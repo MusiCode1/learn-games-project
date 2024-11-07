@@ -15,6 +15,10 @@ export const functionsList = {
     onShowAnimation: {
         name: 'onShowAnimation',
         path: 'PIXI.game.state.states.game.onShowAnimation'
+    },
+    makeBigMovie: {
+                name: 'makeBigMovie',
+        path: 'PIXI.game.state.states.game.makeBigMovie'
     }
 };
 
@@ -49,5 +53,11 @@ export const gameConfigs = [
         triggerFunc: functionsList.onShowAnimation,
         delay: 5 * 1000,
         urlPath: '/wp-content/uploads/new_games/earase_animals/'
+    },
+    {
+        gameName: 'placeValue_eggs',
+        triggerFunc: functionsList.makeBigMovie,
+        delay: 5 * 1000,
+        urlPath: '/wp-content/uploads/new_games/placeValue_eggs/'
     }
 ];

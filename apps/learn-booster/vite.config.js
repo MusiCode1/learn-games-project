@@ -1,8 +1,12 @@
 /** @type {import('vite').UserConfig} */
 export default {
+
+    build:{
+        outDir: 'docs'
+    },
     server: {
         cors: {
-            origin: 'https://gingim.net',
+            origin: false,
             methods: ['GET', 'POST', 'OPTIONS']
         }
     }

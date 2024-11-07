@@ -4,11 +4,23 @@ import { searchFunInGlobal } from "./search-fun-in-global.js";
 import { createVideoHTML } from "./video-element.js";
 import { gameConfigs as gameConfigsFromFile } from "./configs.js";
 import { InjectCodeIntoIframe } from "./load-external-script.js";
-import logger from "./logger.js"
+import logger from "./logger.js";
+
+if(!window.fully) {
+    window.fully = {
+        startApplication(){
+            logger.log('call to startApplication')
+        },
+
+        bringToForeground(){
+            logger.log('call to bringToForeground')
+        }
+    }
+}
 
 
 // @ts-ignore
-const videoDisplayTimeInMS = window.videoLength || 20 * 1000;
+const videoDisplayTimeInMS = window.videoLength || 30 * 1000;
 // @ts-ignore
 let videoURL = window.videoURL || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
