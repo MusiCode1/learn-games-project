@@ -5,23 +5,23 @@
     script.async = true;
     script.type = 'module';
     document.head.appendChild(script);
-})('https://musicode1.github.io/FullyKiosk/gingim-video-cover/index.js');
+})('utl');
 
 async function a() {
-    javascript: fetch('https://musicode1.github.io/FullyKiosk/gingim-video-cover/short-injection.js')
+    javascript: fetch('url')
         .then(r => r.text())
         .then(c => eval(c));
 
-    javascript: fetch('https://musicode1.github.io/FullyKiosk/gingim-video-cover/short-injection.js')
+    javascript: fetch('url')
         .then(res => res.text())
         .then(code => eval(code));
 
-    javascript: eval(await (await fetch('https://musicode1.github.io/FullyKiosk/gingim-video-cover/short-injection.js')).text());
+    javascript: eval(await (await fetch('url')).text());
 
     javascript: eval(await (await fetch('https://user.github.io/repo/index.js')).text())();
 }
 
-const injectionScriptURL = 'https://musicode1.github.io/FullyKiosk/gingim-video-cover/short-injection.js';
+const injectionScriptURL = 'url';
 
 if (window.location.hostname === 'gingim.net') fetch(injectionScriptURL)
     .then(r => r.text())
