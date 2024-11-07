@@ -1,10 +1,11 @@
 import logger from "./logger.js";
 
 function getCodeString (scriptURL) {
+    const fnName = loadExternalScript.name;
     let funStr = "\n";
     funStr += loadExternalScript.toString();
     funStr += "\n\n";
-    funStr += `loadExternalScript('${scriptURL}')\n`;
+    funStr += `${fnName}('${scriptURL}')\n`;
 
     return funStr;
 }
