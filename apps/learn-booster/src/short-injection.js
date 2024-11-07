@@ -21,8 +21,8 @@ async function a() {
     javascript: eval(await (await fetch('https://user.github.io/repo/index.js')).text())();
 }
 
-const injectionScriptURL = 'url';
-
-if (window.location.hostname === 'gingim.net') fetch(injectionScriptURL)
-    .then(r => r.text())
-    .then(c => eval(c));
+const url = 'https://musicode1.github.io/gingim-booster/injection.js';
+if (window.location.hostname === 'gingim.net')
+    fetch(url)
+        .then(r => r.text())
+        .then(c => eval(c));
