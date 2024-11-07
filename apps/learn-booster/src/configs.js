@@ -1,3 +1,7 @@
+export const config = {
+    video: ''
+}
+
 
 const rootPath = 'PIXI.game.state.states.game';
 

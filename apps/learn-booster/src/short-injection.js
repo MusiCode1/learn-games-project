@@ -21,8 +21,9 @@ async function a() {
     javascript: eval(await (await fetch('https://user.github.io/repo/index.js')).text())();
 }
 
+const locURL = '//localhost/src/injection.js'
 const url = 'https://musicode1.github.io/gingim-booster/injection.js';
 if (window.location.hostname === 'gingim.net')
-    fetch(url)
+    fetch(locURL)
         .then(r => r.text())
         .then(c => eval(c));
