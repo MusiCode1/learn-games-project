@@ -1,9 +1,24 @@
-# for local scoure sever
-localhost {
-	# root * ./docs
-	# file_server browse
+http://* {
+	respond "wellcome to my computer"
 
+	log {
+		output stdout
+		format console {
+			level_format color
+		}
+	}
+}
+
+https://dev-server.dev {
+	respond / "Hello, world!"
 	reverse_proxy http://localhost:5173
+
+	tls ./certs/dev-server.dev.pem ./certs/dev-server.dev-key.pem
+
+	log {
+		output stdout
+		format console
+	}
 
 	@cors_preflight {
 		method OPTIONS

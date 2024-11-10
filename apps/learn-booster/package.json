@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/youtube-player": "^5.5.11",
     "vite": "^5.4.10"
   }
 }

@@ -1,0 +1,839 @@
+# ab-inject.js
+
+```js
+
+(() => {
+
+    function loadExternalScript(url) {
+        const script = document.createElement('script');
+        script.src = url;
+        script.async = true;
+        script.type = 'module';
+        document.head.appendChild(script);
+    }
+
+    const bootstrapURL = '//localhost/src/app-booster.js';
+    const devURL = 'https://dev-server.dev/src/app-booster.js';
+    loadExternalScript(devURL);
+
+})();
+```
+
+# main.js
+
+```js
+
+import { main } from './src/main.js';
+
+main()
+```
+
+# src\ab-inject.js
+
+```js
+
+(() => {
+
+    function loadExternalScript(url) {
+        const script = document.createElement('script');
+        script.src = url;
+        script.async = true;
+        script.type = 'module';
+        document.head.appendChild(script);
+    }
+
+    const bootstrapURL = '//localhost/src/app-booster.js';
+    const devURL = 'https://dev-server.dev/src/app-booster.js';
+    loadExternalScript(devURL);
+
+})();
+
+(function example() {
+    const url = 'https://dev-server.dev/ab-inject.js';
+
+    if (window.location.hostname === 'gingim.net')
+        fetch(url)
+            .then(r => r.text())
+            .then(c => eval(c));
+})
+```
+
+# src\app-booster.js
+
+```js
+
+import { wrapFunctionByPath, getFunctionByPath } from "./wrap-fun-by-path.js";
+import { searchFunInGlobal } from "./search-fun-in-global.js";
+import { createVideoHTML } from "./video-element.js";
+import { gameConfigs as gameConfigsFromFile } from "./configs.js";
+import { InjectCodeIntoIframe } from "./load-external-script.js";
+import logger from "./logger.js";
+
+if(!window.fully) {
+    window.fully = {
+        startApplication(){
+            logger.log('call to startApplication')
+        },
+
+        bringToForeground(){
+            logger.log('call to bringToForeground')
+        }
+    }
+}
+
+
+// @ts-ignore
+const videoDisplayTimeInMS = window.videoLength || 30 * 1000;
+// @ts-ignore
+let videoURL = window.videoURL || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+
+const gameConfigs = window.gameConfigs || gameConfigsFromFile;
+
+if (window.FullyKiosk) {
+    videoURL = 'http://localhost/sdcard/video.mp4';
+}
+
+function pullGameConfig(path) {
+
+    return gameConfigs.find((v) => path.includes(v.urlPath))
+}
+
+function getGameConfig() {
+    const gameConfig = pullGameConfig(window.location.pathname);
+
+    if (!gameConfig) {
+        return false;
+    };
+
+    let triggerFuncPath = gameConfig?.triggerFunc?.path;
+    let triggerFuncCode = getFunctionByPath(triggerFuncPath)?.func;
+
+    if (!triggerFuncCode || typeof triggerFuncCode !== 'function') {
+
+        triggerFuncPath = searchFunInGlobal(gameConfig.triggerFunc.name)?.[0];
+
+        if (!triggerFuncPath) throw new Error("No wrapping function found.");
+
+        gameConfig.triggerFunc.path = triggerFuncPath;
+
+        logger.log('Function search successfully completed!');
+    } else {
+
+        logger.log('Trigger function successfully extracted from configuration!')
+    }
+
+    return gameConfig;
+}
+
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+async function loadAndSetVideoElement() {
+
+    if (document.readyState !== 'complete') {
+
+        await new Promise(resolve => window.onload = resolve)
+    }
+
+    const gameConfig = getGameConfig();
+
+    if (!gameConfig) {
+        console.info('The current game is not yet supported.');
+        return;
+    }
+
+    logger.log('path:', gameConfig.triggerFunc.path);
+
+    wrapFunctionByPath(gameConfig.triggerFunc.path, null, async () => {
+
+        logger.log('App show begins...');
+
+        await sleep(gameConfig.delay);
+
+        fully.startApplication('com.edujoy.fidget.pop.it');
+
+        await sleep(videoDisplayTimeInMS + gameConfig.delay);
+
+        fully.bringToForeground()
+    });
+
+    logger.log('The App tsarting has successfully loaded!');
+}
+
+export async function main() {
+
+    const selfURL = import.meta.url;
+
+    logger.log(`The script runs under the address ${window.location.href}`);
+
+    if (window.self !== window.top) {
+        logger.log("The page is inside an iframe.");
+        await loadAndSetVideoElement();
+
+    } else {
+        logger.log("The page is not inside an iframe.");
+
+        if (
+            window.location.href.includes('new_game')
+            || window.location.hostname === 'localhost'
+        ) {
+            await loadAndSetVideoElement();
+
+        } else {
+            InjectCodeIntoIframe(selfURL);
+        }
+
+    }
+
+}
+
+main();
+
+```
+
+# src\configs.js
+
+```js
+export const config = {
+    video: ''
+}
+
+
+const rootPath = 'PIXI.game.state.states.game';
+
+export const functionsList = {
+
+    makeMovie: {
+        name: 'makeMovie',
+        path: 'PIXI.game.state.states.game.makeMovie'
+    },
+
+    onShowAnimation: {
+        name: 'onShowAnimation',
+        path: 'PIXI.game.state.states.game.onShowAnimation'
+    },
+    makeBigMovie: {
+                name: 'makeBigMovie',
+        path: 'PIXI.game.state.states.game.makeBigMovie'
+    }
+};
+
+export const defaultGame = {
+    gameName: 'default',
+    triggerFunc: null,
+    delay: 5 * 1000,
+    urlPath: null
+};
+
+export const gameConfigs = [
+    {
+        gameName: 'tidy_up',
+        triggerFunc: functionsList.makeMovie,
+        delay: 5 * 1000,
+        urlPath: '/wp-content/uploads/new_games/tidy_up/'
+    },
+    {
+        gameName: 'touch_go',
+        triggerFunc: functionsList.makeMovie,
+        delay: 5 * 1000,
+        urlPath: 'wp-content/uploads/new_games/touch_go/'
+    },
+    {
+        gameName: 'earase_animals',
+        triggerFunc: functionsList.onShowAnimation,
+        delay: 5 * 1000,
+        urlPath: '/wp-content/uploads/new_games/earase_animals/'
+    },
+    {
+        gameName: 'earase_animals',
+        triggerFunc: functionsList.onShowAnimation,
+        delay: 5 * 1000,
+        urlPath: '/wp-content/uploads/new_games/earase_animals/'
+    },
+    {
+        gameName: 'placeValue_eggs',
+        triggerFunc: functionsList.makeBigMovie,
+        delay: 3 * 1000,
+        urlPath: '/wp-content/uploads/new_games/placeValue_eggs/'
+    }
+];
+```
+
+# src\injection.js
+
+```js
+
+(() => {
+
+    function loadExternalScript(url) {
+        const script = document.createElement('script');
+        script.src = url;
+        script.async = true;
+        script.type = 'module';
+        document.head.appendChild(script);
+    }
+
+    const bootstrapURL = 'https://musicode1.github.io/FullyKiosk/gingim-video-cover/main.js';
+    loadExternalScript(bootstrapURL);
+
+})();
+```
+
+# src\load-external-script.js
+
+```js
+import logger from "./logger.js";
+
+function getCodeString (scriptURL) {
+    const fnName = loadExternalScript.name;
+    let funStr = "\n";
+    funStr += loadExternalScript.toString();
+    funStr += "\n\n";
+    funStr += `${fnName}('${scriptURL}')\n`;
+
+    return funStr;
+}
+
+function InjectCodeIntoIframe(scriptURL) { 
+
+    function injectFunction (iframe) {
+
+        try {
+            logger.log('iFrame creating!');
+
+            const script = iframe.contentDocument.createElement('script');
+            const codeString = getCodeString(scriptURL);
+            script.textContent = codeString;
+
+            logger.log('Script ready for injection...');
+
+            iframe.contentWindow.onload = () => {
+                iframe.contentDocument.head.appendChild(script);
+            }
+
+            logger.log('The script has been injected');
+
+        } catch (e) {
+            console.error('Cannot access iframe due to cross-origin restrictions');
+            console.error(e);
+            
+        }
+    }
+
+
+
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+                if (node.tagName === 'IFRAME') {
+                    injectFunction(node)
+                }
+            });
+        });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+}
+
+function loadExternalScript(url) {
+    const script = document.createElement('script');
+    script.src = url;
+    script.async = true;
+    script.type = 'module';
+    document.head.appendChild(script);
+}
+
+const devURL = 'https://localhost/gingim-video-cover/index.js?v=0.1'
+
+// loadExternalScript(devURL)
+
+
+export {
+    InjectCodeIntoIframe,
+    loadExternalScript
+}
+```
+
+# src\logger.js
+
+```js
+
+const enableLogger = true;
+
+function log(...args) {
+
+    if(enableLogger) {
+        console.log(...args)
+    }
+}
+
+export default {
+    log
+}
+```
+
+# src\main.js
+
+```js
+
+import { wrapFunctionByPath, getFunctionByPath } from "./wrap-fun-by-path.js";
+import { searchFunInGlobal } from "./search-fun-in-global.js";
+import { createVideoHTML } from "./video-element.js";
+import { gameConfigs as gameConfigsFromFile } from "./configs.js";
+import { InjectCodeIntoIframe } from "./load-external-script.js";
+import logger from "./logger.js"
+
+
+// @ts-ignore
+const videoDisplayTimeInMS = window.videoLength || 20 * 1000;
+// @ts-ignore
+let videoURL = window.videoURL || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+
+const gameConfigs = window.gameConfigs || gameConfigsFromFile;
+
+if (window.FullyKiosk) {
+    videoURL = 'http://localhost/sdcard/video.mp4';
+}
+
+
+
+function loadElements() {
+
+    const { modal, modalManager } = createVideoHTML(videoURL);
+
+    logger.log(document.readyState);
+
+    document.body.appendChild(modal);
+    logger.log('The elements have been loaded successfully!');
+
+    return { modalManager, modal };
+}
+
+function pullGameConfig(path) {
+
+    return gameConfigs.find((v) => path.includes(v.urlPath))
+}
+
+function getGameConfig() {
+    const gameConfig = pullGameConfig(window.location.pathname);
+
+    if (!gameConfig) {
+        return false;
+    };
+
+    let triggerFuncPath = gameConfig?.triggerFunc?.path;
+    let triggerFuncCode = getFunctionByPath(triggerFuncPath)?.func;
+
+    if (!triggerFuncCode || typeof triggerFuncCode !== 'function') {
+
+        triggerFuncPath = searchFunInGlobal(gameConfig.triggerFunc.name)?.[0];
+
+        if (!triggerFuncPath) throw new Error("No wrapping function found.");
+
+        gameConfig.triggerFunc.path = triggerFuncPath;
+
+        logger.log('Function search successfully completed!');
+    } else {
+
+        logger.log('Trigger function successfully extracted from configuration!')
+    }
+
+    return gameConfig;
+}
+
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+async function loadAndSetVideoElement() {
+
+    if (document.readyState !== 'complete') {
+
+        await new Promise(resolve => window.onload = resolve)
+    }
+
+    const gameConfig = getGameConfig();
+
+    if (!gameConfig) {
+        console.info('The current game is not yet supported.');
+        return;
+    }
+
+    logger.log('path:', gameConfig.triggerFunc.path);
+
+    const { modalManager, modal } = loadElements();
+
+    wrapFunctionByPath(gameConfig.triggerFunc.path, null, async () => {
+
+        logger.log('Video playback begins...');
+
+        await sleep(gameConfig.delay);
+
+        modalManager.show();
+
+        await sleep(videoDisplayTimeInMS + gameConfig.delay);
+
+        modalManager.hide();
+    });
+
+    logger.log('The video element has successfully loaded!');
+
+    window.modalManager = modalManager;
+}
+
+export async function main() {
+
+    const config = {
+
+        type: 'app' || 'video',
+        appID: 'com.edujoy.fidget.pop.it',
+        videoURL: ''
+
+    };
+
+    const selfURL = import.meta.url;
+
+    logger.log(`The script runs under the address ${window.location.href}`);
+
+    if (window.self !== window.top) {
+        logger.log("The page is inside an iframe.");
+        await loadAndSetVideoElement();
+
+    } else {
+        logger.log("The page is not inside an iframe.");
+
+        if (
+            window.location.href.includes('new_game')
+            || window.location.hostname === 'localhost'
+        ) {
+            await loadAndSetVideoElement();
+
+        } else {
+            InjectCodeIntoIframe(selfURL);
+        }
+
+    }
+
+}
+
+main();
+
+```
+
+# src\search-fun-in-global.js
+
+```js
+
+export function searchFunInGlobal(funcName) {
+    const results = new Set();
+
+    function getPropertyAccessor(key) {
+        return /^[a-zA-Z_$][0-9a-zA-Z_$]*$/.test(key) ? `.${key}` : `[${JSON.stringify(key)}]`;
+    }
+
+    function searchObject(obj, path = '', visited = new Set()) {
+        if (visited.has(obj)) return;
+        visited.add(obj);
+
+        for (let key in obj) {
+            try {
+                const newPath = Array.isArray(obj) ? `${path}[${key}]` : `${path}${getPropertyAccessor(key)}`;
+
+                if (typeof obj[key] === 'function' && key === funcName) {
+                    results.add(newPath.replace(/^\./, ''));
+                    if (window[key] === obj[key]) {
+                        results.add(key);
+                    }
+                }
+                if (typeof obj[key] === 'object' && obj[key] !== null) {
+                    searchObject(obj[key], newPath, visited);
+                }
+            } catch (e) {
+                continue;
+            }
+        }
+    }
+
+    function searchDOM(element, path = '') {
+        if (typeof element[funcName] === 'function') {
+            results.add(`${path}${getPropertyAccessor(funcName)}`);
+        }
+
+        for (let i = 0; i < element.children.length; i++) {
+            const child = element.children[i];
+            const childPath = `${path}${getPropertyAccessor('children')}[${i}]`;
+            searchDOM(child, childPath);
+        }
+
+        // חיפוש ב-shadowRoot אם קיים
+        if (element.shadowRoot) {
+            searchDOM(element.shadowRoot, `${path}${getPropertyAccessor('shadowRoot')}`);
+        }
+    }
+
+    // חיפוש בסקופ הגלובלי
+    searchObject(window);
+
+    // חיפוש ב-DOM
+    searchDOM(document.documentElement, 'document.documentElement');
+
+    // בדיקת הפניות ישירות בסקופ הגלובלי
+    if (typeof window[funcName] === 'function') {
+        results.add(funcName);
+    }
+
+    return Array.from(results).sort((a, b) => a.length - b.length);
+}
+```
+
+# src\short-injection.js
+
+```js
+
+(function loadExternalScript(url) {
+    const script = document.createElement('script');
+    script.src = url;
+    script.async = true;
+    script.type = 'module';
+    document.head.appendChild(script);
+})('utl');
+
+async function a() {
+    javascript: fetch('url')
+        .then(r => r.text())
+        .then(c => eval(c));
+
+    javascript: fetch('url')
+        .then(res => res.text())
+        .then(code => eval(code));
+
+    javascript: eval(await (await fetch('url')).text());
+
+    javascript: eval(await (await fetch('https://user.github.io/repo/index.js')).text())();
+}
+
+const locURL = '//localhost/src/injection.js'
+const url = 'https://musicode1.github.io/gingim-booster/injection.js';
+if (window.location.hostname === 'gingim.net')
+    fetch(locURL)
+        .then(r => r.text())
+        .then(c => eval(c));
+```
+
+# src\video-element.js
+
+```js
+import logger from './logger.js';
+
+function volumeFade(videoElement, action, duration = 2000) {
+    // מקבל את הווידאו, הפעולה ("fadeIn" או "fadeOut"), ומשך הזמן (במילישניות)
+    const step = 50; // כמה זמן כל צעד (במילישניות)
+    const maxVolume = 1.0; // הווליום המרבי
+    const volumeStep = maxVolume / (duration / step);
+
+    if (action === 'fadeIn') {
+        videoElement.volume = 0; // התחלה מווליום אפס
+        videoElement.play(); // הפעלת הסרטון
+
+        const fadeInInterval = setInterval(() => {
+            if (videoElement.volume < maxVolume) {
+                videoElement.volume = Math.min(maxVolume, videoElement.volume + volumeStep);
+            } else {
+                clearInterval(fadeInInterval);
+            }
+        }, step);
+    } else if (action === 'fadeOut') {
+        const fadeOutInterval = setInterval(() => {
+            if (videoElement.volume > 0) {
+                videoElement.volume = Math.max(0, videoElement.volume - volumeStep);
+            } else {
+                clearInterval(fadeOutInterval);
+                videoElement.pause(); // עצירת הסרטון כשהווליום אפס
+            }
+        }, step);
+    } else {
+        console.error('Invalid action. Use "fadeIn" or "fadeOut".');
+    }
+}
+
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+// פונקציה להזרקת ה-HTML לדף
+export function createVideoHTML(videoURL) {
+
+    // יצירת אלמנט div חדש עבור המודאל
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.setAttribute('dir', 'rtl');
+
+    // יצירת אלמנט div חדש עבור המיכל של הווידאו
+    const mainContainer = document.createElement('div');
+    mainContainer.className = 'main-container';
+
+    // יצירת אלמנט card חדש
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    // הוספת כותרת
+    const title = document.createElement('h1');
+    title.innerText = 'הגיע הזמן לסרטון!';
+
+    // יצירת אלמנט ווידאו
+    const video = document.createElement('video');
+    video.controls = true;
+    const source = document.createElement('source');
+    source.src = videoURL;
+    //source.type = 'video/mp4';
+
+    // הוספת המקורות לווידאו
+    video.appendChild(source);
+    video.innerHTML += 'הדפדפן שלך אינו תומך בתגית הווידאו.';
+
+    // הוספת אלמנטים ל-card
+    card.appendChild(title);
+    card.appendChild(video);
+
+    // הוספת ה-card ל-mainContainer
+    mainContainer.appendChild(card);
+    modal.appendChild(mainContainer); // הוספת mainContainer למודאל
+
+    const css = document.createElement('link');
+
+    css.href = new URL('./style.css', import.meta.url).href;
+    css.rel = 'stylesheet';
+
+    document.head.appendChild(css);
+
+    const modalManager = {
+
+        status: 'hide',
+
+        show() {
+            this.status = 'show';
+            modal.classList.add('show');
+
+            volumeFade(video, 'fadeIn');
+        },
+
+        hide() {
+            this.status = 'hide';
+            modal.classList.remove('show');
+
+            volumeFade(video, 'fadeOut');
+        },
+
+        toggle() {
+            if (this.status === 'show') {
+                this.hide()
+            } else {
+                this.show()
+            }
+        }
+    }
+
+    logger.log()
+
+    return { modal, modalManager }
+
+}
+
+
+
+```
+
+# src\wrap-fun-by-path.js
+
+```js
+
+
+export function getFunctionByPath(path) {
+
+    const isNumber = (v) => !isNaN(v);
+
+    const splitPath = (path) => path.split(/[\.\[\]]+/).filter(Boolean);
+
+    if (!path) return;
+
+    const pathParts = splitPath(path);
+
+    const funcName = pathParts.pop();
+
+    let context = window;
+    for (let i = 0; i < pathParts.length; i++) {
+
+        const key = isNumber(pathParts[i]) ? Number(pathParts[i]) : pathParts[i];
+
+        context = context[key];
+    }
+
+    const func = context[funcName];
+
+    return { func, context, funcName };
+}
+
+function wrapFunction(resultObject, fnCallbackBefore, fnCallbackAfter) {
+
+    const { func, context, funcName } = resultObject;
+
+    context[funcName] = function (...args) {
+        if (fnCallbackBefore) fnCallbackBefore();
+        const result = func.apply(this, args);
+        if (fnCallbackAfter) fnCallbackAfter();
+
+        return result;
+    };
+}
+
+export function wrapFunctionByPath(path, fnCallbackBefore = null, fnCallbackAfter = null) {
+
+    const resultObject = getFunctionByPath(path);
+    wrapFunction(resultObject, fnCallbackBefore, fnCallbackAfter);
+}
+
+```
+
+# vite.config.js
+
+```js
+import { defineConfig } from 'vite';
+
+
+export default defineConfig({
+
+    
+
+    build: {
+        outDir: 'docs',
+
+        /* rollupOptions: {
+            input: {
+                main: 'src/main.js',
+                'app-booster': 'src/app-booster.js'
+            },
+            output: {
+                entryFileNames: '[name].js',
+                manualChunks: undefined
+            }
+        }, */
+        lib: {
+            entry: {
+                main: 'src/main.js',
+                'app-booster': 'src/app-booster.js'
+            },
+            formats: ['es']
+        }
+    },
+
+    server: {
+        cors: {
+            origin: false,
+            methods: ['GET', 'POST', 'OPTIONS']
+        }
+    }
+});
+```
+

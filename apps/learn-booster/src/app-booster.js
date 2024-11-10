@@ -30,20 +30,6 @@ if (window.FullyKiosk) {
     videoURL = 'http://localhost/sdcard/video.mp4';
 }
 
-
-
-function loadElements() {
-
-    const { modal, modalManager } = createVideoHTML(videoURL);
-
-    logger.log(document.readyState);
-
-    document.body.appendChild(modal);
-    logger.log('The elements have been loaded successfully!');
-
-    return { modalManager, modal };
-}
-
 function pullGameConfig(path) {
 
     return gameConfigs.find((v) => path.includes(v.urlPath))
@@ -96,11 +82,9 @@ async function loadAndSetVideoElement() {
 
     logger.log('path:', gameConfig.triggerFunc.path);
 
-    const { modalManager, modal } = loadElements();
-
     wrapFunctionByPath(gameConfig.triggerFunc.path, null, async () => {
 
-        logger.log('Video playback begins...');
+        logger.log('App show begins...');
 
         await sleep(gameConfig.delay);
 
@@ -111,9 +95,7 @@ async function loadAndSetVideoElement() {
         fully.bringToForeground()
     });
 
-    logger.log('The video element has successfully loaded!');
-
-    window.modalManager = modalManager;
+    logger.log('The App tsarting has successfully loaded!');
 }
 
 export async function main() {

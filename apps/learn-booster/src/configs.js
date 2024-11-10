@@ -57,7 +57,7 @@ export const gameConfigs = [
     {
         gameName: 'placeValue_eggs',
         triggerFunc: functionsList.makeBigMovie,
-        delay: 5 * 1000,
+        delay: 3 * 1000,
         urlPath: '/wp-content/uploads/new_games/placeValue_eggs/'
     }
 ];

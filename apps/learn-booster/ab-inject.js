@@ -14,12 +14,3 @@
     loadExternalScript(devURL);
 
 })();
-
-(function example() {
-    const url = 'https://dev-server.dev/ab-inject.js';
-
-    if (window.location.hostname === 'gingim.net')
-        fetch(url)
-            .then(r => r.text())
-            .then(c => eval(c));
-})

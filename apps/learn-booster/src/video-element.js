@@ -57,10 +57,14 @@ export function createVideoHTML(videoURL) {
 
     // יצירת אלמנט ווידאו
     const video = document.createElement('video');
-    video.controls = true;
+    video.controls = false;
     const source = document.createElement('source');
     source.src = videoURL;
     //source.type = 'video/mp4';
+    video.onclick = () =>
+        (video.paused) ?
+            video.play() : video.pause();
+
 
     // הוספת המקורות לווידאו
     video.appendChild(source);

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            /* רקע שקוף כהה */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            /* מעל כל דבר אחר */
+
+        }
+
+        .modal {
+            z-index: -1;
+        }
+
+        .modal,
+        .main-container {
+            transition: all 1s;
+            opacity: 0;
+
+        }
+
+        .modal.show {
+            opacity: 1;
+            z-index: 1000;
+        }
+
+        .modal.show .main-container {
+            opacity: 1;
+            transition-delay: 1s;
+        }
+
+        .main-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin: 10px;
+        }
+
+        .card {
+            background-color: rgb(243, 255, 135);
+            padding: 20px;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin-top: 5px;
+        }
+
+        video {
+            max-height: 100%;
+            max-width: 100%;
+            width: 950px;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="modal show" dir="rtl">
+        <div class="main-container">
+            <div class="card">
+                <h1>הגיע הזמן לסרטון!</h1><video controls="">
+                    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">
+                    הדפדפן שלך אינו תומך בתגית הווידאו.
+                </video>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

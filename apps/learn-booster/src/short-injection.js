@@ -14,16 +14,14 @@ async function a() {
 
     javascript: fetch('url')
         .then(res => res.text())
-        .then(code => eval(code));
+        .then(eval);
 
     javascript: eval(await (await fetch('url')).text());
 
     javascript: eval(await (await fetch('https://user.github.io/repo/index.js')).text())();
 }
 
-const locURL = '//localhost/src/injection.js'
-const url = 'https://musicode1.github.io/gingim-booster/injection.js';
+
+const url = 'https://musicode1.github.io/gingim-booster/main-inject.js';
 if (window.location.hostname === 'gingim.net')
-    fetch(locURL)
-        .then(r => r.text())
-        .then(c => eval(c));
+    fetch(locURL).then(r=>r.text()).then(eval);

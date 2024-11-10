@@ -106,6 +106,14 @@ async function loadAndSetVideoElement() {
 
 export async function main() {
 
+    const config = {
+
+        type: 'app' || 'video',
+        appID: 'com.edujoy.fidget.pop.it',
+        videoURL: ''
+
+    };
+
     const selfURL = import.meta.url;
 
     logger.log(`The script runs under the address ${window.location.href}`);
