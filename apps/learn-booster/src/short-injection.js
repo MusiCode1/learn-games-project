@@ -24,4 +24,4 @@ async function a() {
 
 const url = 'https://musicode1.github.io/gingim-booster/main-inject.js';
 if (window.location.hostname === 'gingim.net')
-    fetch(locURL).then(r=>r.text()).then(eval);
+    fetch(url).then(r=>r.text()).then(eval);

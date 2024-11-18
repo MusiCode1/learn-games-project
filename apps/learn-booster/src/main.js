@@ -46,7 +46,7 @@ function getGameConfig() {
 
     let triggerFuncPath = gameConfig?.triggerFunc?.path;
     let triggerFuncCode = getFunctionByPath(triggerFuncPath)?.func;
-
+    
     if (!triggerFuncCode || typeof triggerFuncCode !== 'function') {
 
         triggerFuncPath = searchFunInGlobal(gameConfig.triggerFunc.name)?.[0];
