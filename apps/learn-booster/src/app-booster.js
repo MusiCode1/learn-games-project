@@ -20,7 +20,7 @@ if(!window.fully) {
 
 
 // @ts-ignore
-const videoDisplayTimeInMS = window.videoLength || 40 * 1000;
+const videoDisplayTimeInMS = window.videoLength || 60 * 1000;
 // @ts-ignore
 let videoURL = window.videoURL || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
