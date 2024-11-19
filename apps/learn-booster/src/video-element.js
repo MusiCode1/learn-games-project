@@ -114,8 +114,7 @@ export function createVideoHTML(videoURL) {
 
     logger.log()
 
-    return { modal, modalManager }
-
+    return { modal, modalManager };
 }
 
 
