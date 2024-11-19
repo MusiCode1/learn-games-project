@@ -14,8 +14,8 @@ let videoURL = window.videoURL || 'https://commondatastorage.googleapis.com/gtv-
 
 const gameConfigs = window.gameConfigs || gameConfigsFromFile;
 
-if (window.FullyKiosk) {
-    videoURL = 'http://localhost/sdcard/video.mp4';
+if (window.FullyKiosk && !window.videoURL) {
+    videoURL = 'http://localhost/sdcard/Movies/video.mp4';
 }
 
 
