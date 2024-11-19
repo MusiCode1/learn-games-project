@@ -57,7 +57,8 @@ export function createVideoHTML(videoURL) {
 
     // יצירת אלמנט ווידאו
     const video = document.createElement('video');
-    video.controls = false;
+    video.controls = true;
+    video.controlsList = 'nofullscreen nodownload noremoteplayback noplaybackrate'
     const source = document.createElement('source');
     source.src = videoURL;
     //source.type = 'video/mp4';

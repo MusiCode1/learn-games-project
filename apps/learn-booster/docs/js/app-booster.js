@@ -7,7 +7,7 @@ window.fully || (window.fully = {
     e.log("call to bringToForeground");
   }
 });
-const p = window.videoLength || 30 * 1e3, w = window.gameConfigs || d;
+const p = window.videoLength || 60 * 1e3, w = window.gameConfigs || d;
 function m(n) {
   return w.find((o) => n.includes(o.urlPath));
 }
