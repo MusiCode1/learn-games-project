@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+    <!-- רקע כהה שקוף -->
+    <rect width="100%" height="100%" fill="rgba(0,0,0,0.6)"/>
+    
+    <!-- חלון מודאלי מעוגל -->
+    <rect x="100" y="50" width="600" height="500" fill="white" rx="15" ry="15" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.1))"/>
+    
+    <!-- אזור הווידאו -->
+    <rect x="120" y="70" width="560" height="315" fill="#f0f0f0" rx="8" ry="8"/>
+    
+    <!-- כפתור סגירה -->
+    <circle cx="670" cy="80" r="15" fill="#ff4444"/>
+    <path d="M663 73 L677 87 M677 73 L663 87" stroke="white" stroke-width="2"/>
+    
+    <!-- אייקון play -->
+    <circle cx="400" cy="227.5" r="40" fill="rgba(0,0,0,0.7)"/>
+    <path d="M385 207.5 L385 247.5 L425 227.5 Z" fill="white"/>
+    
+    <!-- כותרת -->
+    <rect x="120" y="400" width="560" height="40" fill="#f8f8f8" rx="5" ry="5"/>
+    <text x="140" y="425" font-family="Arial" font-size="16" fill="#333">כותרת הווידאו</text>
+</svg>

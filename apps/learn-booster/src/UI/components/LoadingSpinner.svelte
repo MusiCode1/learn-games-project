@@ -1,5 +1,9 @@
-<script>
-  export let message = 'טוען...';
+<script lang="ts">
+  interface Props {
+    message?: string;
+  }
+
+  let { message = 'טוען...' }: Props = $props();
 </script>
 
 <div class="absolute inset-0 flex items-center justify-center text-white">
