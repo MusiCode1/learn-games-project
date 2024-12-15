@@ -2,6 +2,7 @@
   import { untrack } from "svelte";
   import VideoDialog from "./components/VideoDialog.svelte";
   import Modal from "./components/Modal.svelte";
+  import LeftButton from "./components/LeftButton.svelte";
   import { sleep } from "../lib/sleep";
   import type { Config, VideoController, PlayerControls } from "../types";
 
@@ -35,17 +36,33 @@
     videoController?.pause();
   }
 
-  export const show = showModal;
-  export const hide = hideModal;
-  export function getVideo(): VideoController | undefined {
-    return videoController;
+  async function toggle() {
+    if (visible) {
+      hideModal();
+    } else {
+      showModal();
+    }
   }
+
+  export const modalController = {
+    show: showModal,
+    hide: hideModal,
+    toggle,
+    getVideo(): VideoController | undefined {
+      return videoController;
+    },
+  };
 </script>
 
 <div id="show-container" class:show={visible}>
   <main class="min-h-screen flex items-center justify-center">
     <Modal visible={modalVisible}>
-      <VideoDialog visible={videoVisible} videoUrl={config.videoUrl} bind:videoController />
+      <VideoDialog
+        visible={videoVisible}
+        videoUrl={config.videoUrl}
+        type={config.type}
+        bind:videoController
+      />
     </Modal>
   </main>
 </div>

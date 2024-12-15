@@ -38,8 +38,8 @@ export default defineConfig({
   server:{
     host: 'dev-server.dev',
     https:{
-      key: 'old-vers/gingim-booster/certs/dev-server.dev-key.pem',
-      cert: 'old-vers/gingim-booster/certs/dev-server.dev.pem'
+      key: 'dev-cert/dev-server.dev-key.pem',
+      cert: 'dev-cert/dev-server.dev.pem'
     },
     cors:{
       origin: 'https://gingim.net',

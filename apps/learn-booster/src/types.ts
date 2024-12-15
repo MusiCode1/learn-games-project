@@ -5,6 +5,7 @@
 export interface VideoController {
   play: () => void;
   pause: () => void;
+  toggle: () => void;
 }
 
 /**
@@ -13,6 +14,7 @@ export interface VideoController {
 export interface VideoDialogProps {
   visible: boolean;
   videoUrl: string;
+  type: string;
   videoController?: VideoController;
 }
 
@@ -22,7 +24,15 @@ export interface VideoDialogProps {
 export interface PlayerControls {
   show: () => void;
   hide: () => void;
+  toggle: () => void;
   video?: VideoController;
+}
+
+export interface Config {
+  videoDisplayTimeInMS: number;
+  videoUrl: string;
+  type: string;
+  mode: string;
 }
 
 /**

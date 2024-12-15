@@ -1,11 +1,10 @@
-export interface Config {
-    videoDisplayTimeInMS: number,
-    videoUrl: string,
-    mode: string
-}
+import type { Config } from "./types";
+
+const selfUrl = import.meta.url;
 
 export const config: Config = {
     videoDisplayTimeInMS: 20 * 1000,
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    mode: 'video'
+    videoUrl: new URL("videos/video.webm", new URL(selfUrl).origin).toString(),
+    type: "video/webm",
+    mode: "video"
 };

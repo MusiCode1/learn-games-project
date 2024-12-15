@@ -8,8 +8,7 @@ export function loadExternalScript(url: string) {
     document.head.appendChild(script);
 }
 
-
-function getCodeString(scriptUrl: string) {
+function getCodeInjectorString(scriptUrl: string) {
     const fnName = loadExternalScript.name;
     let funStr = "\n";
     funStr += loadExternalScript.toString();
@@ -17,6 +16,28 @@ function getCodeString(scriptUrl: string) {
     funStr += `${fnName}('${scriptUrl}')\n`;
 
     return funStr;
+}
+
+function getScriptInjectorCode(document: Document, scriptUrl: string): HTMLScriptElement {
+    const script = document.createElement('script');
+    const codeString = getCodeInjectorString(scriptUrl);
+    script.textContent = codeString;
+    return script;
+}
+
+function getLinkCode(document: Document, props: object) {
+    const link = document.createElement('link');
+    Object.assign(link, props);
+    return link;
+}
+
+function injectHeeboFont(document: Document) {
+    const fontsLink = [{
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Heebo:wght@100..900&display=swap'
+    }];
+
+    return fontsLink.map(fontLink => getLinkCode(document, fontLink));
 }
 
 export function InjectCodeIntoIframe(scriptUrl: string) {
@@ -41,11 +62,17 @@ export function InjectCodeIntoIframe(scriptUrl: string) {
             }
 
             const script = iframeDocument.createElement('script');
-            const codeString = getCodeString(scriptUrl);
+            const codeString = getCodeInjectorString(scriptUrl);
             script.textContent = codeString;
 
             iframeWindow.onload = (event) => {
+
+                const script = getScriptInjectorCode(iframe.contentDocument!, scriptUrl);
+                const links = injectHeeboFont(iframe.contentDocument!);
+
                 iframe.contentDocument!.head.appendChild(script);
+                iframe.contentDocument!.head.append(...links);
+
                 log('The script has been injected');
             }
 

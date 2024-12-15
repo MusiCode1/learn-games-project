@@ -1,5 +1,4 @@
 import { mount } from 'svelte';
-import '@fontsource/heebo';
 
 import './app.css';
 import type { Config, PlayerControls } from '../types';
@@ -21,10 +20,9 @@ export function init(targetElement: string | HTMLElement, config: Config): Playe
   });
 
   const playerControls = {
-    show: () => app.show(),
-    hide: () => app.hide(),
+    ...app.modalController,
     get video() {
-      return app.getVideo();
+      return app.modalController.getVideo();
     }
   };
 

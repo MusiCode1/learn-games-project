@@ -7,6 +7,7 @@
 
   let {
     videoUrl,
+    type,
     visible = $bindable(false),
     videoController = $bindable() as VideoController,
   }: VideoDialogProps = $props();
@@ -33,18 +34,27 @@
     paused = true;
   }
 
+  function toggle() {
+    if (paused) {
+      play();
+    } else {
+      pause();
+    }
+  }
+
   onMount(() => {
     videoController = {
       play,
       pause,
+      toggle,
     };
   });
 
-  $effect(() => {
+/*   $effect(() => {
     if (!visible && videoElement) {
       pause();
     }
-  });
+  }); */
 
   function handleVideoLoaded() {
     loading = false;
@@ -114,12 +124,12 @@
         border border-gray-500
         bg-gray-400
         w-full
-        aspect-video"
+        "
         onloadeddata={handleVideoLoaded}
         onerror={handleVideoError}
         onclick={onClickVideoToggle}
       >
-        <source src={videoUrl} type="video/mp4" />
+        <source src={videoUrl} {type} />
         הדפדפן שלך לא תומך בתגית וידאו.
       </video>
     </div>
@@ -135,15 +145,16 @@
     transform: scale(1);
   }
 
+  h2 {
+    font-family: "Heebo", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+  }
+
   video::-webkit-media-controls-volume-slider,
   video::-webkit-media-controls-volume-control-container,
   video::-webkit-media-controls-mute-button,
   video::-webkit-media-controls-fullscreen-button {
-    display: none !important;
-  }
-
-  video::-webkit-media-controls-panel:has([aria-label="More options"]),
-  video::-webkit-media-controls-panel:has([aria-label="אפשרויות נוספות"]) {
     display: none !important;
   }
 </style>
