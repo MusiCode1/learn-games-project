@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מודל מודרני</title>
+    <style>
+        :root {
+            --modal-width: min(90vw, 40rem);
+            --modal-height: calc(var(--modal-width) * 0.8115);
+        }
+
+        body {
+            margin: 0;
+            padding: 1.25rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            font-family: system-ui, -apple-system, sans-serif;
+            backdrop-filter: blur(0.5rem);
+        }
+
+        .modal {
+            position: relative;
+            width: var(--modal-width);
+            height: var(--modal-height);
+            background: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            height: 13.5%;
+            background: #4a5568;
+            border-radius: 1.25rem 1.25rem 0 0;
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 50%;
+            left: 1.25rem;
+            transform: translateY(-50%);
+            width: 1.875rem;
+            height: 1.875rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .close-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .close-button::before,
+        .close-button::after {
+            content: '';
+            position: absolute;
+            width: 0.9375rem;
+            height: 0.15625rem;
+            background: white;
+            border-radius: 0.125rem;
+            transition: transform 0.2s ease;
+        }
+
+        .close-button::before {
+            transform: rotate(45deg);
+        }
+
+        .close-button::after {
+            transform: rotate(-45deg);
+        }
+
+        .close-button:hover::before {
+            transform: rotate(45deg) scale(1.1);
+        }
+
+        .close-button:hover::after {
+            transform: rotate(-45deg) scale(1.1);
+        }
+
+        .content-area {
+            margin: 3.5%;
+            height: 65%;
+            border-radius: 0.75rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.75rem;
+            border: 1px solid #2d3748;
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 5.625rem;
+            height: 5.625rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .play-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        .play-button::before {
+            content: '';
+            position: absolute;
+            width: 5.25rem;
+            height: 5.25rem;
+            border: 0.125rem solid white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .play-button::after {
+            content: '';
+            position: absolute;
+            border-style: solid;
+            border-width: 1rem 0 1rem 1.75rem;
+            border-color: transparent transparent transparent white;
+            margin-left: 0.25rem;
+            transition: transform 0.3s ease;
+        }
+
+        .play-button:hover::before {
+            transform: scale(1.1);
+        }
+
+        .play-button:hover::after {
+            transform: scale(1.1);
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 5.77%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 93.75%;
+            height: 0.25rem;
+            background: #e2e8f0;
+            border-radius: 0.125rem;
+            cursor: pointer;
+        }
+
+        .progress {
+            width: 33.33%;
+            height: 100%;
+            background: #4299e1;
+            border-radius: 0.125rem;
+            position: relative;
+            transition: width 0.3s ease;
+        }
+
+        .progress-handle {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%) scale(1);
+            width: 0.75rem;
+            height: 0.75rem;
+            background: #4299e1;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+        }
+
+        .progress-bar:hover .progress-handle {
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        .progress-handle::after {
+            content: '';
+            position: absolute;
+            width: 66.67%;
+            height: 66.67%;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @media (max-width: 40rem) {
+            .play-button {
+                width: 3.5rem;
+                height: 3.5rem;
+            }
+
+            .play-button::before {
+                width: 3.25rem;
+                height: 3.25rem;
+            }
+
+            .play-button::after {
+                border-width: 0.625rem 0 0.625rem 1.125rem;
+                margin-left: 0.1875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="modal">
+        <div class="modal-header">
+            <div class="close-button"></div>
+        </div>
+        <div class="content-area">
+            <img class="video-thumbnail" src="https://i.ytimg.com/vi/aqz-KE-bpKQ/maxresdefault.jpg" alt="תמונה ממוזערת של הוידאו">
+            <div class="play-button"></div>
+        </div>
+        <div class="progress-bar">
+            <div class="progress">
+                <div class="progress-handle"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

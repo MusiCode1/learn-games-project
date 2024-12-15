@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+    <!-- רקע כהה שקוף -->
+    <rect width="100%" height="100%" fill="rgba(0,0,0,0.5)"/>
+    
+    <!-- חלון מודאלי -->
+    <rect x="100" y="50" width="600" height="500" fill="white" stroke="#333" stroke-width="2"/>
+    
+    <!-- אזור הווידאו -->
+    <rect x="120" y="70" width="560" height="315" fill="#f0f0f0" stroke="#ddd"/>
+    
+    <!-- אייקון play -->
+    <circle cx="400" cy="227.5" r="40" fill="rgba(0,0,0,0.7)"/>
+    <path d="M385 207.5 L385 247.5 L425 227.5 Z" fill="white"/>
+</svg>

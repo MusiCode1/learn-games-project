@@ -1,0 +1,25 @@
+# קבלת כל המשחקים
+
+```js
+(() => {
+    // מקבל את האלמנט המכיל את כל המשחקים באמצעות XPath
+    const el = document.evaluate(
+        '/html/body/div[1]/main/div[3]/div/div[8]/div[3]/div[7]/div[2]',
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+    ).singleNodeValue;
+
+    // מחזיר מערך של אובייקטים עם שם ו-URL לכל משחק
+    const list = Array.from(el?.querySelectorAll('[data-href]') || [])
+        .map(game => ({
+            name: game.querySelector('.games_grid_item_title')?.firstChild.textContent.trim(),
+            url: game.getAttribute('data-href')
+        }));
+
+    console.log(JSON.stringify(list)); // מדפיס את התוצאות לקונסולה
+
+    //.slice(0, 5);  // מגביל ל-5 תוצאות
+})()
+```

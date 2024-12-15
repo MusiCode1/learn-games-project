@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>בדיקת הסתרת כפתור ווליום</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .video-container {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        video {
+            width: 100%;
+            max-width: 800px;
+            margin: 10px 0;
+        }
+        h3 {
+            margin-top: 0;
+        }
+
+        /* ניסיון 1: הסתרת כפתור הווליום באמצעות webkit */
+        .method1 video::-webkit-media-controls-volume-slider,
+        .method1 video::-webkit-media-controls-volume-control-container,
+        .method1 video::-webkit-media-controls-mute-button {
+            display: none !important;
+        }
+
+        /* ניסיון 2: הסתרת כפתור הווליום באמצעות mozilla */
+        .method2 video::-moz-range-thumb,
+        .method2 video::-moz-range-track,
+        .method2 video::-moz-volume-control {
+            display: none !important;
+        }
+
+        /* ניסיון 3: הסתרת כל הפקדים והצגה מחדש של הרצויים */
+        .method3 video::-webkit-media-controls-panel {
+            display: flex !important;
+            flex-wrap: wrap;
+        }
+        .method3 video::-webkit-media-controls-volume-slider,
+        .method3 video::-webkit-media-controls-volume-control-container,
+        .method3 video::-webkit-media-controls-mute-button {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        /* ניסיון 4: שימוש בפקדים מותאמים אישית */
+        .method4 video::-webkit-media-controls {
+            display: none !important;
+        }
+        .method4 .custom-controls {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+        .method4 button {
+            padding: 5px 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .method4 button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>ניסיונות להסתרת כפתור ווליום</h1>
+
+    <div class="video-container method1">
+        <h3>שיטה 1: הסתרה באמצעות webkit</h3>
+        <video controls src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"></video>
+    </div>
+
+    <div class="video-container method2">
+        <h3>שיטה 2: הסתרה באמצעות mozilla</h3>
+        <video controls src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"></video>
+    </div>
+
+    <div class="video-container method3">
+        <h3>שיטה 3: הסתרת כל הפקדים והצגה מחדש של הרצויים</h3>
+        <video controls src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"></video>
+    </div>
+
+    <div class="video-container method4">
+        <h3>שיטה 4: פקדים מותאמים אישית</h3>
+        <video id="customVideo" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"></video>
+        <div class="custom-controls">
+            <button onclick="document.getElementById('customVideo').play()">נגן</button>
+            <button onclick="document.getElementById('customVideo').pause()">השהה</button>
+            <button onclick="document.getElementById('customVideo').requestFullscreen()">מסך מלא</button>
+        </div>
+    </div>
+
+    <script>
+        // הגדרת ערך ברירת מחדל לווליום ל-0
+        document.querySelectorAll('video').forEach(video => {
+            video.volume = 0;
+        });
+    </script>
+</body>
+</html>
