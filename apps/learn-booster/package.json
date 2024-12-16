@@ -1,5 +1,5 @@
 {
-  "name": "gingim-reinforcer",
+  "name": "gingim-booster",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -22,6 +22,7 @@
     "vite": "^5.4.10"
   },
   "dependencies": {
-    "@fontsource/heebo": "^5.1.0"
+    "@fontsource/heebo": "^5.1.0",
+    "vite-plugin-css-injected-by-js": "^3.5.2"
   }
 }

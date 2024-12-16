@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import type { Plugin } from 'vite'
+import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 // יצירת פלאגין מותאם אישית לטיפול בבקשות פרה-פלייט
 function privateNetworkSupport(): Plugin {
@@ -21,13 +22,21 @@ function privateNetworkSupport(): Plugin {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    svelte(),
+    svelte({}),
+    cssInjectedByJsPlugin(),
     privateNetworkSupport()
   ],
 
   build: {
-    cssCodeSplit: false,
-    
+    outDir: 'docs',
+    /* cssCodeSplit: false, */
+
+
+    lib: {
+      entry: 'src/main.ts',
+      formats: ['es']
+    },
+
     rollupOptions: {
       output: {
 
@@ -35,13 +44,13 @@ export default defineConfig({
     }
   },
 
-  server:{
+  server: {
     host: 'dev-server.dev',
-    https:{
+    https: {
       key: 'dev-cert/dev-server.dev-key.pem',
       cert: 'dev-cert/dev-server.dev.pem'
     },
-    cors:{
+    cors: {
       origin: 'https://gingim.net',
       credentials: true
     },
@@ -49,5 +58,5 @@ export default defineConfig({
       'Access-Control-Allow-Private-Network': 'true'
     }
   }
-  
+
 })
