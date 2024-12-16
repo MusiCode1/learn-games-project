@@ -66,13 +66,6 @@ export const gameConfigs: gameConfig[] = [{
     gameUrlPath: '/wp-content/uploads/new_games/earase_animals/'
 },
 {
-    gameName: 'earase_animals',
-    gameNameHeb: "מחק וגלה בעלי חיים",
-    triggerFunc: functionsList.onShowAnimation,
-    delay: 5 * 1000,
-    gameUrlPath: '/wp-content/uploads/new_games/earase_animals/'
-},
-{
     gameName: 'puzzle_2',
     gameNameHeb: "פאזל",
     triggerFunc: functionsList.playEndLevelAnimation,
