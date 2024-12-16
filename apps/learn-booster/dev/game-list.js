@@ -1,4 +1,9 @@
 
+window.config = {
+    videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    type: "video/mp4",
+}
+
 JSON.S
 const games = [{
     "name": "כלי תחבורה",
