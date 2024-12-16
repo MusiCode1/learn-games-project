@@ -1,6 +1,8 @@
+new URL("videos/video.webm", new URL(import.meta.url).origin).toString()
+
 
 window.config = {
-    videoUrl: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    videoUrl: "https://dev-server.dev:5173/videos/video.mp4",
     type: "video/mp4",
 }
 

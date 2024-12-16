@@ -6,6 +6,7 @@ declare global {
     interface Window {
         openModal: () => void;
         playerControls: PlayerControls;
-        config?: Config
+        config?: Config;
+        FullyKiosk?: object;
     }
 }

@@ -29,16 +29,8 @@ export interface PlayerControls {
 }
 
 export interface Config {
-  videoDisplayTimeInMS: number;
-  videoUrl: string;
-  type: string;
-  mode: string;
-}
-
-/**
- * Configuration interface for the video player
- */
-export interface Config {
-  videoDisplayTimeInMS: number;
-  videoUrl: string;
+  videoDisplayTimeInMS?: number;
+  videoUrl?: string;
+  type?: string;
+  mode?: string;
 }
