@@ -1,13 +1,9 @@
-new URL("videos/video.webm", new URL(import.meta.url).origin).toString()
-
-
-window.config = {
-    videoUrl: "https://dev-server.dev:5173/videos/video.mp4",
-    type: "video/mp4",
+export interface Game {
+    name: string;
+    url: string;
 }
 
-
-const games = [{
+export const games: Game[] = [{
     "name": "כלי תחבורה",
     "url": "https://gingim.net/wp-content/uploads/new_games/transport?lang=heb"
 },
@@ -94,4 +90,4 @@ const games = [{
 {
     "name": "נדנדה",
     "url": "https://gingim.net/wp-content/uploads/new_games/seesaw_action_reaction/?lang=heb"
-}]
+}];

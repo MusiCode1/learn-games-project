@@ -12,6 +12,7 @@
 
 2. ניתוח פונקציות המשחק:
    - השתמש ב-playwright_evaluate כדי לקבל את כל הפונקציות במשחק
+   פונקציות המשחק נמצאות בתוך `PIXI.game.state.states.game`.
    
 
 ```javascript

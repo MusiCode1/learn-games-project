@@ -1,13 +1,16 @@
-new URL("videos/video.webm", new URL(import.meta.url).origin).toString()
+import { chromium, Browser, Page, BrowserContext } from 'playwright';
 
-
-window.config = {
-    videoUrl: "https://dev-server.dev:5173/videos/video.mp4",
-    type: "video/mp4",
+interface Game {
+    name: string;
+    url: string;
 }
 
+interface GameFunction {
+    name: string;
+    code: string;
+}
 
-const games = [{
+const games: Game[] = [{
     "name": "כלי תחבורה",
     "url": "https://gingim.net/wp-content/uploads/new_games/transport?lang=heb"
 },
@@ -94,4 +97,63 @@ const games = [{
 {
     "name": "נדנדה",
     "url": "https://gingim.net/wp-content/uploads/new_games/seesaw_action_reaction/?lang=heb"
-}]
+}];
+
+async function login(page: Page): Promise<void> {
+    await page.goto('https://gingim.net/login');
+    await page.fill('#user_login', 'צוהר לטוהר');
+    await page.fill('#user_pass', 'רכסים');
+    await page.click('.tml-button');
+    await page.waitForTimeout(2000); // המתנה להתחברות
+}
+
+async function analyzeGame(page: Page, game: Game): Promise<void> {
+    try {
+        console.log(`\nAnalyzing game: ${game.name}`);
+        console.log(`URL: ${game.url}`);
+        
+        await page.goto(game.url);
+        await page.waitForTimeout(5000); // המתנה לטעינת המשחק
+
+        const functions = await page.evaluate(() => {
+            if (!window.PIXI?.game?.state?.states?.game) {
+                return 'Game object not found';
+            }
+            
+            const game = window.PIXI.game.state.states.game;
+            return Object.keys(game)
+                .filter(key => typeof game[key] === 'function')
+                .map(key => ({
+                    name: key,
+                    code: game[key].toString()
+                }));
+        });
+
+        console.log('Functions found:');
+        console.log(JSON.stringify(functions, null, 2));
+        
+        await page.waitForTimeout(2000); // המתנה בין משחקים
+    } catch (error) {
+        console.error(`Error analyzing game ${game.name}:`, error);
+    }
+}
+
+async function main(): Promise<void> {
+    const browser: Browser = await chromium.launch({ headless: false });
+    const context: BrowserContext = await browser.newContext();
+    const page: Page = await context.newPage();
+
+    try {
+        await login(page);
+        
+        for (const game of games) {
+            await analyzeGame(page, game);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    } finally {
+        await browser.close();
+    }
+}
+
+main().catch(console.error);

@@ -78,4 +78,24 @@ export const gameConfigs: gameConfig[] = [{
     triggerFunc: functionsList.playEndLevelAnimation,
     delay: 5 * 1000,
     gameUrlPath: '/wp-content/uploads/new_games/animals/'
+},
+{
+    gameName: 'transport',
+    gameNameHeb: "כלי תחבורה",
+    triggerFunc: functionsList.playEndLevelAnimation,
+    delay: 5 * 1000,
+    gameUrlPath: '/wp-content/uploads/new_games/transport/'
+},
+{
+    gameName: 'puzzle_3',
+    gameNameHeb: "פאזל שני חלקים",
+    triggerFunc: functionsList.playEndLevelAnimation,
+    delay: 5 * 1000,
+    gameUrlPath: '/wp-content/uploads/new_games/puzzle_3/'
+}, {
+    gameName: 'earase_purim',
+    gameNameHeb: "מחקו וגלו תחפושות",
+    triggerFunc: functionsList.onShowAnimation,
+    delay: 5 * 1000,
+    gameUrlPath: '/wp-content/uploads/new_games/earase_purim/'
 }];
