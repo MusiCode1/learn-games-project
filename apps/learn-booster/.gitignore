@@ -27,3 +27,10 @@ videos
 temp
 dev-cert
 
+# Video files
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.mkv
