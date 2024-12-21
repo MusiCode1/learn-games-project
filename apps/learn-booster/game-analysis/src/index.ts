@@ -1,18 +1,37 @@
 import { chromium, type Browser, type Page, type BrowserContext } from 'playwright';
-import { writeFile } from 'fs/promises';
+import { writeFile, readFile } from 'fs/promises';
 import { join } from 'path';
-import './types.js';
-import { games, type Game } from './games.js';
 
-interface GameFunction {
+interface Category {
+    id: string;
     name: string;
-    code: string;
+    parent?: {
+        id: string;
+        name: string;
+    }
+}
+
+interface GameFromList {
+    id: string;
+    name: string;
+    url: string;
+    categories: Category[];
+}
+
+interface GamesData {
+    categories: {
+        main: { id: string; name: string; }[];
+        sub: { id: string; name: string; parentId?: string; }[];
+    };
+    games: GameFromList[];
 }
 
 interface GameAnalysis {
+    id: string;
     name: string;
     url: string;
-    functions: GameFunction[];
+    categories: Category[];
+    functions: string[];  // רק שמות הפונקציות
 }
 
 async function login(page: Page): Promise<void> {
@@ -20,10 +39,10 @@ async function login(page: Page): Promise<void> {
     await page.fill('#user_login', 'צוהר לטוהר');
     await page.fill('#user_pass', 'רכסים');
     await page.click('.tml-button');
-    await page.waitForTimeout(2000); // המתנה להתחברות
+    await page.waitForTimeout(2000);
 }
 
-async function analyzeGame(page: Page, game: Game): Promise<GameAnalysis> {
+async function analyzeGame(page: Page, game: GameFromList): Promise<GameAnalysis> {
     console.log(`\nAnalyzing game: ${game.name}`);
     console.log(`URL: ${game.url}`);
     
@@ -47,27 +66,30 @@ async function analyzeGame(page: Page, game: Game): Promise<GameAnalysis> {
         
         const game = window.PIXI.game.state.states.game;
         return Object.keys(game)
-            .filter(key => typeof game[key] === 'function')
-            .map(key => ({
-                name: key,
-                code: game[key].toString()
-            }));
+            .filter(key => typeof game[key] === 'function');
     });
 
-    console.log('Functions found:');
-    console.log(JSON.stringify(functions, null, 2));
+    console.log('Functions found:', functions);
     
     await page.waitForTimeout(2000); // המתנה בין משחקים
 
     return {
+        id: game.id,
         name: game.name,
         url: game.url,
+        categories: game.categories,
         functions: Array.isArray(functions) ? functions : []
     };
 }
 
+async function loadGamesList(): Promise<GamesData> {
+    const gamesListPath = join('..', 'temp', 'games-list.json');
+    const data = await readFile(gamesListPath, 'utf-8');
+    return JSON.parse(data);
+}
+
 async function saveResults(results: GameAnalysis[]): Promise<void> {
-    const outputPath = join('results.json');
+    const outputPath = join('..', 'temp', 'games-analysis.json');
     await writeFile(outputPath, JSON.stringify(results, null, 2), 'utf-8');
     console.log(`Results saved to ${outputPath}`);
 }
@@ -79,9 +101,14 @@ async function main(): Promise<void> {
     const results: GameAnalysis[] = [];
 
     try {
+        // טעינת רשימת המשחקים
+        const gamesData = await loadGamesList();
+        
+        // התחברות
         await login(page);
         
-        for (const game of games) {
+        // ניתוח כל משחק
+        for (const game of gamesData.games) {
             try {
                 const analysis = await analyzeGame(page, game);
                 results.push(analysis);
