@@ -10,11 +10,13 @@
     type,
     visible = $bindable(false),
     videoController = $bindable() as VideoController,
+    onVideoEnded = $bindable() as (() => void) | undefined,
   }: VideoDialogProps = $props();
 
   let videoElement = $state() as HTMLVideoElement;
   let loading = $state(true);
   let paused = $state(true);
+  let error = $state<string | null>(null);
 
   function play() {
     if (!videoElement) return;
@@ -23,8 +25,9 @@
       .then(() => {
         paused = false;
       })
-      .catch(() => {
+      .catch((err) => {
         paused = true;
+        error = `שגיאה בהפעלת הסרטון: ${err.message}`;
       });
   }
 
@@ -50,23 +53,29 @@
     };
   });
 
-/*   $effect(() => {
-    if (!visible && videoElement) {
-      pause();
+  // כשמשתנה כתובת הסרטון
+  $effect(() => {
+    if (videoUrl) {
+      loading = true;
+      error = null;
+      if (videoElement) {
+        videoElement.load(); // טעינה מחדש של הסרטון
+      }
     }
-  }); */
+  });
 
   function handleVideoLoaded() {
     loading = false;
+    error = null;
     if (videoElement && visible) {
-      videoElement.play().catch(() => {
-        paused = true;
-      });
+      play();
     }
   }
 
-  function handleVideoError(error: any) {
-    throw error;
+  function handleVideoError(event: Event) {
+    loading = false;
+    error = `שגיאה בטעינת הסרטון`;
+    console.error('שגיאת וידאו:', event);
   }
 
   function onClickVideoToggle() {
@@ -74,6 +83,12 @@
       play();
     } else {
       pause();
+    }
+  }
+
+  function handleVideoEnded() {
+    if (onVideoEnded) {
+      onVideoEnded();
     }
   }
 </script>
@@ -84,7 +99,7 @@
   <div
     id="card"
     class="max-h-svh rounded-2xl overflow-hidden bg-white
-            border-2 border-gray-500 shadow-lg max-w-[80%]"
+            border-2 border-gray-500 shadow-lg w-[80%]"
     class:visible
   >
     <!-- כותרת -->
@@ -114,10 +129,15 @@
         <LoadingSpinner message="טוען את הסרטון..." />
       {/if}
 
+      {#if error}
+        <div class="text-red-500 text-center mb-4">{error}</div>
+      {/if}
+
       <!-- svelte-ignore a11y_media_has_caption -->
       <video
         controls
         controlslist="nodownload nofullscreen noplaybackrate noremoteplayback novolume"
+        preload="auto"
         bind:this={videoElement}
         bind:paused
         class="rounded-lg
@@ -128,6 +148,7 @@
         onloadeddata={handleVideoLoaded}
         onerror={handleVideoError}
         onclick={onClickVideoToggle}
+        onended={handleVideoEnded}
       >
         <source src={videoUrl} {type} />
         הדפדפן שלך לא תומך בתגית וידאו.

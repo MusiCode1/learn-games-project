@@ -17,6 +17,11 @@
   let modalVisible = $state(false);
   let videoVisible = $state(false);
   let videoController = $state<VideoController>();
+  let currentVideoIndex = $state(0);
+
+  function nextVideo() {
+    currentVideoIndex = (currentVideoIndex + 1) % config.videoUrls.length;
+  }
 
   async function showModal() {
     videoController?.play();
@@ -59,9 +64,10 @@
     <Modal visible={modalVisible}>
       <VideoDialog
         visible={videoVisible}
-        videoUrl={config.videoUrl}
+        videoUrl={config.videoUrls[currentVideoIndex]}
         type={config.type}
         bind:videoController
+        onVideoEnded={nextVideo}
       />
     </Modal>
   </main>

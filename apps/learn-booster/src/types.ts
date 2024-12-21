@@ -16,6 +16,7 @@ export interface VideoDialogProps {
   videoUrl: string;
   type: string;
   videoController?: VideoController;
+  onVideoEnded?: () => void;
 }
 
 /**
@@ -29,8 +30,10 @@ export interface PlayerControls {
 }
 
 export interface Config {
-  videoDisplayTimeInMS?: number;
-  videoUrl?: string;
-  type?: string;
-  mode?: string;
+  videoDisplayTimeInMS: number;
+  videoUrls: string[];
+  type: string;
+  mode: string;
 }
+
+export type ConfigUpdate = Partial<Config>;
