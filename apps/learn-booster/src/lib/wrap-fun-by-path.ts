@@ -6,9 +6,16 @@ interface FunctionResult {
 
 type CallbackFunction = () => void;
 
+// הוספת טיפוס עבור חלון הדפדפן
+declare const window: Window & typeof globalThis;
+
+interface Context {
+    [key: string]: any;
+    [key: number]: any;
+}
+
 export function getFunctionByPath(path: string): FunctionResult | undefined {
-    
-    const isNumber = (v: any): boolean => !isNaN(v);
+    const isNumber = (v: unknown): boolean => !isNaN(Number(v));
     const splitPath = (path: string): string[] => path.split(/[\.\[\]]+/).filter(Boolean);
 
     if (!path) return;
@@ -16,13 +23,32 @@ export function getFunctionByPath(path: string): FunctionResult | undefined {
     const pathParts = splitPath(path);
     const funcName = pathParts.pop()!;
 
-    let context: any = window;
+    let context: Context = window;
+    
     for (let i = 0; i < pathParts.length; i++) {
+        if (!context) {
+            return;
+        }
+
         const key = isNumber(pathParts[i]) ? Number(pathParts[i]) : pathParts[i];
-        context = context[key];
+        const nextContext = context[key];
+        
+        // בדיקה שהערך הבא תקין לפני שממשיכים
+        if (!nextContext) {
+            return;
+        }
+
+        context = nextContext as Context;
+    }
+
+    // בדיקה אחרונה לפני גישה ל-funcName
+    if (context === null || context === undefined) {
+        return;
     }
 
     const func = context[funcName];
+
+    if (!func) return;
 
     return { func, context, funcName };
 }
@@ -34,7 +60,7 @@ function wrapFunction(
 ): void {
     const { func, context, funcName } = resultObject;
 
-    context[funcName] = function (this: any, ...args: any[]): any {
+    context[funcName] = function (this: unknown, ...args: unknown[]): unknown {
         if (fnCallbackBefore) fnCallbackBefore();
         const result = func.apply(this, args);
         if (fnCallbackAfter) fnCallbackAfter();

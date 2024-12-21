@@ -1,4 +1,5 @@
-import { gameConfigs } from "./game-config";
+import { gameConfigs, defaultGameConfig } from "./game-config";
+import { getFunctionByPath } from "./wrap-fun-by-path";
 
 
 function pullGameConfig(path: string) {
@@ -14,7 +15,12 @@ export function getGameConfig() {
 
     if (!gameConfig) {
 
-        return false;
+        const triggerFuncObj = getFunctionByPath(defaultGameConfig.triggerFunc.path);
+
+        if (!triggerFuncObj) return false;
+
+
+        return defaultGameConfig;
     }
 
     return gameConfig;

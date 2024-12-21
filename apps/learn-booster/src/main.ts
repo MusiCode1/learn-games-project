@@ -5,6 +5,7 @@ import { InjectCodeIntoIframe } from "./lib/script-element-injection";
 import { log } from "./lib/logger.svelte";
 import { config } from "./config";
 import { sleep } from "./lib/sleep";
+import type { GameConfig } from "./lib/game-config";
 
 function main() {
 
@@ -26,7 +27,7 @@ function main() {
     }
 }
 
-function loadVideoElement() {
+function loadVideoElement(isNoGame = false) {
 
     const { videoDisplayTimeInMS } = config;
 
@@ -34,18 +35,34 @@ function loadVideoElement() {
 
     window.playerControls = playerControls;
 
+    let isFirstTime = true;
+
     const gameConfig = getGameConfig();
+
+    async function runAfterEndGameLevel(gameConfig: GameConfig) {
+
+        if (gameConfig.triggerFunc.name === 'makeNewTurn' && isFirstTime) {
+            isFirstTime = false;
+            return;
+        }
+
+        await sleep(gameConfig.delay);
+        playerControls.show();
+
+        await sleep(videoDisplayTimeInMS!);
+        playerControls.hide();
+
+    }
 
     if (gameConfig) {
 
-        wrapFunctionByPath(gameConfig.triggerFunc.path, null, async () => {
+        log('The game is supported!');
 
-            await sleep(gameConfig.delay);
-            playerControls.show();
+        wrapFunctionByPath(gameConfig.triggerFunc.path,
+            null, () => runAfterEndGameLevel(gameConfig));
 
-            await sleep(videoDisplayTimeInMS);
-            playerControls.hide();
-        });
+    } else {
+        log('The game isn\'t supported!');
     }
 
     log('video element is loaded!');
