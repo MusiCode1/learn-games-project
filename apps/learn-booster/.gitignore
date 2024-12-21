@@ -24,7 +24,7 @@ dist-ssr
 *.sw?
 
 videos
-temp
+temp/**
 dev-cert
 
 # Video files
@@ -34,3 +34,4 @@ dev-cert
 *.wmv
 *.flv
 *.mkv
+.env

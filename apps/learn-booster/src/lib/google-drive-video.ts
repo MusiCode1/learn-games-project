@@ -1,4 +1,4 @@
-const key = 'AIzaSyDz3X_qfQe_28FEtMZwx3zizLwv27yJs7c';
+const key = import.meta.env.VITE_GOOGLE_DRIVE_API_TOKEN;
 
 export const videoList = [{
     fileId: '1Tgq4YMcgxtWBIvSl1ioSmZMibnoHZ8l9'
@@ -17,5 +17,3 @@ export const getVideoUrl = (fileId: string): string => {
 
     return url.toString();
 };
-
-// https://www.googleapis.com/drive/v3/files/1xSgsuFbwWh9EcmwvbpqLN6ESUoLlNyks?alt=media&key=AIzaSyDz3X_qfQe_28FEtMZwx3zizLwv27yJs7c
