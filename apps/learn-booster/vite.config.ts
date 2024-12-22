@@ -28,12 +28,13 @@ export default defineConfig({
   ],
 
   build: {
-    outDir: 'docs',
+    outDir: 'dist',
     /* cssCodeSplit: false, */
 
     lib: {
       entry: 'src/main.ts',
-      formats: ['es']
+      formats: ['es'],
+      fileName: 'main'
     },
 
     rollupOptions: {
@@ -63,5 +64,5 @@ export default defineConfig({
   },
 
   // הוספת תמיכה בקבצים מתיקיית temp
-  publicDir: 'temp'
+  //publicDir: 'temp'
 })
