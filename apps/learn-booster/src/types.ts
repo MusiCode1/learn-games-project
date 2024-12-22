@@ -37,3 +37,8 @@ export interface Config {
 }
 
 export type ConfigUpdate = Partial<Config>;
+
+export interface FullyKiosk {
+  getFileList: (folder: string) => string;
+  readFile: (path: string) => string;
+}

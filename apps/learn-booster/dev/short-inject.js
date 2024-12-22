@@ -14,7 +14,7 @@
 
 function shortInject() {
     if (window.location.hostname === 'gingim.net') {
-        url = '//musicode1.github.io/gingim-booster/short-inject.js'
+        url = '//musicode1.github.io/gingim-booster/i.js'
         fetch(url).then(r => r.text()).then(eval)
     }
 }

@@ -31,7 +31,6 @@ export default defineConfig({
     outDir: 'docs',
     /* cssCodeSplit: false, */
 
-
     lib: {
       entry: 'src/main.ts',
       formats: ['es']
@@ -51,12 +50,18 @@ export default defineConfig({
       cert: 'dev-cert/dev-server.dev.pem'
     },
     cors: {
-      origin: 'https://gingim.net',
+      origin: ['https://gingim.net', 'https://www.googleapis.com'],
       credentials: true
     },
     headers: {
-      'Access-Control-Allow-Private-Network': 'true'
+      'Access-Control-Allow-Private-Network': 'true',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+      'Access-Control-Allow-Credentials': 'true'
     }
-  }
+  },
 
+  // הוספת תמיכה בקבצים מתיקיית temp
+  publicDir: 'temp'
 })

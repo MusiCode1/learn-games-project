@@ -1,13 +1,13 @@
 /// <reference types="svelte" />
 
-import type { PlayerControls, Config } from "./types";
+import type { PlayerControls, Config ,FullyKiosk} from "./types";
 
 declare global {
     interface Window {
         openModal: () => void;
         playerControls: PlayerControls;
         config?: Config;
-        FullyKiosk?: object;
+        fully?: FullyKiosk;
         videoUrls: string[];
         currentVideoIndex: number;
     }
