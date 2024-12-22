@@ -17,3 +17,5 @@ export const getVideoUrl = (fileId: string): string => {
 
     return url.toString();
 };
+
+export const videoUrls = videoList.map(video => getVideoUrl(video.fileId));

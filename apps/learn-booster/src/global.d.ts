@@ -8,5 +8,7 @@ declare global {
         playerControls: PlayerControls;
         config?: Config;
         FullyKiosk?: object;
+        videoUrls: string[];
+        currentVideoIndex: number;
     }
 }

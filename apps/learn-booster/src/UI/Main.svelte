@@ -18,6 +18,9 @@
   let videoVisible = $state(false);
   let videoController = $state<VideoController>();
   let currentVideoIndex = $state(0);
+  
+  // svelte-ignore state_referenced_locally
+    window.currentVideoIndex = currentVideoIndex;
 
   function nextVideo() {
     currentVideoIndex = (currentVideoIndex + 1) % config.videoUrls.length;

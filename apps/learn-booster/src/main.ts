@@ -34,6 +34,7 @@ function loadVideoElement(isNoGame = false) {
     const playerControls = loadUI(config);
 
     window.playerControls = playerControls;
+    window.videoUrls = config.videoUrls;
 
     let isFirstTime = true;
 

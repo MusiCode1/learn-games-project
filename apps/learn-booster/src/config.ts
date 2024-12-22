@@ -7,21 +7,25 @@ const devMode = import.meta.env.DEV;
 console.log(import.meta.env);
 
 // הפיכת רשימת הסרטונים למערך של כתובות URL
-const videoUrls = videoList.map(video => getVideoUrl(video.fileId));
+let videoUrls = videoList.map(video => getVideoUrl(video.fileId));
 
-// @ts-ignore
-let defaultVideoUrl = devMode ?
-    new URL('videos/video.webm', new URL(selfUrl).origin).toString() :
-    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+const localVideo = new URL('videos/video.webm', new URL(selfUrl).origin).toString(),
+    BigBuckBunny = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+
+let defaultVideoUrl = devMode ? localVideo : BigBuckBunny;
+
+videoUrls.push(
+    devMode ? localVideo : BigBuckBunny
+);
 
 if (window.FullyKiosk) {
-    defaultVideoUrl = 'http://localhost/sdcard/Movies/video.mp4';
-    videoUrls.splice(0, videoUrls.length, defaultVideoUrl);
+    const localFullyVideo = 'https://localhost/sdcard/Movies/video.mp4';
+    videoUrls = [localFullyVideo];
 }
 
 export const defaultConfig: Config = {
     videoDisplayTimeInMS: 20 * 1000,
-    videoUrls: videoUrls,
+    videoUrls,
     type: 'video/webm',
     mode: 'video'
 };
