@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
   import { scale } from "svelte/transition";
   import PlayLogo from "../assets/play.svg?raw";
   import LoadingSpinner from "./LoadingSpinner.svelte";
@@ -10,6 +10,7 @@
     type,
     visible = $bindable(false),
     videoController = $bindable() as VideoController,
+    time = $bindable("00:00"),
     onVideoEnded = $bindable() as (() => void) | undefined,
   }: VideoDialogProps = $props();
 
@@ -55,13 +56,15 @@
 
   // כשמשתנה כתובת הסרטון
   $effect(() => {
-    if (videoUrl) {
-      loading = true;
-      error = null;
-      if (videoElement) {
-        videoElement.load(); // טעינה מחדש של הסרטון
+    (async () => {
+      if (videoUrl) {
+        loading = true;
+        error = null;
+        if (videoElement) {
+          videoElement.load(); // טעינה מחדש של הסרטון
+        }
       }
-    }
+    })();
   });
 
   function handleVideoLoaded() {
@@ -75,7 +78,7 @@
   function handleVideoError(event: Event) {
     loading = false;
     error = `שגיאה בטעינת הסרטון`;
-    console.error('שגיאת וידאו:', event);
+    console.error("שגיאת וידאו:", event);
   }
 
   function onClickVideoToggle() {
@@ -115,6 +118,8 @@
           {@html PlayLogo}
         </div>
         <h2 class="text-xl font-bold text-white">וידאו</h2>
+        <p>•</p>
+        <p>{time}</p>
       </div>
 
       <div

@@ -65,12 +65,12 @@ export function InjectCodeIntoIframe(scriptUrl: string) {
             const codeString = getCodeInjectorString(scriptUrl);
             script.textContent = codeString;
 
-            const envConfig = {...window?.config};
+            const envConfig = (window?.config) ? { ...window?.config } : null;
 
             iframeWindow.onload = (event) => {
 
                 // @ts-ignore
-                iframe.contentWindow.config = envConfig;
+                envConfig ? iframe.contentWindow.config = envConfig : null;
 
                 const script = getScriptInjectorCode(iframe.contentDocument!, scriptUrl);
                 const links = injectHeeboFont(iframe.contentDocument!);

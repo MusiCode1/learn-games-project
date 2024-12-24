@@ -3,7 +3,7 @@ import { getGameConfig } from "./lib/get-game-config";
 import { wrapFunctionByPath } from "./lib/wrap-fun-by-path";
 import { InjectCodeIntoIframe } from "./lib/script-element-injection";
 import { log } from "./lib/logger.svelte";
-import { config } from "./config";
+import { getConfigs } from "./config";
 import { sleep } from "./lib/sleep";
 import type { GameConfig } from "./lib/game-config";
 
@@ -29,12 +29,15 @@ function main() {
 
 function loadVideoElement(isNoGame = false) {
 
+    const { config, defaultConfig } = getConfigs();
+
     const { videoDisplayTimeInMS } = config;
 
     const playerControls = loadUI(config);
 
     window.playerControls = playerControls;
     window.videoUrls = config.videoUrls;
+    window.defaultConfig = defaultConfig;
 
     let isFirstTime = true;
 
@@ -52,6 +55,7 @@ function loadVideoElement(isNoGame = false) {
 
         await sleep(videoDisplayTimeInMS!);
         playerControls.hide();
+        await sleep(1000 * 2.5);
 
     }
 
@@ -59,8 +63,10 @@ function loadVideoElement(isNoGame = false) {
 
         log('The game is supported!');
 
-        wrapFunctionByPath(gameConfig.triggerFunc.path,
-            null, () => runAfterEndGameLevel(gameConfig));
+        wrapFunctionByPath(
+            gameConfig.triggerFunc.path,
+            () => runAfterEndGameLevel(gameConfig)
+        );
 
     } else {
         log('The game isn\'t supported!');

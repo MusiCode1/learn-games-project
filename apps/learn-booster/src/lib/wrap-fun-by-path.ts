@@ -4,7 +4,7 @@ interface FunctionResult {
     funcName: string;
 }
 
-type CallbackFunction = () => void;
+type CallbackFunction = () => Promise<void>;
 
 // הוספת טיפוס עבור חלון הדפדפן
 declare const window: Window & typeof globalThis;
@@ -24,7 +24,7 @@ export function getFunctionByPath(path: string): FunctionResult | undefined {
     const funcName = pathParts.pop()!;
 
     let context: Context = window;
-    
+
     for (let i = 0; i < pathParts.length; i++) {
         if (!context) {
             return;
@@ -32,7 +32,7 @@ export function getFunctionByPath(path: string): FunctionResult | undefined {
 
         const key = isNumber(pathParts[i]) ? Number(pathParts[i]) : pathParts[i];
         const nextContext = context[key];
-        
+
         // בדיקה שהערך הבא תקין לפני שממשיכים
         if (!nextContext) {
             return;
@@ -60,10 +60,10 @@ function wrapFunction(
 ): void {
     const { func, context, funcName } = resultObject;
 
-    context[funcName] = function (this: unknown, ...args: unknown[]): unknown {
-        if (fnCallbackBefore) fnCallbackBefore();
+    context[funcName] = async function (this: unknown, ...args: unknown[]): Promise<unknown> {
+        if (fnCallbackBefore) await fnCallbackBefore();
         const result = func.apply(this, args);
-        if (fnCallbackAfter) fnCallbackAfter();
+        if (fnCallbackAfter) await fnCallbackAfter();
 
         return result;
     };

@@ -45,7 +45,8 @@ export default defineConfig({
   },
 
   server: {
-    host: 'dev-server.dev',
+
+    host: '0.0.0.0', //'dev-server.dev',
     https: {
       key: 'dev-cert/dev-server.dev-key.pem',
       cert: 'dev-cert/dev-server.dev.pem'

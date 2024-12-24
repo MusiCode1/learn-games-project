@@ -16,6 +16,7 @@ export interface VideoDialogProps {
   videoUrl: string;
   type: string;
   videoController?: VideoController;
+  time?: string;
   onVideoEnded?: () => void;
 }
 

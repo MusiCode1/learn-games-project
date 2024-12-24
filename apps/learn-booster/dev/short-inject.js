@@ -14,7 +14,10 @@
 
 function shortInject() {
     if (window.location.hostname === 'gingim.net') {
-        url = '//musicode1.github.io/gingim-booster/i.js'
+        window.config = {
+            videoDisplayTimeInMS: 1000 * 30
+        };
+        const url = '//musicode1.github.io/gingim-booster/i.js'
         fetch(url).then(r => r.text()).then(eval)
     }
 }

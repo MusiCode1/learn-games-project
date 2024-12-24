@@ -15,18 +15,6 @@ const MOVIES_PATH = '/sdcard/Movies/';
 const BASE_URL = 'https://localhost';
 
 /**
- * מערבב מערך באופן אקראי באמצעות אלגוריתם Fisher-Yates
- */
-function shuffleArray<T>(array: T[]): T[] {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-}
-
-/**
  * מסנן רק קבצי MP4 מתוך רשימת הפריטים
  */
 function filterMP4Files(items: FullyItem[]): FullyItem[] {
@@ -50,7 +38,6 @@ export function getFileList(): string[] | false {
 
     const fileList = JSON.parse(fileListStr) as FullyItem[];
     const mp4Files = filterMP4Files(fileList);
-    const shuffledFiles = shuffleArray(mp4Files);
     
-    return shuffledFiles.map(item => BASE_URL + MOVIES_PATH + item.name);
+    return mp4Files.map(item => BASE_URL + MOVIES_PATH + item.name);
 }
