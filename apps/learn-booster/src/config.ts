@@ -110,7 +110,8 @@ export async function getConfigs() {
         mode: 'video',
         videoSource: 'local',
         googleDriveFolderUrl: undefined,
-        hideVideoProgress: false
+        hideVideoProgress: false,
+        turnsPerVideo: 1
     };
 
     let config: Config = {

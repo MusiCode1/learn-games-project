@@ -23,17 +23,27 @@ export function mountComponent(options: MountOptions): Record<string, any> {
   const mergedOptions = { ...defaultOptions, ...options };
   const { elementId, component, props = {}, styles = {} } = mergedOptions;
 
+  let targetElement = document.getElementById(elementId);
+
   // יצירת אלמנט אם לא קיים
-  if (!document.getElementById(elementId!)) {
+  if (!targetElement) {
+
     const element = document.createElement('div');
     element.id = elementId!;
     Object.assign(element.style, styles);
+
+    const subElement = document.createElement('div');
+    subElement.classList.add('gingim-booster');
+
+    element.append(subElement);
     document.body.append(element);
+
+    targetElement = subElement;
   }
 
   // הרכבת הקומפוננטה
   return mount(component, {
-    target: document.getElementById(elementId!)!,
+    target: targetElement,
     props
   });
 }

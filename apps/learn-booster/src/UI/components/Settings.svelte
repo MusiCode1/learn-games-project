@@ -22,6 +22,7 @@
   let videoDisplayTime = $state(videoDisplayTimeInSec);
   let videoSource = $state(config.videoSource || "local");
   let hideVideoProgress = $state(config.hideVideoProgress || false);
+  let turnsPerVideo = $state(config.turnsPerVideo || 1);
 
   function handleSave() {
     config.hideVideoProgress = hideVideoProgress;
@@ -29,6 +30,7 @@
     config.googleDriveFolderUrl = googleDriveFolderUrl;
     config.videoDisplayTimeInMS = videoDisplayTime * 1000; // המרה משניות למילישניות
     config.videoSource = videoSource;
+    config.turnsPerVideo = turnsPerVideo;
 
     // שמירת הקונפיגורציה בלוקל סטורג'
     const saved = saveConfigToLocalStorage(config);
@@ -114,6 +116,20 @@
         />
       </div>
 
+      <!-- מספר סיבובים בין הסרטונים -->
+      <div class="flex flex-col space-y-1 md:space-y-2 text-right">
+        <label for="turnsPerVideo" class="font-medium text-base"
+          >הצג סרטון כל כמה סיבובים:</label
+        >
+        <input
+          id="turnsPerVideo"
+          type="number"
+          bind:value={turnsPerVideo}
+          min="1"
+          class="p-3 border rounded-lg text-right bg-white text-base w-full touch-manipulation"
+        />
+      </div>
+
       <!-- הסתרת פס התקדמות -->
       <div class="flex items-center justify-end gap-2">
         <label for="hideProgress" class="font-medium text-base">
@@ -123,7 +139,7 @@
           id="hideProgress"
           type="checkbox"
           bind:checked={hideVideoProgress}
-          class="w-5 h-5 rounded border-gray-300 static text-blue-600 focus:ring-blue-500"
+          class="!static w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
       </div>
     </div>

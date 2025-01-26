@@ -39,6 +39,7 @@ export type Config = {
   videoSource: 'local' | 'google-drive' | 'youtube';
   googleDriveFolderUrl?: string;
   hideVideoProgress?: boolean;
+  turnsPerVideo: number;
 }
 
 export type ConfigUpdate = Partial<Config>;

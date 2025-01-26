@@ -17,14 +17,21 @@ export function injectCodeToGame(playerControls: PlayerControls, config: Config)
             log('The game is supported!');
 
             let isFirstTurn = true;
+            let turnsCounter = 0;
 
             const handle = async function () {
-
+                // בסיבוב הראשון רק מעדכנים את הדגל
                 if (gameConfig.triggerFunc.name === 'makeNewTurn' && isFirstTurn) {
                     isFirstTurn = false;
                     return;
                 }
 
+                turnsCounter++;
+
+                // אם לא הגיע הזמן להציג סרטון - יוצאים
+                if (turnsCounter % (config.turnsPerVideo || 1) !== 0) {
+                    return;
+                }
 
                 // מחכה לדיליי שהוגדר בקונפיג
                 await sleep(gameConfig.delay);
@@ -40,7 +47,6 @@ export function injectCodeToGame(playerControls: PlayerControls, config: Config)
 
                 // מחכה זמן קבוע אחרי הסתרת הוידאו
                 await sleep(AFTER_VIDEO_DELAY_MS);
-
             }
 
             if (gameConfig.triggerFunc.name === 'makeNewTurn') {
