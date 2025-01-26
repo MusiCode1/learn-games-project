@@ -1,21 +1,53 @@
 import { mount } from 'svelte';
-
 import './app.css';
-import type { Config, PlayerControls } from '../types';
+import type { Config, PlayerControls, SettingsController } from '../types';
 import App from './Main.svelte';
+import SettingsPage from './SettingsPage.svelte';
+import { log } from '../lib/logger.svelte';
 
-export function init(targetElement: string | HTMLElement, config: Config): PlayerControls {
+interface MountOptions {
+  elementId: string;
+  component: any;
+  props?: any;
+  styles?: Partial<CSSStyleDeclaration>;
+}
 
-  const target = typeof targetElement === 'string'
-    ? document.querySelector(targetElement)
-    : targetElement;
+const defaultOptions: { styles: Partial<CSSStyleDeclaration> } = {
+  styles: {
+    zIndex: '9999999',
+    position: 'absolute'
+  }
+};
 
-  if (!target) {
-    throw new Error('Target element not found');
+export function mountComponent(options: MountOptions): Record<string, any> {
+  const mergedOptions = { ...defaultOptions, ...options };
+  const { elementId, component, props = {}, styles = {} } = mergedOptions;
+
+  // יצירת אלמנט אם לא קיים
+  if (!document.getElementById(elementId!)) {
+    const element = document.createElement('div');
+    element.id = elementId!;
+    Object.assign(element.style, styles);
+    document.body.append(element);
   }
 
-  const app = mount(App, {
-    target,
+  // הרכבת הקומפוננטה
+  return mount(component, {
+    target: document.getElementById(elementId!)!,
+    props
+  });
+}
+
+/**
+ * מאתחל את נגן הווידאו - יוצר את האלמנט בדף, מאתחל את הממשק ומגדיר משתנים גלובליים
+ * @param config קונפיגורציית המערכת
+ * @param defaultConfig קונפיגורציית ברירת מחדל
+ * @returns בקר נגן הווידאו
+ */
+export function initializeVideoPlayer(config: Config, defaultConfig: Config): PlayerControls {
+  const app = mountComponent({
+    elementId: 'playerRoot',
+    component: App,
     props: { config }
   });
 
@@ -26,22 +58,42 @@ export function init(targetElement: string | HTMLElement, config: Config): Playe
     }
   };
 
+  // מגדיר משתנים גלובליים לצורך דיבוג
+  window.playerControls = playerControls;
+  window.videoUrls = config.videoUrls;
+  window.defaultConfig = defaultConfig;
+
+  log('video element is loaded!');
+
   return playerControls;
 }
 
-export function loadUI(config: Config): PlayerControls {
-  let element = '#playerRoot';
+/**
+ * מאתחל את דף ההגדרות
+ * @param config קונפיגורציית המערכת
+ * @returns מופע הקומפוננטה
+ */
+export function initializeSettings(config: Config): SettingsController {
+  const settingsApp = mountComponent({
+    elementId: 'settingsRoot',
+    component: SettingsPage,
+    props: { config },
+    styles: {
+      ...defaultOptions.styles,
+      zIndex: '99998',
+    }
+  });
 
-  if (!document.getElementById('playerRoot')) {
 
-    const element = document.createElement('div');
-    element.id = 'playerRoot';
-    element.style.zIndex = '9999999';
-    element.style.position = 'absolute';
 
-    document.body.append(element);
-  }
+  const settingsController = {
+    ...settingsApp.settingsController
+  };
 
-  return init(element, config);
+  // מגדיר משתנה גלובלי לצורך דיבוג
+  window.settingsController = settingsController;
 
+  log('settings element is loaded!');
+
+  return settingsController;
 }

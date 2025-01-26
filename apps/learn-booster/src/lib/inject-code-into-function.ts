@@ -69,7 +69,7 @@ function wrapFunction(
     };
 }
 
-export function wrapFunctionByPath(
+export function injectCodeIntoFunction(
     path: string,
     fnCallbackBefore: CallbackFunction | null = null,
     fnCallbackAfter: CallbackFunction | null = null

@@ -2,7 +2,7 @@
 
 @gdrive_key={{$dotenv VITE_GOOGLE_DRIVE_API_TOKEN}}
 @file_id = 1rtJO0kKOoYFvhoqV3nl1fOgo7aUn2tbt
-
+@folder_id = 1pSYI1l21VCQ8EKBMrCwP-6MyZNM1e4yu?ths=true
 
 
 ###
@@ -15,6 +15,12 @@ HEAD https://www.googleapis.com/drive/v3/files/{{file_id}}
 ?key={{gdrive_key}}
 &alt=media
 ###
+GET https://www.googleapis.com/drive/v3/files/{{folder_id}}
+?key={{gdrive_key}}
+###
+
+
+
 GET https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
 Range: bytes=0-100
 ###

@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { onMount, untrack } from "svelte";
+  import { onMount } from "svelte";
   import VideoDialog from "./components/VideoDialog.svelte";
   import Modal from "./components/Modal.svelte";
   import LeftButton from "./components/LeftButton.svelte";
   import { sleep } from "../lib/sleep";
   import { msToTime } from "../lib/utils/ms-to-time";
   import type { Config, VideoController, PlayerControls } from "../types";
+  import { getVideoBlob, isFullyKiosk } from "../lib/fully-kiosk";
 
   interface Props {
     config: Config;
@@ -13,7 +14,6 @@
 
   let { config }: Props = $props();
 
-  let isShowing = $state(false);
   let visible = $state(false);
   let modalVisible = $state(false);
   let videoVisible = $state(false);
@@ -29,25 +29,20 @@
 
   onMount(() => nextVideo());
 
-  async function getVideoBlob(videoUrl: string) {
-    const videoBlob = await fetch(videoUrl).then((res) => res.blob());
-    const blobUrl = URL.createObjectURL(videoBlob);
-
-    return blobUrl;
-  }
-
   function nextVideo() {
     currentVideoIndex = (currentVideoIndex + 1) % config.videoUrls.length;
     const originalUrl = config.videoUrls[currentVideoIndex];
-    if (window.fully) {
+    if (isFullyKiosk()) {
+      if (videoUrl.startsWith("blob:")) URL.revokeObjectURL(videoUrl);
+
       getVideoBlob(originalUrl).then((res) => (videoUrl = res));
     } else {
       videoUrl = originalUrl;
     }
   }
 
-  async function showModal() {
-    let startTime = Date.now();
+  function startTimer() {
+    const startTime = Date.now();
     intervalId = setInterval(() => {
       const elapsedTimeInMS = Date.now() - startTime;
       const remainingTimeInMS = Math.max(
@@ -59,7 +54,18 @@
         Math.round(remainingTimeInMS / 1000) * 1000;
       time = msToTime(remainingTimeInSeconds);
     }, 100);
+  }
 
+  function stopTimer() {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = undefined;
+    }
+    time = "00:00"; // איפוס הטיימר בסגירה
+  }
+
+  async function showModal() {
+    startTimer();
     videoController?.play();
     visible = true;
     await sleep(10);
@@ -69,17 +75,13 @@
   }
 
   async function hideModal() {
-    if (intervalId) {
-      clearInterval(intervalId);
-      intervalId = undefined;
-    }
+    stopTimer();
     videoVisible = false;
     await sleep(1000 * 1.5);
     modalVisible = false;
     await sleep(700);
     visible = false;
     videoController?.pause();
-    time = "00:00"; // איפוס הטיימר בסגירה
   }
 
   async function toggle() {
@@ -110,6 +112,7 @@
         bind:videoController
         onVideoEnded={nextVideo}
         {time}
+        hideProgress={config.hideVideoProgress}
       />
     </Modal>
   </main>

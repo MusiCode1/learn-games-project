@@ -1,5 +1,5 @@
 import { gameConfigs, defaultGameConfig } from "./game-config";
-import { getFunctionByPath } from "./wrap-fun-by-path";
+import { getFunctionByPath } from "./inject-code-into-function";
 
 
 function pullGameConfig(path: string) {

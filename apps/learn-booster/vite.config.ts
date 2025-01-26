@@ -64,6 +64,8 @@ export default defineConfig({
     }
   },
 
+
+
   // הוספת תמיכה בקבצים מתיקיית temp
   //publicDir: 'temp'
 })

@@ -1,6 +1,6 @@
 /// <reference types="svelte" />
 
-import type { PlayerControls, Config ,FullyKiosk} from "./types";
+import type { PlayerControls, Config, FullyKiosk, SettingsController } from "./types";
 
 declare global {
     interface Window {
@@ -11,5 +11,6 @@ declare global {
         fully?: FullyKiosk;
         videoUrls: string[];
         currentVideoIndex: number;
+        settingsController: SettingsController;
     }
 }

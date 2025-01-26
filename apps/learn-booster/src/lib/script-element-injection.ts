@@ -40,7 +40,7 @@ function injectHeeboFont(document: Document) {
     return fontsLink.map(fontLink => getLinkCode(document, fontLink));
 }
 
-export function InjectCodeIntoIframe(scriptUrl: string) {
+export function injectCodeIntoIframe(scriptUrl: string) {
 
     function injectFunction(iframe: HTMLIFrameElement) {
         try {

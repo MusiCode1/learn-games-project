@@ -12,6 +12,7 @@
     videoController = $bindable() as VideoController,
     time = $bindable("00:00"),
     onVideoEnded = $bindable() as (() => void) | undefined,
+    hideProgress = $bindable(false),
   }: VideoDialogProps = $props();
 
   let videoElement = $state() as HTMLVideoElement;
@@ -150,6 +151,7 @@
         bg-gray-400
         w-full
         "
+        class:hide-progress={hideProgress}
         onloadeddata={handleVideoLoaded}
         onerror={handleVideoError}
         onclick={onClickVideoToggle}
@@ -181,6 +183,12 @@
   video::-webkit-media-controls-volume-control-container,
   video::-webkit-media-controls-mute-button,
   video::-webkit-media-controls-fullscreen-button {
+    display: none !important;
+  }
+
+  video.hide-progress::-webkit-media-controls-timeline,
+  video.hide-progress::-webkit-media-controls-current-time-display,
+  video.hide-progress::-webkit-media-controls-time-remaining-display {
     display: none !important;
   }
 </style>

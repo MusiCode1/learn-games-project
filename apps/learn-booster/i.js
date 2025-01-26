@@ -9,6 +9,6 @@
         document.head.appendChild(script);
     }
 
-    const url = '//dev-server.dev:5173';
+    const url = '//dev-server.dev:5173/src/main.ts';
     loadExternalScript(url);
 })();
