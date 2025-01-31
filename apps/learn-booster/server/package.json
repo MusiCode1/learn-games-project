@@ -1,0 +1,41 @@
+{
+  "name": "gingim-booster-server",
+  "version": "1.0.0",
+  "description": "שרת פרוקסי לסרטוני גוגל דרייב",
+  "main": "dist/app.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write src/**/*.ts",
+    "test": "tap --ts"
+  },
+  "dependencies": {
+    "@fastify/caching": "^8.3.0",
+    "@fastify/cors": "^8.5.0",
+    "@fastify/rate-limit": "^9.1.0",
+    "@googleapis/drive": "^8.14.0",
+    "dotenv": "^16.4.1",
+    "fastify": "^4.25.0",
+    "fastify-plugin": "^4.5.1",
+    "pino": "^8.17.2",
+    "pino-pretty": "^10.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.4",
+    "tap": "^18.7.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "",
+  "license": "MIT"
+}

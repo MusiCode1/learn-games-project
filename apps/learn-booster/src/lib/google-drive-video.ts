@@ -23,7 +23,7 @@ export const getFilesFromGDrive = async (folderId: string): Promise<DriveFile[]>
     url.pathname = '/drive/v3/files';
 
     url.searchParams.append('key', key);
-    url.searchParams.append('q', `'${folderId}' in parents and trashed = false`);
+    url.searchParams.append('q', `'${folderId}' in parents and trashed = false and mimeType contains 'video/'`);
 
     const response = await fetch(url.toString());
 
