@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תרגול קריאה</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- דף הבית -->
+        <div id="homeScreen" class="screen active">
+            <div class="container">
+                <h1>תרגול קריאה</h1>
+                <div class="set-size-input">
+                    <label for="wordsPerSet">מספר מילים בסט:</label>
+                    <input type="number" id="wordsPerSet" value="5" min="1">
+                </div>
+                <div class="set-number-input">
+                    <label for="setNumber">מספר סט להתחלה:</label>
+                    <input type="number" id="setNumber" value="1" min="1" inputmode="numeric" pattern="[0-9]*">
+                    <span class="set-range">(1-<span class="total-sets">9</span>)</span>
+                </div>
+                <button class="start-btn">התחל תרגול</button>
+                <div class="progress-display">
+                    סט <span class="current-set">1</span> מתוך <span class="total-sets">9</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- דף התרגול -->
+        <div id="practiceScreen" class="screen">
+            <div class="container">
+                <div class="word-card">
+                    <div class="word"></div>
+                    
+                </div>
+                <div class="navigation">
+                    <button class="nav-button prev-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z" />
+                        </svg>
+                        הקודם
+                    </button>
+                    <button class="nav-button next-btn">
+                        הבא
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                        </svg>
+                    </button>
+                    <button class="show-word-btn">הצג מילה</button>
+                </div>
+                <div class="progress">
+                    <div class="word-progress">
+                        מילה <span class="current-word">1</span> מתוך <span class="words-per-set">5</span>
+                    </div>
+                    <div class="set-progress">
+                        סט <span class="current-set">1</span> מתוך <span class="total-sets">9</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/words.js"></script>
+    <script src="scripts/state.js"></script>
+    <script src="scripts/navigation.js"></script>
+    <script src="scripts/app.js"></script>
+</body>
+
+</html>

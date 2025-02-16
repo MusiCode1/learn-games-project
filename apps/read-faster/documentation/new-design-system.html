@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מערכת העיצוב החדשה - Read Faster</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=Rubik:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  
+  <style type="text/tailwindcss">
+    @layer base {
+      html {
+        font-family: 'Rubik', sans-serif;
+      }
+    }
+    
+    @theme {
+      /* Colors */
+      --color-primary: oklch(0.55 0.18 250);
+      --color-secondary: oklch(0.75 0.12 190);
+      --color-accent: oklch(0.70 0.15 160);
+      --color-surface: oklch(0.98 0 0);
+      --color-text-primary: oklch(0.2 0 0);
+      --color-text-secondary: oklch(0.5 0 0);
+
+      /* Gradients */
+      --gradient-background: linear-gradient(135deg, oklch(0.98 0 0), oklch(0.55 0.18 250 / 0.35), oklch(0.75 0.12 190 / 0.25), oklch(0.98 0 0));
+      --gradient-primary: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+      --gradient-secondary: linear-gradient(to right, var(--color-secondary), var(--color-accent));
+
+      /* Spacing */
+      --space-2: 0.5rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+
+      /* Border Radius */
+      --radius-lg: 0.5rem;
+      --radius-xl: 0.75rem;
+      --radius-2xl: 1rem;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-regular: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+      /* Typography */
+      --font-family-primary: 'Rubik', sans-serif;
+      --font-family-secondary: 'Frank Ruhl Libre';
+      
+      /* Font Sizes */
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.25rem;
+      --text-2xl: 1.5rem;
+      --text-4xl: 2.25rem;
+
+      /* Animation */
+      --transition-all: all 0.3s ease-out;
+      --animation-duration: 0.8s;
+    }
+
+    @keyframes fade-in-up {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes fade-in-right {
+      0% { opacity: 0; transform: translateX(-20px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes fade-in-down {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fade-in-up {
+      animation: fade-in-up 0.8s ease-out;
+    }
+
+    .animate-fade-in-right {
+      animation: fade-in-right 0.8s ease-out;
+    }
+
+    .animate-fade-in-down {
+      animation: fade-in-down 0.8s ease-out;
+    }
+  </style>
+</head>
+
+<body class="[background-image:var(--gradient-background)] [background-attachment:fixed] [background-size:cover] text-text-primary min-h-screen p-8">
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-white p-6 rounded-2xl shadow-sm mb-6">
+      <h1 class="text-4xl font-bold bg-linear-to-r/oklch from-primary to-secondary bg-clip-text text-transparent text-center">
+        מערכת העיצוב החדשה - Read Faster
+      </h1>
+    </div>
+
+    <!-- צבעים -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-6">צבעים</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- צבע ראשי -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm">
+          <div class="w-full h-24 bg-primary rounded-lg mb-4"></div>
+          <h3 class="font-bold mb-2">צבע ראשי</h3>
+          <code class="text-sm">oklch(0.55 0.18 250)</code>
+          <p class="mt-2 text-sm text-text-secondary">משמש עבור: כפתורים, כותרות, הדגשות</p>
+        </div>
+
+        <!-- צבע משני -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm">
+          <div class="w-full h-24 bg-secondary rounded-lg mb-4"></div>
+          <h3 class="font-bold mb-2">צבע משני</h3>
+          <code class="text-sm">oklch(0.75 0.12 190)</code>
+          <p class="mt-2 text-sm text-text-secondary">משמש עבור: גרדיאנטים, רקעים משניים</p>
+        </div>
+
+        <!-- צבע מדגיש -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm">
+          <div class="w-full h-24 bg-accent rounded-lg mb-4"></div>
+          <h3 class="font-bold mb-2">צבע מדגיש</h3>
+          <code class="text-sm">oklch(0.70 0.15 160)</code>
+          <p class="mt-2 text-sm text-text-secondary">משמש עבור: אלמנטים מיוחדים, הדגשות</p>
+        </div>
+
+        <!-- צבע רקע -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm">
+          <div class="w-full h-24 bg-surface rounded-lg mb-4 border border-gray-200"></div>
+          <h3 class="font-bold mb-2">צבע רקע</h3>
+          <code class="text-sm">oklch(0.98 0 0)</code>
+          <p class="mt-2 text-sm text-text-secondary">משמש עבור: רקע כללי, קארדים</p>
+        </div>
+
+        <!-- צבע טקסט ראשי -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm">
+          <div class="w-full h-24 bg-text-primary rounded-lg mb-4"></div>
+          <h3 class="font-bold mb-2">צבע טקסט ראשי</h3>
+          <code class="text-sm">oklch(0.2 0 0)</code>
+          <p class="mt-2 text-sm text-text-secondary">משמש עבור: טקסט ראשי, כותרות</p>
+        </div>
+
+        <!-- צבע טקסט משני -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm">
+          <div class="w-full h-24 bg-text-secondary rounded-lg mb-4"></div>
+          <h3 class="font-bold mb-2">צבע טקסט משני</h3>
+          <code class="text-sm">oklch(0.5 0 0)</code>
+          <p class="mt-2 text-sm text-text-secondary">משמש עבור: טקסט משני, תיאורים</p>
+        </div>
+      </div>
+
+      <!-- גרדיאנטים -->
+      <div class="mt-8">
+        <h3 class="text-xl font-bold mb-4">גרדיאנטים</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white p-6 rounded-2xl shadow-sm">
+            <div class="w-full h-24 bg-linear-to-r/oklch from-primary to-secondary rounded-lg mb-4"></div>
+            <h4 class="font-bold mb-2">גרדיאנט ראשי</h4>
+            <code class="text-sm">bg-linear-to-r/oklch from-primary to-secondary</code>
+          </div>
+          <div class="bg-white p-6 rounded-2xl shadow-sm">
+            <div class="w-full h-24 bg-linear-to-r/oklch from-secondary to-accent rounded-lg mb-4"></div>
+            <h4 class="font-bold mb-2">גרדיאנט משני</h4>
+            <code class="text-sm">bg-linear-to-r/oklch from-secondary to-accent</code>
+          </div>
+          <div class="bg-white p-6 rounded-2xl shadow-sm">
+            <div class="w-full h-24 [background-image:var(--gradient-background)] rounded-lg mb-4"></div>
+            <h4 class="font-bold mb-2">גרדיאנט רקע</h4>
+            <code class="text-sm">var(--gradient-background)</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- דוגמאות שימוש -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-6">דוגמאות שימוש</h2>
+
+      <!-- כפתורים -->
+      <div class="bg-white p-8 rounded-2xl shadow-sm mb-8">
+        <h3 class="text-xl font-bold mb-4">כפתורים</h3>
+        <div class="flex flex-wrap gap-4">
+          <button
+            class="px-6 py-3 text-base rounded-lg transition-all duration-300 bg-linear-to-r/oklch from-primary to-secondary text-white hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5">
+            התחל לתרגל
+          </button>
+          <button
+            class="px-6 py-3 text-base rounded-lg transition-all duration-300 bg-linear-to-r/oklch from-secondary to-accent text-white hover:shadow-lg hover:shadow-secondary/20 hover:-translate-y-0.5">
+            המשך לשלב הבא
+          </button>
+        </div>
+      </div>
+
+      <!-- כרטיס מילה -->
+      <div class="bg-white p-8 rounded-2xl shadow-sm mb-8">
+        <h3 class="text-xl font-bold mb-4">כרטיס מילה</h3>
+        <div
+          class="w-[300px] h-[200px] border-2 rounded-2xl shadow-lg mx-auto flex items-center justify-center hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+          <div class="font-['Frank_Ruhl_Libre'] text-[60px] text-black text-center leading-normal">מִילָה</div>
+        </div>
+      </div>
+
+      <!-- קארדים -->
+      <div class="bg-white p-8 rounded-2xl shadow-sm mb-8">
+        <h3 class="text-xl font-bold mb-4">קארדים</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- קארד תרגול -->
+          <div
+            class="w-full bg-linear-to-r/oklch from-primary to-secondary rounded-2xl shadow-lg p-8 text-white hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+            <h4 class="text-2xl font-bold mb-4">תרגול קריאה</h4>
+            <p>התחל לתרגל קריאה מהירה עם טקסטים מותאמים לרמתך</p>
+          </div>
+          <!-- קארד התקדמות -->
+          <div
+            class="w-full bg-linear-to-r/oklch from-secondary to-accent rounded-2xl shadow-lg p-8 text-white hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+            <h4 class="text-2xl font-bold mb-4">התקדמות אישית</h4>
+            <p>עקוב אחר ההתקדמות שלך ושפר את מהירות הקריאה</p>
+          </div>
+          <div class="bg-white p-8 rounded-2xl shadow-sm mb-8">
+            <h4 class="text-2xl font-bold mb-4">כרטיס רקע</h4>
+            <p>כרטיס לבן לרקע </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- שדות קלט -->
+      <div class="bg-white p-8 rounded-2xl shadow-sm">
+        <h3 class="text-xl font-bold mb-4">שדות קלט</h3>
+        <div class="space-y-4 max-w-md">
+          <div>
+            <label class="text-lg font-medium mb-2 block">מהירות קריאה רצויה</label>
+            <input type="number"
+              class="w-full p-4 text-center bg-surface border-2 border-transparent rounded-lg focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300"
+              placeholder="מילים לדקה">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- סרגל התקדמות -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-6">סרגל התקדמות</h2>
+      <div class="bg-white p-8 rounded-2xl shadow-sm">
+        <div class="w-full h-4 bg-surface rounded-full overflow-hidden">
+          <div class="h-full bg-linear-to-r/oklch from-primary to-secondary transition-all duration-300 ease-out"
+            style="width: 75%"></div>
+        </div>
+        <p class="text-center mt-4 text-text-secondary">75% מהיעד הושלם</p>
+      </div>
+    </section>
+
+    <!-- טיפוגרפיה -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-6">טיפוגרפיה</h2>
+
+      <div class="bg-white p-8 rounded-2xl shadow-sm">
+        <!-- פונטים -->
+        <div class="mb-8">
+          <h3 class="text-xl font-bold mb-4">פונטים</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-bold mb-2">Rubik - פונט ראשי</h4>
+              <p class="text-2xl">אבגדהוזחטיכלמנסעפצקרשת</p>
+              <p class="text-2xl">ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
+            </div>
+            <div>
+              <h4 class="font-bold mb-2">Frank Ruhl Libre - פונט משני</h4>
+              <p class="font-['Frank_Ruhl_Libre'] text-2xl">אבגדהוזחטיכלמנסעפצקרשת</p>
+              <p class="font-['Frank_Ruhl_Libre'] text-2xl">ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- גדלי טקסט -->
+        <div class="mb-8">
+          <h3 class="text-xl font-bold mb-4">גדלי טקסט</h3>
+          <div class="space-y-4">
+            <div>
+              <code class="text-sm text-text-secondary">text-4xl</code>
+              <p class="text-4xl">כותרת ראשית</p>
+            </div>
+            <div>
+              <code class="text-sm text-text-secondary">text-2xl</code>
+              <p class="text-2xl">כותרת משנית</p>
+            </div>
+            <div>
+              <code class="text-sm text-text-secondary">text-xl</code>
+              <p class="text-xl">כותרת קטנה</p>
+            </div>
+            <div>
+              <code class="text-sm text-text-secondary">text-base</code>
+              <p class="text-base">טקסט רגיל</p>
+            </div>
+            <div>
+              <code class="text-sm text-text-secondary">text-sm</code>
+              <p class="text-sm">טקסט קטן</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- משקלים -->
+        <div>
+          <h3 class="text-xl font-bold mb-4">משקלי פונט</h3>
+          <div class="space-y-4">
+            <div>
+              <code class="text-sm text-text-secondary">font-bold</code>
+              <p class="font-bold text-xl">טקסט מודגש</p>
+            </div>
+            <div>
+              <code class="text-sm text-text-secondary">font-medium</code>
+              <p class="font-medium text-xl">טקסט בינוני</p>
+            </div>
+            <div>
+              <code class="text-sm text-text-secondary">font-normal</code>
+              <p class="font-normal text-xl">טקסט רגיל</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- אנימציות -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-6">אנימציות ומעברים</h2>
+
+      <div class="bg-white p-8 rounded-2xl shadow-sm">
+        <div class="space-y-8">
+          <!-- אנימציות בסיסיות -->
+          <div>
+            <h3 class="text-xl font-bold mb-4">אנימציות בסיסיות</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="p-4 bg-gray-100 rounded-lg">
+                <code class="text-sm block mb-2">animate-fade-in-up</code>
+                <div class="animate-fade-in-up bg-primary w-16 h-16 rounded-lg"></div>
+              </div>
+              <div class="p-4 bg-gray-100 rounded-lg">
+                <code class="text-sm block mb-2">animate-fade-in-right</code>
+                <div class="animate-fade-in-right bg-secondary w-16 h-16 rounded-lg"></div>
+              </div>
+              <div class="p-4 bg-gray-100 rounded-lg">
+                <code class="text-sm block mb-2">animate-fade-in-down</code>
+                <div class="animate-fade-in-down bg-accent w-16 h-16 rounded-lg"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- מעברים -->
+          <div>
+            <h3 class="text-xl font-bold mb-4">מעברים</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="p-4 bg-gray-100 rounded-lg">
+                <code class="text-sm block mb-2">hover:-translate-y-1 hover:shadow-lg</code>
+                <button
+                  class="px-4 py-2 bg-primary text-white rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                  העבר עכבר
+                </button>
+              </div>
+              <div class="p-4 bg-gray-100 rounded-lg">
+                <code class="text-sm block mb-2">hover:scale-105</code>
+                <button
+                  class="px-4 py-2 bg-secondary text-white rounded-lg transition-all duration-300 hover:scale-105">
+                  העבר עכבר
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- תבניות -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold mb-6">תבניות ומבנים</h2>
+
+      <div class="bg-white p-8 rounded-2xl shadow-sm">
+        <!-- קונטיינרים -->
+        <div class="mb-8">
+          <h3 class="text-xl font-bold mb-4">קונטיינרים</h3>
+          <div class="border-2 border-dashed border-gray-200 p-4 rounded-lg">
+            <code class="text-sm block mb-2">max-w-4xl mx-auto px-6</code>
+            <div class="max-w-4xl mx-auto px-6 py-4 bg-gray-100 rounded-lg">
+              תוכן הקונטיינר
+            </div>
+          </div>
+        </div>
+
+        <!-- מרווחים -->
+        <div>
+          <h3 class="text-xl font-bold mb-4">מרווחים</h3>
+          <div class="space-y-4">
+            <div class="p-4 bg-gray-100 rounded-lg">
+              <code class="text-sm block mb-2">gap-6</code>
+              <div class="flex gap-6">
+                <div class="w-16 h-16 bg-primary rounded-lg"></div>
+                <div class="w-16 h-16 bg-primary rounded-lg"></div>
+                <div class="w-16 h-16 bg-primary rounded-lg"></div>
+              </div>
+            </div>
+            <div class="p-4 bg-gray-100 rounded-lg">
+              <code class="text-sm block mb-2">space-y-4</code>
+              <div class="space-y-4">
+                <div class="w-full h-8 bg-secondary rounded-lg"></div>
+                <div class="w-full h-8 bg-secondary rounded-lg"></div>
+                <div class="w-full h-8 bg-secondary rounded-lg"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+
+</html>

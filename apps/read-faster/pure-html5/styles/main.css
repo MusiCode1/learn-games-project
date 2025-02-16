@@ -1,0 +1,229 @@
+:root {
+    /* צבעים */
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --background-color: #ecf0f1;
+    --card-background: #ffffff;
+    --text-color: #2c3e50;
+    --button-hover: #2980b9;
+    
+    /* גדלים */
+    --card-width: 300px;
+    --card-height: 200px;
+    --word-size: 100px;
+    --button-size: 40px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Frank Ruhl Libre', serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+    direction: rtl;
+}
+
+#app {
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s;
+}
+
+.screen.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* דף הבית */
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+    text-align: center;
+}
+
+.set-size-input,
+.set-number-input {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.set-size-input label,
+.set-number-input label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.set-size-input input,
+.set-number-input input {
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    width: 100px;
+    text-align: center;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+}
+
+.set-range {
+    display: block;
+    font-size: 1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-top: 0.5rem;
+}
+
+.start-btn {
+    font-size: 1.2rem;
+    padding: 0.8rem 2rem;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-bottom: 2rem;
+}
+
+.start-btn:hover {
+    background-color: var(--button-hover);
+}
+
+/* דף התרגול */
+.word-card {
+    background-color: var(--card-background);
+    width: var(--card-width);
+    height: var(--card-height);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease-out;
+}
+
+.word {
+    font-size: var(--word-size);
+    text-align: center;
+    line-height: 1.5;
+    transition: opacity 0.3s ease;
+}
+
+.word.hidden {
+    opacity: 0;
+}
+
+.show-word-btn {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem 1rem;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.show-word-btn:hover {
+    background-color: var(--button-hover);
+}
+
+.navigation {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.nav-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    padding: 0.8rem 1.5rem;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.nav-button:hover {
+    background-color: var(--button-hover);
+    transform: scale(1.05);
+}
+
+.nav-button svg {
+    fill: currentColor;
+}
+
+.progress {
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.word-progress {
+    margin-bottom: 0.5rem;
+}
+
+/* אנימציות */
+.word-card.next {
+    transform: translateX(-100%);
+}
+
+.word-card.prev {
+    transform: translateX(100%);
+}
+
+/* רספונסיביות */
+@media (max-width: 600px) {
+    :root {
+        --card-width: 280px;
+        --card-height: 180px;
+        --word-size: 40px;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .navigation {
+        gap: 1rem;
+    }
+}
