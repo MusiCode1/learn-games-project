@@ -9,7 +9,7 @@
 
 <div class="font-['Rubik'] text-[var(--color-text-primary)] flex min-h-screen flex-col [background-image:var(--gradient-background)]" dir="rtl">
   <Header />
-  <main class="flex-1 pt-[var(--space-16)]">
+  <main class="flex-1 pt-[var(--space-16)] overflow-x-hidden">
     {@render children()}
   </main>
   <Footer />

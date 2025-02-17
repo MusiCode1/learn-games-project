@@ -12,6 +12,9 @@ export const CONFIG = {
     defaultRepetitions: 1,
     minRepetitions: 1,
     maxRepetitions: 5,
-    transitionDuration: 300
+    transitionDuration: 500,
+    defaultHideSeconds: 3,
+    minHideSeconds: 1,
+    maxHideSeconds: 10
   }
 };

@@ -3,9 +3,10 @@
 		image: string;
 		alt: string;
 		direction: 'next' | 'prev' | null;
+		lastDirection: 'next' | 'prev';
 	}
 
-	let { image, alt, direction }: Props = $props();
+	let { image, alt, direction, lastDirection }: Props = $props();
 	let isImageVisible = $state(false);
 
 	function showImage() {
@@ -25,20 +26,7 @@
 	});
 </script>
 
-<style>
-	.image-container::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background-size: cover;
-		background-position: center;
-		filter: blur(8px) brightness(0.7);
-		transition: all 0.3s;
-		background-image: var(--image-url);
-	}
-</style>
-
-<svelte:window on:keydown={handleKeyDown} />
+<svelte:window onkeydown={handleKeyDown} />
 
 <button
 	type="button"
@@ -48,19 +36,20 @@
     hover:-translate-y-1 hover:shadow-xl"
 >
 	{#if isImageVisible}
-		<div 
-			class="relative h-full w-full image-container"
-			style="--image-url: url({image});"
-		>
+		<div class="image-container relative h-full w-full" style="--image-url: url({image});">
 			<img
 				src={image}
 				{alt}
-				class="relative h-full w-full object-contain p-2 transition-[opacity,visibility] delay-100 duration-300"
-				style="visibility: {isImageVisible ? 'visible' : 'hidden'}; opacity: {isImageVisible ? '1' : '0'};"
+				class="relative h-full w-full object-contain p-2 rounded-[20px]
+				transition-[opacity,visibility] delay-100 duration-300"
+				style="visibility: {isImageVisible ? 'visible' : 'hidden'}; 
+				opacity: {isImageVisible ? '1' : '0'};"
 			/>
 		</div>
 	{:else}
-		<div class="from-secondary to-accent h-full w-full bg-linear-to-r/oklch transition-all duration-300">
+		<div
+			class="from-secondary to-accent h-full w-full bg-linear-to-r/oklch transition-all duration-300"
+		>
 			<div class="flex h-full flex-col items-center justify-center gap-2 text-white">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -78,3 +67,16 @@
 		</div>
 	{/if}
 </button>
+
+<style>
+	.image-container::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background-size: cover;
+		background-position: center;
+		filter: blur(8px) brightness(0.7);
+		transition: all 0.3s;
+		background-image: var(--image-url);
+	}
+</style>

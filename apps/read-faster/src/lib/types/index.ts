@@ -15,6 +15,7 @@ export interface Progress {
   currentSet: number;
   wordsPerSet: number;
   repetitionsPerSet: number;
+  hideAfterSeconds: number;
 }
 
 export interface Word {
