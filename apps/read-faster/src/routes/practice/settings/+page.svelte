@@ -23,7 +23,8 @@
 			wordsPerSet: newWordsPerSet.toString(),
 			set: newSet.toString(),
 			repetitions: newRepetitions.toString(),
-			hideAfterSeconds: newHideAfterSeconds.toString()
+			hideAfterSeconds: newHideAfterSeconds.toString(),
+			wordIndex: '1' // התחלה מהמילה הראשונה
 		});
 		goto(`/practice?${params.toString()}`);
 	}

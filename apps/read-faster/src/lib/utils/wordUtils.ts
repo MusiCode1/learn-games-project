@@ -22,15 +22,18 @@ export function shuffle<T>(array: T[]): T[] {
 
 // ניהול סשן אימון
 export const WordSession = {
-  create(originalWords: Word[], repetitions: number): WordSessionState {
+  create(originalWords: Word[], repetitions: number, startIndex: number = 0): WordSessionState {
     // יוצרים את רשימת המילים עם החזרות 
     const allWords = Array(repetitions)
       .fill(originalWords)
       .flat();
 
+    // וידוא שהאינדקס ההתחלתי תקין
+    const validStartIndex = Math.min(Math.max(0, startIndex), allWords.length - 1);
+
     return {
       words: allWords,
-      currentIndex: 0,
+      currentIndex: validStartIndex,
       wordsPerRepetition: originalWords.length,
       totalRepetitions: repetitions
     };
@@ -55,6 +58,10 @@ export const WordSession = {
   },
 
   getCurrentWord(state: WordSessionState): Word {
+    // בדיקת תקינות האינדקס
+    if (state.currentIndex < 0 || state.currentIndex >= state.words.length) {
+      return state.words[0]; // החזרת המילה הראשונה כברירת מחדל
+    }
     return state.words[state.currentIndex];
   },
 

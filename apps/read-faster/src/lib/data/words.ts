@@ -27,7 +27,7 @@ function getImagePath(word: string): string|false {
   return false;
 }
 
-const w = wordList.leavel_1.map((word) => ({
+const w = wordList.level_1.map((word) => ({
   text: word,
   image: getImagePath(word),
   level: 1

@@ -8,14 +8,14 @@
 
 	// פרמטרים מהניתוב
 	const { data } = $props();
-	const { set, wordsPerSet, repetitions } = data;
+	const { set, wordsPerSet, repetitions, wordIndex } = data;
 	const hideAfterSeconds = data.hideAfterSeconds ?? CONFIG.app.defaultHideSeconds;
 
 	// יצירת סט המילים הנוכחי
 	const currentSetWords = WordSetCalculator.getWordsForSet(words, set, wordsPerSet);
 
-	// יצירת הסשן
-	const sessionState = WordSession.create(currentSetWords, data.repetitions);
+	// יצירת הסשן עם אינדקס התחלתי מה-URL
+	const sessionState = WordSession.create(currentSetWords, data.repetitions, wordIndex);
 
 	// מצב גלוי/מוסתר של התמונה והמילה
 	let isImageVisible = $state(false);
@@ -56,6 +56,11 @@
 			totalRepetitions: session.totalRepetitions
 		});
 		session.currentIndex = nextState.currentIndex;
+		
+		// עדכון ה-URL עם האינדקס החדש (המרה ל-1-based)
+		const url = new URL(window.location.href);
+		url.searchParams.set('wordIndex', (nextState.currentIndex + 1).toString());
+		goto(url.toString());
 	}
 
 	function handlePrevWord() {
@@ -66,6 +71,11 @@
 			totalRepetitions: session.totalRepetitions
 		});
 		session.currentIndex = prevState.currentIndex;
+		
+		// עדכון ה-URL עם האינדקס החדש (המרה ל-1-based)
+		const url = new URL(window.location.href);
+		url.searchParams.set('wordIndex', (prevState.currentIndex + 1).toString());
+		goto(url.toString());
 	}
 
 	function handleFinishSet() {
@@ -76,7 +86,7 @@
 		if (WordSession.isComplete(session)) {
 			if (data.set < totalSets) {
 				goto(
-					`/practice?set=${data.set + 1}&wordsPerSet=${data.wordsPerSet}&repetitions=${data.repetitions}&hideAfterSeconds=${hideAfterSeconds}`
+					`/practice?set=${data.set + 1}&wordsPerSet=${data.wordsPerSet}&repetitions=${data.repetitions}&hideAfterSeconds=${hideAfterSeconds}&wordIndex=1`
 				);
 			} else {
 				goto('/');
