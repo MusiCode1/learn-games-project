@@ -927,40 +927,44 @@ With these adjusted guidelines, your AI can now generate SvelteKit 2 code accura
 ### Props Typing in Svelte 5
 
 #### Interface-Based Props Definition
+
 Props should be defined using an interface and referenced in the variable declaration:
 
 ```typescript
 interface Props {
-  name: string;
-  age?: number; // optional prop
+	name: string;
+	age?: number; // optional prop
 }
 
 let { name, age }: Props = $props();
 ```
 
 #### Bindable Props
+
 For props that can be modified, use $bindable:
 
 ```typescript
 interface Props {
-  visible?: boolean;
+	visible?: boolean;
 }
 
 let { visible = $bindable(false) }: Props = $props();
 ```
 
 #### Function Props
+
 For props that are functions:
 
 ```typescript
 interface Props {
-  onclick: () => void;
+	onclick: () => void;
 }
 
 let { onclick }: Props = $props();
 ```
 
 #### Important Rules
+
 1. Always define Props using an interface
 2. Place the type after the colon in the variable declaration
 3. Use $props() without generic type

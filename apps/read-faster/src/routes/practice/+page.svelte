@@ -15,7 +15,7 @@
 	const currentSetWords = WordSetCalculator.getWordsForSet(words, set, wordsPerSet);
 
 	// יצירת הסשן עם אינדקס התחלתי מה-URL
-	const sessionState = WordSession.create(currentSetWords, data.repetitions, wordIndex);
+	const sessionState = WordSession.create(currentSetWords, repetitions, wordIndex);
 
 	// מצב גלוי/מוסתר של התמונה והמילה
 	let isImageVisible = $state(false);
@@ -56,7 +56,12 @@
 			totalRepetitions: session.totalRepetitions
 		});
 		session.currentIndex = nextState.currentIndex;
-		
+
+		// איפוס מצב התמונה והמילה
+		isImageVisible = false;
+		isWordVisible = true;
+		startHideWordTimer();
+
 		// עדכון ה-URL עם האינדקס החדש (המרה ל-1-based)
 		const url = new URL(window.location.href);
 		url.searchParams.set('wordIndex', (nextState.currentIndex + 1).toString());
@@ -71,7 +76,12 @@
 			totalRepetitions: session.totalRepetitions
 		});
 		session.currentIndex = prevState.currentIndex;
-		
+
+		// איפוס מצב התמונה והמילה
+		isImageVisible = false;
+		isWordVisible = true;
+		startHideWordTimer();
+
 		// עדכון ה-URL עם האינדקס החדש (המרה ל-1-based)
 		const url = new URL(window.location.href);
 		url.searchParams.set('wordIndex', (prevState.currentIndex + 1).toString());
@@ -127,35 +137,27 @@
 		}
 	}
 
-// ניהול מקשי מקלדת
-function handleImageCardClick() {
-isImageVisible = true;
-isWordVisible = true;
-startHideWordTimer(); // הפעלת טיימר להסתרת המילה
-}
+	// ניהול מקשי מקלדת
+	function handleImageCardClick() {
+		isImageVisible = true;
+		isWordVisible = true;
+		startHideWordTimer(); // הפעלת טיימר להסתרת המילה
+	}
 
-function handleWordCardClick() {
-if (!isWordVisible) {
-isWordVisible = true;
-startHideWordTimer(); // הפעלת טיימר להסתרת המילה
-}
-}
+	function handleWordCardClick() {
+		if (!isWordVisible) {
+			isWordVisible = true;
+			startHideWordTimer(); // הפעלת טיימר להסתרת המילה
+		}
+	}
 
-$effect(() => {
-return setupKeyboardShortcuts({
-onArrowLeft: handleNext,
-onArrowRight: handlePrev,
-onEscape: handleFinishPractice,
-onSpace: handleImageCardClick
-});
-});
-
-	// איפוס מצב התמונה והמילה בכל מעבר מילה
 	$effect(() => {
-		session.currentIndex; // track changes
-		isImageVisible = false;
-		isWordVisible = true; // המילה תמיד מוצגת במעבר
-		startHideWordTimer(); // מפעיל טיימר להסתרת המילה
+		return setupKeyboardShortcuts({
+			onArrowLeft: handleNext,
+			onArrowRight: handlePrev,
+			onEscape: handleFinishPractice,
+			onSpace: handleImageCardClick
+		});
 	});
 
 	// ניקוי טיימר כשהקומפוננטה מתפרקת
@@ -193,8 +195,8 @@ onSpace: handleImageCardClick
 	onPrev={handlePrev}
 	onFinish={handleFinishSet}
 	onExit={handleFinishPractice}
-onImageCardClick={handleImageCardClick}
-onWordCardClick={handleWordCardClick}
+	onImageCardClick={handleImageCardClick}
+	onWordCardClick={handleWordCardClick}
 	{direction}
 	{lastDirection}
 	{isImageVisible}

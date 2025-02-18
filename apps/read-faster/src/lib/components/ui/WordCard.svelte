@@ -1,18 +1,18 @@
 <script lang="ts">
-interface Props {
-word: string;
-direction: 'next' | 'prev' | null;
-lastDirection: 'next' | 'prev';
-hideAfterSeconds: number;
-isVisible: boolean;
-onClick: () => void;
-}
+	interface Props {
+		word: string;
+		direction: 'next' | 'prev' | null;
+		lastDirection: 'next' | 'prev';
+		hideAfterSeconds: number;
+		isVisible: boolean;
+		onClick: () => void;
+	}
 
-let { word, direction, lastDirection, hideAfterSeconds, isVisible, onClick }: Props = $props();
+	let { word, direction, lastDirection, hideAfterSeconds, isVisible, onClick }: Props = $props();
 
-function handleClick(event: Event) {
-onClick();
-}
+	function handleClick(event: Event) {
+		onClick();
+	}
 </script>
 
 <button

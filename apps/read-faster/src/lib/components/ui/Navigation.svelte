@@ -1,12 +1,12 @@
 <script lang="ts">
-interface Props {
-  onNext: () => void;
-  onPrev: () => void;
-  isFirstWord: boolean;
-  isLastWord: boolean;
-}
+	interface Props {
+		onNext: () => void;
+		onPrev: () => void;
+		isFirstWord: boolean;
+		isLastWord: boolean;
+	}
 
-let { onNext, onPrev, isFirstWord, isLastWord }: Props = $props();
+	let { onNext, onPrev, isFirstWord, isLastWord }: Props = $props();
 </script>
 
 <div class="my-4 flex justify-center gap-8">

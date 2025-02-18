@@ -7,10 +7,13 @@
 	const { children }: { children: Snippet } = $props();
 </script>
 
-<div class="font-['Rubik'] text-[var(--color-text-primary)] flex min-h-screen flex-col [background-image:var(--gradient-background)]" dir="rtl">
-  <Header />
-  <main class="flex-1 pt-[var(--space-16)] overflow-x-hidden">
-    {@render children()}
-  </main>
-  <Footer />
+<div
+	class="flex min-h-screen flex-col [background-image:var(--gradient-background)] font-['Rubik'] text-[var(--color-text-primary)]"
+	dir="rtl"
+>
+	<Header />
+	<main class="flex-1 overflow-x-hidden pt-[var(--space-16)]">
+		{@render children()}
+	</main>
+	<Footer />
 </div>
