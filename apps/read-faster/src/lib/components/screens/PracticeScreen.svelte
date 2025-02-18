@@ -21,8 +21,12 @@
 		onPrev: () => void;
 		onFinish: () => void;
 		onExit: () => void;
+		onImageCardClick: () => void;
+		onWordCardClick: () => void;
 		direction: 'next' | 'prev' | null;
 		lastDirection: 'next' | 'prev';
+		isImageVisible: boolean;
+		isWordVisible: boolean;
 	}
 
 	let {
@@ -40,8 +44,12 @@
 		onPrev,
 		onFinish,
 		onExit,
+		onImageCardClick,
+		onWordCardClick,
 		direction,
-		lastDirection
+		lastDirection,
+		isImageVisible = $bindable(false),
+		isWordVisible = $bindable(false)
 	}: Props = $props();
 
 	function handleNext() {
@@ -76,10 +84,18 @@
 					{direction}
 					{lastDirection}
 					{hideAfterSeconds}
-					onclick={handleNext}
+					isVisible={isWordVisible}
+					onClick={onWordCardClick}
 				/>
 
-				<ImageCard image={word.image || ''} alt={word.text} {direction} {lastDirection} />
+				<ImageCard
+					image={word.image || ''}
+					alt={word.text}
+					{direction}
+					{lastDirection}
+					{isImageVisible}
+					onClick={onImageCardClick}
+				/>
 			</div>
 
 			<Navigation onNext={handleNext} {onPrev} isFirstWord={isFirst} isLastWord={isLast} />

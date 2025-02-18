@@ -4,6 +4,7 @@
 	import { CONFIG } from '$lib/constants/config';
 	import PracticeScreen from '$lib/components/screens/PracticeScreen.svelte';
 	import { words } from '$lib/data/words';
+	import { setupKeyboardShortcuts } from '$lib/core/keyboard';
 
 	// פרמטרים מהניתוב
 	const { data } = $props();
@@ -13,8 +14,27 @@
 	// יצירת סט המילים הנוכחי
 	const currentSetWords = WordSetCalculator.getWordsForSet(words, set, wordsPerSet);
 
-	// יצירת הסשן (לא ריאקטיבי)
+	// יצירת הסשן
 	const sessionState = WordSession.create(currentSetWords, data.repetitions);
+
+	// מצב גלוי/מוסתר של התמונה והמילה
+	let isImageVisible = $state(false);
+	let isWordVisible = $state(false);
+	let hideWordTimeout: number;
+
+	function startHideWordTimer() {
+		// ניקוי טיימר קודם אם קיים
+		if (hideWordTimeout) {
+			clearTimeout(hideWordTimeout);
+		}
+
+		// הגדרת טיימר חדש אם hideAfterSeconds גדול מ-0
+		if (hideAfterSeconds > 0) {
+			hideWordTimeout = setTimeout(() => {
+				isWordVisible = false;
+			}, hideAfterSeconds * 1000);
+		}
+	}
 
 	const session = $state({
 		words: sessionState.words,
@@ -77,11 +97,15 @@
 	const progress = $derived.by(() => WordSession.getProgress(session));
 	const currentRepetition = $derived.by(() => WordSession.getCurrentRepetition(session));
 
+	function delayedHandleNextWord(callback: () => void) {
+		setTimeout(callback, CONFIG.app.transitionDuration);
+	}
+
 	async function handleNext() {
 		if (!WordSession.isComplete(session)) {
 			direction = 'next';
 			lastDirection = 'next';
-			handleNextWord();
+			delayedHandleNextWord(handleNextWord);
 		}
 	}
 
@@ -89,24 +113,48 @@
 		if (session.currentIndex > 0) {
 			direction = 'prev';
 			lastDirection = 'prev';
-			handlePrevWord();
+			delayedHandleNextWord(handlePrevWord);
 		}
 	}
 
-	// ניהול מקשי מקלדת
-	$effect(() => {
-		function handleKeyPress(event: KeyboardEvent) {
-			if (event.key === 'ArrowLeft') {
-				handleNext();
-			} else if (event.key === 'ArrowRight') {
-				handlePrev();
-			} else if (event.key === 'Escape') {
-				handleFinishPractice();
-			}
-		}
+// ניהול מקשי מקלדת
+function handleImageCardClick() {
+isImageVisible = true;
+isWordVisible = true;
+startHideWordTimer(); // הפעלת טיימר להסתרת המילה
+}
 
-		window.addEventListener('keydown', handleKeyPress);
-		return () => window.removeEventListener('keydown', handleKeyPress);
+function handleWordCardClick() {
+if (!isWordVisible) {
+isWordVisible = true;
+startHideWordTimer(); // הפעלת טיימר להסתרת המילה
+}
+}
+
+$effect(() => {
+return setupKeyboardShortcuts({
+onArrowLeft: handleNext,
+onArrowRight: handlePrev,
+onEscape: handleFinishPractice,
+onSpace: handleImageCardClick
+});
+});
+
+	// איפוס מצב התמונה והמילה בכל מעבר מילה
+	$effect(() => {
+		session.currentIndex; // track changes
+		isImageVisible = false;
+		isWordVisible = true; // המילה תמיד מוצגת במעבר
+		startHideWordTimer(); // מפעיל טיימר להסתרת המילה
+	});
+
+	// ניקוי טיימר כשהקומפוננטה מתפרקת
+	$effect(() => {
+		return () => {
+			if (hideWordTimeout) {
+				clearTimeout(hideWordTimeout);
+			}
+		};
 	});
 
 	// איפוס כיוון האנימציה
@@ -135,6 +183,10 @@
 	onPrev={handlePrev}
 	onFinish={handleFinishSet}
 	onExit={handleFinishPractice}
+onImageCardClick={handleImageCardClick}
+onWordCardClick={handleWordCardClick}
 	{direction}
 	{lastDirection}
+	{isImageVisible}
+	{isWordVisible}
 />

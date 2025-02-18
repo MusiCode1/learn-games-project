@@ -23,11 +23,11 @@ export function shuffle<T>(array: T[]): T[] {
 // ניהול סשן אימון
 export const WordSession = {
   create(originalWords: Word[], repetitions: number): WordSessionState {
-    // יוצרים את רשימת המילים עם החזרות ומערבבים
+    // יוצרים את רשימת המילים עם החזרות 
     const allWords = Array(repetitions)
       .fill(originalWords)
       .flat();
-    
+
     return {
       words: allWords,
       currentIndex: 0,
@@ -101,8 +101,8 @@ export const WordProgress = {
     return loadProgress();
   },
 
-  save(currentSet: number, wordsPerSet: number, repetitionsPerSet: number = CONFIG.app.defaultRepetitions): void {
-    const progress: Progress = { currentSet, wordsPerSet, repetitionsPerSet };
+  save(currentSet: number, wordsPerSet: number, repetitionsPerSet: number = CONFIG.app.defaultRepetitions, hideAfterSeconds: number = CONFIG.app.defaultHideSeconds): void {
+    const progress: Progress = { currentSet, wordsPerSet, repetitionsPerSet, hideAfterSeconds };
     saveProgress(progress);
   }
 };

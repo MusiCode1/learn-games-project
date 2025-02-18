@@ -13,7 +13,12 @@
 		hideAfterSeconds: CONFIG.app.defaultHideSeconds
 	});
 
-	function handleStartPractice(newWordsPerSet: number, newSet: number, newRepetitions: number, newHideAfterSeconds: number) {
+	function handleStartPractice(
+		newWordsPerSet: number,
+		newSet: number,
+		newRepetitions: number,
+		newHideAfterSeconds: number
+	) {
 		const params = new URLSearchParams({
 			wordsPerSet: newWordsPerSet.toString(),
 			set: newSet.toString(),

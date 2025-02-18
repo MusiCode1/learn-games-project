@@ -13,7 +13,7 @@ export const CONFIG = {
     minRepetitions: 1,
     maxRepetitions: 5,
     transitionDuration: 500,
-    defaultHideSeconds: 3,
+    defaultHideSeconds: 0,
     minHideSeconds: 1,
     maxHideSeconds: 10
   }

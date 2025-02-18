@@ -4,33 +4,31 @@
 		alt: string;
 		direction: 'next' | 'prev' | null;
 		lastDirection: 'next' | 'prev';
+		isImageVisible: boolean;
+		onClick: () => void;
 	}
 
-	let { image, alt, direction, lastDirection }: Props = $props();
-	let isImageVisible = $state(false);
+	let {
+		image,
+		alt,
+		direction,
+		lastDirection,
+		isImageVisible = $bindable(false),
+		onClick
+	}: Props = $props();
 
-	function showImage() {
-		isImageVisible = true;
-	}
-
-	function handleKeyDown(event: KeyboardEvent) {
-		if (event.code === 'Space') {
-			event.preventDefault();
-			showImage();
-		}
-	}
-
+	// טעינה מוקדמת של התמונה בכל פעם שהיא משתנה
 	$effect(() => {
-		image; // track image changes
-		isImageVisible = false;
+		if (image) {
+			const preloader = new Image();
+			preloader.src = image;
+		}
 	});
 </script>
 
-<svelte:window onkeydown={handleKeyDown} />
-
 <button
 	type="button"
-	onclick={showImage}
+	onclick={onClick}
 	class="relative h-[200px] w-[300px] overflow-hidden rounded-2xl
     border-2 shadow-lg transition-all duration-300
     hover:-translate-y-1 hover:shadow-xl"
@@ -40,7 +38,7 @@
 			<img
 				src={image}
 				{alt}
-				class="relative h-full w-full object-contain p-2 rounded-[20px]
+				class="relative h-full w-full rounded-[20px] object-contain p-2
 				transition-[opacity,visibility] delay-100 duration-300"
 				style="visibility: {isImageVisible ? 'visible' : 'hidden'}; 
 				opacity: {isImageVisible ? '1' : '0'};"

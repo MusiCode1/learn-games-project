@@ -19,10 +19,10 @@ export interface Progress {
 }
 
 export interface Word {
-  text: string;       // המילה עם ניקוד
-  image?: string |false;     // נתיב לתמונה (אופציונלי)
-  level: number;      // רמת הקושי
-  type?: 'verb';       // סוג המילה
+  text: string;             // המילה עם ניקוד
+  image?: string | false;   // נתיב לתמונה (אופציונלי)
+  level: number;            // רמת הקושי
+  type?: 'verb';            // סוג המילה
 }
 
 export type WordList = Word[];
