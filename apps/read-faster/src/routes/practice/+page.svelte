@@ -22,6 +22,13 @@
 	let isWordVisible = $state(false);
 	let hideWordTimeout: number;
 
+	function setupWordVisibility() {
+		// איפוס מצב התמונה והמילה
+		isImageVisible = false;
+		isWordVisible = true;
+		startHideWordTimer();
+	}
+
 	function startHideWordTimer() {
 		// ניקוי טיימר קודם אם קיים
 		if (hideWordTimeout) {
@@ -57,10 +64,7 @@
 		});
 		session.currentIndex = nextState.currentIndex;
 
-		// איפוס מצב התמונה והמילה
-		isImageVisible = false;
-		isWordVisible = true;
-		startHideWordTimer();
+		setupWordVisibility();
 
 		// עדכון ה-URL עם האינדקס החדש (המרה ל-1-based)
 		const url = new URL(window.location.href);
@@ -77,16 +81,18 @@
 		});
 		session.currentIndex = prevState.currentIndex;
 
-		// איפוס מצב התמונה והמילה
-		isImageVisible = false;
-		isWordVisible = true;
-		startHideWordTimer();
+		setupWordVisibility();
 
 		// עדכון ה-URL עם האינדקס החדש (המרה ל-1-based)
 		const url = new URL(window.location.href);
 		url.searchParams.set('wordIndex', (prevState.currentIndex + 1).toString());
 		goto(url.toString());
 	}
+
+	// הפעלת מצב נראות ראשוני
+	$effect(() => {
+		setupWordVisibility();
+	});
 
 	function handleFinishSet() {
 		// שמירת התקדמות
