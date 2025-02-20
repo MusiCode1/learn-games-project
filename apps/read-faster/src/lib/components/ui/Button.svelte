@@ -17,7 +17,7 @@
 		children,
 		ariaLabel,
 		class: className = ''
-	} = $props();
+	}: Props = $props();
 </script>
 
 <button
@@ -46,5 +46,7 @@
 	{onclick}
 	aria-label={ariaLabel}
 >
-	{@render children()}
+	{#if children}
+		{@render children()}
+	{/if}
 </button>
