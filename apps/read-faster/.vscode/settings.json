@@ -4,5 +4,10 @@
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": "explicit"
 	},
-	"eslint.validate": ["javascript", "typescript", "svelte"]
+	"eslint.validate": ["javascript", "typescript", "svelte"],
+	"eslint.options": {
+		"extensions": [".js", ".ts", ".svelte"]
+	},
+	"typescript.tsserver.log": "verbose",
+	"typescript.tsserver.experimental.enableProjectDiagnostics": true
 }

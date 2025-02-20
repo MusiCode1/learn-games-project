@@ -61,18 +61,14 @@
 	}
 </script>
 
-<div class="flex items-center via-transparent">
+<div class="flex h-full items-center justify-center via-transparent">
 	<Container>
-		<div class="flex flex-col items-center gap-3">
-			<button
-				class="from-secondary to-accent hover:shadow-secondary/20 fixed top-4 right-4 rounded-lg bg-linear-to-r/oklch px-4 py-2 text-sm text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5"
-				onclick={onExit}
-			>
-				חזור למסך הבית
-			</button>
-
+		<div
+			class="flex h-full flex-col items-center justify-center py-4
+			md:gap-4"
+		>
 			<div
-				class="flex flex-row gap-6 transition-transform duration-300 ease-in-out"
+				class="flex flex-row gap-4 transition-transform duration-300 ease-in-out sm:gap-3 md:gap-8"
 				style="transform: {direction === 'next'
 					? 'translateX(-100vw)'
 					: direction === 'prev'

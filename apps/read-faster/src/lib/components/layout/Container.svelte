@@ -5,9 +5,9 @@
 		children: Snippet;
 	}
 
-	let { children } = $props();
+	let { children }: Props = $props();
 </script>
 
-<div class="mx-auto flex max-w-4xl flex-col items-center px-[var(--space-6)] py-[var(--space-6)]">
+<div id="container" class="mx-auto flex h-full max-w-4xl flex-col items-center px-6">
 	{@render children()}
 </div>

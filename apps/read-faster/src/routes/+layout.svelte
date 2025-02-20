@@ -8,11 +8,13 @@
 </script>
 
 <div
-	class="flex min-h-screen flex-col [background-image:var(--gradient-background)] font-['Rubik'] text-[var(--color-text-primary)]"
+	class="font-primary flex min-h-screen
+	flex-col [background-image:var(--gradient-background)]
+	text-[var(--color-text-primary)]"
 	dir="rtl"
 >
 	<Header />
-	<main class="flex-1 overflow-x-hidden pt-[var(--space-16)]">
+	<main class="flex flex-1 flex-col justify-center overflow-x-hidden">
 		{@render children()}
 	</main>
 	<Footer />
