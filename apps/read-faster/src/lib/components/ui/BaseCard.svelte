@@ -12,7 +12,7 @@
 <button
 	type="button"
 	onclick={onClick}
-	class="card mx-auto overflow-hidden rounded-2xl border-2 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+	class="card overflow-hidden rounded-2xl border-2 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
 >
 	{@render children()}
 </button>
@@ -28,8 +28,8 @@
 
 	@media (max-width: 768px) {
 		.card {
-			width: min(300px, 90vw);
-			height: min(200px, 60vw);
+			width: min(300px, 60vw);
+			height: min(200px, 40vw);
 		}
 	}
 </style>
