@@ -104,8 +104,6 @@
 						<ImageCard
 							image={word.image || ''}
 							alt={word.text}
-							{direction}
-							{lastDirection}
 							{isImageVisible}
 							onClick={onImageCardClick}
 						/>
@@ -114,7 +112,6 @@
 					<Button
 						variant="round"
 						onclick={handleNext}
-						disabled={isLast}
 						ariaLabel="למילה הבאה"
 						class="h-[8vw] max-h-16 min-h-10 w-[8vw] max-w-16 min-w-10"
 					>

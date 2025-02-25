@@ -1,14 +1,6 @@
-import type { Progress, Word } from '$lib/types';
+import type { Progress, Word, WordSessionState } from '$lib/types';
 import { CONFIG } from '$lib/constants/config';
 import { loadProgress, saveProgress } from '$lib/utils/localStorage';
-
-// מצב סשן אימון
-interface WordSessionState {
-	words: Word[]; // רשימת המילים המלאה כולל חזרות
-	currentIndex: number; // האינדקס הנוכחי
-	wordsPerRepetition: number; // כמה מילים בכל חזרה
-	totalRepetitions: number; // כמה חזרות סה"כ
-}
 
 // פונקציית עזר לערבוב מערך
 export function shuffle<T>(array: T[]): T[] {

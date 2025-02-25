@@ -3,24 +3,57 @@
 	import { WordSession, WordSetCalculator, WordProgress } from '$lib/utils/wordUtils';
 	import { CONFIG } from '$lib/constants/config';
 	import PracticeScreen from '$lib/components/screens/PracticeScreen.svelte';
+	import PracticeCompletionScreen from '$lib/components/screens/PracticeCompletionScreen.svelte';
 	import { words } from '$lib/data/words';
 	import { setupKeyboardShortcuts } from '$lib/core/keyboard';
+	import { fade } from '$lib/utils/transitions';
+	import type { Word, WordSessionState } from '$lib/types';
 
 	// פרמטרים מהניתוב
 	const { data } = $props();
-	const { set, wordsPerSet, repetitions, wordIndex } = data;
 	const hideAfterSeconds = data.hideAfterSeconds ?? CONFIG.app.defaultHideSeconds;
+	let { set, wordsPerSet, repetitions, wordIndex } = data;
 
-	// יצירת סט המילים הנוכחי
-	const currentSetWords = WordSetCalculator.getWordsForSet(words, set, wordsPerSet);
+	let currentSetWords: Word[] = [];
+	let sessionState: WordSessionState;
+	let session: WordSessionState = $state({
+		words: [],
+		currentIndex: 0,
+		wordsPerRepetition: 0,
+		totalRepetitions: 0
+	});
 
-	// יצירת הסשן עם אינדקס התחלתי מה-URL
-	const sessionState = WordSession.create(currentSetWords, repetitions, wordIndex);
+	// חישוב מספר הסטים הכולל
+	const totalSets = $derived.by(() =>
+		WordSetCalculator.calculateTotalSets(words, data.wordsPerSet)
+	);
+
+	// מצב השלמת הסט
+	let isCompleted = $state(false);
+
+	startSession();
 
 	// מצב גלוי/מוסתר של התמונה והמילה
 	let isImageVisible = $state(false);
 	let isWordVisible = $state(false);
 	let hideWordTimeout: number;
+
+	function startSession() {
+		// יצירת סט המילים הנוכחי
+		currentSetWords = WordSetCalculator.getWordsForSet(words, set, wordsPerSet);
+
+		// יצירת הסשן עם אינדקס התחלתי מה-URL
+		sessionState = WordSession.create(currentSetWords, repetitions, wordIndex);
+		// חישוב מילים לסט
+		isCompleted = false;
+
+		session = {
+			words: sessionState.words,
+			currentIndex: sessionState.currentIndex,
+			wordsPerRepetition: sessionState.wordsPerRepetition,
+			totalRepetitions: sessionState.totalRepetitions
+		};
+	}
 
 	function setupWordVisibility() {
 		// איפוס מצב התמונה והמילה
@@ -42,18 +75,6 @@
 			}, hideAfterSeconds * 1000);
 		}
 	}
-
-	const session = $state({
-		words: sessionState.words,
-		currentIndex: sessionState.currentIndex,
-		wordsPerRepetition: sessionState.wordsPerRepetition,
-		totalRepetitions: sessionState.totalRepetitions
-	});
-
-	// חישוב מספר הסטים הכולל
-	const totalSets = $derived.by(() =>
-		WordSetCalculator.calculateTotalSets(words, data.wordsPerSet)
-	);
 
 	function handleNextWord() {
 		const nextState = WordSession.next({
@@ -98,19 +119,28 @@
 		// שמירת התקדמות
 		WordProgress.save(data.set, data.wordsPerSet, data.repetitions);
 
-		// אם סיימנו את כל החזרות, עוברים לסט הבא
+		// אם סיימנו את כל החזרות, מציגים את מסך הסיום
 		if (WordSession.isComplete(session)) {
-			if (data.set < totalSets) {
-				goto(
-					`/practice?set=${data.set + 1}&wordsPerSet=${data.wordsPerSet}&repetitions=${data.repetitions}&hideAfterSeconds=${hideAfterSeconds}&wordIndex=1`
-				);
-			} else {
-				goto('/');
-			}
+			isCompleted = true;
 		}
 	}
 
-	function handleFinishPractice() {
+	function handleNextSet() {
+		goto(
+			`/practice?set=${data.set + 1}&wordsPerSet=${data.wordsPerSet}&repetitions=${data.repetitions}&hideAfterSeconds=${hideAfterSeconds}&wordIndex=1`
+		);
+		set++; // עדכון הסט לסט הבא
+		startSession();
+	}
+
+	function handleRepeatSet() {
+		goto(
+			`/practice?set=${data.set}&wordsPerSet=${data.wordsPerSet}&repetitions=${data.repetitions}&hideAfterSeconds=${hideAfterSeconds}&wordIndex=1`
+		);
+		startSession();
+	}
+
+	function handleHome() {
 		goto('/');
 	}
 
@@ -128,7 +158,9 @@
 	}
 
 	async function handleNext() {
-		if (!WordSession.isComplete(session)) {
+		if (WordSession.isComplete(session)) {
+			handleFinishSet();
+		} else {
 			direction = 'next';
 			lastDirection = 'next';
 			delayedHandleNextWord(handleNextWord);
@@ -161,7 +193,7 @@
 		return setupKeyboardShortcuts({
 			onArrowLeft: handleNext,
 			onArrowRight: handlePrev,
-			onEscape: handleFinishPractice,
+			onEscape: handleHome,
 			onSpace: handleImageCardClick
 		});
 	});
@@ -186,25 +218,41 @@
 	});
 </script>
 
-<PracticeScreen
-	word={currentWord}
-	isFirst={session.currentIndex === 0}
-	isLast={WordSession.isComplete(session)}
-	currentWord={progress.current}
-	totalWords={progress.total}
-	currentSet={data.set}
-	{totalSets}
-	{currentRepetition}
-	totalRepetitions={session.totalRepetitions}
-	{hideAfterSeconds}
-	onNext={handleNext}
-	onPrev={handlePrev}
-	onFinish={handleFinishSet}
-	onExit={handleFinishPractice}
-	onImageCardClick={handleImageCardClick}
-	onWordCardClick={handleWordCardClick}
-	{direction}
-	{lastDirection}
-	{isImageVisible}
-	{isWordVisible}
-/>
+{#if isCompleted}
+	<div in:fade={{ duration: 500 }}>
+		<PracticeCompletionScreen
+			totalWords={progress.total}
+			repetitions={data.repetitions}
+			currentSet={data.set}
+			{totalSets}
+			onNextSet={handleNextSet}
+			onRepeatSet={handleRepeatSet}
+			onHome={handleHome}
+		/>
+	</div>
+{:else}
+	<div in:fade={{ duration: 500 }}>
+		<PracticeScreen
+			word={currentWord}
+			isFirst={session.currentIndex === 0}
+			isLast={WordSession.isComplete(session)}
+			currentWord={progress.current}
+			totalWords={progress.total}
+			currentSet={data.set}
+			{totalSets}
+			{currentRepetition}
+			totalRepetitions={session.totalRepetitions}
+			{hideAfterSeconds}
+			onNext={handleNext}
+			onPrev={handlePrev}
+			onFinish={handleFinishSet}
+			onExit={handleHome}
+			onImageCardClick={handleImageCardClick}
+			onWordCardClick={handleWordCardClick}
+			{direction}
+			{lastDirection}
+			{isImageVisible}
+			{isWordVisible}
+		/>
+	</div>
+{/if}

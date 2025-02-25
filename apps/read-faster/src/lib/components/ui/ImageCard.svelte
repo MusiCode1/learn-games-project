@@ -4,20 +4,11 @@
 	interface Props {
 		image: string;
 		alt: string;
-		direction: 'next' | 'prev' | null;
-		lastDirection: 'next' | 'prev';
 		isImageVisible: boolean;
 		onClick: () => void;
 	}
 
-	let {
-		image,
-		alt,
-		direction,
-		lastDirection,
-		isImageVisible = $bindable(false),
-		onClick
-	}: Props = $props();
+	let { image, alt, isImageVisible = $bindable(false), onClick }: Props = $props();
 
 	// טעינה מוקדמת של התמונה בכל פעם שהיא משתנה
 	$effect(() => {
@@ -28,14 +19,14 @@
 	});
 </script>
 
-<BaseCard {onClick}>
+<BaseCard {onClick} mode="1:1">
 	<div class="relative h-full w-full">
 		{#if isImageVisible}
 			<div class="image-container absolute inset-0" style="--image-url: url({image});">
 				<img
 					src={image}
 					{alt}
-					class="relative h-full w-full object-contain p-2
+					class="relative h-full w-full object-cover p-2
 					transition-[opacity,visibility] delay-100 duration-300"
 					style="visibility: {isImageVisible ? 'visible' : 'hidden'}; 
 					opacity: {isImageVisible ? '1' : '0'};"

@@ -8,6 +8,6 @@
 	"eslint.options": {
 		"extensions": [".js", ".ts", ".svelte"]
 	},
-	"typescript.tsserver.log": "verbose",
-	"typescript.tsserver.experimental.enableProjectDiagnostics": true
+	"typescript.tsserver.log": "verbose"
+	/* "typescript.tsserver.experimental.enableProjectDiagnostics": true */
 }

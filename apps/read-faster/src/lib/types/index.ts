@@ -9,6 +9,13 @@ export interface WordState {
   totalWords: number;
 }
 
+export interface WordSessionState {
+  words: Word[]; // רשימת המילים המלאה כולל חזרות
+  currentIndex: number; // האינדקס הנוכחי
+  wordsPerRepetition: number; // כמה מילים בכל חזרה
+  totalRepetitions: number; // כמה חזרות סה"כ
+}
+
 export type DerivedBoolean = Readable<boolean>;
 
 export interface Progress {
