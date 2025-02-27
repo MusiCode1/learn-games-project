@@ -1,5 +1,5 @@
-// prod inject
-
+/* eslint-disable no-undef */
+// @ts-nocheck
 (() => {
     function loadExternalScript(url) {
         const script = document.createElement('script');
@@ -9,6 +9,7 @@
         document.head.appendChild(script);
     }
 
-    const url = '//gingim-booster.vercel.app/main.js';
+    const url = '//dev-server.dev:443/src/main.ts';
+
     loadExternalScript(url);
 })();

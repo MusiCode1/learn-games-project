@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import type { Plugin } from 'vite'
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
+import injectScriptPlugin from './vite-plugin/vite-plugin-inject-script';
+
 
 // יצירת פלאגין מותאם אישית לטיפול בבקשות פרה-פלייט
 function privateNetworkSupport(): Plugin {
@@ -24,8 +26,10 @@ export default defineConfig({
   plugins: [
     svelte({}),
     cssInjectedByJsPlugin(),
-    privateNetworkSupport()
+    privateNetworkSupport(),
+    injectScriptPlugin(),
   ],
+
 
   build: {
     outDir: 'dist',
@@ -45,6 +49,7 @@ export default defineConfig({
   },
 
   server: {
+     port: 443,
 
     host: '0.0.0.0', //'dev-server.dev',
     https: {
@@ -63,6 +68,7 @@ export default defineConfig({
       'Access-Control-Allow-Credentials': 'true'
     }
   },
+  
 
 
 

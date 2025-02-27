@@ -72,24 +72,9 @@
     <div class="container">
         <h1>העתקת קוד</h1>
         <div class="code-container">
-            <pre><code id="codeArea" class="language-javascript">
-// ==UserScript==
-// @name        gingim-booster-inject.js
-// @description Code injection of gingim-booster
-// @match       https://gingim.net/games*
-// ==/UserScript==
-(function shortInject() {
-    if (window.location.hostname === 'gingim.net') {
-
-        window.config = {
-            
-        };
-        
-        const url = '//gingim-booster.vercel.app/i.js'
-        fetch(url).then(r => r.text()).then(eval)
-    }
-})();
-</code></pre>
+            <pre>
+                <code id="codeArea" class="language-javascript"></code>
+            </pre>
             <div style="text-align: center;">
                 <button onclick="copyCode()">העתק קוד</button>
             </div>
@@ -102,6 +87,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
     <script>
+        // Fetch and display the code
+        fetch('gingim-booster-inject.js')
+            .then(response => response.text())
+            .then(code => {
+                document.getElementById('codeArea').textContent = code;
+                Prism.highlightAll();
+            });
         // פונקציית העתקה
         function copyCode() {
             const codeArea = document.getElementById('codeArea');

@@ -1,5 +1,5 @@
-// dev inject
-
+/* eslint-disable no-undef */
+// @ts-nocheck
 (() => {
     function loadExternalScript(url) {
         const script = document.createElement('script');
@@ -9,6 +9,7 @@
         document.head.appendChild(script);
     }
 
-    const url = '//dev-server.dev:5173/src/main.ts';
+    const url = '@theUrl';
+
     loadExternalScript(url);
 })();

@@ -6,8 +6,8 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
-/*     "noEmit": true, */
+/*  "noEmit": true, */
     "noUncheckedSideEffectImports": true
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "vite-plugin/vite-plugin-inject-script.ts"]
 }

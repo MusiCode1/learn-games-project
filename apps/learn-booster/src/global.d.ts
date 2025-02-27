@@ -13,7 +13,6 @@ declare global {
         videoUrls: string[];
         currentVideoIndex: number;
         settingsController: SettingsController;
-
         app: any;
     }
 }

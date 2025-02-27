@@ -61,8 +61,7 @@ export function extractGoogleDriveFolderId(url: string): string {
         }
     } catch (e) {
         // אם ה-URL לא תקין, נחזיר את הערך המקורי
-        console.error('URL לא תקין:', e);
+        
     }
-    
     return url;
 }
