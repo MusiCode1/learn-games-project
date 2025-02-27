@@ -3,7 +3,7 @@ export interface GameConfig {
     gameNameHeb?: string,
     triggerFunc: FunctionConfig,
     delay: number,
-    gameUrlPath: string | null
+    gameUrlPath?: string
 };
 
 interface FunctionConfig {
@@ -13,53 +13,32 @@ interface FunctionConfig {
 
 const rootPath = 'PIXI.game.state.states.game';
 
-const functionsListObj = {
-    makeMovie: {
-        name: 'makeMovie',
-        path: rootPath + '.makeMovie'
-    },
-    onShowAnimation: {
-        name: 'onShowAnimation',
-        path: rootPath + '.onShowAnimation'
-    },
-    makeBigMovie: {
-        name: 'makeBigMovie',
-        path: rootPath + '.makeBigMovie'
-    },
-    playEndLevelAnimation: {
-        name: 'playEndLevelAnimation',
-        path: rootPath + '.playEndLevelAnimation'
-    },
-    makeAnimation: {
-        name: 'makeAnimation',
-        path: rootPath + '.makeAnimation'
-    },
-    onStartAnim: {
-        name: 'onStartAnim',
-        path: rootPath + '.onStartAnim'
-    },
-    makeNewTurn: {
-        name: 'makeNewTurn',
-        path: rootPath + '.makeNewTurn'
-    }
+const functionNames = [
+    'makeNewTurn',
 
-} as const;
+    'makeMovie',
+    'onShowAnimation',
+    'makeBigMovie',
+    'playEndLevelAnimation',
+    'makeAnimation',
+    'onStartAnim'
+    
+] as const;
 
-type FunctionName = keyof typeof functionsListObj;
-type FunctionsConfig = {
-    [K in FunctionName]: {
-        name: K,
-        path: string
-    }
-};
+type FunctionKey = typeof functionNames[number];
+type FunctionsListType = Record<FunctionKey, FunctionConfig>;
 
-export const functionsList: FunctionsConfig = functionsListObj;
+export const functionsList = Object.fromEntries(
+    functionNames.map(name => [
+        name,
+        { name, path: `${rootPath}.${name}` }
+    ])
+) as FunctionsListType;
 
 export const defaultGameConfig = {
     gameName: 'default',
     triggerFunc: functionsList.makeNewTurn,
-    delay: 100,
-    gameUrlPath: null
+    delay: 100
 };
 
 export const gameConfigs: GameConfig[] = [{
@@ -75,63 +54,13 @@ export const gameConfigs: GameConfig[] = [{
     delay: 100,
     gameUrlPath: '/wp-content/uploads/new_games/touch_go/'
 },
-{
-    gameName: 'earase_animals',
-    gameNameHeb: "מחק וגלה בעלי חיים",
-    triggerFunc: functionsList.makeNewTurn,
-    delay: 100,
-    gameUrlPath: '/wp-content/uploads/new_games/earase_animals/'
-},
-{
-    gameName: 'puzzle_2',
-    gameNameHeb: "פאזל",
-    triggerFunc: functionsList.makeNewTurn,
-    delay: 100,
-    gameUrlPath: '/wp-content/uploads/new_games/puzzle_2/'
-},
-{
-    gameName: 'animals',
-    gameNameHeb: "בעלי חיים",
-    triggerFunc: functionsList.makeNewTurn,
-    delay: 100,
-    gameUrlPath: '/wp-content/uploads/new_games/animals/'
-},
+
+// משחק עם פונקציה שונה
 {
     gameName: 'transport',
     gameNameHeb: "כלי תחבורה",
     triggerFunc: functionsList.playEndLevelAnimation,
     delay: 1000 * 5,
     gameUrlPath: '/wp-content/uploads/new_games/transport/'
-},
-{
-    gameName: 'puzzle_3',
-    gameNameHeb: "פאזל שני חלקים",
-    triggerFunc: functionsList.makeNewTurn,
-    delay: 100,
-    gameUrlPath: '/wp-content/uploads/new_games/puzzle_3/'
-}, {
-    gameName: 'earase_purim',
-    gameNameHeb: "מחקו וגלו תחפושות",
-    triggerFunc: functionsList.makeNewTurn,
-    delay: 100,
-    gameUrlPath: '/wp-content/uploads/new_games/earase_purim/'
-},
-{
-    gameName: 'catch_me',
-    gameNameHeb: "תפוס אותי",
-    triggerFunc: functionsList.makeNewTurn,
-    delay: 100,
-    gameUrlPath: '/wp-content/uploads/new_games/catch_me/'
-}, {
-    gameName: 'catch_hanuka',
-    gameNameHeb: "תפוס אותי",
-    triggerFunc: functionsList.makeNewTurn,
-    delay: 100,
-    gameUrlPath: '/wp-content/uploads/new_games/catch_hanuka/'
-}, {
-    gameName: 'box',
-    gameNameHeb: "הפתעה בקופסה",
-    triggerFunc: functionsList.makeNewTurn,
-    delay: 100,
-    gameUrlPath: '/wp-content/uploads/new_games/box/'
-}];
+}
+];

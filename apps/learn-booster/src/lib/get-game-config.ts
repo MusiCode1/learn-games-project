@@ -15,7 +15,7 @@ export function getGameConfig() {
 
     if (!gameConfig) {
 
-        const triggerFuncObj = getFunctionByPath(defaultGameConfig.triggerFunc.path);
+        const triggerFuncObj = getFunctionByPath('makeNewTurn');
 
         if (!triggerFuncObj) return false;
 

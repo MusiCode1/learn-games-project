@@ -17,14 +17,14 @@ function shortInject() {
         window.config = {
             videoDisplayTimeInMS: 1000 * 30
         };
-        const url = '//musicode1.github.io/gingim-booster/i.js'
-        fetch(url).then(r => r.text()).then(eval)
+        const url = '//musicode1.github.io/gingim-booster/i.js';
+        fetch(url).then(r => r.text()).then(eval);
     }
 }
 
 function shortInjectWithShortUrl() {
     if (window.location.hostname === 'gingim.net') {
-        url = '//is.gd/GingimV02'
-        fetch(url, { mode: 'no-cors', redirect: 'follow' }).then(r => r.text()).then(eval)
+        url = '//is.gd/GingimV02';
+        fetch(url, { mode: 'no-cors', redirect: 'follow' }).then(r => r.text()).then(eval);
     }
 }

@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <title>העתקת קוד</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet" />
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,33 +17,33 @@
             justify-content: center;
             background-color: #f5f5f5;
         }
+
         .container {
             width: 90%;
             max-width: 800px;
             margin: 20px;
         }
+
         h1 {
             color: #333;
             text-align: center;
         }
+
         .code-container {
+            direction: ltr;
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: auto;
+            /* Add scroll for long code */
         }
-        textarea {
-            width: 100%;
-            height: 300px;
-            padding: 15px;
-            margin: 0;
-            font-family: monospace;
-            border: 1px solid #333;
-            border-radius: 4px;
-            resize: none;
+
+        .code-container code {
             direction: ltr;
-            box-sizing: border-box;
+            text-align: left;
         }
+
         button {
             background-color: #007bff;
             color: white;
@@ -52,9 +54,11 @@
             font-size: 16px;
             transition: background-color 0.3s;
         }
+
         button:hover {
             background-color: #0056b3;
         }
+
         .success-message {
             display: none;
             color: #28a745;
@@ -63,11 +67,17 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>העתקת קוד</h1>
         <div class="code-container">
-        <textarea id="codeArea" readonly>
+            <pre><code id="codeArea" class="language-javascript">
+// ==UserScript==
+// @name        gingim-booster-inject.js
+// @description Code injection of gingim-booster
+// @match       https://gingim.net/games*
+// ==/UserScript==
 (function shortInject() {
     if (window.location.hostname === 'gingim.net') {
 
@@ -75,26 +85,27 @@
             
         };
         
-        const url = '//musicode1.github.io/gingim-booster/i.js'
+        const url = '//gingim-booster.vercel.app/i.js'
         fetch(url).then(r => r.text()).then(eval)
     }
 })();
-</textarea>
-        <div style="text-align: center;">
-            <button onclick="copyCode()">העתק קוד</button>
+</code></pre>
+            <div style="text-align: center;">
+                <button onclick="copyCode()">העתק קוד</button>
+            </div>
         </div>
-    </div>
         <div id="successMessage" class="success-message">
             הקוד הועתק בהצלחה!
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
     <script>
         // פונקציית העתקה
         function copyCode() {
             const codeArea = document.getElementById('codeArea');
-            codeArea.select();
-            navigator.clipboard.writeText(codeArea.value).then(() => {
+            navigator.clipboard.writeText(codeArea.textContent).then(() => {
                 const successMessage = document.getElementById('successMessage');
                 successMessage.style.display = 'block';
                 setTimeout(() => {
@@ -104,4 +115,5 @@
         }
     </script>
 </body>
+
 </html>

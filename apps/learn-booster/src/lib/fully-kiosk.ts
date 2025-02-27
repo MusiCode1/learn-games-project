@@ -1,16 +1,4 @@
-/**
- * מייצג פריט (קובץ או תיקייה) במערכת הקבצים של Fully Kiosk
- */
-interface FullyItem {
-    canRead: boolean;
-    canWrite: boolean;
-    isHidden: boolean;
-    lastModified: number;
-    name: string;
-    size: number;
-    type: "file" | "folder";
-}
-
+import type { FullyItem } from '../types'
 const MOVIES_PATH = '/sdcard/Movies/';
 const BASE_URL = 'https://localhost';
 

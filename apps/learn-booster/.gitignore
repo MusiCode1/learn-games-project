@@ -36,3 +36,4 @@ dev-cert
 *.mkv
 .env
 onsaved-dev
+.vercel

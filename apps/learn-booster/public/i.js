@@ -1,3 +1,5 @@
+// prod inject
+
 (() => {
     function loadExternalScript(url) {
         const script = document.createElement('script');
@@ -7,6 +9,6 @@
         document.head.appendChild(script);
     }
 
-    const url = '//musicode1.github.io/gingim-booster/js/app-booster.js';
+    const url = '//gingim-booster.vercel.app/main.js';
     loadExternalScript(url);
 })();

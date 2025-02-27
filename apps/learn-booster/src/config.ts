@@ -1,4 +1,4 @@
-import type { Config, ConfigUpdate } from './types';
+import type { Config, ConfigOverrides } from './types';
 import { extractGoogleDriveFolderId, getFolderVideosUrls } from './lib/google-drive-video';
 import { shuffleArray } from './lib/utils/shuffle-array';
 import { getFileList } from "./lib/fully-kiosk";
@@ -72,7 +72,7 @@ async function getVideoUrls(config: Config): Promise<string[]> {
  * מביא את ההגדרות מה-Local Storage
  * @returns הגדרות מה-Local Storage או undefined אם אין הגדרות או שהן לא תקינות
  */
-function getConfigFromLocalStorage(): ConfigUpdate | undefined {
+function getConfigFromLocalStorage(): Config | undefined {
     try {
         const storedConfig = localStorage.getItem(localStorgeItemName);
         if (!storedConfig) return undefined;
@@ -91,7 +91,7 @@ function getConfigFromLocalStorage(): ConfigUpdate | undefined {
  * שומר את ההגדרות ב-Local Storage
  * @param config ההגדרות לשמירה
  */
-export function saveConfigToLocalStorage(config: ConfigUpdate): boolean {
+export function saveConfigToLocalStorage(config: Config): boolean {
     try {
         localStorage.setItem(localStorgeItemName, JSON.stringify(config));
         return true;
@@ -101,7 +101,7 @@ export function saveConfigToLocalStorage(config: ConfigUpdate): boolean {
     }
 }
 
-export async function getConfigs() {
+export async function getConfigs(configOverrides: ConfigOverrides = {}) {
 
     const defaultConfig: Config = {
         videoDisplayTimeInMS: 20 * 1000,
@@ -111,19 +111,25 @@ export async function getConfigs() {
         videoSource: 'local',
         googleDriveFolderUrl: undefined,
         hideVideoProgress: false,
-        turnsPerVideo: 1
+        turnsPerVideo: 1,
+        appName: 'com.edujoy.fidget.pop.it',
+
+        systemConfig: {
+            enableHideModalButton: true,
+            disableGameCodeInjection: false
+        }
     };
 
-    let config: Config = {
+    let config = {
         ...defaultConfig
     };
 
-    const savedConfigs = getConfigFromLocalStorage();
+    const savedConfig = getConfigFromLocalStorage();
 
-    if (savedConfigs) {
+    if (savedConfig) {
         config = {
             ...config,
-            ...savedConfigs
+            ...savedConfig
         }
     }
 
@@ -134,7 +140,21 @@ export async function getConfigs() {
         }
     }
 
-    config.videoUrls = await getVideoUrls(config);
+    if (configOverrides) {
+        config = {
+            ...config,
+            ...configOverrides as Partial<Config>
+        }
+    }
+
+    if (config.mode === 'video') {
+
+        try {
+            config.videoUrls = await getVideoUrls(config);
+        } catch (error) {
+            console.error('שגיאה בקבלת כתובות הסרטונים:', error);
+        }
+    }
 
     return {
         defaultConfig,

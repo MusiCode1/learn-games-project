@@ -9,9 +9,11 @@
 
   interface Props {
     config: Config;
+    handleShowVideo: () => void;
   }
 
-  let { config }: Props = $props();
+  let { config, handleShowVideo = $bindable() }: Props = $props();
+
   let settingsVisible = $state(false);
   export const settingsController = {
     show: () => (settingsVisible = true),
@@ -31,7 +33,11 @@
     <div transition:fade>
       <Modal visible={true}>
         <div transition:fade={{ delay: 500, duration: 1000 }}>
-          <Settings {config} controller={settingsController} />
+          <Settings
+            {config}
+            controller={settingsController}
+            {handleShowVideo}
+          />
         </div>
       </Modal>
     </div>

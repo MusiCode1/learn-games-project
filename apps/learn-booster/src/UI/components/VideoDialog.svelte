@@ -3,16 +3,18 @@
   import { scale } from "svelte/transition";
   import PlayLogo from "../assets/play.svg?raw";
   import LoadingSpinner from "./LoadingSpinner.svelte";
-  import type { VideoDialogProps, VideoController } from "../../types";
+  import type { VideoDialogProps } from "../../types";
 
   let {
+    config,
     videoUrl,
     type,
     visible = $bindable(false),
-    videoController = $bindable() as VideoController,
+    videoController = $bindable(),
     time = $bindable("00:00"),
-    onVideoEnded = $bindable() as (() => void) | undefined,
+    onVideoEnded = $bindable(),
     hideProgress = $bindable(false),
+    hideModal = $bindable(),
   }: VideoDialogProps = $props();
 
   let videoElement = $state() as HTMLVideoElement;
@@ -122,11 +124,21 @@
         <p>•</p>
         <p>{time}</p>
       </div>
-
-      <div
-        class="border border-gray-600 bg-gray-500
+      
+      {#if config.systemConfig.enableHideModalButton}
+        <div
+          id="close-button"
+          onclick={hideModal}
+          class="border border-red-700 bg-red-400
                      rounded-full aspect-square h-4 cursor-pointer"
-      ></div>
+        ></div>
+      {:else}
+        <div
+          id="close-button"
+          class="border border-gray-600 bg-gray-500
+                   rounded-full aspect-square h-4 cursor-pointer"
+        ></div>
+      {/if}
     </div>
 
     <!-- תוכן -->

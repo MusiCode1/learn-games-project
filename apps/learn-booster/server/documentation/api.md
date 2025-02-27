@@ -2,93 +2,58 @@
 
 ## נקודות קצה
 
-### GET /video/:fileId/info
-מחזיר מידע על סרטון מגוגל דרייב.
+### GET /videos/folder/:folderId
+מחזיר רשימת סרטונים מתיקייה בגוגל דרייב.
 
 #### פרמטרים
-- `fileId` (string, חובה) - מזהה הקובץ בגוגל דרייב
+- `folderId` (string, חובה) - מזהה התיקייה בגוגל דרייב
 
 #### תגובה
 ```json
 {
-  "id": "string",
-  "name": "string",
-  "mimeType": "string",
-  "size": "number",
-  "duration": "number",
-  "createdTime": "string",
-  "modifiedTime": "string"
+  "files": [
+    {
+      "id": "string",
+      "name": "string",
+      "mimeType": "string",
+      "size": "number",
+      "createdTime": "string",
+      "modifiedTime": "string"
+    }
+  ]
 }
 ```
 
 ### GET /video/:fileId
-מזרים סרטון מגוגל דרייב עם תמיכה בהזרמה חלקית (HTTP 206).
+מזרים סרטון מגוגל דרייב.
 
 #### פרמטרים בנתיב
 - `fileId` (string, חובה) - מזהה הקובץ בגוגל דרייב
 
-#### פרמטרים ב-Query
-- `timestamp` (number, אופציונלי) - נקודת זמן בשניות להתחלת ההזרמה
-
-#### Headers
-הנקודה תומכת ב-Range header לבקשת חלקים ספציפיים מהסרטון:
-```
-Range: bytes=start-end
-```
-
-לדוגמה:
-- `Range: bytes=0-1048575` - לבקש את המגה-בייט הראשון
-- `Range: bytes=1048576-2097151` - לבקש את המגה-בייט השני
-- `Range: bytes=10485760-` - לבקש את כל התוכן החל מ-10MB
-
 #### תגובות
 
 ##### הצלחה (200 OK)
-כאשר מבקשים את כל הסרטון:
 - Content-Type: video/mp4 (או סוג MIME מתאים אחר)
 - Content-Length: [גודל הקובץ המלא]
-- Accept-Ranges: bytes
-- Cache-Control: public, max-age=31536000
-
-##### תוכן חלקי (206 Partial Content)
-כאשר מבקשים חלק מהסרטון:
-- Content-Type: video/mp4 (או סוג MIME מתאים אחר)
-- Content-Range: bytes start-end/total
-- Content-Length: [גודל החלק המבוקש]
-- Accept-Ranges: bytes
-- Cache-Control: public, max-age=31536000
 
 ##### שגיאות
 - 400 Bad Request - הקובץ אינו סרטון
 - 403 Forbidden - אין הרשאות גישה לקובץ
 - 404 Not Found - הקובץ לא נמצא
-- 416 Range Not Satisfiable - טווח הבתים המבוקש אינו תקין
 - 500 Internal Server Error - שגיאה כללית
 
 ## דוגמאות לשימוש
 
-### קבלת מידע על סרטון
-```bash
-curl http://localhost:3000/video/FILE_ID/info
-```
-
-### הזרמת סרטון מלא
+### הזרמת סרטון
 ```bash
 curl http://localhost:3000/video/FILE_ID
 ```
 
-### הזרמת חלק מסרטון
+### קבלת רשימת סרטונים מתיקייה
 ```bash
-curl http://localhost:3000/video/FILE_ID -H "Range: bytes=0-1048575"
-```
-
-### קפיצה לנקודת זמן ספציפית
-```bash
-curl http://localhost:3000/video/FILE_ID?timestamp=120
+curl http://localhost:3000/videos/folder/FOLDER_ID
 ```
 
 ## הערות מימוש
-- המערכת תומכת בהזרמה חלקית באמצעות HTTP 206 Partial Content
-- ניתן לשלב timestamp עם Range header לקבלת חלק ספציפי מנקודת זמן מסוימת
-- המערכת משתמשת במטמון עבור מידע על סרטונים (נקודת הקצה info)
 - הסרטונים מוזרמים באיכות המקורית שלהם מגוגל דרייב
+- המערכת משתמשת במטמון עבור טוקנים של גוגל דרייב

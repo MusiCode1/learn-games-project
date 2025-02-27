@@ -11,15 +11,6 @@ export interface VideoMetadata {
   modifiedTime: string;
 }
 
-// אפשרויות סטרימינג
-export interface StreamOptions {
-  timestamp?: number;  // נקודת זמן התחלתית בשניות
-  range?: {
-    start: number;    // מיקום התחלתי בבתים
-    end: number;      // מיקום סופי בבתים
-  };
-}
-
 // הרחבת טיפוס הבקשה של Fastify
 declare module 'fastify' {
   interface FastifyRequest {

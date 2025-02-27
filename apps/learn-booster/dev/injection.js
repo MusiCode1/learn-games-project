@@ -4,9 +4,9 @@
 
         window.config = {
             videoUrl :'http://localhost/sdcard/Movies/video.mp4',
-            type: "video/mp4",
+            type: 'video/mp4',
             videoDisplayTimeInMS: 20 * 1000,
-            mode: "video"
+            mode: 'video'
         };
 
         function loadExternalScript(url) {

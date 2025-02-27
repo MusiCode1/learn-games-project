@@ -32,7 +32,7 @@
   function nextVideo() {
     currentVideoIndex = (currentVideoIndex + 1) % config.videoUrls.length;
     const originalUrl = config.videoUrls[currentVideoIndex];
-    if (isFullyKiosk()) {
+    if (isFullyKiosk() && config.videoSource === "local") {
       if (videoUrl.startsWith("blob:")) URL.revokeObjectURL(videoUrl);
 
       getVideoBlob(originalUrl).then((res) => (videoUrl = res));
@@ -47,7 +47,7 @@
       const elapsedTimeInMS = Date.now() - startTime;
       const remainingTimeInMS = Math.max(
         0,
-        config.videoDisplayTimeInMS - elapsedTimeInMS,
+        config.videoDisplayTimeInMS - elapsedTimeInMS
       );
       // עיגול לשנייה הקרובה כדי למנוע קפיצות
       const remainingTimeInSeconds =
@@ -106,6 +106,7 @@
   <main class="min-h-screen flex items-center justify-center">
     <Modal visible={modalVisible}>
       <VideoDialog
+        {config}
         visible={videoVisible}
         {videoUrl}
         type={config.type}
@@ -113,10 +114,14 @@
         onVideoEnded={nextVideo}
         {time}
         hideProgress={config.hideVideoProgress}
+        {hideModal}
       />
     </Modal>
   </main>
 </div>
+
+<!-- שקול שינוי שם הקובץ למשהו שמתאר נגן וידאו, במידה וזה יותר ברור.
+ -->
 
 <style>
   #show-container {

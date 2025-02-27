@@ -9,7 +9,7 @@
 
     };
 
-    const url = '//musicode1.github.io/gingim-booster/i.js'
-    fetch(url).then(r => r.text()).then(eval)
+    const url = '//musicode1.github.io/gingim-booster/i.js';
+    fetch(url).then(r => r.text()).then(eval);
 
 })();
