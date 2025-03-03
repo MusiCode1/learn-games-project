@@ -5,10 +5,10 @@
   import Settings from "./components/Settings.svelte";
   import Modal from "./components/Modal.svelte";
 
-  import type { Config, SettingsController } from "../types";
+  import type { OldConfig, SettingsController } from "../types";
 
   interface Props {
-    config: Config;
+    config: OldConfig;
     handleShowVideo: () => void;
   }
 

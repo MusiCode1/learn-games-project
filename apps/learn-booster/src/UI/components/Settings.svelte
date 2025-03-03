@@ -1,14 +1,14 @@
 <script lang="ts">
-  import type { Config, SettingsController } from "../../types";
+  import type { OldConfig, SettingsController } from "../../types";
   import { onMount } from "svelte";
   import { saveConfigToLocalStorage } from "../../config";
   import { loadVideoElement } from "../component-composer";
 
   let saveStatus = $state<"success" | "error" | null>(null);
-  let saveStatusTimeoutHandle: number;
+  let saveStatusTimeoutHandle: NodeJS.Timeout;
 
   interface Props {
-    config: Config;
+    config: OldConfig;
     controller?: SettingsController;
     handleShowVideo: () => void;
   }
@@ -46,6 +46,8 @@
     } else if (mode === "app") {
       // שמירת הגדרות מצב אפליקציה
       config.appName = appName;
+      config.videoDisplayTimeInMS = videoDisplayTime * 1000; // המרה משניות למילישניות
+      config.turnsPerVideo = turnsPerVideo;
     }
 
     // שמירת הקונפיגורציה בלוקל סטורג'

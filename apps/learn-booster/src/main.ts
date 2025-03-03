@@ -1,6 +1,7 @@
 import { loadVideoElement, loadSettingsElement } from "./UI/component-composer";
 import { injectCodeIntoIframe } from "./lib/script-element-injection";
 import { log } from "./lib/logger.svelte";
+import { initializeConfig } from "./lib/config-manager";
 
 const DEV_SERVER_HOSTNAME = 'dev-server.dev';
 
@@ -18,6 +19,9 @@ async function main(): Promise<void> {
     log('Gingim-Booster is loaded in', mode, 'mode.');
 
     try {
+        // אתחול מערכת ההגדרות בתחילת הריצה
+        await initializeConfig(window.config, selfUrl, devMode);
+        
         if (isIframe) {
             await loadVideoElement();
 

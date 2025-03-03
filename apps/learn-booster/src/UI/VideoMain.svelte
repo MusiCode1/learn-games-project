@@ -5,11 +5,11 @@
   import LeftButton from "./components/LeftButton.svelte";
   import { sleep } from "../lib/sleep";
   import { msToTime } from "../lib/utils/ms-to-time";
-  import type { Config, VideoController, PlayerControls } from "../types";
+  import type { OldConfig, VideoController, PlayerControls } from "../types";
   import { getVideoBlob, isFullyKiosk } from "../lib/fully-kiosk";
 
   interface Props {
-    config: Config;
+    config: OldConfig;
   }
 
   let { config }: Props = $props();
@@ -20,7 +20,7 @@
   let videoController = $state<VideoController>();
   let currentVideoIndex = $state(0);
   let time = $state("00:00");
-  let intervalId: number | undefined;
+  let intervalId: NodeJS.Timeout | undefined;
 
   let videoUrl = $state("");
 

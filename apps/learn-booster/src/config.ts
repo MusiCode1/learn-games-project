@@ -1,4 +1,4 @@
-import type { Config, ConfigOverrides } from './types';
+import type { OldConfig, ConfigOverrides } from './types';
 import { extractGoogleDriveFolderId, getFolderVideosUrls } from './lib/google-drive-video';
 import { shuffleArray } from './lib/utils/shuffle-array';
 import { getFileList } from "./lib/fully-kiosk";
@@ -12,7 +12,7 @@ const localStorgeItemName = 'gingim-booster-config';
  * @param config הגדרות המערכת
  * @returns מערך של כתובות URL לסרטונים
  */
-async function getVideoUrls(config: Config): Promise<string[]> {
+async function getVideoUrls(config: OldConfig): Promise<string[]> {
     let videoUrls: string[] = [];
 
     async function getAndSetVideoFolderFromGdrive(folderId: string) {
@@ -72,7 +72,7 @@ async function getVideoUrls(config: Config): Promise<string[]> {
  * מביא את ההגדרות מה-Local Storage
  * @returns הגדרות מה-Local Storage או undefined אם אין הגדרות או שהן לא תקינות
  */
-function getConfigFromLocalStorage(): Config | undefined {
+function getConfigFromLocalStorage(): OldConfig | undefined {
     try {
         const storedConfig = localStorage.getItem(localStorgeItemName);
         if (!storedConfig) return undefined;
@@ -91,7 +91,7 @@ function getConfigFromLocalStorage(): Config | undefined {
  * שומר את ההגדרות ב-Local Storage
  * @param config ההגדרות לשמירה
  */
-export function saveConfigToLocalStorage(config: Config): boolean {
+export function saveConfigToLocalStorage(config: OldConfig): boolean {
     try {
         localStorage.setItem(localStorgeItemName, JSON.stringify(config));
         return true;
@@ -103,7 +103,7 @@ export function saveConfigToLocalStorage(config: Config): boolean {
 
 export async function getConfigs(configOverrides: ConfigOverrides = {}) {
 
-    const defaultConfig: Config = {
+    const defaultConfig: OldConfig = {
         videoDisplayTimeInMS: 20 * 1000,
         videoUrls: [],
         type: 'video/mp4',
@@ -143,7 +143,7 @@ export async function getConfigs(configOverrides: ConfigOverrides = {}) {
     if (configOverrides) {
         config = {
             ...config,
-            ...configOverrides as Partial<Config>
+            ...configOverrides as Partial<OldConfig>
         }
     }
 

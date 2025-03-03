@@ -46,7 +46,7 @@ export interface PlayerControls {
   video?: VideoController;
 }
 
-export type Config = {
+export type OldConfig = {
   videoDisplayTimeInMS: number;
   videoUrls: string[];
   type: string;
@@ -62,6 +62,102 @@ export type Config = {
     disableGameCodeInjection: boolean;
   };
 }
+
+/**
+ * טיפוס המייצג את מבנה ההגדרות של המערכת
+ */
+export type Config = {
+  // הגדרות כלליות
+  /**
+   * סוג התגמול שיוצג למשתמש (סרטון או אפליקציה)
+   */
+  rewardType: 'video' | 'app';
+  
+  /**
+   * משך הזמן (במילישניות) להצגת התגמול
+   */
+  rewardDisplayDurationMs: number;
+  
+  /**
+   * מספר המשימות שיש לבצע לפני הצגת תגמול
+   */
+  turnsPerReward: number;
+  
+  // הגדרות הודעות ותזכורות
+  notifications: {
+    // הודעה לפני סיום זמן התגמול
+    endingNotification: {
+      /**
+       * טקסט ההודעה שתוצג לפני סיום זמן התגמול
+       */
+      text: string;
+      
+      /**
+       * כמה זמן (במילישניות) לפני סיום להציג את ההודעה
+       */
+      displayBeforeEndMs: number;
+      
+      /**
+       * מתי להציג את ההודעה (במצב וידאו, אפליקציה, שניהם, או אף פעם)
+       */
+      enabledFor: 'video' | 'app' | 'both' | 'none';
+    };
+  };
+  
+  // הגדרות וידאו - רלוונטיות רק כאשר rewardType === 'video'
+  video: {
+    /**
+     * רשימת סרטונים להצגה, כל אחד עם ה-URL וה-MIME Type שלו
+     */
+    videos: Array<{
+      /**
+       * כתובת URL של הסרטון
+       */
+      url: string;
+      
+      /**
+       * סוג/פורמט הסרטון (למשל 'video/mp4')
+       */
+      mimeType: string;
+    }>;
+    
+    /**
+     * מקור הסרטונים (מקומי, גוגל דרייב, או יוטיוב)
+     */
+    source: 'local' | 'google-drive' | 'youtube';
+    
+    /**
+     * כתובת URL של תיקיית Google Drive שמכילה סרטונים
+     */
+    googleDriveFolderUrl?: string;
+    
+    /**
+     * האם להסתיר את פס ההתקדמות של הסרטון
+     */
+    hideProgressBar?: boolean;
+  };
+  
+  // הגדרות אפליקציה - רלוונטיות רק כאשר rewardType === 'app'
+  app: {
+    /**
+     * שם החבילה (Package Name) של האפליקציה להפעלה
+     */
+    packageName?: string;
+  };
+  
+  // הגדרות מערכת - לא מיועדות לשינוי ע"י המשתמש
+  system: {
+    /**
+     * האם לאפשר כפתור להסתרת המודל
+     */
+    enableHideModalButton: boolean;
+    
+    /**
+     * האם לבטל הזרקת קוד למשחק
+     */
+    disableGameCodeInjection: boolean;
+  };
+};
 
 type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]
@@ -96,3 +192,16 @@ export interface DriveFile {
   name: string;
   mimeType: string;
 }
+
+/**
+ * פריט וידאו בודד
+ */
+export interface VideoItem {
+  url: string;
+  mimeType: string;
+}
+
+/**
+ * רשימת פריטי וידאו
+ */
+export type VideoList = VideoItem[];

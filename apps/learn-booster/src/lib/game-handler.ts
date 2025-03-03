@@ -1,5 +1,6 @@
 import type { GameConfig } from "./game-config";
-import type { PlayerControls, Config } from "../types";
+import type { PlayerControls, OldConfig, Config } from "../types";
+import { convertNewConfigToOld } from "./config-manager";
 
 import { injectCodeIntoFunction } from "./inject-code-into-function";
 import { getGameConfig } from "./get-game-config";
@@ -10,7 +11,7 @@ const AFTER_VIDEO_DELAY_MS = 2500;
 
 interface handleGameOptions {
     gameConfig?: GameConfig;
-    config: Config;
+    config: OldConfig; // נשאר OldConfig לתאימות לאחור
 
     playerControls: PlayerControls;
 
@@ -75,7 +76,12 @@ export async function handleGameTurn(options: handleGameOptions):
     return res;
 }
 
-export function injectCodeToGame(playerControls: PlayerControls, config: Config) {
+/**
+ * הזרקת קוד למשחק
+ * @param playerControls בקר הנגן
+ * @param config הגדרות המערכת (במבנה הישן)
+ */
+export function injectCodeToGame(playerControls: PlayerControls, config: OldConfig) {
     try {
         const gameConfig = getGameConfig();
 
