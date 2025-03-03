@@ -2,12 +2,12 @@
 
 import { mount, unmount } from 'svelte';
 import './app.css';
-import type { Config, ConfigOverrides, PlayerControls, SettingsController } from '../types';
+import type { Config, PlayerControls, SettingsController } from '../types';
 import App from './VideoMain.svelte';
 import SettingsPage from './SettingsMain.svelte';
 import { log } from '../lib/logger.svelte';
-import { initializeConfig, getAllConfig, updateConfig, convertNewConfigToOld } from '../lib/config-manager';
-import { injectCodeToGame, handleGameTurn } from '../lib/game-handler';
+import { getAllConfig, convertNewConfigToOld } from '../lib/config-manager';
+import { handleGameTurn } from '../lib/game-handler';
 
 interface MountComponenttOptions {
   elementId: string;
@@ -60,7 +60,7 @@ export function mountComponent(options: MountComponenttOptions): Record<string, 
 function initializeVideoPlayer(config: Config) {
   // המרה למבנה הישן עבור תאימות עם קומפוננטות קיימות
   const oldConfig = convertNewConfigToOld(config);
-  
+
   const app = mountComponent({
     elementId: 'playerRoot',
     component: App,
@@ -101,12 +101,8 @@ export async function loadSettingsElement() {
 
 
 // TODO: ליצור פונקציית בדיקת תקינות ההגדרות
-export async function loadVideoElement(configOverrides: ConfigOverrides = {}) {
-  // אם יש דריסות הגדרות, מעדכנים את ההגדרות
-  if (Object.keys(configOverrides).length > 0) {
-    await initializeConfig({...window.config, ...configOverrides}, import.meta.url, import.meta.env.DEV);
-  }
-  
+export async function loadVideoElement() {
+
   // קבלת ההגדרות העדכניות
   const config = getAllConfig();
 
@@ -131,27 +127,17 @@ export async function loadVideoElement(configOverrides: ConfigOverrides = {}) {
     throw new Error('Failed to initialize video player: ' + (error as Error).message);
   }
 
-  if (!configOverrides?.system?.disableGameCodeInjection) {
-    // המרה למבנה הישן עבור תאימות עם פונקציות קיימות
-    const oldConfig = convertNewConfigToOld(config);
-    injectCodeToGame(playerControls, oldConfig);
-  }
-
   return { playerControls, app };
 }
 
 function initializeSettings(config: Config): SettingsController {
+  
   const handleShowVideo = async () => {
-    const { playerControls, app } = await loadVideoElement({
-      system: {
-        enableHideModalButton: true,
-        disableGameCodeInjection: true,
-      }
-    });
+    const { playerControls, app } = await loadVideoElement();
 
     // המרה למבנה הישן עבור תאימות עם פונקציות קיימות
     const oldConfig = convertNewConfigToOld(config);
-    
+
     handleGameTurn({
       playerControls,
       config: oldConfig
@@ -161,7 +147,7 @@ function initializeSettings(config: Config): SettingsController {
   };
   // המרה למבנה הישן עבור תאימות עם קומפוננטות קיימות
   const oldConfig = convertNewConfigToOld(config);
-  
+
   const settingsApp = mountComponent({
     elementId: 'settingsRoot',
     component: SettingsPage,
