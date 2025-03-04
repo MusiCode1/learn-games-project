@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount,onDestroy } from "svelte";
   import VideoDialog from "./components/VideoDialog.svelte";
   import Modal from "./components/Modal.svelte";
   import LeftButton from "./components/LeftButton.svelte";
@@ -7,7 +7,7 @@
   import { msToTime } from "../lib/utils/ms-to-time";
   import type { Config, VideoController, VideoItem } from "../types";
   import { getVideoBlob, isFullyKiosk } from "../lib/fully-kiosk";
-  import { getAllConfig } from "../lib/config-manager";
+  import { getAllConfig, addConfigListener } from "../lib/config-manager";
 
   interface Props {
     config?: Config;
@@ -16,6 +16,12 @@
   let { config }: Props = $props();
 
   let localConfig = config || getAllConfig();
+
+  const configSubscriber = addConfigListener((newConfig) => {
+    config = newConfig;
+  });
+
+  onDestroy(configSubscriber);
 
   let visible = $state(false);
   let modalVisible = $state(false);
@@ -33,7 +39,8 @@
   onMount(() => nextVideo());
 
   function nextVideo() {
-    currentVideoIndex = (currentVideoIndex + 1) % localConfig.video.videos.length;
+    currentVideoIndex =
+      (currentVideoIndex + 1) % localConfig.video.videos.length;
     const videoItem: VideoItem = localConfig.video.videos[currentVideoIndex];
 
     if (isFullyKiosk() && localConfig.video.source === "local") {
