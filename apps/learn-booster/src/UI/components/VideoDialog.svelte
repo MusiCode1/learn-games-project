@@ -3,19 +3,32 @@
   import { scale } from "svelte/transition";
   import PlayLogo from "../assets/play.svg?raw";
   import LoadingSpinner from "./LoadingSpinner.svelte";
-  import type { VideoDialogProps } from "../../types";
+
+  import type { Config, VideoController } from "../../types";
+
+  interface VideoDialogProps {
+    config: Config;
+    visible: boolean;
+    videoUrl: string;
+    mimeType: string;
+    videoController?: VideoController;
+    time?: string;
+    onVideoEnded: () => void;
+    hideModal: () => void;
+  }
 
   let {
     config,
     videoUrl,
-    type,
+    mimeType,
     visible = $bindable(false),
     videoController = $bindable(),
     time = $bindable("00:00"),
     onVideoEnded = $bindable(),
-    hideProgress = $bindable(false),
     hideModal = $bindable(),
   }: VideoDialogProps = $props();
+
+  let hideProgress = config.video.hideProgressBar;
 
   let videoElement = $state() as HTMLVideoElement;
   let loading = $state(true);
@@ -124,8 +137,8 @@
         <p>•</p>
         <p>{time}</p>
       </div>
-      
-      {#if config.systemConfig.enableHideModalButton}
+
+      {#if config.system.enableHideModalButton}
         <div
           id="close-button"
           onclick={hideModal}
@@ -169,7 +182,7 @@
         onclick={onClickVideoToggle}
         onended={handleVideoEnded}
       >
-        <source src={videoUrl} {type} />
+        <source src={videoUrl} type={mimeType} />
         הדפדפן שלך לא תומך בתגית וידאו.
       </video>
     </div>

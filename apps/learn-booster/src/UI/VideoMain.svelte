@@ -5,14 +5,17 @@
   import LeftButton from "./components/LeftButton.svelte";
   import { sleep } from "../lib/sleep";
   import { msToTime } from "../lib/utils/ms-to-time";
-  import type { OldConfig, VideoController, PlayerControls } from "../types";
+  import type { Config, VideoController, VideoItem } from "../types";
   import { getVideoBlob, isFullyKiosk } from "../lib/fully-kiosk";
+  import { getAllConfig } from "../lib/config-manager";
 
   interface Props {
-    config: OldConfig;
+    config?: Config;
   }
 
   let { config }: Props = $props();
+
+  let localConfig = config || getAllConfig();
 
   let visible = $state(false);
   let modalVisible = $state(false);
@@ -20,9 +23,9 @@
   let videoController = $state<VideoController>();
   let currentVideoIndex = $state(0);
   let time = $state("00:00");
-  let intervalId: NodeJS.Timeout | undefined;
-
   let videoUrl = $state("");
+
+  let intervalId: NodeJS.Timeout | undefined;
 
   // svelte-ignore state_referenced_locally
   window.currentVideoIndex = currentVideoIndex;
@@ -30,14 +33,15 @@
   onMount(() => nextVideo());
 
   function nextVideo() {
-    currentVideoIndex = (currentVideoIndex + 1) % config.videoUrls.length;
-    const originalUrl = config.videoUrls[currentVideoIndex];
-    if (isFullyKiosk() && config.videoSource === "local") {
+    currentVideoIndex = (currentVideoIndex + 1) % localConfig.video.videos.length;
+    const videoItem: VideoItem = localConfig.video.videos[currentVideoIndex];
+
+    if (isFullyKiosk() && localConfig.video.source === "local") {
       if (videoUrl.startsWith("blob:")) URL.revokeObjectURL(videoUrl);
 
-      getVideoBlob(originalUrl).then((res) => (videoUrl = res));
+      getVideoBlob(videoItem.url).then((res) => (videoUrl = res));
     } else {
-      videoUrl = originalUrl;
+      videoUrl = videoItem.url;
     }
   }
 
@@ -47,7 +51,7 @@
       const elapsedTimeInMS = Date.now() - startTime;
       const remainingTimeInMS = Math.max(
         0,
-        config.videoDisplayTimeInMS - elapsedTimeInMS
+        localConfig.rewardDisplayDurationMs - elapsedTimeInMS
       );
       // עיגול לשנייה הקרובה כדי למנוע קפיצות
       const remainingTimeInSeconds =
@@ -106,14 +110,13 @@
   <main class="min-h-screen flex items-center justify-center">
     <Modal visible={modalVisible}>
       <VideoDialog
-        {config}
+        config={localConfig}
         visible={videoVisible}
         {videoUrl}
-        type={config.type}
+        mimeType={localConfig.video.videos[currentVideoIndex]?.mimeType}
         bind:videoController
         onVideoEnded={nextVideo}
         {time}
-        hideProgress={config.hideVideoProgress}
         {hideModal}
       />
     </Modal>

@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 // ==UserScript==
 // @name        gingim-booster-inject.js
 // @description Code injection of gingim-booster

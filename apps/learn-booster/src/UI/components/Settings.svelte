@@ -1,16 +1,14 @@
 <script lang="ts">
-  import type { OldConfig, SettingsController } from "../../types";
+  import type { Config, SettingsController } from "../../types";
   import { onMount } from "svelte";
-  import { saveConfigToLocalStorage } from "../../config";
-  import { loadVideoElement } from "../component-composer";
-
-  let saveStatus = $state<"success" | "error" | null>(null);
-  let saveStatusTimeoutHandle: NodeJS.Timeout;
+  import * as configManager from "../../lib/config-manager";
+  import { log } from "../../lib/logger.svelte";
+  import { isFullyKiosk } from "../../lib/fully-kiosk";
 
   interface Props {
-    config: OldConfig;
+    config: Config;
     controller?: SettingsController;
-    handleShowVideo: () => void;
+    handleShowVideo: (newConfig: Config) => void;
   }
 
   let {
@@ -19,39 +17,27 @@
     handleShowVideo = $bindable(),
   }: Props = $props();
 
-  const videoDisplayTimeInSec = Math.floor(
-    // המרה ממילישניות לשניות
-    (config.videoDisplayTimeInMS || 10000) / 1000
-  );
+  const msToSec = (n: number) => Math.floor(n / 1000);
 
-  let mode = $state(config.mode || "video");
-  let appName = $state(config.appName || "com.edujoy.fidget.pop.it");
-  let googleDriveFolderUrl = $state(config.googleDriveFolderUrl || "");
-  let videoDisplayTime = $state(videoDisplayTimeInSec);
-  let videoSource = $state(config.videoSource || "local");
-  let hideVideoProgress = $state(config.hideVideoProgress || false);
-  let turnsPerVideo = $state(config.turnsPerVideo || 1);
+  const isNotFullyKiosk = !isFullyKiosk();
 
-  function handleSave() {
-    config.mode = mode; // שמירת המצב
+  let saveStatus = $state<"success" | "error" | null>(null);
+  let saveStatusTimeoutHandle: NodeJS.Timeout;
 
-    if (mode === "video") {
-      // שמירת הגדרות מצב סרטון
-      config.hideVideoProgress = hideVideoProgress;
-      // עדכון הקונפיגורציה - חילוץ ID מה-URL אם זה URL של גוגל דרייב
-      config.googleDriveFolderUrl = googleDriveFolderUrl;
-      config.videoDisplayTimeInMS = videoDisplayTime * 1000; // המרה משניות למילישניות
-      config.videoSource = videoSource;
-      config.turnsPerVideo = turnsPerVideo;
-    } else if (mode === "app") {
-      // שמירת הגדרות מצב אפליקציה
-      config.appName = appName;
-      config.videoDisplayTimeInMS = videoDisplayTime * 1000; // המרה משניות למילישניות
-      config.turnsPerVideo = turnsPerVideo;
-    }
+  let newConfig = $state(structuredClone(config));
+
+  let videoDisplayTime = $state(msToSec(config.rewardDisplayDurationMs));
+
+  let videoDisplayTimeInSec = $derived(videoDisplayTime * 1000);
+
+  function onSaveHandle() {
+    newConfig.rewardDisplayDurationMs = videoDisplayTimeInSec; // המרה משניות למילישניות
+
+    configManager.updateConfig($state.snapshot(newConfig));
+    config = configManager.getAllConfig();
 
     // שמירת הקונפיגורציה בלוקל סטורג'
-    const saved = saveConfigToLocalStorage(config);
+    const saved = configManager.saveConfigToStorage();
 
     // עדכון סטטוס השמירה
     saveStatus = saved ? "success" : "error";
@@ -64,10 +50,21 @@
       if (saved) {
         controller?.hide();
         saveStatus = null;
-        window.location.reload();
       }
     }, 1500);
   }
+
+  const showVideo = () => {
+    newConfig.rewardDisplayDurationMs = videoDisplayTimeInSec; // המרה משניות למילישניות
+
+    log(newConfig);
+    handleShowVideo(newConfig);
+  };
+
+  const onClose = () => {
+    newConfig = config;
+    controller?.hide();
+  };
 
   // ניקוי הטיימר בעת הסרת הקומפוננטה
   onMount(() => {
@@ -92,16 +89,16 @@
         <label for="mode" class="font-medium text-base">מצב מחזק:</label>
         <select
           id="mode"
-          bind:value={mode}
+          bind:value={newConfig.rewardType}
           class="p-3 border rounded-lg text-right bg-white text-base w-full touch-manipulation"
         >
           <option value="video">סרטון</option>
-          <option value="app">אפליקציה</option>
+          <option value="app" disabled={isNotFullyKiosk}>אפליקציה</option>
         </select>
       </div>
 
       <!-- הגדרות מצב אפליקציה -->
-      {#if mode === "app"}
+      {#if newConfig.rewardType === "app"}
         <div class="flex flex-col space-y-1 md:space-y-2 text-right">
           <label for="appName" class="font-medium text-base"
             >שם האפליקציה:</label
@@ -109,7 +106,7 @@
           <input
             id="appName"
             type="text"
-            bind:value={appName}
+            bind:value={newConfig.app.packageName}
             class="p-3 border rounded-lg text-right bg-white text-base w-full touch-manipulation"
             placeholder="com.example.app"
           />
@@ -142,14 +139,14 @@
         <input
           id="turnsPerVideo"
           type="number"
-          bind:value={turnsPerVideo}
+          bind:value={newConfig.turnsPerReward}
           min="1"
           class="p-3 border rounded-lg text-right bg-white text-base w-full touch-manipulation"
         />
       </div>
 
       <!-- הגדרות מצב סרטון -->
-      {#if mode === "video"}
+      {#if newConfig.rewardType === "video"}
         <!-- מקור הסרטונים -->
         <div class="flex flex-col space-y-1 md:space-y-2 text-right">
           <label for="videoSource" class="font-medium text-base"
@@ -157,17 +154,17 @@
           >
           <select
             id="videoSource"
-            bind:value={videoSource}
+            bind:value={newConfig.video.source}
             class="p-3 border rounded-lg text-right bg-white text-base w-full touch-manipulation"
           >
-            <option value="local">מקומי</option>
+            <option value="local" disabled={isNotFullyKiosk}>מקומי</option>
             <option value="google-drive">גוגל דרייב</option>
-            <option value="youtube">יוטיוב</option>
+            <option value="youtube" disabled>יוטיוב</option>
           </select>
         </div>
 
         <!-- מזהה תיקייה בגוגל דרייב -->
-        {#if videoSource === "google-drive"}
+        {#if newConfig.video.source === "google-drive"}
           <div class="flex flex-col space-y-1 md:space-y-2 text-right">
             <label for="folderId" class="font-medium text-base"
               >מזהה תיקייה בגוגל דרייב:</label
@@ -175,7 +172,7 @@
             <input
               id="folderId"
               type="text"
-              bind:value={googleDriveFolderUrl}
+              bind:value={newConfig.video.googleDriveFolderUrl}
               class="p-3 border rounded-lg text-right bg-white text-base w-full touch-manipulation"
               placeholder="הכנס את מזהה התיקייה"
             />
@@ -190,7 +187,7 @@
           <input
             id="hideProgress"
             type="checkbox"
-            bind:checked={hideVideoProgress}
+            bind:checked={newConfig.video.hideProgressBar}
             class="!static w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           />
         </div>
@@ -198,7 +195,7 @@
         <!-- כפתור בדיקת סרטון -->
         <div class="flex flex-col space-y-1 md:space-y-2 text-right">
           <button
-            onclick={handleShowVideo}
+            onclick={showVideo}
             class="w-full px-6 py-3 rounded-lg bg-gray-100 text-gray-800 text-base hover:bg-gray-200 transition-colors touch-manipulation"
           >
             בדיקת סרטון
@@ -223,13 +220,13 @@
     <!-- כפתורי פעולה -->
     <div class="grid grid-cols-2 gap-3">
       <button
-        onclick={() => controller?.hide()}
+        onclick={onClose}
         class="w-full px-6 py-3 rounded-lg border text-base hover:bg-gray-100 transition-colors touch-manipulation"
       >
         ביטול
       </button>
       <button
-        onclick={handleSave}
+        onclick={onSaveHandle}
         class="w-full px-6 py-3 rounded-lg bg-blue-500 text-white text-base hover:bg-blue-600 transition-colors touch-manipulation"
       >
         שמירה

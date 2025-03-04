@@ -1,3 +1,5 @@
+import type { Component as ComponentImport , SvelteComponent } from "svelte";
+
 /**
  * מייצג פריט (קובץ או תיקייה) במערכת הקבצים של Fully Kiosk
  */
@@ -72,17 +74,17 @@ export type Config = {
    * סוג התגמול שיוצג למשתמש (סרטון או אפליקציה)
    */
   rewardType: 'video' | 'app';
-  
+
   /**
    * משך הזמן (במילישניות) להצגת התגמול
    */
   rewardDisplayDurationMs: number;
-  
+
   /**
    * מספר המשימות שיש לבצע לפני הצגת תגמול
    */
   turnsPerReward: number;
-  
+
   // הגדרות הודעות ותזכורות
   notifications: {
     // הודעה לפני סיום זמן התגמול
@@ -91,19 +93,19 @@ export type Config = {
        * טקסט ההודעה שתוצג לפני סיום זמן התגמול
        */
       text: string;
-      
+
       /**
        * כמה זמן (במילישניות) לפני סיום להציג את ההודעה
        */
       displayBeforeEndMs: number;
-      
+
       /**
        * מתי להציג את ההודעה (במצב וידאו, אפליקציה, שניהם, או אף פעם)
        */
       enabledFor: 'video' | 'app' | 'both' | 'none';
     };
   };
-  
+
   // הגדרות וידאו - רלוונטיות רק כאשר rewardType === 'video'
   video: {
     /**
@@ -114,29 +116,29 @@ export type Config = {
        * כתובת URL של הסרטון
        */
       url: string;
-      
+
       /**
        * סוג/פורמט הסרטון (למשל 'video/mp4')
        */
       mimeType: string;
     }>;
-    
+
     /**
      * מקור הסרטונים (מקומי, גוגל דרייב, או יוטיוב)
      */
     source: 'local' | 'google-drive' | 'youtube';
-    
+
     /**
      * כתובת URL של תיקיית Google Drive שמכילה סרטונים
      */
     googleDriveFolderUrl?: string;
-    
+
     /**
      * האם להסתיר את פס ההתקדמות של הסרטון
      */
     hideProgressBar?: boolean;
   };
-  
+
   // הגדרות אפליקציה - רלוונטיות רק כאשר rewardType === 'app'
   app: {
     /**
@@ -144,14 +146,14 @@ export type Config = {
      */
     packageName?: string;
   };
-  
+
   // הגדרות מערכת - לא מיועדות לשינוי ע"י המשתמש
   system: {
     /**
      * האם לאפשר כפתור להסתרת המודל
      */
     enableHideModalButton: boolean;
-    
+
     /**
      * האם לבטל הזרקת קוד למשחק
      */
@@ -159,7 +161,11 @@ export type Config = {
   };
 };
 
+export type VideoConfig = Config & { rewardType: 'video' };
+export type AppConfig = Config & { rewardType: 'app' }
+
 type DeepPartial<T> = {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   [P in keyof T]?: T[P] extends (infer U)[]
   ? T[P]  // שמירה על טיפוס המערך המקורי
   : T[P] extends object
@@ -200,8 +206,12 @@ export interface VideoItem {
   url: string;
   mimeType: string;
 }
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * רשימת פריטי וידאו
  */
 export type VideoList = VideoItem[];
+
+export type Exports = Record<string, any> | Record<string, Record<string, any>>;
+export type Props = Record<string, any>;
+export type Component = SvelteComponent<Props, Exports> | ComponentImport<Props, Exports, string>;

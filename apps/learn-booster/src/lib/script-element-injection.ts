@@ -45,11 +45,11 @@ export function injectCodeIntoIframe(scriptUrl: string) {
     function injectFunction(iframe: HTMLIFrameElement) {
         try {
             let iframeDocument = iframe.contentDocument as Document;
-            let iframeWindow = iframe.contentWindow as Window;
+            const iframeWindow = iframe.contentWindow as Window;
 
             if (!iframeDocument) {
                 if (iframe.contentWindow?.document)
-                    iframeDocument = iframeWindow?.document!;
+                    iframeDocument = iframeWindow!.document!;
 
                 if (!iframeDocument)
                     throw new Error("iframe not have document prop");
@@ -65,12 +65,7 @@ export function injectCodeIntoIframe(scriptUrl: string) {
             const codeString = getCodeInjectorString(scriptUrl);
             script.textContent = codeString;
 
-            const envConfig = (window?.config) ? { ...window?.config } : null;
-
-            iframeWindow.onload = (event) => {
-
-                // @ts-ignore
-                envConfig ? iframe.contentWindow.config = envConfig : null;
+            iframeWindow.onload = () => {
 
                 const script = getScriptInjectorCode(iframe.contentDocument!, scriptUrl);
                 const links = injectHeeboFont(iframe.contentDocument!);

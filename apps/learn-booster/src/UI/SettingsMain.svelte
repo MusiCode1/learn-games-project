@@ -5,11 +5,11 @@
   import Settings from "./components/Settings.svelte";
   import Modal from "./components/Modal.svelte";
 
-  import type { OldConfig, SettingsController } from "../types";
+  import type { Config, SettingsController } from "../types";
 
   interface Props {
-    config: OldConfig;
-    handleShowVideo: () => void;
+    config: Config;
+    handleShowVideo: (newConfig: Config) => void;
   }
 
   let { config, handleShowVideo = $bindable() }: Props = $props();

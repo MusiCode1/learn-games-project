@@ -1,4 +1,4 @@
-import type { Config, OldConfig, VideoList } from '../types';
+import type { Config, OldConfig } from '../types';
 import { loadVideoUrls } from './video-loader';
 
 // מפתח לשמירה ב-localStorage
@@ -86,19 +86,13 @@ function notifyConfigListeners(): void {
  * @param updates עדכונים להגדרות
  */
 export function updateConfig(updates: Partial<Config>): void {
-    // עדכון רקורסיבי שמשמר את המבנה של תתי-אובייקטים
-    function deepMerge(target: any, source: any): any {
-        for (const key in source) {
-            if (source[key] instanceof Object && key in target) {
-                deepMerge(target[key], source[key]);
-            } else {
-                target[key] = source[key];
-            }
-        }
-        return target;
+
+    if (updates.video && updates.video.googleDriveFolderUrl === '') {
+        updates.video.googleDriveFolderUrl = GOOGLE_DRIVE_DEFAULT_FOLDER;
     }
 
     appConfig = deepMerge({ ...appConfig }, updates);
+    saveConfigToStorage();
     notifyConfigListeners();
 }
 
@@ -107,6 +101,7 @@ export function updateConfig(updates: Partial<Config>): void {
  * @returns האם הטעינה הצליחה
  */
 export function loadConfigFromStorage(): boolean {
+    
     try {
         const storedConfig = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (!storedConfig) return false;
@@ -119,6 +114,7 @@ export function loadConfigFromStorage(): boolean {
             // המרה ממבנה ישן לחדש
             const newConfig = convertOldConfigToNew(parsedConfig as OldConfig);
             appConfig = { ...defaultConfig, ...newConfig };
+            saveConfigToStorage()
         } else {
             // מיזוג עם ברירת המחדל
             appConfig = { ...defaultConfig, ...parsedConfig };
@@ -214,12 +210,10 @@ export function convertNewConfigToOld(newConfig: Config): OldConfig {
 
 /**
  * אתחול מערכת ההגדרות
- * @param windowConfig הגדרות מ-window.config (אם קיים)
  * @param selfUrl ה-URL של הסקריפט הנוכחי
  * @param devMode האם האפליקציה במצב פיתוח
  */
 export async function initializeConfig(
-    windowConfig?: any,
     selfUrl?: string,
     devMode?: boolean
 ): Promise<Config> {
@@ -228,17 +222,6 @@ export async function initializeConfig(
 
     // טעינה מ-localStorage
     loadConfigFromStorage();
-
-    // שילוב עם הגדרות מ-window.config אם קיים
-    if (windowConfig) {
-        if ('mode' in windowConfig) {
-            // המרה ממבנה ישן לחדש
-            const newConfig = convertOldConfigToNew(windowConfig as OldConfig);
-            updateConfig(newConfig);
-        } else {
-            updateConfig(windowConfig);
-        }
-    }
 
     // טעינת רשימת סרטונים אם במצב וידאו וסופקו הפרמטרים הנדרשים
     if (appConfig.rewardType === 'video' && selfUrl) {
@@ -280,7 +263,22 @@ export function getAllConfig(): Readonly<Config> {
     if (!isConfigInitialized) {
         throw new Error('מערכת ההגדרות לא אותחלה. יש לקרוא ל-initializeConfig לפני השימוש ב-getAllConfig');
     }
-    
+
     // יצירת עותק עמוק של ההגדרות
     return Object.freeze(structuredClone(appConfig));
+}
+
+// עדכון רקורסיבי שמשמר את המבנה של תתי-אובייקטים
+function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial<T>): T {
+    for (const key in source) {
+        const sourceValue = source[key];
+        const targetValue = target[key];
+
+        if (typeof sourceValue === 'object' && sourceValue !== null && typeof targetValue === 'object' && targetValue !== null && key in target) {
+            deepMerge(targetValue as Record<string, unknown>, sourceValue as Record<string, unknown>);
+        } else if (typeof target === 'object' && target !== null) {
+            target[key] = sourceValue as T[Extract<keyof T, string>];
+        }
+    }
+    return target;
 }
