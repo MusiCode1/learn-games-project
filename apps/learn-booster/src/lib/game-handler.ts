@@ -55,21 +55,24 @@ export async function handleGameTurn(options: handleGameOptions):
     const { gameConfig, config, turnsCounter = 1 } = options;
     let { isFirstTurn = false } = options;
 
-    // בסיבוב הראשון רק מעדכנים את הדגל
-    if (gameConfig?.triggerFunc?.name === 'makeNewTurn' && isFirstTurn) {
-        isFirstTurn = false;
-        return {
-            isFirstTurn,
-            turnsCounter
-        };
-    }
+    if (!config.system.disableGameCodeInjection) {
 
-    // אם לא הגיע הזמן להציג סרטון - יוצאים
-    if (turnsCounter && turnsCounter % config.turnsPerReward !== 0) {
-        return {
-            isFirstTurn,
-            turnsCounter
-        };
+        // בסיבוב הראשון רק מעדכנים את הדגל
+        if (gameConfig?.triggerFunc?.name === 'makeNewTurn' && isFirstTurn) {
+            isFirstTurn = false;
+            return {
+                isFirstTurn,
+                turnsCounter
+            };
+        }
+
+        // אם לא הגיע הזמן להציג סרטון - יוצאים
+        if (turnsCounter && turnsCounter % config.turnsPerReward !== 0) {
+            return {
+                isFirstTurn,
+                turnsCounter
+            };
+        }
     }
 
     if (isVideoOptions(options)) {

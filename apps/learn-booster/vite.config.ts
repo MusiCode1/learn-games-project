@@ -3,6 +3,7 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 import type { Plugin } from 'vite'
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 import injectScriptPlugin from './vite-plugin/vite-plugin-inject-script';
+import vercel from "vite-plugin-vercel";
 
 
 // יצירת פלאגין מותאם אישית לטיפול בבקשות פרה-פלייט
@@ -28,6 +29,7 @@ export default defineConfig({
     cssInjectedByJsPlugin(),
     privateNetworkSupport(),
     injectScriptPlugin(),
+    vercel()
   ],
 
 

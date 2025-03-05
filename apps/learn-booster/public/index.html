@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>העתקת קוד</title>
+    <title>Gingim Booster - מגביר המוטיבציה של ג'ינג'ים</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet" />
     <style>
         body {
@@ -14,7 +14,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             background-color: #f5f5f5;
         }
 
@@ -27,6 +26,20 @@
         h1 {
             color: #333;
             text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #007bff;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #555;
+            margin-top: 20px;
         }
 
         .code-container {
@@ -36,7 +49,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             overflow: auto;
-            /* Add scroll for long code */
+            margin-top: 20px;
         }
 
         .code-container code {
@@ -65,22 +78,130 @@
             margin-top: 10px;
             text-align: center;
         }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        ul {
+            list-style-type: disc;
+            padding-right: 20px;
+        }
+
+        ol {
+            padding-right: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .nav-links a {
+            color: #007bff;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: #e9f5ff;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>העתקת קוד</h1>
-        <div class="code-container">
-            <pre>
-                <code id="codeArea" class="language-javascript"></code>
-            </pre>
-            <div style="text-align: center;">
-                <button onclick="copyCode()">העתק קוד</button>
-            </div>
+        <h1>Gingim Booster - מגביר המוטיבציה של ג'ינג'ים</h1>
+
+        <div class="nav-links">
+            <a href="#description">תיאור הפרויקט</a>
+            <a href="#how-it-works">איך זה עובד</a>
+            <a href="#project-structure">מבנה הפרויקט</a>
+            <a href="#installation">התקנה</a>
+            <a href="#code-copy">העתקת קוד</a>
         </div>
-        <div id="successMessage" class="success-message">
-            הקוד הועתק בהצלחה!
+
+        <div id="description" class="section">
+            <h2>תיאור הפרויקט</h2>
+            <p>Gingim Booster הוא תוסף לאתר ג'ינג'ים (Gingim.net) שנועד להגביר את המוטיבציה של תלמידים בתפקוד נמוך מאוד לשחק במשחקים הלימודיים באתר. התוסף מוסיף שכבת תמריצים נוספת למשחקים הקיימים על ידי הצגת סרטונים קצרים כפרס לאחר השלמת משימות במשחק.</p>
+        </div>
+
+        <div id="how-it-works" class="section">
+            <h2>איך זה עובד?</h2>
+            <ol>
+                <li>התלמיד משחק במשחק הלימודי כרגיל</li>
+                <li>לאחר השלמת משימה בהצלחה והצגת האנימציה המקורית של המשחק</li>
+                <li>מוצג חלון קופץ עם סרטון קצר כפרס נוסף</li>
+                <li>החלון נסגר אוטומטית לאחר כ-20 שניות</li>
+                <li>התלמיד ממשיך למשימה הבאה במשחק</li>
+            </ol>
+        </div>
+
+        <div id="project-structure" class="section">
+            <h2>מבנה הפרויקט</h2>
+            
+            <h3>רכיבי ממשק משתמש</h3>
+            <ul>
+                <li>חלון קופץ להצגת סרטונים</li>
+                <li>תמיכה בסרטונים מגוגל דרייב</li>
+                <li>תמיכה בסרטונים מהמכשיר באפליקציית פולי קיוסק</li>
+                <li>תמיכה במשחקים ע"י פולי קיוסק</li>
+                <li>אנימציית טעינה</li>
+                <li>ממשק משתמש נקי ופשוט</li>
+            </ul>
+            
+            <h3>לוגיקה עסקית</h3>
+            <ul>
+                <li>ניהול אינטראקציות המשחק</li>
+                <li>הגדרות ותצורת המשחקים</li>
+                <li>ניהול רשימת הסרטונים</li>
+                <li>הזרקת קוד לדף המשחק</li>
+            </ul>
+        </div>
+
+        <div id="installation" class="section">
+            <h2>התקנה</h2>
+            <p>להתקנת התוסף, יש להזריק את הקוד המוצג למטה לאתר ג'ינג'ים.</p>
+        </div>
+
+        <div id="code-copy" class="section">
+            <h2>העתקת קוד</h2>
+            <div class="code-container">
+                <pre>
+                    <code id="codeArea" class="language-javascript"></code>
+                </pre>
+                <div style="text-align: center;">
+                    <button onclick="copyCode()">העתק קוד</button>
+                </div>
+            </div>
+            <div id="successMessage" class="success-message">
+                הקוד הועתק בהצלחה!
+            </div>
         </div>
     </div>
 

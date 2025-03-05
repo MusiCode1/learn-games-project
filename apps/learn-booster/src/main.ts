@@ -5,7 +5,11 @@ import { injectCodeIntoIframe } from "./lib/script-element-injection";
 import { log } from "./lib/logger.svelte";
 import { initializeConfig } from "./lib/config-manager";
 
-import { injectCodeToGame, handleGameTurn, isVideoConfig, isAppConfig } from "./lib/game-handler";
+import {
+    injectCodeToGame,
+    handleGameTurn,
+    isVideoConfig, isAppConfig
+} from "./lib/game-handler";
 
 import VideoComponent from './UI/VideoMain.svelte';
 import SettingsComponent from "./UI/SettingsMain.svelte";
@@ -19,10 +23,13 @@ const DEV_SERVER_HOSTNAME = 'dev-server.dev';
  * מזהה את הסביבה ומאתחלת את המערכת בהתאם
  */
 async function main(): Promise<void> {
+    const hostname = window.location.hostname;
     const isIframe = window.self !== window.top;
     const selfUrl = import.meta.url;
     const isDevServer = (window.location.hostname === DEV_SERVER_HOSTNAME);
     const devMode = import.meta.env.DEV;
+
+    if (!isDevServer && hostname !== 'gingim.net') return;
 
     const mode = (devMode) ? 'development' : 'production';
     log('Gingim-Booster is loaded in', mode, 'mode.');
@@ -35,14 +42,11 @@ async function main(): Promise<void> {
             await initGameRewardHandler(config);
 
         } else if (isDevServer) {
-            /* const playerControls = await loadVideoElement();
-            playerControls?.show(); */
 
             initializeSettings(config);
         } else {
             injectCodeIntoIframe(selfUrl);
             initializeSettings(config);
-
         }
     } catch (error) {
         log('Failed to initialize system:', error);
@@ -92,9 +96,18 @@ function initializeSettings(config: Config) {
     const handleShowVideo = async (newConfig: Config) => {
         const { playerControls, app } = initializeVideoPlayer(newConfig);
 
+        newConfig = {
+            ...newConfig,
+            system: {
+                ...newConfig.system,
+                disableGameCodeInjection: true
+            },
+            turnsPerReward: 1
+        }
+
         handleGameTurn({
             playerControls,
-            config: config
+            config: newConfig
         }).then(() => {
             unmount(app);
         });

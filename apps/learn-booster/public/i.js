@@ -1,5 +1,4 @@
- 
-// @ts-nocheck
+// mode: production 
 (() => {
     function loadExternalScript(url) {
         const script = document.createElement('script');
@@ -9,7 +8,7 @@
         document.head.appendChild(script);
     }
 
-    const url = '//dev-server.dev:443/src/main.ts';
+    const url = 'https://dev-server.dev/main.js';
 
     loadExternalScript(url);
 })();

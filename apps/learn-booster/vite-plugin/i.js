@@ -1,5 +1,4 @@
- 
-// @ts-nocheck
+// mode: @mode 
 (() => {
     function loadExternalScript(url) {
         const script = document.createElement('script');
