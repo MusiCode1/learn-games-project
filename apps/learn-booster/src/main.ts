@@ -6,14 +6,13 @@ import { log } from "./lib/logger.svelte";
 import { initializeConfig } from "./lib/config-manager";
 
 import {
-    injectCodeToGame,
-    handleGameTurn,
-    isVideoConfig, isAppConfig
+    isVideoConfig,
+    injectCode
 } from "./lib/game-handler";
 
 import VideoComponent from './UI/VideoMain.svelte';
 import SettingsComponent from "./UI/SettingsMain.svelte";
-import type { Config, Component } from "./types";
+import type { Config, Component, PlayerControls } from "./types";
 
 
 const DEV_SERVER_HOSTNAME = 'dev-server.dev';
@@ -64,16 +63,13 @@ main();
 
 async function initGameRewardHandler(config: Config) {
 
+    let playerControls: PlayerControls | undefined = undefined;
+
     if (isVideoConfig(config)) {
 
-        const { playerControls } = initializeVideoPlayer(config);
-
-        injectCodeToGame(config, playerControls);
-
-    } else if (isAppConfig(config)) {
-
-        injectCodeToGame(config);
+        ({ playerControls } = initializeVideoPlayer(config));
     }
+    injectCode(config, playerControls);
 }
 
 function initializeVideoPlayer(config: Config) {
@@ -109,19 +105,18 @@ function initializeSettings(config: Config) {
                 disableGameCodeInjection: true
             },
             turnsPerReward: 1
-        }
+        };
 
-        handleGameTurn({
-            playerControls,
-            config: newConfig
-        }).then(() => {
-            unmount(app);
-        });
+        // הזרקת קוד למשחק עם הגדרות בדיקה
+        injectCode(newConfig, playerControls);
+        
+        // הסרת הקומפוננטה אחרי הזרקת הקוד
+        unmount(app);
     };
 
     const settingsApp = mountComponent({
         elementId: 'settingsRoot',
-        component: SettingsComponent,
+        component: SettingsComponent as unknown as Component,
         props: { config, handleShowVideo },
         styles: {
             ...defaultOptions.styles,

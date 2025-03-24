@@ -1,9 +1,13 @@
+// סוגי הזרקת קוד
+export type InjectionMethod = 'direct' | 'monitor';
+
 export interface GameConfig {
     gameName: string,
     gameNameHeb?: string,
     triggerFunc: FunctionConfig,
     delay: number,
-    gameUrlPath?: string
+    gameUrlPath?: string,
+    injectionMethod?: InjectionMethod
 };
 
 interface FunctionConfig {
@@ -22,7 +26,7 @@ const functionNames = [
     'playEndLevelAnimation',
     'makeAnimation',
     'onStartAnim'
-    
+
 ] as const;
 
 type FunctionKey = typeof functionNames[number];
@@ -35,10 +39,11 @@ export const functionsList = Object.fromEntries(
     ])
 ) as FunctionsListType;
 
-export const defaultGameConfig = {
+export const defaultGameConfig: GameConfig = {
     gameName: 'default',
     triggerFunc: functionsList.makeNewTurn,
-    delay: 100
+    delay: 100,
+    injectionMethod: "direct"
 };
 
 export const gameConfigs: GameConfig[] = [{
@@ -46,13 +51,15 @@ export const gameConfigs: GameConfig[] = [{
     gameNameHeb: "סדר את החדר",
     triggerFunc: functionsList.makeNewTurn,
     delay: 100,
-    gameUrlPath: '/wp-content/uploads/new_games/tidy_up/'
+    gameUrlPath: '/wp-content/uploads/new_games/tidy_up/',
+    injectionMethod: "direct"
 }, {
     gameName: 'touch_go',
     gameNameHeb: "לחץ וסע",
     triggerFunc: functionsList.makeNewTurn,
     delay: 100,
-    gameUrlPath: '/wp-content/uploads/new_games/touch_go/'
+    gameUrlPath: '/wp-content/uploads/new_games/touch_go/',
+    injectionMethod: "direct"
 },
 
 // משחק עם פונקציה שונה
@@ -61,6 +68,6 @@ export const gameConfigs: GameConfig[] = [{
     gameNameHeb: "כלי תחבורה",
     triggerFunc: functionsList.playEndLevelAnimation,
     delay: 1000 * 5,
-    gameUrlPath: '/wp-content/uploads/new_games/transport/'
-}
-];
+    gameUrlPath: '/wp-content/uploads/new_games/transport/',
+    injectionMethod: "direct"
+}];
