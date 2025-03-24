@@ -19,7 +19,6 @@ export function getGameConfig() {
 
         if (!triggerFuncObj) return false;
 
-
         return defaultGameConfig;
     }
 

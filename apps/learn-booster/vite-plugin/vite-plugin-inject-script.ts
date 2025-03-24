@@ -1,7 +1,6 @@
 import type { Plugin } from 'vite';
 import fs from 'node:fs';
 import path from 'path';
-import 'dotenv/config';
 
 type Mode = 'development' | 'preview' | 'production';
 
@@ -36,7 +35,7 @@ export default function injectScriptPlugin(): Plugin {
     name: 'inject-script-plugin',
     configResolved(config) {
       const mode = (config.env.VITE_VERCEL_ENV || config.mode) as Mode;
-      const domain = process.env.PRJ_DOMAIN as string;
+      const domain = config.env.VITE_PRJ_DOMAIN as string;
       const urlPath: string = (mode === 'development') ? 'src/' : '';
 
       const baseUrl = `https://${domain}/`,

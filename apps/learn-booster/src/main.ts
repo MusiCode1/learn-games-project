@@ -18,18 +18,24 @@ import type { Config, Component } from "./types";
 
 const DEV_SERVER_HOSTNAME = 'dev-server.dev';
 
+const hostname = window.location.hostname,
+    isIframe = window.self !== window.top,
+    selfUrl = import.meta.url,
+    isDevServer = (hostname === DEV_SERVER_HOSTNAME),
+    devMode = import.meta.env.DEV,
+    deployServer = import.meta.env.VITE_PRJ_DOMAIN,
+    isDeployServer = (hostname === deployServer),
+    isGingim = (hostname === 'gingim.net');
+
+
 /**
  * הפונקציה הראשית של האפליקציה
  * מזהה את הסביבה ומאתחלת את המערכת בהתאם
  */
 async function main(): Promise<void> {
-    const hostname = window.location.hostname;
-    const isIframe = window.self !== window.top;
-    const selfUrl = import.meta.url;
-    const isDevServer = (window.location.hostname === DEV_SERVER_HOSTNAME);
-    const devMode = import.meta.env.DEV;
+    "main-function";
 
-    if (!isDevServer && hostname !== 'gingim.net') return;
+    if (!isDevServer && !isDeployServer && !isGingim) return;
 
     const mode = (devMode) ? 'development' : 'production';
     log('Gingim-Booster is loaded in', mode, 'mode.');

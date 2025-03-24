@@ -8,11 +8,11 @@
 // ==/UserScript==
 
 /**
- * mode: development 
+ * mode: @mode 
  */
 
 (() =>{
     if (window.location.hostname === 'gingim.net'){
-    const url = 'https://dev-server.dev/i.js';
+    const url = '@injectFileUrl';
     fetch(url).then(r => r.text()).then(eval)
 }})();

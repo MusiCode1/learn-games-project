@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface FunctionResult {
     func: Function;
     context: any;
@@ -16,7 +18,7 @@ interface Context {
 
 export function getFunctionByPath(path: string): FunctionResult | undefined {
     const isNumber = (v: unknown): boolean => !isNaN(Number(v));
-    const splitPath = (path: string): string[] => path.split(/[\.\[\]]+/).filter(Boolean);
+    const splitPath = (path: string): string[] => path.split(/[.[\]]+/).filter(Boolean);
 
     if (!path) return;
 
@@ -78,4 +80,15 @@ export function injectCodeIntoFunction(
     if (resultObject) {
         wrapFunction(resultObject, fnCallbackBefore, fnCallbackAfter);
     }
+}
+
+
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function example() {
+    // הזרקת קוד לפונקציית היצירה של המשחק
+    const createGamePath = 'PIXI.game.state.states.game.create';
+
+    injectCodeIntoFunction(createGamePath, null, async () => { })
+    // בדיקת תמיכה במשחק לאחר אתחול המשחק
 }
