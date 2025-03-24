@@ -1,9 +1,10 @@
-import type { GameConfig } from "./game-config";
+import { defaultGameConfig, type GameConfig } from "./game-config";
 import type { PlayerControls, Config } from "../types";
 import { injectCodeIntoFunction } from "./inject-code-into-function";
 import { getGameConfig } from "./get-game-config";
 import { log } from "./logger.svelte";
 import { sleep } from "./sleep";
+import { monitorFunctionCalls } from "./function-monitor";
 
 const AFTER_VIDEO_DELAY_MS = 2500;
 
@@ -48,32 +49,13 @@ export function isAppConfig(config: Config): config is Config & { rewardType: 'a
 
 type AsyncFun = () => Promise<void>;
 
+// הפונקציה שרצה בפועל בעת התגמול בסוף משימה
 export async function handleGameTurn(options: handleGameOptions):
-    Promise<{ isFirstTurn: boolean, turnsCounter: number }> {
+    Promise<void> {
 
     // חילוץ שדות משותפים
-    const { gameConfig, config, turnsCounter = 1 } = options;
-    let { isFirstTurn = false } = options;
+    const { gameConfig, config } = options;
 
-    if (!config.system.disableGameCodeInjection) {
-
-        // בסיבוב הראשון רק מעדכנים את הדגל
-        if (gameConfig?.triggerFunc?.name === 'makeNewTurn' && isFirstTurn) {
-            isFirstTurn = false;
-            return {
-                isFirstTurn,
-                turnsCounter
-            };
-        }
-
-        // אם לא הגיע הזמן להציג סרטון - יוצאים
-        if (turnsCounter && turnsCounter % config.turnsPerReward !== 0) {
-            return {
-                isFirstTurn,
-                turnsCounter
-            };
-        }
-    }
 
     if (isVideoOptions(options)) {
         // עכשיו אנחנו יודעים שיש playerControls
@@ -110,46 +92,125 @@ export async function handleGameTurn(options: handleGameOptions):
 
         await sleep(AFTER_VIDEO_DELAY_MS);
     }
-
-    return {
-        isFirstTurn,
-        turnsCounter
-    };
 }
 
 /**
  * הזרקת קוד למשחק עבור סוג תגמול וידאו
  */
-export function injectCodeToGame(config: Config & { rewardType: 'video' }, playerControls: PlayerControls): void;
+export function injectCodeToGame_old(config: Config & { rewardType: 'video' }, playerControls: PlayerControls): void;
 
 /**
  * הזרקת קוד למשחק עבור סוג תגמול אפליקציה
  */
-export function injectCodeToGame(config: Config & { rewardType: 'app' }): void;
+export function injectCodeToGame_old(config: Config & { rewardType: 'app' }): void;
+
 
 /**
  * הזרקת קוד למשחק
  * @param config הגדרות המערכת
  * @param playerControls בקר הנגן (חובה רק עבור rewardType === 'video')
  */
+export function injectCodeToGame_old(config: Config, playerControls?: PlayerControls) {
+    try {
+        // הזרקת קוד לפונקציית היצירה של המשחק
+        const createGamePath = 'PIXI.game.state.states.game.create';
+
+        injectCodeIntoFunction(createGamePath, null, async () => {
+            // בדיקת תמיכה במשחק לאחר אתחול המשחק
+            const gameConfig = getGameConfig();
+
+            if (gameConfig) {
+                log('The game is supported!');
+
+                // הוצא משימוש.
+                let isFirstTurn = false;
+
+                let turnsCounter = 1;
+                let beforeCallback: null | AsyncFun,
+                    afterCallback: null | AsyncFun;
+
+                let handlerOptions: handleGameOptions = {
+                    config,
+                    turnsCounter,
+                    isFirstTurn,
+                    gameConfig
+                } as AppGameOptions;
+
+                if (isVideoConfig(config)) {
+                    handlerOptions = { ...handlerOptions, playerControls };
+                }
+
+                const triggerFuncName = gameConfig.triggerFunc.name;
+
+                const handler = async () => {
+                    let canExecute = false;
+                    if (!config.system.disableGameCodeInjection) {
+
+                        // בסיבוב הראשון רק מעדכנים את הדגל
+                        if (triggerFuncName === 'makeNewTurn' && isFirstTurn) {
+                            isFirstTurn = false;
+                        } else if (turnsCounter && (turnsCounter % config.turnsPerReward) !== 0) {
+                            // אם לא הגיע הזמן להציג סרטון - יוצאים
+                        } else {
+                            canExecute = true;
+                        }
+                    }
+
+                    if (canExecute)
+                        await handleGameTurn({ ...handlerOptions });
+
+                    turnsCounter++;
+                    log('turnsCounter: ', turnsCounter)
+                };
+
+                if (triggerFuncName === 'makeNewTurn') {
+                    beforeCallback = handler;
+                    afterCallback = null;
+                } else {
+                    beforeCallback = null;
+                    afterCallback = handler;
+                }
+
+                // הזרקת קוד לפונקציית הטריגר
+                injectCodeIntoFunction(
+                    gameConfig.triggerFunc.path,
+                    beforeCallback,
+                    afterCallback
+                );
+                log(`Injected code into ${gameConfig.triggerFunc.path}`);
+            } else {
+                log('The game isn\'t supported!');
+            }
+        });
+    } catch (error) {
+        log('Failed to initialize game:', (error as Error).message);
+        throw error;
+    }
+}
+
+// הגדרת פונקציה שתרוץ בעת קריאה לפונקציית טריגר, ללא הזרקה מראש
 export function injectCodeToGame(config: Config, playerControls?: PlayerControls) {
     try {
-        const gameConfig = getGameConfig();
 
-        if (gameConfig) {
+        let isHandlerDefinded = false;
+
+        const definingHandler = () => {
+            const gameConfig = getGameConfig();
+
+            if (!gameConfig) {
+                log('The game isn\'t supported!');
+                return;
+            }
+
             log('The game is supported!');
 
-            // הוצא משימוש.
-            let isFirstTurn = false;
-
             let turnsCounter = 1;
-            let beforeCallback: null | AsyncFun,
-                afterCallback: null | AsyncFun;
+            let callbackTiming: 'before' | 'after' | 'both';
+            let isFirstTurn = false; // נכון לעכשיו, מבוטל
 
             let handlerOptions: handleGameOptions = {
                 config,
                 turnsCounter,
-                isFirstTurn,
                 gameConfig
             } as AppGameOptions;
 
@@ -159,42 +220,55 @@ export function injectCodeToGame(config: Config, playerControls?: PlayerControls
 
             const triggerFuncName = gameConfig.triggerFunc.name;
 
-            const handler = async () => {
-
-                ({ isFirstTurn } =
-                    await handleGameTurn({
-                        ...handlerOptions,
-                        isFirstTurn,
-                        turnsCounter
-                    }));
-
-                turnsCounter++;
-                log('turnsCounter: ', turnsCounter)
-            };
-
             if (triggerFuncName === 'makeNewTurn') {
-                beforeCallback = handler;
-                afterCallback = null;
+                callbackTiming = 'before';
             } else {
-                beforeCallback = null;
-                afterCallback = handler;
+                callbackTiming = 'after';
             }
 
-            const createGamePath = 'PIXI.game.state.states.game.create';
+            const handler = async () => {
 
-            injectCodeIntoFunction(createGamePath, null, async () => {
-                injectCodeIntoFunction(
-                    gameConfig.triggerFunc.path,
-                    beforeCallback,
-                    afterCallback
-                );
-            })
+                // לא בסיבוב הראשון אם הטריגר הוא יצירת סיבוב חדש
+                if (triggerFuncName === 'makeNewTurn' && isFirstTurn) {
+                    isFirstTurn = false;
+                    return;
+                }
 
-        } else {
-            log('The game isn\'t supported!');
-            // לא נזרוק שגיאה כאן כי אתחול המשחק הוא אופציונלי
+                if (
+                    // המערכת במצב בדיקה
+                    (config.system.disableGameCodeInjection) ||
+                    // לא נמצאים במספר סיבוב שאינו מתאים להגדרות
+                    (turnsCounter % config.turnsPerReward === 0)
+                ) {
 
-        }
+                    // אז תריץ את התגמול
+                    await handleGameTurn({
+                        ...handlerOptions,
+                    });
+                }
+                // כך או כך צריך להמשיך לספור סיבובים
+                log('turnsCounter: ', turnsCounter);
+                turnsCounter++;
+            };
+
+            monitorFunctionCalls(
+                gameConfig.triggerFunc.name,
+                handler,
+                callbackTiming
+            );
+
+            log(`Injected code into ${gameConfig.triggerFunc.path}`);
+        };
+
+        monitorFunctionCalls(
+            defaultGameConfig.triggerFunc.name,
+            async () => {
+                if (!isHandlerDefinded) { definingHandler(); isHandlerDefinded = true; }
+                log('handler defined');
+            },
+            'before'
+        );
+
     } catch (error) {
         log('Failed to initialize game:', (error as Error).message);
         throw error;
