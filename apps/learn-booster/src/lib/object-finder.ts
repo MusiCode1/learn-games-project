@@ -42,6 +42,36 @@ interface SearchOptions {
 }
 
 /**
+ * אפשרויות לפונקציית החיפוש עם סטטיסטיקות
+ */
+interface SearchOptionsWithStats extends SearchOptions {
+  /** האם לאסוף סטטיסטיקות - חייב להיות true */
+  collectStats: true;
+}
+
+/**
+ * אפשרויות לפונקציית החיפוש ללא סטטיסטיקות
+ */
+interface SearchOptionsWithoutStats extends SearchOptions {
+  /** האם לאסוף סטטיסטיקות - חייב להיות false או לא מוגדר */
+  collectStats?: false;
+}
+
+/**
+ * מחפש אובייקטים מסוג מסוים באובייקט window
+ * @param options - אפשרויות חיפוש עם סטטיסטיקות
+ * @returns תוצאות החיפוש עם סטטיסטיקות
+ */
+export function findFunctionInWindow(options: SearchOptionsWithStats): SearchResultWithStats;
+
+/**
+ * מחפש אובייקטים מסוג מסוים באובייקט window
+ * @param options - אפשרויות חיפוש ללא סטטיסטיקות
+ * @returns מערך של נתיבים
+ */
+export function findFunctionInWindow(options: SearchOptionsWithoutStats): string[];
+
+/**
  * מחפש אובייקטים מסוג מסוים באובייקט window
  * @param options - אפשרויות חיפוש
  * @returns תוצאות החיפוש, עם או בלי סטטיסטיקות

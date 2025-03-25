@@ -1,4 +1,4 @@
-import { defaultGameConfig, type GameConfig, type InjectionMethod } from "./game-config";
+import type { GameConfig, InjectionMethod } from "./game-config";
 import type { PlayerControls, Config } from "../types";
 import { injectCodeIntoFunction } from "./inject-code-into-function";
 import { getGameConfig } from "./get-game-config";
@@ -95,12 +95,12 @@ function shouldShowReward(
     if (config.system.disableGameCodeInjection) {
         return true;
     }
-    
+
     // בסיבוב הראשון של makeNewTurn לא מציגים תגמול
     if (triggerFuncName === 'makeNewTurn' && isFirstTurn) {
         return false;
     }
-    
+
     // מציגים תגמול רק כשמספר הסיבובים מתחלק במספר הסיבובים לתגמול
     return turnsCounter % config.turnsPerReward === 0;
 }
@@ -222,13 +222,13 @@ function initializeInjectionByMethod(
         // שיטת הזרקה ישירה
         let beforeCallback: AsyncFun | null = null;
         let afterCallback: AsyncFun | null = null;
-        
+
         if (gameConfig.triggerFunc.name === 'makeNewTurn') {
             beforeCallback = handler;
         } else {
             afterCallback = handler;
         }
-        
+
         injectCodeIntoFunction(
             gameConfig.triggerFunc.path,
             beforeCallback,
@@ -236,9 +236,9 @@ function initializeInjectionByMethod(
         );
     } else if (method === 'monitor') {
         // שיטת ניטור פונקציות
-        const callbackTiming: 'before' | 'after' = 
+        const callbackTiming: 'before' | 'after' =
             gameConfig.triggerFunc.name === 'makeNewTurn' ? 'before' : 'after';
-        
+
         monitorFunctionCalls(
             gameConfig.triggerFunc.name,
             handler,
@@ -249,7 +249,7 @@ function initializeInjectionByMethod(
         log(`Unknown injection method: ${method}, using default method instead`);
         initializeInjectionByMethod(gameConfig, handler, DEFAULT_INJECTION_METHOD);
     }
-    
+
     log(`Injected code into ${gameConfig.triggerFunc.path} using ${method} method`);
 }
 
@@ -275,50 +275,10 @@ export function injectCodeDirectly(config: Config, playerControls?: PlayerContro
 
             // יצירת פונקציית ההאנדלר
             const handler = createGameTurnHandler(config, gameConfig, playerControls);
-            
+
             // אתחול הזרקת הקוד בשיטה הישירה
             initializeInjectionByMethod(gameConfig, handler, 'direct');
         });
-    } catch (error) {
-        log('Failed to initialize game:', (error as Error).message);
-        throw error;
-    }
-}
-
-/**
- * מזריק קוד למשחק באמצעות ניטור קריאות פונקציה
- * @deprecated השתמש ב-injectCode במקום
- */
-export function injectCodeWithMonitor(config: Config, playerControls?: PlayerControls): void {
-    try {
-        let isHandlerDefined = false;
-        
-        // ניטור פונקציית ברירת המחדל
-        monitorFunctionCalls(
-            defaultGameConfig.triggerFunc.name,
-            async () => {
-                if (!isHandlerDefined) {
-                    const gameConfig = getGameConfig();
-                    
-                    if (!gameConfig) {
-                        log('The game isn\'t supported!');
-                        return;
-                    }
-                    
-                    log('The game is supported!');
-                    
-                    // יצירת פונקציית ההאנדלר
-                    const handler = createGameTurnHandler(config, gameConfig, playerControls);
-                    
-                    // אתחול הזרקת הקוד בשיטת הניטור
-                    initializeInjectionByMethod(gameConfig, handler, 'monitor');
-                    
-                    isHandlerDefined = true;
-                }
-                log('handler defined');
-            },
-            'before'
-        );
     } catch (error) {
         log('Failed to initialize game:', (error as Error).message);
         throw error;
@@ -337,45 +297,42 @@ export function injectCode(
     method?: InjectionMethod
 ): void {
     try {
-        // הזרקת קוד לפונקציית היצירה של המשחק
-        const createGamePath = 'PIXI.game.state.states.game.create';
 
-        injectCodeIntoFunction(createGamePath, null, async () => {
-            // בדיקת תמיכה במשחק לאחר אתחול המשחק
-            const gameConfig = getGameConfig();
+        // בדיקת תמיכה במשחק
+        const gameConfig = getGameConfig();
 
-            if (!gameConfig) {
-                log('The game isn\'t supported!');
-                return;
-            }
+        if (!gameConfig) {
+            log('The game isn\'t supported!');
+            return;
+        }
 
-            log('The game is supported!');
+        log('The game is supported!');
 
-            // קביעת שיטת ההזרקה
-            let injectionMethod: InjectionMethod;
-            
-            // אם צוינה שיטת הזרקה בפרמטר, נשתמש בה
-            if (method) {
-                injectionMethod = method;
-                log(`Using specified injection method: ${method}`);
-            } 
-            // אחרת, אם יש קונפיג משחק עם שיטת הזרקה מוגדרת, נשתמש בה
-            else if ('injectionMethod' in gameConfig && gameConfig.injectionMethod) {
-                injectionMethod = gameConfig.injectionMethod;
-                log(`Using game config injection method: ${injectionMethod}`);
-            }
-            // אחרת, נשתמש בברירת המחדל
-            else {
-                injectionMethod = DEFAULT_INJECTION_METHOD;
-                log(`Using default injection method: ${DEFAULT_INJECTION_METHOD}`);
-            }
+        // קביעת שיטת ההזרקה
+        let injectionMethod: InjectionMethod;
 
-            // יצירת פונקציית ההאנדלר
-            const handler = createGameTurnHandler(config, gameConfig, playerControls);
-            
-            // אתחול הזרקת הקוד לפי השיטה המתאימה
-            initializeInjectionByMethod(gameConfig, handler, injectionMethod);
-        });
+        // אם צוינה שיטת הזרקה בפרמטר, נשתמש בה
+        if (method) {
+            injectionMethod = method;
+            log(`Using specified injection method: ${method}`);
+        }
+        // אחרת, אם יש קונפיג משחק עם שיטת הזרקה מוגדרת, נשתמש בה
+        else if ('injectionMethod' in gameConfig && gameConfig.injectionMethod) {
+            injectionMethod = gameConfig.injectionMethod;
+            log(`Using game config injection method: ${injectionMethod}`);
+        }
+        // אחרת, נשתמש בברירת המחדל
+        else {
+            injectionMethod = DEFAULT_INJECTION_METHOD;
+            log(`Using default injection method: ${DEFAULT_INJECTION_METHOD}`);
+        }
+
+        // יצירת פונקציית ההאנדלר
+        const handler = createGameTurnHandler(config, gameConfig, playerControls);
+
+        // אתחול הזרקת הקוד לפי השיטה המתאימה
+        initializeInjectionByMethod(gameConfig, handler, injectionMethod);
+
     } catch (error) {
         log('Failed to initialize game:', (error as Error).message);
         throw error;
