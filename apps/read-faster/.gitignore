@@ -27,4 +27,7 @@ src/stories/
 
 src/lib/images/
 static/images/
+original-presentations
+
 .vercel
+

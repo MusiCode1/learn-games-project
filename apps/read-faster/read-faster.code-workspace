@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"typescript.tsserver.log": "verbose",
+		"typescript.tsserver.experimental.enableProjectDiagnostics": true
+	}
+}

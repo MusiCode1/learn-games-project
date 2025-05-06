@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>משחק התאמה</title>
+    <style>
+        @import 'https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=Rubik:wght@400;500;700&display=swap';
+
+        body {
+            font-family: 'Frank Ruhl Libre', serif, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 40px;
+            gap: 40px;
+        }
+
+        .images-container,
+        .words-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .images-container>*,
+        .words-container>* {
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .image-placeholder {
+            width: 200px;
+            height: 200px;
+            border: 3px dashed rgba(52, 152, 219, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .word-box {
+            width: 200px;
+            height: 200px;
+            border: 3px dashed #3498db;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 70px;
+            font-weight: bold;
+            color: #2c3e50;
+            background: rgba(255, 255, 255, 0.8);
+            transition: background-color 0.2s;
+            position: relative;
+        }
+
+        .word-box .word-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .word-box.highlight {
+            background: rgba(52, 152, 219, 0.1);
+            border-style: solid;
+        }
+
+        .word-box.correct {
+            border-color: #2ecc71;
+            background: rgba(46, 204, 113, 0.1);
+            border-style: solid;
+        }
+
+        .word-box.correct .draggable-image {
+            cursor: default;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        #success-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(46, 204, 113, 0.9);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-size: 24px;
+            animation: fadeIn 0.5s;
+            z-index: 2000;
+            cursor: pointer;
+        }
+
+        .draggable-image {
+            width: 200px;
+            height: 200px;
+            cursor: grab;
+            border-radius: 10px;
+            border: 3px solid #3498db;
+            user-select: none;
+            object-fit: contain;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background: white;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .draggable-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .draggable-image:active {
+            cursor: grabbing;
+        }
+
+        .draggable-image.dragging {
+            opacity: 0.8;
+            transform: scale(1.1);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>התאם את התמונות למילים המתאימות</h1>
+
+    <div class="game-container">
+        <div class="images-container"></div>
+        <div class="words-container"></div>
+    </div>
+
+    <div id="success-message">
+        כל הכבוד! השלמת את המשחק בהצלחה! 🎉
+    </div>
+
+    <script>
+        // הגדרת הכרטיסים
+        const cards = [
+            { word: 'זָזָה', image: '../static/images/זזה.png' },
+            { word: 'גָרָה', image: '../static/images/גרה.png' },
+            { word: 'נָמָה', image: '../static/images/נמה.png' }
+        ];
+
+        // יצירת הכרטיסים והיעדים
+        function createGame() {
+            const imagesContainer = document.querySelector('.images-container');
+            const wordsContainer = document.querySelector('.words-container');
+
+            // יצירת הכרטיסים
+            cards.forEach(card => {
+                const img = document.createElement('img');
+                img.src = card.image;
+                img.className = 'draggable-image';
+                img.dataset.word = card.word;
+                img.draggable = true;
+                imagesContainer.appendChild(img);
+            });
+
+            // יצירת היעדים
+            cards.forEach(card => {
+                const wordBox = document.createElement('div');
+                wordBox.className = 'word-box';
+                wordBox.dataset.word = card.word;
+
+                const wordText = document.createElement('span');
+                wordText.className = 'word-text';
+                wordText.textContent = card.word;
+
+                wordBox.appendChild(wordText);
+                wordsContainer.appendChild(wordBox);
+            });
+        }
+
+        // אתחול המשחק
+        createGame();
+
+        let draggedElement = null;
+        let mouseOffset = { x: 0, y: 0 };
+        let originalPositions = new Map();
+
+        // שמירת המיקום המקורי של כל התמונות
+        document.querySelectorAll('.draggable-image').forEach(img => {
+            const rect = img.getBoundingClientRect();
+            originalPositions.set(img, {
+                x: rect.left,
+                y: rect.top
+            });
+        });
+
+        // מונע את ברירת המחדל של גרירת תמונות בדפדפן
+        document.addEventListener('dragstart', e => e.preventDefault());
+
+        // טיפול בתחילת הגרירה
+        document.querySelectorAll('.draggable-image').forEach(image => {
+            image.addEventListener('mousedown', e => {
+                // לא מאפשר גרירה של כרטיס שכבר במקום הנכון
+                if (image.parentElement.classList.contains('correct')) {
+                    return;
+                }
+
+                draggedElement = image;
+                const rect = image.getBoundingClientRect();
+
+                mouseOffset.x = e.clientX - rect.left;
+                mouseOffset.y = e.clientY - rect.top;
+
+                draggedElement.style.position = 'fixed';
+                draggedElement.style.zIndex = 1000;
+                draggedElement.classList.add('dragging');
+
+                // יצירת פלייסהולדר חדש במקום הכרטיס שנגרר
+                const placeholder = document.createElement('div');
+                placeholder.className = 'image-placeholder';
+                draggedElement.parentNode.insertBefore(placeholder, draggedElement);
+
+                moveElement(e);
+            });
+        });
+
+        // טיפול בגרירה
+        document.addEventListener('mousemove', e => {
+            if (draggedElement) {
+                moveElement(e);
+
+                // בדיקה אם נמצאים מעל קופסת מילה
+                const wordBoxes = document.querySelectorAll('.word-box');
+                wordBoxes.forEach(box => {
+                    const rect = box.getBoundingClientRect();
+                    if (e.clientX > rect.left && e.clientX < rect.right &&
+                        e.clientY > rect.top && e.clientY < rect.bottom) {
+                        box.classList.add('highlight');
+                    } else {
+                        box.classList.remove('highlight');
+                    }
+                });
+            }
+        });
+
+        // טיפול בסיום הגרירה
+        document.addEventListener('mouseup', async () => {
+            if (!draggedElement) return;
+
+            const wordBoxes = document.querySelectorAll('.word-box');
+            let matched = false;
+
+            wordBoxes.forEach(box => {
+                const rect = box.getBoundingClientRect();
+                const draggedRect = draggedElement.getBoundingClientRect();
+
+                // בדיקה אם התמונה מעל הקופסה
+                if (isOverlapping(draggedRect, rect)) {
+                    if (draggedElement.dataset.word === box.dataset.word) {
+                        // התאמה נכונה
+                        box.classList.add('correct');
+                        box.classList.remove('highlight');
+                        draggedElement.classList.remove('dragging');
+
+                        // מיקום התמונה במרכז הקופסה
+                        draggedElement.style.position = 'static';
+                        box.prepend(draggedElement);
+                        draggedElement.style = 'none';
+                        matched = true;
+
+                        // בדיקה אם כל ההתאמות הושלמו
+                        checkCompletion();
+                    }
+                }
+            });
+
+            if (!matched) {
+                const orgPosition = originalPositions.get(draggedElement);
+
+                draggedElement.style.transition = 'all 0.5s';
+                draggedElement.classList.remove('dragging');
+
+                await sleep(10);
+
+                // החזרה למיקום המקורי
+                draggedElement.style.left = orgPosition.x + 'px';
+                draggedElement.style.top = orgPosition.y + 'px';
+
+                await sleep(500);
+
+                draggedElement.style = '';
+
+
+                // הסרת הפלייסהולדר
+                const placeholder = draggedElement.previousElementSibling;
+                if (placeholder && placeholder.classList.contains('image-placeholder')) {
+                    placeholder.remove();
+                }
+            }
+
+            // ניקוי הדגשות
+            wordBoxes.forEach(box => box.classList.remove('highlight'));
+            draggedElement = null;
+        });
+
+        document.querySelector('#success-message').addEventListener('click', () => {
+            window.location.reload();
+        });
+
+        // פונקציה להזזת האלמנט
+        function moveElement(e) {
+            if (!draggedElement) return;
+
+            draggedElement.style.left = (e.clientX - mouseOffset.x) + 'px';
+            draggedElement.style.top = (e.clientY - mouseOffset.y) + 'px';
+        }
+
+        // פונקציה לבדיקת חפיפה בין שני אלמנטים
+        function isOverlapping(rect1, rect2) {
+            return !(rect1.right < rect2.left ||
+                rect1.left > rect2.right ||
+                rect1.bottom < rect2.top ||
+                rect1.top > rect2.bottom);
+        }
+
+        // פונקציה לבדיקת השלמת המשחק
+        function checkCompletion() {
+            const correctMatches = document.querySelectorAll('.word-box.correct').length;
+            if (correctMatches === 3) {
+                document.getElementById('success-message').style.display = 'block';
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+
+</html>

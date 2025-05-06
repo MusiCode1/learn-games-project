@@ -89,6 +89,16 @@ export const WordSetCalculator = {
 
 	validateRepetitions(repetitions: number): boolean {
 		return repetitions >= CONFIG.app.minRepetitions && repetitions <= CONFIG.app.maxRepetitions;
+	},
+
+	// פונקציה חדשה לבדיקת תקינות שלב
+	validateLevel(level: number): boolean {
+		return level > 0 && level <= CONFIG.app.maxLevel;
+	},
+
+	// פונקציה לסינון מילים לפי שלב
+	filterWordsByLevel(words: Word[], level: number): Word[] {
+		return words.filter(word => word.level === level);
 	}
 };
 
@@ -102,9 +112,16 @@ export const WordProgress = {
 		currentSet: number,
 		wordsPerSet: number,
 		repetitionsPerSet: number = CONFIG.app.defaultRepetitions,
-		hideAfterSeconds: number = CONFIG.app.defaultHideSeconds
+		hideAfterSeconds: number = CONFIG.app.defaultHideSeconds,
+		level: number = CONFIG.app.defaultLevel
 	): void {
-		const progress: Progress = { currentSet, wordsPerSet, repetitionsPerSet, hideAfterSeconds };
+		const progress: Progress = {
+			currentSet,
+			wordsPerSet,
+			repetitionsPerSet,
+			hideAfterSeconds,
+			level
+		};
 		saveProgress(progress);
 	}
 };

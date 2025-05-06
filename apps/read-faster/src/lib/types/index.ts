@@ -19,10 +19,11 @@ export interface WordSessionState {
 export type DerivedBoolean = Readable<boolean>;
 
 export interface Progress {
-  currentSet: number;
-  wordsPerSet: number;
-  repetitionsPerSet: number;
-  hideAfterSeconds: number;
+  currentSet: number; // הסט הנוכחי
+  wordsPerSet: number; // מספר מילים בכל סט
+  repetitionsPerSet: number; // מספר חזרות לכל סט
+  hideAfterSeconds: number; // זמן הסתרת המילה בשניות
+  level: number; // שלב נוכחי
 }
 
 export interface Word {

@@ -15,6 +15,8 @@ export const CONFIG = {
 		transitionDuration: 500,
 		defaultHideSeconds: 0,
 		minHideSeconds: 1,
-		maxHideSeconds: 10
+		maxHideSeconds: 10,
+		defaultLevel: 1, // שלב ברירת מחדל
+		maxLevel: 4      // מספר השלבים המקסימלי
 	}
 };

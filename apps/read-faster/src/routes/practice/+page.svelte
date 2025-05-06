@@ -4,7 +4,7 @@
 	import { CONFIG } from '$lib/constants/config';
 	import PracticeScreen from '$lib/components/screens/PracticeScreen.svelte';
 	import PracticeCompletionScreen from '$lib/components/screens/PracticeCompletionScreen.svelte';
-	import { words } from '$lib/data/words';
+	import { words, getWordsByLevel } from '$lib/data/words';
 	import { setupKeyboardShortcuts } from '$lib/core/keyboard';
 	import { fade } from '$lib/utils/transitions';
 	import type { Word, WordSessionState } from '$lib/types';
@@ -12,7 +12,10 @@
 	// פרמטרים מהניתוב
 	const { data } = $props();
 	const hideAfterSeconds = data.hideAfterSeconds ?? CONFIG.app.defaultHideSeconds;
-	let { set, wordsPerSet, repetitions, wordIndex } = data;
+	let { set, wordsPerSet, repetitions, wordIndex, level } = data;
+
+	// סינון מילים לפי שלב
+	const levelWords = $derived.by(() => getWordsByLevel(level));
 
 	let currentSetWords: Word[] = [];
 	let sessionState: WordSessionState;
@@ -25,7 +28,7 @@
 
 	// חישוב מספר הסטים הכולל
 	const totalSets = $derived.by(() =>
-		WordSetCalculator.calculateTotalSets(words, data.wordsPerSet)
+		WordSetCalculator.calculateTotalSets(levelWords, data.wordsPerSet)
 	);
 
 	// מצב השלמת הסט
@@ -39,8 +42,8 @@
 	let hideWordTimeout: number;
 
 	function startSession() {
-		// יצירת סט המילים הנוכחי
-		currentSetWords = WordSetCalculator.getWordsForSet(words, set, wordsPerSet);
+		// יצירת סט המילים הנוכחי - עם סינון לפי שלב
+		currentSetWords = WordSetCalculator.getWordsForSet(levelWords, set, wordsPerSet);
 
 		// יצירת הסשן עם אינדקס התחלתי מה-URL
 		sessionState = WordSession.create(currentSetWords, repetitions, wordIndex);
@@ -117,7 +120,7 @@
 
 	function handleFinishSet() {
 		// שמירת התקדמות
-		WordProgress.save(data.set, data.wordsPerSet, data.repetitions);
+		WordProgress.save(data.set, data.wordsPerSet, data.repetitions, hideAfterSeconds, level);
 
 		// אם סיימנו את כל החזרות, מציגים את מסך הסיום
 		if (WordSession.isComplete(session)) {
@@ -127,7 +130,7 @@
 
 	function handleNextSet() {
 		goto(
-			`/practice?set=${data.set + 1}&wordsPerSet=${data.wordsPerSet}&repetitions=${data.repetitions}&hideAfterSeconds=${hideAfterSeconds}&wordIndex=1`
+			`/practice?set=${data.set + 1}&wordsPerSet=${data.wordsPerSet}&repetitions=${data.repetitions}&hideAfterSeconds=${hideAfterSeconds}&wordIndex=1&level=${level}`
 		);
 		set++; // עדכון הסט לסט הבא
 		startSession();
@@ -135,7 +138,7 @@
 
 	function handleRepeatSet() {
 		goto(
-			`/practice?set=${data.set}&wordsPerSet=${data.wordsPerSet}&repetitions=${data.repetitions}&hideAfterSeconds=${hideAfterSeconds}&wordIndex=1`
+			`/practice?set=${data.set}&wordsPerSet=${data.wordsPerSet}&repetitions=${data.repetitions}&hideAfterSeconds=${hideAfterSeconds}&wordIndex=1&level=${level}`
 		);
 		startSession();
 	}

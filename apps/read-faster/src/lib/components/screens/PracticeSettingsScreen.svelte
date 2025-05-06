@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte';
 	import { goto } from '$app/navigation';
+	import { CONFIG } from '$lib/constants/config';
 
 	interface Props {
 		wordsPerSet: number;
@@ -8,11 +9,14 @@
 		totalSets: number;
 		repetitionsPerSet: number;
 		hideAfterSeconds: number;
+		level: number; // הוספת שלב
+		maxLevel: number; // מספר השלבים המקסימלי
 		onStartPractice: (
 			wordsPerSet: number,
 			set: number,
 			repetitions: number,
-			hideAfterSeconds: number
+			hideAfterSeconds: number,
+			level: number // הוספת שלב
 		) => void;
 	}
 
@@ -22,14 +26,17 @@
 		onStartPractice,
 		repetitionsPerSet,
 		totalSets,
-		wordsPerSet
+		wordsPerSet,
+		level = CONFIG.app.defaultLevel,
+		maxLevel = CONFIG.app.maxLevel
 	}: Props = $props();
 
 	const state = $state({
 		selectedWordsPerSet: wordsPerSet,
 		selectedSet: currentSet,
 		selectedRepetitions: repetitionsPerSet,
-		hideAfterSeconds: hideAfterSeconds
+		hideAfterSeconds: hideAfterSeconds,
+		selectedLevel: level // הוספת שלב נבחר
 	});
 
 	function handleStartPractice() {
@@ -37,19 +44,38 @@
 			state.selectedWordsPerSet,
 			state.selectedSet,
 			state.selectedRepetitions,
-			state.hideAfterSeconds
+			state.hideAfterSeconds,
+			state.selectedLevel // העברת השלב הנבחר
 		);
 	}
 
 	function handleBack() {
 		goto('/welcome');
 	}
+
+	const enabledLevels = [1, 2];
 </script>
 
 <div class="flex flex-col items-center justify-center space-y-8 px-4 py-12">
 	<h1 class="text-4xl font-bold">הגדרות תרגול</h1>
 
 	<div class="flex flex-col items-center space-y-6">
+		<!-- הוספת בחירת שלב -->
+		<div class="space-y-2 text-center">
+			<label for="level-select" class="block font-medium">שלב</label>
+			<select
+				id="level-select"
+				class="w-32 rounded-lg border p-2 text-center"
+				bind:value={state.selectedLevel}
+			>
+				{#each Array(maxLevel) as _, i}
+					<option value={i + 1} disabled={!enabledLevels.includes(i + 1)}
+						>שלב {i + 1} {!enabledLevels.includes(i + 1) ? '(לא זמין עדיין)' : ''}</option
+					>
+				{/each}
+			</select>
+		</div>
+
 		<div class="space-y-2 text-center">
 			<label for="words-num" class="block font-medium">מספר מילים בכל סט</label>
 			<select

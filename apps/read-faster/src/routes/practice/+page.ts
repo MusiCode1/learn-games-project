@@ -1,7 +1,7 @@
 import type { PageLoad } from './$types';
 import { CONFIG } from '$lib/constants/config';
 import { WordSetCalculator } from '$lib/utils/wordUtils';
-import { words } from '$lib/data/words';
+import { words, getWordsByLevel } from '$lib/data/words';
 
 export const load = (async ({ url }) => {
 	// קריאת פרמטרים מה-URL עם ערכי ברירת מחדל
@@ -20,13 +20,27 @@ export const load = (async ({ url }) => {
 	);
 	let wordIndex = Math.max(0, parseInt(url.searchParams.get('wordIndex') || '1', 10) - 1);
 
+	// הוספת פרמטר שלב
+	let level = parseInt(
+		url.searchParams.get('level') || CONFIG.app.defaultLevel.toString(),
+		10
+	);
+
 	// בדיקת תקינות מספר המילים בסט
 	if (!WordSetCalculator.validateWordsPerSet(wordsPerSet)) {
 		wordsPerSet = CONFIG.app.defaultWordsPerSet;
 	}
 
+	// בדיקת תקינות השלב
+	if (!WordSetCalculator.validateLevel(level)) {
+		level = CONFIG.app.defaultLevel;
+	}
+
+	// סינון מילים לפי שלב
+	const levelWords = getWordsByLevel(level);
+
 	// חישוב מספר הסטים הכולל
-	const totalSets = WordSetCalculator.calculateTotalSets(words, wordsPerSet);
+	const totalSets = WordSetCalculator.calculateTotalSets(levelWords, wordsPerSet);
 
 	// בדיקת תקינות מספר הסט
 	if (!WordSetCalculator.validateSetNumber(set, totalSets)) {
@@ -44,7 +58,7 @@ export const load = (async ({ url }) => {
 	}
 
 	// בדיקת תקינות אינדקס המילה
-	const currentSetWords = WordSetCalculator.getWordsForSet(words, set, wordsPerSet);
+	const currentSetWords = WordSetCalculator.getWordsForSet(levelWords, set, wordsPerSet);
 	const maxWordIndex = currentSetWords.length * repetitions - 1;
 	if (wordIndex < 0 || wordIndex > maxWordIndex) {
 		wordIndex = 0;
@@ -55,6 +69,7 @@ export const load = (async ({ url }) => {
 		set,
 		repetitions,
 		hideAfterSeconds,
-		wordIndex
+		wordIndex,
+		level
 	};
 }) satisfies PageLoad;

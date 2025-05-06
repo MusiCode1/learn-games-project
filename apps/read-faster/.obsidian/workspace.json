@@ -1,0 +1,202 @@
+{
+  "main": {
+    "id": "0898513a4f0720ab",
+    "type": "split",
+    "children": [
+      {
+        "id": "4bdbea94cb933449",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7cf985fb643240a8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "documentation/refactoring/word-organization-strategies.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "word-organization-strategies"
+            }
+          },
+          {
+            "id": "5cc0c09ee232c21c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "documentation/CHANGELOG.md",
+                "mode": "preview",
+                "source": true
+              },
+              "icon": "lucide-file",
+              "title": "CHANGELOG"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "2c0093f78dbf5418",
+    "type": "split",
+    "children": [
+      {
+        "id": "c0878b3988570002",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e4c18c9597dae386",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "סייר קבצים"
+            }
+          },
+          {
+            "id": "7cb49ba51c3733ce",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "לחפש"
+            }
+          },
+          {
+            "id": "14d810dbee8e46c2",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "סימניות"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "41d5e72158312100",
+    "type": "split",
+    "children": [
+      {
+        "id": "23eff5fc56361861",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3c496ff568af53d7",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "documentation/CHANGELOG.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "קישורים נכנסים עבור CHANGELOG"
+            }
+          },
+          {
+            "id": "874fe1ac2d25bb1e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "documentation/CHANGELOG.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "קישורים יוצאים מ-CHANGELOG"
+            }
+          },
+          {
+            "id": "4aa7111d727f1035",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "תגים"
+            }
+          },
+          {
+            "id": "c558c288920ef79f",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "documentation/CHANGELOG.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "מתאר של CHANGELOG"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:פתח את המחליף המהיר": false,
+      "graph:פתח תצוגת גרף": false,
+      "canvas:צור קנבס חדש": false,
+      "daily-notes:פתח את ההערה של היום": false,
+      "templates:הכנס תבנית": false,
+      "command-palette:פתח את לוח הפקודות": false
+    }
+  },
+  "active": "5cc0c09ee232c21c",
+  "lastOpenFiles": [
+    "ללא כותרת.md",
+    "documentation/refactoring/refactoring-types.md",
+    "documentation/refactoring/practice-screen-modularization.md",
+    "src/stories/assets/accessibility.svg",
+    "word-list.md",
+    "documentation/תכנית לרכישת קריאה.md",
+    "documentation/refactoring/מעקב-אחר יישום.md",
+    "documentation/refactoring/word-organization-strategies.md",
+    "documentation/refactoring/state-management-refactoring.md",
+    "documentation/refactoring/state-management-options.md",
+    "documentation/refactoring/refactoring-url.md",
+    "documentation/refactoring/refactoring-final-plan.md",
+    "documentation/refactoring/props-implementation.md"
+  ]
+}

@@ -8,6 +8,12 @@
 	"eslint.options": {
 		"extensions": [".js", ".ts", ".svelte"]
 	},
-	"typescript.tsserver.log": "verbose"
+	"typescript.tsserver.log": "verbose",
+	"[xml]": {
+		"editor.defaultFormatter": "DotJoshJohnson.xml"
+	},
+	"[powershell]": {
+		"editor.defaultFormatter": "ms-vscode.powershell"
+	}
 	/* "typescript.tsserver.experimental.enableProjectDiagnostics": true */
 }
