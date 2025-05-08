@@ -9,7 +9,7 @@ Svelte 5 introduces runes, a set of advanced primitives for controlling reactivi
 - **Purpose:** Declare reactive state.
 - **Usage:**
 
-```javascript
+```html
 <script>let count = $state(0);</script>
 ```
 
@@ -44,7 +44,7 @@ class Todo {
 - **Purpose:** Take a static snapshot of $state.
 - **Usage:**
 
-```javascript
+```html
 <script>
 	let counter = $state({ count: 0 });
 

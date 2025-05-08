@@ -1,5 +1,23 @@
 # יומן שינויים
 
+## [2025-05-08]
+
+### שינוי: ריפקטורינג טיפוסים ו-Props
+
+- **פירוט טכני**: הוגדרו טיפוסי `ScreenProps` חדשים ב-[`src/lib/types/index.ts`](src/lib/types/index.ts:1) (לדוגמה, `PracticeScreenProps`, `PracticeSettingsScreenProps`) עם מבנה אחיד של `state` ו-`handlers`. קומפוננטות המסך ב-[`src/lib/components/screens/`](src/lib/components/screens/) עודכנו להשתמש בטיפוסים אלו. בוצעו התאמות ב-[`src/lib/utils/wordUtils.ts`](src/lib/utils/wordUtils.ts:1) (שינוי `Progress` ל-`PracticeSettings` ו-`WordSessionState` ל-`SessionState`). קריאות לקומפוננטות עודכנו בקובצי ה-route-ים (למשל, [`src/routes/+page.svelte`](src/routes/+page.svelte:1), [`src/routes/practice/+page.svelte`](src/routes/practice/+page.svelte:1), [`src/routes/practice/settings/+page.svelte`](src/routes/practice/settings/+page.svelte:1), [`src/routes/welcome/+page.svelte`](src/routes/welcome/+page.svelte:1)) כדי להתאים למבנה ה-props החדש.
+
+- **למה**: שיפור מבנה הקוד, הקריאות והתחזוקתיות על ידי שימוש בטיפוסים חזקים ומבנה props אחיד. הכנה לשינויים עתידיים בניהול המצב.
+
+- **השפעות**: שינוי פנימי במבנה ה-props של קומפוננטות המסך. אין שינוי בפונקציונליות הנראית למשתמש.
+
+### שינוי: ריכוז הגדרות ברירת מחדל ופישוט תחביר
+
+- **פירוט טכני**: נוצר קובץ [`src/lib/defaults.ts`](src/lib/defaults.ts:1) המרכז את הגדרות ברירת המחדל `defaultSession` ו-`defaultUIState`. קבצים שהשתמשו בהגדרות אלו ([`src/routes/+page.svelte`](src/routes/+page.svelte:1), [`src/routes/practice/settings/+page.svelte`](src/routes/practice/settings/+page.svelte:1)) עודכנו לייבא אותן. בוצעו פישוטי תחביר נוספים, בעיקר ב-[`src/routes/practice/settings/+page.svelte`](src/routes/practice/settings/+page.svelte:1) (למשל, שימוש ב-`$derived` לחישוב `totalSets`).
+
+- **למה**: הפחתת כפילות קוד, שיפור הקריאות והתחזוקתיות.
+
+- **השפעות**: שינוי פנימי במבנה הקוד. אין שינוי בפונקציונליות הנראית למשתמש.
+
 ## [2025-05-06]
 
 ### שינוי: הוספת מערכת שלבים (levels) לאימון

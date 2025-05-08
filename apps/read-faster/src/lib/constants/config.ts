@@ -6,7 +6,7 @@ export const CONFIG = {
 		defaultSize: '300x300'
 	},
 	app: {
-		defaultWordsPerSet: 5,
+		defaultWordsPerSet: 5, // מספר המילים ברירת מחדל בסט
 		minWordsPerSet: 1,
 		maxWordsPerSet: 10,
 		defaultRepetitions: 1,

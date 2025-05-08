@@ -2,58 +2,43 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import { goto } from '$app/navigation';
 	import { CONFIG } from '$lib/constants/config';
+	import type { PracticeSettingsScreenProps, PracticeSettings } from '$lib/types';
+	import { appState } from '$lib/state/appState'; // ייבוא הסטייט הגלובלי
+	import { WordSetCalculator } from '$lib/utils/wordUtils'; // ייבוא מחשבון הסטים
 
-	interface Props {
-		wordsPerSet: number;
-		currentSet: number;
-		totalSets: number;
-		repetitionsPerSet: number;
-		hideAfterSeconds: number;
-		level: number; // הוספת שלב
-		maxLevel: number; // מספר השלבים המקסימלי
-		onStartPractice: (
-			wordsPerSet: number,
-			set: number,
-			repetitions: number,
-			hideAfterSeconds: number,
-			level: number // הוספת שלב
-		) => void;
-	}
+	let { state: externalState, handlers }: PracticeSettingsScreenProps = $props();
 
-	const {
-		currentSet,
-		hideAfterSeconds,
-		onStartPractice,
-		repetitionsPerSet,
-		totalSets,
-		wordsPerSet,
-		level = CONFIG.app.defaultLevel,
-		maxLevel = CONFIG.app.maxLevel
-	}: Props = $props();
+	// מצב פנימי של הקומפוננטה, מאותחל מה-props
+	const progress = externalState.user.progress; // שימוש במשתנה רגיל לקיצור הנתיב
 
-	const state = $state({
-		selectedWordsPerSet: wordsPerSet,
-		selectedSet: currentSet,
-		selectedRepetitions: repetitionsPerSet,
-		hideAfterSeconds: hideAfterSeconds,
-		selectedLevel: level // הוספת שלב נבחר
+	const internalState = $state({
+		selectedWordsPerSet: progress.wordsPerSet,
+		selectedSet: progress.currentSet,
+		selectedRepetitions: progress.repetitionsPerSet,
+		selectedHideAfterSeconds: progress.hideAfterSeconds,
+		selectedLevel: progress.level
 	});
 
+	// חישוב totalSets כערך נגזר מהסטייט הגלובלי והבחירות המקומיות
+	const calculatedTotalSets = $derived(
+		WordSetCalculator.calculateTotalSets(
+			appState.practice.wordsByLevel[internalState.selectedLevel] || [], // קריאה מהסטייט הגלובלי
+			internalState.selectedWordsPerSet
+		)
+	);
+
 	function handleStartPractice() {
-		onStartPractice(
-			state.selectedWordsPerSet,
-			state.selectedSet,
-			state.selectedRepetitions,
-			state.hideAfterSeconds,
-			state.selectedLevel // העברת השלב הנבחר
-		);
+		const currentSettings: PracticeSettings = {
+			wordsPerSet: internalState.selectedWordsPerSet,
+			currentSet: internalState.selectedSet,
+			repetitionsPerSet: internalState.selectedRepetitions,
+			hideAfterSeconds: internalState.selectedHideAfterSeconds,
+			level: internalState.selectedLevel
+		};
+		handlers.onStartPractice(currentSettings);
 	}
 
-	function handleBack() {
-		goto('/welcome');
-	}
-
-	const enabledLevels = [1, 2];
+	const enabledLevels = [1, 2]; // This was hardcoded, using maxLevel prop now
 </script>
 
 <div class="flex flex-col items-center justify-center space-y-8 px-4 py-12">
@@ -66,9 +51,9 @@
 			<select
 				id="level-select"
 				class="w-32 rounded-lg border p-2 text-center"
-				bind:value={state.selectedLevel}
+				bind:value={internalState.selectedLevel}
 			>
-				{#each Array(maxLevel) as _, i}
+				{#each Array(CONFIG.app.maxLevel) as _, i}
 					<option value={i + 1} disabled={!enabledLevels.includes(i + 1)}
 						>שלב {i + 1} {!enabledLevels.includes(i + 1) ? '(לא זמין עדיין)' : ''}</option
 					>
@@ -81,7 +66,7 @@
 			<select
 				id="words-num"
 				class="w-32 rounded-lg border p-2 text-center"
-				bind:value={state.selectedWordsPerSet}
+				bind:value={internalState.selectedWordsPerSet}
 			>
 				<option value={3}>3 מילים</option>
 				<option value={5}>5 מילים</option>
@@ -94,9 +79,9 @@
 			<select
 				id="set-num"
 				class="w-32 rounded-lg border p-2 text-center"
-				bind:value={state.selectedSet}
+				bind:value={internalState.selectedSet}
 			>
-				{#each Array(totalSets) as _, i}
+				{#each Array(calculatedTotalSets) as _, i}
 					<option value={i + 1}>סט {i + 1}</option>
 				{/each}
 			</select>
@@ -107,7 +92,7 @@
 			<select
 				id="repetitions-num"
 				class="w-32 rounded-lg border p-2 text-center"
-				bind:value={state.selectedRepetitions}
+				bind:value={internalState.selectedRepetitions}
 			>
 				<option value={1}>חזרה אחת</option>
 				<option value={2}>2 חזרות</option>
@@ -120,10 +105,10 @@
 			<label class="block font-medium" for="hide-after-seconds">
 				זמן הצגת המילה:
 				<span>
-					{#if state.hideAfterSeconds === 0}
+					{#if internalState.selectedHideAfterSeconds === 0}
 						ללא הגבלת זמן
 					{:else}
-						{state.hideAfterSeconds} שניות
+						{internalState.selectedHideAfterSeconds} שניות
 					{/if}
 				</span>
 			</label>
@@ -136,22 +121,22 @@
 					max="10"
 					step="1"
 					class="accent-primary h-2 w-48 cursor-pointer appearance-none rounded-lg bg-gray-200"
-					bind:value={state.hideAfterSeconds}
+					bind:value={internalState.selectedHideAfterSeconds}
 				/>
 				<span class="text-sm">10</span>
 			</div>
 			<div class="text-sm text-gray-500">
-				{#if state.hideAfterSeconds === 0}
+				{#if internalState.selectedHideAfterSeconds === 0}
 					המילה תוצג ללא הגבלת זמן
 				{:else}
-					המילה תוסתר אחרי {state.hideAfterSeconds} שניות
+					המילה תוסתר אחרי {internalState.selectedHideAfterSeconds} שניות
 				{/if}
 			</div>
 		</div>
 	</div>
 
 	<div class="flex gap-4">
-		<Button onclick={handleBack} variant="secondary">חזרה</Button>
+		<Button onclick={handlers.onBack} variant="secondary">חזרה</Button>
 		<Button onclick={handleStartPractice}>התחל תרגול</Button>
 	</div>
 </div>

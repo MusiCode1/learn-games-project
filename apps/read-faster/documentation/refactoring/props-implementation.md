@@ -13,7 +13,7 @@
 
 דוגמה למצב הנוכחי:
 
-```svelte
+```jsx
 <PracticeScreen
 	word={currentWord}
 	{wordIndex}

@@ -320,7 +320,7 @@ export function match<T, E, R>(
 
 3. **אתחול הסטייט בעת טעינת האפליקציה:**
 
-```svelte
+```html
 <!-- src/routes/+layout.svelte -->
 <script>
 	import { onMount } from 'svelte';

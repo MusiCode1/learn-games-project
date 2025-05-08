@@ -1,6 +1,7 @@
-import type { Progress, Word, WordSessionState } from '$lib/types';
+import type { PracticeSettings, Word, SessionState } from '$lib/types';
 import { CONFIG } from '$lib/constants/config';
 import { loadProgress, saveProgress } from '$lib/utils/localStorage';
+import { match } from '$lib/utils/result';
 
 // פונקציית עזר לערבוב מערך
 export function shuffle<T>(array: T[]): T[] {
@@ -14,7 +15,7 @@ export function shuffle<T>(array: T[]): T[] {
 
 // ניהול סשן אימון
 export const WordSession = {
-	create(originalWords: Word[], repetitions: number, startIndex: number = 0): WordSessionState {
+	create(originalWords: Word[], repetitions: number, startIndex: number = 0): SessionState {
 		// יוצרים את רשימת המילים עם החזרות
 		const allWords = Array(repetitions).fill(originalWords).flat();
 
@@ -29,25 +30,25 @@ export const WordSession = {
 		};
 	},
 
-	next(state: WordSessionState): WordSessionState {
+	next(state: SessionState): SessionState {
 		if (state.currentIndex < state.words.length - 1) {
 			return { ...state, currentIndex: state.currentIndex + 1 };
 		}
 		return state;
 	},
 
-	prev(state: WordSessionState): WordSessionState {
+	prev(state: SessionState): SessionState {
 		if (state.currentIndex > 0) {
 			return { ...state, currentIndex: state.currentIndex - 1 };
 		}
 		return state;
 	},
 
-	getCurrentRepetition(state: WordSessionState): number {
+	getCurrentRepetition(state: SessionState): number {
 		return Math.floor(state.currentIndex / state.wordsPerRepetition) + 1;
 	},
 
-	getCurrentWord(state: WordSessionState): Word {
+	getCurrentWord(state: SessionState): Word {
 		// בדיקת תקינות האינדקס
 		if (state.currentIndex < 0 || state.currentIndex >= state.words.length) {
 			return state.words[0]; // החזרת המילה הראשונה כברירת מחדל
@@ -55,14 +56,14 @@ export const WordSession = {
 		return state.words[state.currentIndex];
 	},
 
-	getProgress(state: WordSessionState): { current: number; total: number } {
+	getProgress(state: SessionState): { current: number; total: number } {
 		return {
 			current: (state.currentIndex % state.wordsPerRepetition) + 1,
 			total: state.wordsPerRepetition
 		};
 	},
 
-	isComplete(state: WordSessionState): boolean {
+	isComplete(state: SessionState): boolean {
 		return state.currentIndex === state.words.length - 1;
 	}
 };
@@ -104,8 +105,13 @@ export const WordSetCalculator = {
 
 // ניהול התקדמות
 export const WordProgress = {
-	load(): Progress | null {
-		return loadProgress();
+	load(): PracticeSettings | null {
+		const result = loadProgress();
+		return match(
+			result,
+			(value) => value, // במקרה של הצלחה, החזר את הערך
+			(_error) => null // במקרה של כישלון, החזר null
+		);
 	},
 
 	save(
@@ -115,7 +121,7 @@ export const WordProgress = {
 		hideAfterSeconds: number = CONFIG.app.defaultHideSeconds,
 		level: number = CONFIG.app.defaultLevel
 	): void {
-		const progress: Progress = {
+		const progress: PracticeSettings = {
 			currentSet,
 			wordsPerSet,
 			repetitionsPerSet,

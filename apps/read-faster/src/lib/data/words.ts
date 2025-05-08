@@ -181,3 +181,16 @@ export function getWordsByLevel(level: number): WordList {
 			return level1Words;
 	}
 }
+
+// פונקציה לארגון כל המילים לפי רמה, כפי שנדרש ל-AppState
+export function initializeWordsByLevel(): Record<number, WordList> {
+	// בהנחה שיש לנו עד 4 רמות כרגע
+	// אפשר להפוך את זה לדינמי יותר אם יש יותר רמות או שהן לא רציפות
+	return {
+		1: level1Words,
+		2: level2Words,
+		3: level3Words,
+		4: level4Words
+		// ניתן להוסיף כאן רמות נוספות אם יש
+	};
+}

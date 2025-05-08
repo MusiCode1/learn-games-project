@@ -7,7 +7,7 @@
 	import { words, getWordsByLevel } from '$lib/data/words';
 	import { setupKeyboardShortcuts } from '$lib/core/keyboard';
 	import { fade } from '$lib/utils/transitions';
-	import type { Word, WordSessionState } from '$lib/types';
+	import type { Word, SessionState } from '$lib/types';
 
 	// פרמטרים מהניתוב
 	const { data } = $props();
@@ -18,8 +18,8 @@
 	const levelWords = $derived.by(() => getWordsByLevel(level));
 
 	let currentSetWords: Word[] = [];
-	let sessionState: WordSessionState;
-	let session: WordSessionState = $state({
+	let sessionState: SessionState;
+	let session: SessionState = $state({
 		words: [],
 		currentIndex: 0,
 		wordsPerRepetition: 0,
@@ -224,38 +224,66 @@
 {#if isCompleted}
 	<div in:fade={{ duration: 500 }}>
 		<PracticeCompletionScreen
-			totalWords={progress.total}
-			repetitions={data.repetitions}
-			currentSet={data.set}
-			{totalSets}
-			onNextSet={handleNextSet}
-			onRepeatSet={handleRepeatSet}
-			onHome={handleHome}
+			state={{
+				user: {
+					progress: {
+						currentSet: data.set,
+						wordsPerSet: data.wordsPerSet,
+						repetitionsPerSet: data.repetitions,
+						hideAfterSeconds: hideAfterSeconds,
+						level: level
+					}
+				},
+				practice: {
+					session: session, // Assuming session is compatible with SessionState
+					ui: {
+						// Assuming default values or that they are not needed for completion screen
+						isWordVisible: false,
+						isImageVisible: false,
+						direction: null,
+						lastDirection: 'next'
+					}
+				}
+			}}
+			handlers={{
+				onExit: handleHome,
+				onNextSet: handleNextSet,
+				onRepeatSet: handleRepeatSet,
+				onHome: handleHome
+			}}
 		/>
 	</div>
 {:else}
 	<div in:fade={{ duration: 500 }}>
 		<PracticeScreen
-			word={currentWord}
-			isFirst={session.currentIndex === 0}
-			isLast={WordSession.isComplete(session)}
-			currentWord={progress.current}
-			totalWords={progress.total}
-			currentSet={data.set}
-			{totalSets}
-			{currentRepetition}
-			totalRepetitions={session.totalRepetitions}
-			{hideAfterSeconds}
-			onNext={handleNext}
-			onPrev={handlePrev}
-			onFinish={handleFinishSet}
-			onExit={handleHome}
-			onImageCardClick={handleImageCardClick}
-			onWordCardClick={handleWordCardClick}
-			{direction}
-			{lastDirection}
-			{isImageVisible}
-			{isWordVisible}
+			state={{
+				user: {
+					progress: {
+						currentSet: data.set,
+						wordsPerSet: data.wordsPerSet,
+						repetitionsPerSet: data.repetitions,
+						hideAfterSeconds: hideAfterSeconds,
+						level: level
+					}
+				},
+				practice: {
+					session: session,
+					ui: {
+						isWordVisible: isWordVisible,
+						isImageVisible: isImageVisible,
+						direction: direction,
+						lastDirection: lastDirection
+					}
+				}
+			}}
+			handlers={{
+				onExit: handleHome,
+				onNext: handleNext,
+				onPrev: handlePrev,
+				onFinish: handleFinishSet,
+				onImageCardClick: handleImageCardClick,
+				onWordCardClick: handleWordCardClick
+			}}
 		/>
 	</div>
 {/if}

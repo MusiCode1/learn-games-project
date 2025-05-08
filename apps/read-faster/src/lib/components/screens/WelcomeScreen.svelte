@@ -1,8 +1,16 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte';
 	import { goto } from '$app/navigation';
+	import type { WelcomeScreenProps } from '$lib/types';
+
+	// למרות שהקומפוננטה לא משתמשת כרגע ב-state או handlers,
+	// היא מוגדרת לקבל אותם לשמירה על עקביות עם שאר קומפוננטות המסך.
+	let { state, handlers }: WelcomeScreenProps = $props();
 
 	function handleStart() {
+		// אם יש handler ספציפי להתחלה, אפשר לקרוא לו כאן.
+		// לדוגמה: if (handlers.onStart) handlers.onStart();
+		// כרגע, מנווטים ישירות.
 		goto('/practice/settings');
 	}
 </script>
