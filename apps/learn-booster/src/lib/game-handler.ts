@@ -1,6 +1,9 @@
+import * as store from "svelte/store";
+import type { Writable } from "svelte/store";
+
 import type { GameConfig, InjectionMethod } from "./game-config";
-import type { PlayerControls, Config } from "../types";
-import { injectCodeIntoFunction } from "./inject-code-into-function";
+import type { PlayerControls, Config, TimerController } from "../types";
+import { injectCodeIntoFunction, getFunctionByPath } from "./inject-code-into-function";
 import { getGameConfig } from "./get-game-config";
 import { log } from "./logger.svelte";
 import { sleep } from "./sleep";
@@ -16,6 +19,7 @@ interface BaseGameOptions {
     gameConfig?: GameConfig;
     config: Config;
     turnsCounter: number;
+    timer: TimerController;
 }
 
 // אפשרויות עבור סוג תגמול אפליקציה
@@ -29,19 +33,24 @@ interface VideoGameOptions extends BaseGameOptions {
     playerControls: PlayerControls;
 }
 
+interface UnknownGameOptions extends BaseGameOptions {
+    config: Config & { rewardType: string };
+    playerControls: PlayerControls;
+}
+
 // איחוד הטיפוסים
-type GameOptions = VideoGameOptions | AppGameOptions;
+type GameOptions = VideoGameOptions | AppGameOptions | UnknownGameOptions;
 
 // טיפוס לפונקציה אסינכרונית
 type AsyncFun = () => Promise<void>;
 
 // Type guard לבדיקה אם מדובר באפשרויות של וידאו
-function isVideoOptions(options: GameOptions): options is VideoGameOptions {
+export function isVideoOptions(options: GameOptions): options is VideoGameOptions {
     return options.config.rewardType === 'video';
 }
 
 // Type guard לבדיקה אם מדובר באפשרויות של אפליקציה
-function isAppOptions(options: GameOptions): options is AppGameOptions {
+export function isAppOptions(options: GameOptions): options is AppGameOptions {
     return options.config.rewardType === 'app';
 }
 
@@ -62,13 +71,15 @@ function createGameOptions(
     config: Config,
     gameConfig: GameConfig | undefined,
     turnsCounter: number,
-    playerControls?: PlayerControls
+    playerControls: PlayerControls | undefined,
+    timer: TimerController
 ): GameOptions {
     // יצירת אובייקט האפשרויות הבסיסי
     const baseOptions: BaseGameOptions = {
         config,
         turnsCounter,
-        gameConfig
+        gameConfig,
+        timer
     };
 
     // הוספת playerControls אם מדובר בתגמול וידאו
@@ -111,16 +122,37 @@ function shouldShowReward(
 async function handleVideoReward(
     playerControls: PlayerControls,
     config: Config,
+    timer: TimerController,
     delay?: number
 ): Promise<void> {
+
+     playerControls.modalHasHidden.set(false);
     // מחכה לדיליי שהוגדר בקונפיג
     if (delay) await sleep(delay);
 
     // מציג את הוידאו
     playerControls.show();
 
-    // מחכה את הזמן שהוגדר להצגת הוידאו
-    await sleep(config.rewardDisplayDurationMs);
+    let unsubscribe: store.Unsubscriber | undefined;
+
+    await Promise.race([
+        // הזמן המרבי להצגת הווידאו
+        timer.configure(config.rewardDisplayDurationMs),
+
+        // נסגר ברגע שהמודאל הוסתר
+        new Promise<void>((resolve) => {
+            unsubscribe = playerControls.modalHasHidden.subscribe(h => {
+                if (h) {
+                    unsubscribe?.();
+                    resolve();
+                    log('Modal was closed by user');
+                }
+            });
+        }),
+    ]).finally(() => {
+        // אם הסתיים מה-timeout, ננקה את המנוי
+        unsubscribe?.();
+    });
 
     // מסתיר את הוידאו
     playerControls.hide();
@@ -134,6 +166,7 @@ async function handleVideoReward(
  */
 async function handleAppReward(
     config: Config & { rewardType: 'app' },
+    timer: TimerController,
     delay?: number
 ): Promise<void> {
     // מחכה לדיליי שהוגדר בקונפיג
@@ -145,11 +178,20 @@ async function handleAppReward(
     // מציג את האפליקציה
     window.fully.startApplication(config.app.packageName);
 
-    await sleep(config.rewardDisplayDurationMs);
+    const timerPromise = timer.configure(config.rewardDisplayDurationMs);
+    timer.start();
+    await timerPromise;
 
     window.fully.bringToForeground();
 
     await sleep(AFTER_VIDEO_DELAY_MS);
+}
+
+function replaceLastLiteral(str: string, search: string, replace: string): string {
+    if (search === "") return str; // הימנע ממקרה קצה: "" נמצא "בסוף"
+    const i = str.lastIndexOf(search);
+    return i === -1 ? str
+        : str.slice(0, i) + replace + str.slice(i + search.length);
 }
 
 /**
@@ -157,33 +199,50 @@ async function handleAppReward(
  */
 export async function handleGameTurn(options: GameOptions): Promise<void> {
     // חילוץ שדות משותפים
-    const { gameConfig, config } = options;
+    const { gameConfig, config, timer } = options;
 
     if (isVideoOptions(options)) {
-        await handleVideoReward(options.playerControls, config, gameConfig?.delay);
+        await handleVideoReward(options.playerControls, config, timer, gameConfig?.delay);
     } else if (isAppOptions(options)) {
-        await handleAppReward(options.config, gameConfig?.delay);
+        await handleAppReward(options.config, timer, gameConfig?.delay);
     }
 }
 
 /**
  * יוצר פונקציית האנדלר לטיפול בתורות משחק
  */
-function createGameTurnHandler(
+export function createGameTurnHandler(
     config: Config,
     gameConfig: GameConfig,
-    playerControls?: PlayerControls
+
+    //משתנה שמחזיק האם המשחק אותחל
+    // כדי שלא ירוץ מחזק בסיבוב הראשון של makeNewTurn
+    isGameInitialized: Writable<boolean>,
+    playerControls: PlayerControls | undefined,
+    timer: TimerController
 ): AsyncFun {
-    // משתנים משותפים
+
+    // === משתנים משותפים ===
     let turnsCounter = 1;
     let isFirstTurn = false;
+
+    // ========================
+
+
     const triggerFuncName = gameConfig.triggerFunc.name;
 
     // יצירת אובייקט האפשרויות
-    const gameOptions = createGameOptions(config, gameConfig, turnsCounter, playerControls);
+    const gameOptions = createGameOptions(config, gameConfig, turnsCounter, playerControls, timer);
 
     // פונקציית ההאנדלר
     return async () => {
+
+        // בדיקה אם המשחק אותחל
+        if (!store.get(isGameInitialized)) {
+            isFirstTurn = false;
+            return;
+        }
+
         // בדיקה אם זה הסיבוב הראשון של makeNewTurn
         if (triggerFuncName === 'makeNewTurn' && isFirstTurn) {
             isFirstTurn = false;
@@ -257,14 +316,14 @@ function initializeInjectionByMethod(
  * מזריק קוד למשחק באמצעות הזרקה ישירה לפונקציה
  * @deprecated השתמש ב-injectCode במקום
  */
-export function injectCodeDirectly(config: Config, playerControls?: PlayerControls): void {
+export function injectCodeDirectly(config: Config, playerControls: PlayerControls | undefined, timer: TimerController): void {
     try {
         // הזרקת קוד לפונקציית היצירה של המשחק
         const createGamePath = 'PIXI.game.state.states.game.create';
 
         injectCodeIntoFunction(createGamePath, null, async () => {
             // בדיקת תמיכה במשחק לאחר אתחול המשחק
-            const gameConfig = getGameConfig();
+            const gameConfig = getGameConfig(config);
 
             if (!gameConfig) {
                 log('The game isn\'t supported!');
@@ -273,8 +332,10 @@ export function injectCodeDirectly(config: Config, playerControls?: PlayerContro
 
             log('The game is supported!');
 
+            const isGameInitialized = store.writable(true);
+
             // יצירת פונקציית ההאנדלר
-            const handler = createGameTurnHandler(config, gameConfig, playerControls);
+            const handler = createGameTurnHandler(config, gameConfig, isGameInitialized, playerControls, timer);
 
             // אתחול הזרקת הקוד בשיטה הישירה
             initializeInjectionByMethod(gameConfig, handler, 'direct');
@@ -293,13 +354,14 @@ export function injectCodeDirectly(config: Config, playerControls?: PlayerContro
  */
 export function injectCode(
     config: Config,
-    playerControls?: PlayerControls,
+    playerControls: PlayerControls | undefined,
+    timer: TimerController,
     method?: InjectionMethod
 ): void {
     try {
 
         // בדיקת תמיכה במשחק
-        const gameConfig = getGameConfig();
+        const gameConfig = getGameConfig(config);
 
         if (!gameConfig) {
             log('The game isn\'t supported!');
@@ -327,8 +389,29 @@ export function injectCode(
             log(`Using default injection method: ${DEFAULT_INJECTION_METHOD}`);
         }
 
+        // הזרקת קוד לפונקציית אתחול המשחק, כדי לסמן שהמשחק אותחל
+        const initGameFnName = "create";
+        const initGameFnPath = replaceLastLiteral(
+            gameConfig.triggerFunc.path, gameConfig.triggerFunc.name, initGameFnName);
+
+        const initGameFnExists = getFunctionByPath(initGameFnPath);
+        const isGameInitialized = store.writable(false);
+
+        if (initGameFnExists) {
+
+            injectCodeIntoFunction(initGameFnPath, null, async () => {
+                await sleep(1000); // מחכים שנייה כדי לוודא שהמשחק אכן אותחל
+                isGameInitialized.set(true);
+                log('[gingim-booster] Game initialized');
+            });
+
+            log(`Found game initialization function at path: ${initGameFnPath}`);
+        } else {
+            isGameInitialized.set(true);
+        }
+
         // יצירת פונקציית ההאנדלר
-        const handler = createGameTurnHandler(config, gameConfig, playerControls);
+        const handler = createGameTurnHandler(config, gameConfig, isGameInitialized, playerControls, timer);
 
         // אתחול הזרקת הקוד לפי השיטה המתאימה
         initializeInjectionByMethod(gameConfig, handler, injectionMethod);

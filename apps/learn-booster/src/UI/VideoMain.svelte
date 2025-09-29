@@ -1,19 +1,29 @@
 <script lang="ts">
-  import { onMount,onDestroy } from "svelte";
+  import { onMount, onDestroy } from "svelte";
+  import { writable, derived } from "svelte/store";
+
   import VideoDialog from "./components/VideoDialog.svelte";
   import Modal from "./components/Modal.svelte";
   import LeftButton from "./components/LeftButton.svelte";
   import { sleep } from "../lib/sleep";
   import { msToTime } from "../lib/utils/ms-to-time";
-  import type { Config, VideoController, VideoItem } from "../types";
   import { getVideoBlob, isFullyKiosk } from "../lib/fully-kiosk";
   import { getAllConfig, addConfigListener } from "../lib/config-manager";
 
+  import type {
+    Config,
+    VideoController,
+    VideoItem,
+    PlayerControls,
+    TimerController,
+  } from "../types";
+
   interface Props {
     config?: Config;
+    timer: TimerController;
   }
 
-  let { config }: Props = $props();
+  let { config, timer }: Props = $props();
 
   let localConfig = config || getAllConfig();
 
@@ -28,15 +38,19 @@
   let videoVisible = $state(false);
   let videoController = $state<VideoController>();
   let currentVideoIndex = $state(0);
-  let time = $state("00:00");
   let videoUrl = $state("");
-
-  let intervalId: NodeJS.Timeout | undefined;
 
   // svelte-ignore state_referenced_locally
   window.currentVideoIndex = currentVideoIndex;
 
-  onMount(() => nextVideo());
+  onMount(() => {
+    nextVideo();
+  });
+
+  const timeFormatted = derived(timer.time, ($time) => {
+    const remainingInSeconds = Math.round($time / 1000) * 1000;
+    return msToTime(remainingInSeconds);
+  });
 
   function nextVideo() {
     currentVideoIndex =
@@ -52,31 +66,8 @@
     }
   }
 
-  function startTimer() {
-    const startTime = Date.now();
-    intervalId = setInterval(() => {
-      const elapsedTimeInMS = Date.now() - startTime;
-      const remainingTimeInMS = Math.max(
-        0,
-        localConfig.rewardDisplayDurationMs - elapsedTimeInMS
-      );
-      // עיגול לשנייה הקרובה כדי למנוע קפיצות
-      const remainingTimeInSeconds =
-        Math.round(remainingTimeInMS / 1000) * 1000;
-      time = msToTime(remainingTimeInSeconds);
-    }, 100);
-  }
-
-  function stopTimer() {
-    if (intervalId) {
-      clearInterval(intervalId);
-      intervalId = undefined;
-    }
-    time = "00:00"; // איפוס הטיימר בסגירה
-  }
-
   async function showModal() {
-    startTimer();
+    timer.start();
     videoController?.play();
     visible = true;
     await sleep(10);
@@ -86,13 +77,14 @@
   }
 
   async function hideModal() {
-    stopTimer();
+    timer.stop();
     videoVisible = false;
     await sleep(1000 * 1.5);
     modalVisible = false;
     await sleep(700);
     visible = false;
     videoController?.pause();
+    modalHasHidden.set(true);
   }
 
   async function toggle() {
@@ -103,6 +95,8 @@
     }
   }
 
+  const modalHasHidden = writable(false);
+
   export const modalController = {
     show: showModal,
     hide: hideModal,
@@ -110,6 +104,7 @@
     getVideo(): VideoController | undefined {
       return videoController;
     },
+    modalHasHidden,
   };
 </script>
 
@@ -123,8 +118,9 @@
         mimeType={localConfig.video.videos[currentVideoIndex]?.mimeType}
         bind:videoController
         onVideoEnded={nextVideo}
-        {time}
+        time={$timeFormatted}
         {hideModal}
+        {modalHasHidden}
       />
     </Modal>
   </main>

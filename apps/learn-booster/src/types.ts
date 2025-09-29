@@ -1,4 +1,5 @@
-import type { Component as ComponentImport , SvelteComponent } from "svelte";
+import type { Component as ComponentImport, SvelteComponent } from "svelte";
+import type { Writable, Readable } from "svelte/store";
 
 /**
  * מייצג פריט (קובץ או תיקייה) במערכת הקבצים של Fully Kiosk
@@ -41,11 +42,20 @@ export interface VideoDialogProps {
 /**
  * Controls returned from the main API
  */
+export interface TimerController {
+  start: () => void;
+  pause: () => void;
+  stop: () => void;
+  configure: (durationMs: number) => Promise<void>;
+  time: Readable<number>;
+}
+
 export interface PlayerControls {
   show: () => void;
   hide: () => void;
   toggle: () => void;
   video?: VideoController;
+  modalHasHidden: Writable<boolean>;
 }
 
 export type OldConfig = {
