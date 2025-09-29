@@ -3,6 +3,9 @@ import { extractGoogleDriveFolderId, getFolderVideosUrls } from './google-drive-
 import { shuffleArray } from './utils/shuffle-array';
 import { getFileList } from './fully-kiosk';
 
+const devMode = import.meta.env.DEV,
+    selfUrl = import.meta.url;
+
 /**
  * המרת רשימת URLs לרשימת פריטי וידאו
  * @param urls רשימת URLs של סרטונים
@@ -14,7 +17,7 @@ export function urlsToVideoItems(urls: string[], defaultMimeType: string = 'vide
         // ניסיון לזהות את סוג הקובץ לפי הסיומת
         let mimeType = defaultMimeType;
         const extension = url.split('.').pop()?.toLowerCase();
-        
+
         if (extension) {
             switch (extension) {
                 case 'mp4':
@@ -53,7 +56,7 @@ export function urlsToVideoItems(urls: string[], defaultMimeType: string = 'vide
                     break;
             }
         }
-        
+
         return { url, mimeType };
     });
 }
@@ -64,15 +67,15 @@ export function urlsToVideoItems(urls: string[], defaultMimeType: string = 'vide
  * @param devMode האם האפליקציה במצב פיתוח
  * @returns פריט וידאו
  */
-export function createLocalVideoItem(selfUrl: string, devMode: boolean): VideoItem {
+export function createLocalVideoItem(): VideoItem {
     const baseUrl = (new URL(selfUrl).origin).toString();
     const localVideo = new URL('videos/video.webm', baseUrl).toString();
     const fallbackVideo = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-    
+
     const url = devMode ? localVideo : fallbackVideo;
     const extension = url.split('.').pop()?.toLowerCase();
     const mimeType = extension === 'webm' ? 'video/webm' : 'video/mp4';
-    
+
     return { url, mimeType };
 }
 
@@ -113,7 +116,7 @@ export async function loadDefaultGoogleDriveVideos(): Promise<VideoList> {
             import.meta.env.VITE_GOOGLE_DRIVE_DEFAULT_FOLDER
         );
         const driveUrls = await getFolderVideosUrls(defaultFolderId);
-        
+
         if (driveUrls.length > 0) {
             return urlsToVideoItems(driveUrls);
         } else {
@@ -128,11 +131,9 @@ export async function loadDefaultGoogleDriveVideos(): Promise<VideoList> {
 
 /**
  * טעינת סרטונים מקומיים
- * @param selfUrl ה-URL של הסקריפט הנוכחי
- * @param devMode האם האפליקציה במצב פיתוח
  * @returns רשימת פריטי וידאו
  */
-export async function loadLocalVideos(selfUrl: string, devMode: boolean): Promise<VideoList> {
+export async function loadLocalVideos(): Promise<VideoList> {
     try {
         if (window.fully) {
             const fileList = getFileList();
@@ -142,13 +143,13 @@ export async function loadLocalVideos(selfUrl: string, devMode: boolean): Promis
                 console.warn('לא נמצאו סרטונים מקומיים ב-Fully Kiosk');
             }
         }
-        
+
         // אם אין סרטונים מקומיים או שלא במצב Fully Kiosk, מחזירים סרטון ברירת מחדל
-        return [createLocalVideoItem(selfUrl, devMode)];
+        return [createLocalVideoItem()];
     } catch (error) {
         console.error('שגיאה בטעינת סרטונים מקומיים:', error);
         // במקרה של שגיאה, מחזירים סרטון ברירת מחדל
-        return [createLocalVideoItem(selfUrl, devMode)];
+        return [createLocalVideoItem()];
     }
 }
 
@@ -160,9 +161,7 @@ export async function loadLocalVideos(selfUrl: string, devMode: boolean): Promis
  * @returns רשימת פריטי וידאו
  */
 export async function loadVideoUrls(
-    config: Config,
-    selfUrl: string,
-    devMode: boolean
+    config: Config
 ): Promise<VideoList> {
     // בדיקה אם במצב וידאו
     if (config.rewardType !== 'video') {
@@ -172,39 +171,39 @@ export async function loadVideoUrls(
 
     try {
         let videoList: VideoList = [];
-        
+
         // טעינת סרטונים בהתאם למקור
         switch (config.video.source) {
             case 'google-drive':
                 videoList = await loadGoogleDriveVideos(config.video.googleDriveFolderUrl);
-                
+
                 // אם לא נמצאו סרטונים, ננסה לטעון מתיקיית ברירת המחדל
                 if (videoList.length === 0) {
                     console.log('מנסה לטעון סרטונים מתיקיית ברירת המחדל');
                     videoList = await loadDefaultGoogleDriveVideos();
                 }
                 break;
-                
+
             case 'local':
-                videoList = await loadLocalVideos(selfUrl, devMode);
+                videoList = await loadLocalVideos();
                 break;
-                
+
             case 'youtube':
                 console.warn('תמיכה ביוטיוב עדיין לא מומשה');
                 break;
-                
+
             default:
                 console.warn(`מקור סרטונים לא ידוע: ${config.video.source}`);
                 break;
         }
-        
+
         // בדיקה אם נמצאו סרטונים
         if (videoList.length === 0) {
             console.warn('לא נמצאו סרטונים במקור שנבחר, מחזיר רשימה ריקה');
         } else {
             console.log(`נטענו ${videoList.length} סרטונים`);
         }
-        
+
         // ערבוב הסרטונים
         return shuffleArray([...videoList]);
     } catch (error) {

@@ -4,8 +4,9 @@
   import PlayLogo from "../assets/play.svg?raw";
   import LoadingSpinner from "./LoadingSpinner.svelte";
 
-  import type { Config, VideoController } from "../../types";
-
+  import type { Writable } from "svelte/store";
+  import type { Config, VideoController, TimerController } from "../../types";
+  
   interface VideoDialogProps {
     config: Config;
     visible: boolean;
@@ -15,8 +16,10 @@
     time?: string;
     onVideoEnded: () => void;
     hideModal: () => void;
+    modalHasHidden: Writable<boolean>;
+    timer: TimerController;
   }
-
+  
   let {
     config,
     videoUrl,
@@ -26,6 +29,8 @@
     time = $bindable("00:00"),
     onVideoEnded = $bindable(),
     hideModal = $bindable(),
+    modalHasHidden,
+    timer,
   }: VideoDialogProps = $props();
 
   let hideProgress = config.video.hideProgressBar;
@@ -110,6 +115,10 @@
       onVideoEnded();
     }
   }
+
+  function closeButton() {
+    modalHasHidden.set(true)
+  }
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -141,7 +150,7 @@
       {#if config.system.enableHideModalButton}
         <div
           id="close-button"
-          onclick={hideModal}
+          onclick={closeButton}
           class="border border-red-700 bg-red-400
                      rounded-full aspect-square h-4 cursor-pointer"
         ></div>
@@ -181,6 +190,8 @@
         onerror={handleVideoError}
         onclick={onClickVideoToggle}
         onended={handleVideoEnded}
+        onwaiting={() => timer.pause()}
+        onplaying={() => timer.start()}
       >
         <source src={videoUrl} type={mimeType} />
         הדפדפן שלך לא תומך בתגית וידאו.

@@ -34,7 +34,7 @@ export default function injectScriptPlugin(): Plugin {
   return {
     name: 'inject-script-plugin',
     configResolved(config) {
-      const mode = (config.env.VITE_VERCEL_ENV || config.mode) as Mode;
+      const mode = (config.env.VITE_VERCEL_ENV || config.mode || 'development') as Mode;
       const domain = config.env.VITE_PRJ_DOMAIN as string;
       const urlPath: string = (mode === 'development') ? 'src/' : '';
 

@@ -3,8 +3,9 @@
 
 import { mount } from 'svelte';
 import './app.css';
+import type { Component } from 'svelte';
 
-import type { Component, Props, Exports } from '../types';
+import type { Props, Exports } from '../types';
 
 
 interface MountComponenttOptions {

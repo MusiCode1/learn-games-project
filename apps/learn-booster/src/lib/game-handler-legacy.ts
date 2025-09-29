@@ -117,7 +117,7 @@ export function injectCodeToGame_old(config: Config, playerControls?: PlayerCont
 
         injectCodeIntoFunction(createGamePath, null, async () => {
             // בדיקת תמיכה במשחק לאחר אתחול המשחק
-            const gameConfig = getGameConfig();
+            const gameConfig = getGameConfig(config);
 
             if (gameConfig) {
                 log('The game is supported!');
@@ -195,7 +195,7 @@ export function injectCodeToGame(config: Config, playerControls?: PlayerControls
         let isHandlerDefinded = false;
 
         const definingHandler = () => {
-            const gameConfig = getGameConfig();
+            const gameConfig = getGameConfig(config);
 
             if (!gameConfig) {
                 log('The game isn\'t supported!');

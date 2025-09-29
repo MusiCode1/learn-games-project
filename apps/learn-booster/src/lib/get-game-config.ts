@@ -2,6 +2,7 @@ import { gameConfigs, defaultGameConfig, type GameConfig } from "./game-config";
 import { getFunctionByPath } from "./inject-code-into-function";
 import { findFunctionInWindow } from "./object-finder";
 import { log } from "./logger.svelte";
+import type { Config } from "../types";
 
 /**
  * מחפש את קונפיגורציית המשחק המתאימה לפי נתיב
@@ -22,19 +23,19 @@ function findGameConfig(path: string): GameConfig | undefined {
 function findTriggerFunctionPath(functionName: string): string | undefined {
     try {
         log(`מחפש את הפונקציה ${functionName} באמצעות חיפוש רקורסיבי...`);
-        
+
         const results = findFunctionInWindow({
             keyForSearch: functionName,
             valueType: 'function',
             debug: false
         });
-        
+
         if (results.length > 0) {
             const path = results[0];
             log(`נמצאה הפונקציה ${functionName} בנתיב: ${path}`);
             return path;
         }
-        
+
         log(`לא נמצאה הפונקציה ${functionName} בחיפוש רקורסיבי`);
         return undefined;
     } catch (error) {
@@ -49,35 +50,38 @@ function findTriggerFunctionPath(functionName: string): string | undefined {
  * 
  * @returns קונפיגורציית המשחק המעודכנת אם פונקציית המטרה נמצאה, או false אם לא נמצאה
  */
-export function getGameConfig(): GameConfig | false {
+export function getGameConfig(systemConfig: Config): GameConfig | false {
     try {
+
+        if (systemConfig.system.disableGameCodeInjection) return defaultGameConfig;
+
         // קבלת נתיב ה-URL הנוכחי
         const currentPath = window.location.pathname;
         log(`נתיב נוכחי: ${currentPath}`);
-        
+
         // חיפוש קונפיגורציית המשחק המתאימה
         const gameConfig = findGameConfig(currentPath);
         log(gameConfig ? `נמצאה קונפיגורציה למשחק: ${gameConfig.gameName}` : "לא נמצאה קונפיגורציה ספציפית למשחק");
-        
+
         // בחירת הקונפיגורציה המתאימה (ספציפית או ברירת מחדל)
         const config = gameConfig || defaultGameConfig;
         log(`משתמש בקונפיגורציה: ${config.gameName}`);
-        
+
         // ניסיון למצוא את הפונקציה בנתיב הידוע
         log(`מחפש את הפונקציה ${config.triggerFunc.name} בנתיב: ${config.triggerFunc.path}`);
         const triggerFuncObj = getFunctionByPath(config.triggerFunc.path);
-        
+
         if (triggerFuncObj) {
             log(`נמצאה הפונקציה ${config.triggerFunc.name} בנתיב הידוע`);
             return config;
         }
-        
+
         log(`לא נמצאה הפונקציה ${config.triggerFunc.name} בנתיב הידוע, מנסה חיפוש רקורסיבי...`);
-        
+
         // אם לא נמצאה הפונקציה, ננסה לחפש אותה באמצעות object-finder
         const functionName = config.triggerFunc.name;
         const newPath = findTriggerFunctionPath(functionName);
-        
+
         // אם נמצא נתיב חדש
         if (newPath) {
             // עדכון נתיב הפונקציה בקונפיגורציה
@@ -88,17 +92,17 @@ export function getGameConfig(): GameConfig | false {
                     path: newPath
                 }
             };
-            
+
             // בדיקה שהפונקציה אכן קיימת בנתיב החדש
             const verifyFunc = getFunctionByPath(newPath);
             if (verifyFunc) {
                 log(`אומתה הפונקציה ${functionName} בנתיב החדש: ${newPath}`);
                 return updatedConfig;
             }
-            
+
             log(`לא ניתן לאמת את הפונקציה ${functionName} בנתיב החדש: ${newPath}`);
         }
-        
+
         // אם לא נמצאה הפונקציה בשום דרך
         log(`לא נמצאה הפונקציה ${functionName} בשום דרך`);
         return false;
@@ -107,3 +111,5 @@ export function getGameConfig(): GameConfig | false {
         return false;
     }
 }
+
+export { defaultGameConfig };

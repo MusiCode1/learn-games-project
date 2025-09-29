@@ -85,15 +85,50 @@ function notifyConfigListeners(): void {
  * עדכון הגדרות המערכת
  * @param updates עדכונים להגדרות
  */
-export function updateConfig(updates: Partial<Config>): void {
+export async function updateConfig(updates: Partial<Config>): Promise<Config> {
 
-    if (updates.video && updates.video.googleDriveFolderUrl === '') {
-        updates.video.googleDriveFolderUrl = GOOGLE_DRIVE_DEFAULT_FOLDER;
+    if (updates.video) {
+
+        if (updates.video.googleDriveFolderUrl === '') {
+            updates.video.googleDriveFolderUrl = GOOGLE_DRIVE_DEFAULT_FOLDER;
+        }
     }
 
     appConfig = deepMerge({ ...appConfig }, updates);
+
+    if (appConfig.rewardType === 'video') {
+
+        await setVideosUrls(appConfig);
+    }
+
     saveConfigToStorage();
     notifyConfigListeners();
+
+    return appConfig;
+}
+
+export async function tempConfig(updates: Partial<Config>) {
+    if (updates.video) {
+
+        if (updates.video.googleDriveFolderUrl === '') {
+            updates.video.googleDriveFolderUrl = GOOGLE_DRIVE_DEFAULT_FOLDER;
+        }
+    }
+
+    const tempConfig = deepMerge({ ...appConfig }, updates);
+
+    if (appConfig.rewardType === 'video') {
+
+        await setVideosUrls(appConfig);
+    }
+
+    return tempConfig;
+}
+
+async function setVideosUrls(systemConfig: Config) {
+    const videos = await loadVideoUrls(systemConfig);
+
+    appConfig.video.videos = videos;
 }
 
 /**
@@ -101,7 +136,7 @@ export function updateConfig(updates: Partial<Config>): void {
  * @returns האם הטעינה הצליחה
  */
 export function loadConfigFromStorage(): boolean {
-    
+
     try {
         const storedConfig = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (!storedConfig) return false;
@@ -207,16 +242,8 @@ export function convertNewConfigToOld(newConfig: Config): OldConfig {
     };
 }
 
+export async function initializeConfig(): Promise<Config> {
 
-/**
- * אתחול מערכת ההגדרות
- * @param selfUrl ה-URL של הסקריפט הנוכחי
- * @param devMode האם האפליקציה במצב פיתוח
- */
-export async function initializeConfig(
-    selfUrl?: string,
-    devMode?: boolean
-): Promise<Config> {
     // איפוס למצב ברירת המחדל
     resetConfig();
 
@@ -224,15 +251,10 @@ export async function initializeConfig(
     loadConfigFromStorage();
 
     // טעינת רשימת סרטונים אם במצב וידאו וסופקו הפרמטרים הנדרשים
-    if (appConfig.rewardType === 'video' && selfUrl) {
-        const videos = await loadVideoUrls(appConfig, selfUrl, !!devMode);
+    if (appConfig.rewardType === 'video') {
+
         // עדכון רשימת הסרטונים בקונפיג
-        updateConfig({
-            video: {
-                ...appConfig.video,
-                videos
-            }
-        });
+        await setVideosUrls(appConfig);
     }
 
     // סימון שמערכת ההגדרות אותחלה

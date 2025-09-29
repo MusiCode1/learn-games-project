@@ -121,6 +121,7 @@
         time={$timeFormatted}
         {hideModal}
         {modalHasHidden}
+        {timer}
       />
     </Modal>
   </main>

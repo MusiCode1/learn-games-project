@@ -35,6 +35,8 @@
   },
   "dependencies": {
     "@fontsource/heebo": "^5.1.0",
+    "@playwright/test": "^1.51.1",
+    "caniuse-lite": "^1.0.30001745",
     "dotenv": "^16.4.7",
     "vite-plugin-css-injected-by-js": "^3.5.2"
   }

@@ -30,11 +30,10 @@
 
   let videoDisplayTimeInSec = $derived(videoDisplayTime * 1000);
 
-  function onSaveHandle() {
+  async function onSaveHandle() {
     newConfig.rewardDisplayDurationMs = videoDisplayTimeInSec; // המרה משניות למילישניות
 
-    configManager.updateConfig($state.snapshot(newConfig));
-    config = configManager.getAllConfig();
+    config = await configManager.updateConfig($state.snapshot(newConfig));
 
     // שמירת הקונפיגורציה בלוקל סטורג'
     const saved = configManager.saveConfigToStorage();
