@@ -15,9 +15,8 @@ export function createTimer(): TimerController {
   let intervalId: NodeJS.Timeout | undefined;
   let expectedEndTime: number;
   let remainingTimeAtPause = 0;
-  let onDone: (() => void) | null = null;
-  let duration = 0;
-
+  let resolvePromise: (() => void) | null = null;
+  
   function tick() {
     const remaining = Math.max(0, expectedEndTime - Date.now());
     internalStore.set(remaining);
@@ -27,7 +26,7 @@ export function createTimer(): TimerController {
         clearInterval(intervalId);
         intervalId = undefined;
       }
-      onDone?.();
+      resolvePromise?.();
     }
   }
 
@@ -51,17 +50,19 @@ export function createTimer(): TimerController {
       clearInterval(intervalId);
       intervalId = undefined;
     }
-    remainingTimeAtPause = duration;
-    internalStore.set(duration);
-    onDone?.(); // פותר את ההבטחה גם בעצירה יזומה
+    remainingTimeAtPause = 0;
+    internalStore.set(0);
+    resolvePromise?.(); // פותר את ההבטחה גם בעצירה יזומה
   }
 
-  function configure(durationMs: number): Promise<void> {
-    duration = durationMs;
+  function configure(durationMs: number): void {
     remainingTimeAtPause = durationMs;
     internalStore.set(durationMs);
+  }
+
+  function onDone(): Promise<void> {
     return new Promise((resolve) => {
-      onDone = resolve;
+      resolvePromise = resolve;
     });
   }
 
@@ -70,6 +71,7 @@ export function createTimer(): TimerController {
     pause,
     stop,
     configure,
+    onDone,
     time,
   };
 }

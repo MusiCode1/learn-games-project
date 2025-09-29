@@ -130,14 +130,16 @@ async function handleVideoReward(
     // מחכה לדיליי שהוגדר בקונפיג
     if (delay) await sleep(delay);
 
+    let unsubscribe: store.Unsubscriber | undefined;
+
+    timer.configure(config.rewardDisplayDurationMs);
+
     // מציג את הוידאו
     playerControls.show();
 
-    let unsubscribe: store.Unsubscriber | undefined;
-
     await Promise.race([
         // הזמן המרבי להצגת הווידאו
-        timer.configure(config.rewardDisplayDurationMs),
+        timer.onDone(),
 
         // נסגר ברגע שהמודאל הוסתר
         new Promise<void>((resolve) => {
@@ -178,9 +180,11 @@ async function handleAppReward(
     // מציג את האפליקציה
     window.fully.startApplication(config.app.packageName);
 
-    const timerPromise = timer.configure(config.rewardDisplayDurationMs);
+    timer.configure(config.rewardDisplayDurationMs);
+    
     timer.start();
-    await timerPromise;
+    
+    await timer.onDone();
 
     window.fully.bringToForeground();
 

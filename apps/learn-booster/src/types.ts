@@ -46,7 +46,8 @@ export interface TimerController {
   start: () => void;
   pause: () => void;
   stop: () => void;
-  configure: (durationMs: number) => Promise<void>;
+  configure: (durationMs: number) => void;
+  onDone: () => Promise<void>;
   time: Readable<number>;
 }
 
