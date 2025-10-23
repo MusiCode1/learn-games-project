@@ -14,5 +14,6 @@ declare global {
         currentVideoIndex: number;
         settingsController: SettingsController;
         app: any;
+        getGingimBoosterConfig?: () => Config;
     }
 }

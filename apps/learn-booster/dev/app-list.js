@@ -7,5 +7,10 @@
 
   const res = await fetch(url).then((r) => r.json());
 
+  window.res = res;
+
   
 })();
+
+
+fetch('http://127.0.0.1:2323/?cmd=manageApps&password=V64P%5EBgiiynM&type=json')

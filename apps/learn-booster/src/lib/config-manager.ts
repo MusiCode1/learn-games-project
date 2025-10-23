@@ -19,6 +19,8 @@ const defaultConfig: Config = {
     rewardType: 'video',
     rewardDisplayDurationMs: 20 * 1000,
     turnsPerReward: 1,
+    environmentMode: 'development',
+    
 
     // הגדרות הודעות ותזכורות
     notifications: {

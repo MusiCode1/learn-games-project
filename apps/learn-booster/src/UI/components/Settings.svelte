@@ -4,6 +4,7 @@
   import * as configManager from "../../lib/config-manager";
   import { log } from "../../lib/logger.svelte";
   import { isFullyKiosk } from "../../lib/fully-kiosk";
+  import { getAppsList } from "../../lib/get-app-list";
 
   interface Props {
     config: Config;
@@ -20,6 +21,11 @@
   const msToSec = (n: number) => Math.floor(n / 1000);
 
   const isNotFullyKiosk = !isFullyKiosk();
+
+  const disabledAppMode =
+    config.environmentMode !== "development" && isNotFullyKiosk;
+
+  $inspect("disabledAppMode:", disabledAppMode);
 
   let saveStatus = $state<"success" | "error" | null>(null);
   let saveStatusTimeoutHandle: NodeJS.Timeout;
@@ -71,6 +77,13 @@
       if (saveStatusTimeoutHandle) clearTimeout(saveStatusTimeoutHandle);
     };
   });
+
+  async function appList() {
+    return getAppsList().catch((error) => {
+      console.error(error);
+      return [];
+    });
+  }
 </script>
 
 <div
@@ -92,7 +105,7 @@
           class="p-3 border rounded-lg text-right bg-white text-base w-full touch-manipulation"
         >
           <option value="video">סרטון</option>
-          <option value="app" disabled={isNotFullyKiosk}>אפליקציה</option>
+          <option value="app" disabled={disabledAppMode}>אפליקציה</option>
         </select>
       </div>
 
@@ -102,11 +115,31 @@
           <label for="appName" class="font-medium text-base"
             >שם האפליקציה:</label
           >
-          <input
+
+          <select
             id="appName"
+            bind:value={newConfig.app.packageName}
+            class="p-3 border rounded-lg bg-white text-base w-full touch-manipulation"
+            placeholder="זה עובד?"
+          >
+            {#await appList()}
+              <option>אנא המתן לטעינת רשימת האפליקציות...</option>
+            {:then appList}
+              {#each appList as app}
+                <option dir="auto" value={app.package} class="text-center"
+                  >{app.label}</option
+                >
+              {:else}
+                <option selected disabled>לא ניתן לטעון את רשימת האפליקציות</option>
+              {/each}
+            {/await}
+          </select>
+
+          <input
+            id="appNameText"
             type="text"
             bind:value={newConfig.app.packageName}
-            class="p-3 border rounded-lg text-right bg-white text-base w-full touch-manipulation"
+            class="p-3 border rounded-lg text-left bg-white text-base w-full touch-manipulation"
             placeholder="com.example.app"
           />
           <p class="text-gray-500 text-sm text-right">
@@ -233,3 +266,6 @@
     </div>
   </div>
 </div>
+
+<style>
+</style>

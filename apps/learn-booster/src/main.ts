@@ -3,7 +3,7 @@ import { unmount } from "svelte";
 import { mountComponent, defaultOptions } from "./UI/component-composer";
 import { injectCodeIntoIframe } from "./lib/script-element-injection";
 import { log } from "./lib/logger.svelte";
-import { initializeConfig, tempConfig } from "./lib/config-manager";
+import { initializeConfig, tempConfig, getAllConfig } from "./lib/config-manager";
 
 import {
     isVideoConfig,
@@ -41,6 +41,9 @@ async function main(): Promise<void> {
     "main-function";
 
     if (!isDevServer && !isDeployServer && !isGingim) return;
+
+    window.getGingimBoosterConfig = getAllConfig;
+
 
     const mode = (devMode) ? 'development' : 'production';
     log('Gingim-Booster is loaded in', mode, 'mode.');

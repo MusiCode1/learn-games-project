@@ -96,6 +96,8 @@ export type Config = {
    */
   turnsPerReward: number;
 
+  environmentMode: 'production' | 'development' | 'preview';
+
   // הגדרות הודעות ותזכורות
   notifications: {
     // הודעה לפני סיום זמן התגמול
@@ -226,3 +228,11 @@ export type VideoList = VideoItem[];
 export type Exports = Record<string, any> | Record<string, Record<string, any>>;
 export type Props = Record<string, any>;
 export type Component = SvelteComponent<Props, Exports> | ComponentImport<Props, Exports, string>;
+
+export interface AppListItem {
+  icon: string;      // Base64 מקודד של האייקון
+  label: string;     // שם האפליקציה
+  package: string;   // שם החבילה (Package Name)
+  version: string;   // גרסת האפליקציה
+  versionCode: number; // קוד גרסה מספרי
+}
