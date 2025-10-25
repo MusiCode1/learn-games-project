@@ -191,10 +191,11 @@ export type ConfigOverrides = DeepPartial<Config>;
 export interface FullyKiosk {
   getFileList: (folder: string) => string;
   readFile: (path: string) => string;
-  getBooleanSetting: (key: string) => void;
+  getBooleanSetting: (key: string) => 'true' | 'false';
   setBooleanSetting: (key: string, value: boolean) => void;
   bringToForeground: (millis?: number) => void;
   startApplication(packageName: string, action?: string, url?: string): void;
+  getStringRawSetting: (key: string) => string;
 }
 
 /**

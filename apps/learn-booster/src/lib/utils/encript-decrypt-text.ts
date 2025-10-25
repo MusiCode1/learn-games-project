@@ -105,8 +105,8 @@ function normalizeAad(aad?: string | Uint8Array): Uint8Array | undefined {
 
 // ==== גזירת מפתח ====
 async function deriveAesGcmKey(passwordBytes: Uint8Array, salt: Uint8Array, usage: KeyUsage[]): Promise<CryptoKey> {
-  const keyMaterial = await crypto.subtle.importKey("raw", toAB(passwordBytes), { name: "PBKDF2" }, false, ["deriveKey"]);
-  return crypto.subtle.deriveKey(
+  const keyMaterial = await globalThis.crypto.subtle.importKey("raw", toAB(passwordBytes), { name: "PBKDF2" }, false, ["deriveKey"]);
+  return globalThis.crypto.subtle.deriveKey(
     { name: "PBKDF2", salt: toAB(salt), iterations: PBKDF2_ITERATIONS, hash: "SHA-256" },
     keyMaterial,
     { name: "AES-GCM", length: KEY_LENGTH },
@@ -122,9 +122,9 @@ export async function encryptText(plaintext: string, password: string, opts: Enc
   assert(typeof password === "string" && password.length > 0, "password is required");
 
   const salt = new Uint8Array(SALT_BYTES);
-  crypto.getRandomValues(salt);
+  globalThis.crypto.getRandomValues(salt);
   const iv = new Uint8Array(IV_BYTES);
-  crypto.getRandomValues(iv);
+  globalThis.crypto.getRandomValues(iv);
 
   const pw = normalizePassword(password);
   const key = await deriveAesGcmKey(pw, salt, ["encrypt"]);
@@ -137,7 +137,7 @@ export async function encryptText(plaintext: string, password: string, opts: Enc
   };
 
   const msgBytes = enc.encode(plaintext);
-  const ctBuf = await crypto.subtle.encrypt(alg, key, toAB(msgBytes));
+  const ctBuf = await globalThis.crypto.subtle.encrypt(alg, key, toAB(msgBytes));
   const ct = new Uint8Array(ctBuf);
 
   const iters = u32ToBytesBE(PBKDF2_ITERATIONS);
@@ -179,8 +179,8 @@ export async function decryptText(b64urlPayload: string, password: string, opts:
   assert(ct.length >= 16, "ciphertext is too short");
 
   const pw = normalizePassword(password);
-  const keyMaterial = await crypto.subtle.importKey("raw", toAB(pw), { name: "PBKDF2" }, false, ["deriveKey"]);
-  const key = await crypto.subtle.deriveKey(
+  const keyMaterial = await globalThis.crypto.subtle.importKey("raw", toAB(pw), { name: "PBKDF2" }, false, ["deriveKey"]);
+  const key = await globalThis.crypto.subtle.deriveKey(
     { name: "PBKDF2", salt: toAB(salt), iterations: iters, hash: "SHA-256" },
     keyMaterial,
     { name: "AES-GCM", length: KEY_LENGTH },
@@ -196,15 +196,13 @@ export async function decryptText(b64urlPayload: string, password: string, opts:
   };
 
   try {
-    const ptBuf = await crypto.subtle.decrypt(alg, key, toAB(ct));
+    const ptBuf = await globalThis.crypto.subtle.decrypt(alg, key, toAB(ct));
     return dec.decode(ptBuf);
   } catch {
     throw new Error("Decryption failed (wrong password or corrupted data).");
   }
 }
-// filename: src/lib/utils/encript-decrypt-text.ts
-(window as any).encryptText = encryptText;
-(window as any).decryptText = decryptText;
+
 // ==== דוגמה ====
 // (async () => {
 //   const msg = "שלום עולם!";

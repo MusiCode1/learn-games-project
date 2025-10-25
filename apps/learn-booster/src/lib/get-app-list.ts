@@ -6,7 +6,8 @@ const filePath = '/data/user/0/com.fullykiosk.emm/files/remote-admin-pass';
 const passwordKey = import.meta.env.VITE_PASS_KEY;
 const aad = 'gingim-booster-fully-kiosk-key:v1';
 
-async function getFullyKioskPassword() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function getFullyKioskPasswordOld() {
 
     const encryptedPassFile = window.fully?.readFile(filePath);
     if (!encryptedPassFile) {
@@ -17,6 +18,25 @@ async function getFullyKioskPassword() {
         passwordKey, { strictVersion: true, aad });
     // להחליף בקובץ מקומי
     return clearPass;
+}
+
+async function getFullyKioskPassword() {
+
+    const isRemoteAdminEnable = window.fully?.getBooleanSetting('remoteAdmin');
+
+    if (isRemoteAdminEnable === 'false') {
+        throw new Error('Fully Kiosk remote admin is not enabled.');
+    }
+
+    const password =
+        window.fully?.getStringRawSetting('remoteAdminPassword');
+
+    if (!password) {
+        throw new Error('Could not read Fully Kiosk remote admin password file.');
+    }
+
+    return password;
+
 }
 
 

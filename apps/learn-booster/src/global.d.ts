@@ -13,6 +13,7 @@ declare global {
         videoUrls: string[];
         currentVideoIndex: number;
         settingsController: SettingsController;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         app: any;
         getGingimBoosterConfig?: () => Config;
     }
