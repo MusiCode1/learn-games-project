@@ -1,56 +1,23 @@
-import type { Config, OldConfig } from '../types';
-import { loadVideoUrls } from './video-loader';
 import { getActiveProfile, initializeProfiles, saveActiveProfileConfig } from './profile-manager';
+import { getDefaultConfig } from './default-config';
+import { loadVideoUrls } from './video-loader';
+
+import type { Config, OldConfig } from '../types';
+
 
 // מפתח לשמירה ב-localStorage
 const LOCAL_STORAGE_KEY = 'gingim-booster-config';
+
 const GOOGLE_DRIVE_DEFAULT_FOLDER =
     import.meta.env.VITE_GOOGLE_DRIVE_DEFAULT_FOLDER
+
+
 
 // רשימת מאזינים לשינויים בקונפיגורציה
 type ConfigChangeListener = (config: Config) => void;
 const listeners: ConfigChangeListener[] = [];
 
-
-/**
- * ערכי ברירת מחדל של התצורה
- */
-const defaultConfig: Config = {
-    // הגדרות כלליות
-    rewardType: 'video',
-    rewardDisplayDurationMs: 20 * 1000,
-    turnsPerReward: 1,
-    environmentMode: 'development',
-
-
-    // הגדרות הודעות ותזכורות
-    notifications: {
-        endingNotification: {
-            text: 'המחזק יסתיים בעוד 10 שניות',
-            displayBeforeEndMs: 10 * 1000,
-            enabledFor: 'none',
-        },
-    },
-
-    // הגדרות וידאו
-    video: {
-        videos: [],
-        source: 'google-drive',
-        googleDriveFolderUrl: GOOGLE_DRIVE_DEFAULT_FOLDER,
-        hideProgressBar: false,
-    },
-
-    // הגדרות אפליקציה
-    app: {
-        packageName: 'com.google.android.youtube',
-    },
-
-    // הגדרות מערכת
-    system: {
-        enableHideModalButton: true,
-        disableGameCodeInjection: false,
-    },
-};
+const defaultConfig = getDefaultConfig();
 
 /**
  * דגל המציין האם מערכת ההגדרות אותחלה

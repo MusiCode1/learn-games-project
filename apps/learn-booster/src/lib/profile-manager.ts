@@ -1,4 +1,9 @@
-import type { Config, Profile, ProfilesExportPayload, ProfilesState } from '../types';
+import { getDefaultConfig } from "./default-config";
+
+import type {
+    Config, Profile,
+    ProfilesExportPayload, ProfilesState
+} from '../types';
 
 const STORAGE_KEY = 'gingim-booster-profiles:v1';
 const SCHEMA_VERSION = 1;
@@ -393,32 +398,7 @@ function cloneConfig(config: Config): Config {
 }
 
 function buildFallbackConfig(): Config {
-    return {
-        rewardType: 'video',
-        rewardDisplayDurationMs: 20 * 1000,
-        turnsPerReward: 1,
-        environmentMode: 'development',
-        notifications: {
-            endingNotification: {
-                text: '',
-                displayBeforeEndMs: 0,
-                enabledFor: 'none',
-            },
-        },
-        video: {
-            videos: [],
-            source: 'google-drive',
-            googleDriveFolderUrl: '',
-            hideProgressBar: false,
-        },
-        app: {
-            packageName: '',
-        },
-        system: {
-            enableHideModalButton: false,
-            disableGameCodeInjection: false,
-        },
-    };
+    return getDefaultConfig();
 }
 
 function assertInitialized(): void {
