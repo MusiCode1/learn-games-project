@@ -41,7 +41,7 @@ const defaultConfig: Config = {
 
     // הגדרות אפליקציה
     app: {
-        packageName: 'com.edujoy.fidget.pop.it',
+        packageName: 'com.google.android.youtube',
     },
 
     // הגדרות מערכת

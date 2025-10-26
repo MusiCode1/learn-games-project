@@ -1,4 +1,5 @@
 import { decryptText } from "./utils/encript-decrypt-text";
+import { getAllConfig } from "./config-manager";
 
 import type { AppListItem } from "../types";
 
@@ -18,6 +19,24 @@ async function getFullyKioskPasswordOld() {
         passwordKey, { strictVersion: true, aad });
     // להחליף בקובץ מקומי
     return clearPass;
+}
+
+async function getExampleAppList() {
+
+    return fetch('/example-app-list.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data: AppListItem[]) => {
+            return data;
+        })
+        .catch((error) => {
+            console.error('Error fetching example app list:', error);
+            throw error;
+        });
 }
 
 async function getFullyKioskPassword() {
@@ -41,6 +60,15 @@ async function getFullyKioskPassword() {
 
 
 export async function getAppsList() {
+
+    const environmentMode = getAllConfig().environmentMode;
+
+    if (environmentMode === 'development') {
+        const exampleAppList = await getExampleAppList();
+
+        return exampleAppList;
+    }
+
     const password = await getFullyKioskPassword();
 
     const params = new URLSearchParams({
