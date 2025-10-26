@@ -1,10 +1,20 @@
 <script lang="ts">
-  import type { AppListItem, Config, SettingsController } from "../../types";
+  import type { AppListItem, Config, SettingsController, Profile } from "../../types";
   import { onMount } from "svelte";
   import * as configManager from "../../lib/config-manager";
   import { log } from "../../lib/logger.svelte";
   import { isFullyKiosk } from "../../lib/fully-kiosk";
   import { getAppsList as getAppsListFromFully } from "../../lib/get-app-list";
+  import {
+    addProfilesListener,
+    clearDirtyConfig,
+    createProfile,
+    deleteProfile as deleteStoredProfile,
+    getProfilesState,
+    markDirtyConfig,
+    setActiveProfile,
+    setProfilesUiEnabled,
+  } from "../../lib/profile-manager";
 
   interface Props {
     config: Config;
@@ -36,24 +46,58 @@
 
   let videoDisplayTimeInSec = $derived(videoDisplayTime * 1000);
 
-  async function onSaveHandle() {
-    newConfig.rewardDisplayDurationMs = videoDisplayTimeInSec;
+  let profilesState = $state(getProfilesState());
+  let selectedProfileId = $state(profilesState.activeProfileId ?? "");
 
-    config = await configManager.updateConfig($state.snapshot(newConfig));
+  const orderedProfiles = $derived(
+    profilesState.order
+      .map((id) => profilesState.profiles[id])
+      .filter((profile): profile is Profile => Boolean(profile))
+  );
 
-    const saved = configManager.saveConfigToStorage();
+  const isProfilesUiEnabled = $derived(profilesState.uiEnabled);
+  const hasUnsavedProfileChanges = $derived.by(() => {
+    if (!profilesState.uiEnabled) return false;
+    const dirty = profilesState.dirtyConfig;
+    if (!dirty) return false;
+    return !configsEqual(dirty, $state.snapshot(newConfig));
+  });
 
-    saveStatus = saved ? "success" : "error";
+  const selectedProfile = $derived(
+    orderedProfiles.find((profile) => profile.id === selectedProfileId)
+  );
+
+  const canDeleteSelectedProfile = $derived(
+    Boolean(
+      selectedProfile &&
+        orderedProfiles.length > 1 &&
+        selectedProfile.id !== profilesState.activeProfileId
+    )
+  );
+
+  async function persistConfig(closeSettings = true) {
+    try {
+      newConfig.rewardDisplayDurationMs = videoDisplayTimeInSec;
+      config = await configManager.updateConfig($state.snapshot(newConfig));
+      saveStatus = "success";
+    } catch (error) {
+      console.error("שמירת הגדרות נכשלה:", error);
+      saveStatus = "error";
+    }
 
     if (saveStatusTimeoutHandle) clearTimeout(saveStatusTimeoutHandle);
 
     saveStatusTimeoutHandle = setTimeout(() => {
-      if (saved) {
+      if (saveStatus === "success" && closeSettings) {
         controller?.hide();
-        saveStatus = null;
       }
-    }, 1500);
+      saveStatus = null;
+    }, closeSettings ? 1500 : 2000);
   }
+
+  const onSaveHandle = async () => {
+    await persistConfig(true);
+  };
 
   const showVideo = () => {
     newConfig.rewardDisplayDurationMs = videoDisplayTimeInSec;
@@ -64,6 +108,7 @@
 
   const onClose = () => {
     newConfig = config;
+    selectedProfileId = profilesState.activeProfileId ?? selectedProfileId;
     controller?.hide();
   };
 
@@ -71,6 +116,60 @@
     return () => {
       if (saveStatusTimeoutHandle) clearTimeout(saveStatusTimeoutHandle);
     };
+  });
+
+  onMount(() => {
+    const removeListener = addProfilesListener((next) => {
+      profilesState = next;
+    });
+    return () => {
+      removeListener();
+    };
+  });
+
+  $effect(() => {
+    if (!selectedProfileId && orderedProfiles[0]) {
+      selectedProfileId = orderedProfiles[0].id;
+      return;
+    }
+
+    const exists = orderedProfiles.some(
+      (profile) => profile.id === selectedProfileId,
+    );
+    if (!exists) {
+      selectedProfileId =
+        profilesState.activeProfileId ?? orderedProfiles[0]?.id ?? "";
+    }
+  });
+
+  $effect(() => {
+    if (!profilesState.uiEnabled) {
+      if (profilesState.dirtyConfig) {
+        clearDirtyConfig();
+      }
+      return;
+    }
+
+    const activeProfileId = profilesState.activeProfileId;
+    if (!activeProfileId) return;
+
+    const activeProfile = profilesState.profiles[activeProfileId];
+    if (!activeProfile) return;
+
+    const configSnapshot = structuredClone($state.snapshot(newConfig));
+    const isSame = configsEqual(configSnapshot, activeProfile.config);
+
+    if (isSame) {
+      if (profilesState.dirtyConfig) {
+        clearDirtyConfig();
+      }
+      return;
+    }
+
+    const existingDirty = profilesState.dirtyConfig;
+    if (!existingDirty || !configsEqual(existingDirty, configSnapshot)) {
+      markDirtyConfig(configSnapshot);
+    }
   });
 
   const appListPromise = (async function () {
@@ -86,6 +185,120 @@
     const appItem = appList.filter((v) => v.package === packageName)?.[0];
     return appItem as unknown as AppListItem | undefined;
   });
+
+  const saveProfileWithoutClosing = async () => {
+    await persistConfig(false);
+    clearDirtyConfig();
+  };
+
+  function configsEqual(
+    a?: Config | null,
+    b?: Config | null,
+  ): boolean {
+    if (!a || !b) return false;
+    try {
+      return JSON.stringify(a) === JSON.stringify(b);
+    } catch {
+      return false;
+    }
+  }
+
+  function confirmProfileSwitch(): boolean {
+    if (!profilesState.dirtyConfig) return true;
+    if (typeof window === "undefined") return true;
+    return window.confirm(
+      "בוצעו שינויים בפרופיל הפעיל שטרם נשמרו. להמשיך בכל זאת?",
+    );
+  }
+
+  function snapshotCurrentConfig(): Config {
+    return structuredClone($state.snapshot(newConfig));
+  }
+
+  async function applyProfileById(
+    profileId: string,
+    options: { skipConfirm?: boolean } = {},
+  ) {
+    if (!profileId) return;
+    if (!options.skipConfirm && !confirmProfileSwitch()) {
+      selectedProfileId = profilesState.activeProfileId ?? profileId;
+      return;
+    }
+
+    try {
+      const profile = setActiveProfile(profileId);
+      config = await configManager.updateConfig(structuredClone(profile.config));
+      newConfig = structuredClone(config);
+      videoDisplayTime = msToSec(config.rewardDisplayDurationMs);
+      saveStatus = null;
+    } catch (error) {
+      console.error("החלפת הפרופיל נכשלה:", error);
+    }
+  }
+
+  const applySelectedProfile = async () => {
+    if (!selectedProfileId) return;
+    await applyProfileById(selectedProfileId);
+  };
+
+  const createNewProfileFromCurrent = async () => {
+    if (typeof window === "undefined") return;
+    const suggestedName = `פרופיל ${orderedProfiles.length + 1}`;
+    const name = window
+      .prompt("תנו שם לפרופיל החדש:", suggestedName)
+      ?.trim();
+    if (!name) return;
+
+    try {
+      const profile = createProfile({
+        name,
+        config: snapshotCurrentConfig(),
+      });
+      selectedProfileId = profile.id;
+      await applyProfileById(profile.id, { skipConfirm: true });
+    } catch (error) {
+      console.error("יצירת הפרופיל נכשלה:", error);
+    }
+  };
+
+  const deleteSelectedProfile = () => {
+    const profile = selectedProfile;
+    if (
+      !profile ||
+      profile.id === profilesState.activeProfileId ||
+      orderedProfiles.length <= 1
+    )
+      return;
+
+    if (
+      typeof window !== "undefined" &&
+      !window.confirm(`למחוק את "${profile.name}"? הפעולה אינה הפיכה.`)
+    ) {
+      return;
+    }
+
+    try {
+      deleteStoredProfile(profile.id);
+    } catch (error) {
+      console.error("מחיקת הפרופיל נכשלה:", error);
+    }
+  };
+
+  const onProfilesToggleChange = (event: Event) => {
+    const target = event.currentTarget as HTMLInputElement | null;
+    if (!target) return;
+    try {
+      setProfilesUiEnabled(target.checked);
+    } catch (error) {
+      console.error("עדכון מצב ניהול הפרופילים נכשל:", error);
+    }
+  };
+
+  const onProfileSelectChange = (event: Event) => {
+    const target = event.currentTarget as HTMLSelectElement | null;
+    if (!target) return;
+    selectedProfileId = target.value;
+  };
 </script>
 
 <div
@@ -99,6 +312,129 @@
       class="bg-gray-50 rounded-lg p-4 md:p-6 space-y-4 md:space-y-6 max-h-[60vh] overflow-y-auto"
     >
       <div class="space-y-4 md:space-y-5">
+        <!-- ניהול פרופילים -->
+        <section class="settings-card space-y-4 text-right">
+          <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div class="space-y-1">
+              <p class="font-medium text-base">ניהול פרופילים</p>
+              <p class="settings-help-text">
+                שמרו והחילו הגדרות שונות לכל תלמיד או תרחיש.
+              </p>
+            </div>
+            <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+              <span>הצג פרופילים</span>
+              <input
+                type="checkbox"
+                class="!static h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                checked={isProfilesUiEnabled}
+                onchange={onProfilesToggleChange}
+              />
+            </label>
+          </div>
+
+          {#if isProfilesUiEnabled}
+            <div class="space-y-3">
+              <div class="flex flex-col space-y-1">
+                <label for="profileSelect" class="font-medium text-base">
+                  בחירת פרופיל:
+                </label>
+                <select
+                  id="profileSelect"
+                  bind:value={selectedProfileId}
+                  onchange={onProfileSelectChange}
+                  class="p-3 border rounded-lg text-right bg-white text-base w-full touch-manipulation"
+                >
+                  {#each orderedProfiles as profile}
+                    <option value={profile.id}>
+                      {profile.name}
+                      {profile.id === profilesState.activeProfileId ? " (פעיל)" : ""}
+                    </option>
+                  {/each}
+                </select>
+                {#if orderedProfiles.length === 0}
+                  <p class="settings-help-text">
+                    עדיין אין פרופילים שמורים. צרו פרופיל חדש כדי להתחיל.
+                  </p>
+                {/if}
+              </div>
+
+              {#if hasUnsavedProfileChanges}
+                <div class="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                  בוצעו שינויים בפרופיל הפעיל שטרם נשמרו. לחצו על "שמור לפרופיל הנוכחי" או על "שמור" בתחתית המסך.
+                </div>
+              {/if}
+
+              <div class="flex flex-col gap-2 md:flex-row">
+                <button
+                  onclick={applySelectedProfile}
+                  class="flex-1 rounded-lg border px-4 py-2 text-base hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  disabled={!selectedProfileId || orderedProfiles.length === 0}
+                >
+                  <span class="flex items-center justify-center gap-2">
+                    <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
+                      <path
+                        d="M5.5 12H3l4.5-4.5L12 12H9.5c0 3.03 2.47 5.5 5.5 5.5.97 0 1.87-.25 2.66-.69l1.52 1.52A7.95 7.95 0 0 1 15 19c-4.42 0-8-3.58-8-8Z"
+                        class="fill-current opacity-70"
+                      />
+                      <path
+                        d="M18.5 12H21l-4.5 4.5L12 12h2.5c0-3.03-2.47-5.5-5.5-5.5-.97 0-1.87.25-2.66.69L4.82 5.67A7.95 7.95 0 0 1 9 5c4.42 0 8 3.58 8 8Z"
+                        class="fill-current"
+                      />
+                    </svg>
+                    <span>החל פרופיל</span>
+                  </span>
+                </button>
+                <button
+                  onclick={saveProfileWithoutClosing}
+                  class="flex-1 rounded-lg bg-blue-500 px-4 py-2 text-base text-white hover:bg-blue-600 transition-colors disabled:opacity-50"
+                  disabled={!profilesState.activeProfileId}
+                >
+                  <span class="flex items-center justify-center gap-2">
+                    <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
+                      <path
+                        d="M5 3h13l3 3v15H3V3h2Zm9 2H7v4h7V5Zm-5 6h6v8H9v-8Z"
+                        class="fill-current"
+                      />
+                    </svg>
+                    <span>שמור לפרופיל הנוכחי</span>
+                  </span>
+                </button>
+              </div>
+
+              <div class="flex flex-col gap-2 md:flex-row">
+                <button
+                  onclick={createNewProfileFromCurrent}
+                  class="flex-1 rounded-lg bg-gray-100 px-4 py-2 text-base hover:bg-gray-200 transition-colors"
+                >
+                  <span class="flex items-center justify-center gap-2">
+                    <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
+                      <path
+                        d="M12 5v6h6v2h-6v6h-2v-6H4v-2h6V5h2Z"
+                        class="fill-current"
+                      />
+                    </svg>
+                    <span>פרופיל חדש</span>
+                  </span>
+                </button>
+                <button
+                  onclick={deleteSelectedProfile}
+                  class="flex-1 rounded-lg border border-red-200 px-4 py-2 text-base text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                  disabled={!canDeleteSelectedProfile}
+                >
+                  <span class="flex items-center justify-center gap-2">
+                    <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true">
+                      <path
+                        d="M6 6h12l-1 15H7L6 6Zm5 2v10h2V8h-2Zm-5-4h4l1-1h4l1 1h4v2H3V4h3Z"
+                        class="fill-current"
+                      />
+                    </svg>
+                    <span>מחק פרופיל</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          {/if}
+        </section>
         <!-- סוג הפרס -->
         <section class="settings-card space-y-3 text-right">
           <div class="flex flex-col space-y-1 md:space-y-2">
@@ -307,8 +643,8 @@
               </div>
             {/if}
 
-            <div class="flex flex-col gap-2 rounded-lg bg-gray-50/80 p-3">
-              <div class="flex items-center justify-end gap-2">
+            <div class="flex flex-col gap-2 rounded-lg bg-gray-50/80 p-3 text-right">
+              <div class="flex items-center justify-end gap-2 flex-row-reverse">
                 <label for="hideProgress" class="font-medium text-base">
                   הסתירו את פס ההתקדמות
                 </label>
@@ -320,7 +656,7 @@
                 />
               </div>
               <p class="settings-help-text">
-                שימושי כאשר רוצים שהילדים יצפו בקליפ בלי לדעת כמה זמן נשאר.
+                שימושי כאשר התלמידים משחקים בפס ההתקדמות ו'תוקעים' אותו.
               </p>
             </div>
 

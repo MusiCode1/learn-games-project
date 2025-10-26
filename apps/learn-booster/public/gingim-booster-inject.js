@@ -11,8 +11,9 @@
  * mode: development 
  */
 
-(() =>{
-    if (window.location.hostname === 'gingim.net'){
-    const url = 'https://dev-server.dev/i.js';
-    fetch(url).then(r => r.text()).then(eval)
-}})();
+(() => {
+    if (window.location.hostname === 'gingim.net') {
+        const url = 'https://192.168.33.116/i.js';
+        fetch(url).then(r => r.text()).then(eval)
+    }
+})();

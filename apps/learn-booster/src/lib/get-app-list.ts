@@ -1,11 +1,33 @@
 import { decryptText } from "./utils/encript-decrypt-text";
-import { getAllConfig } from "./config-manager";
+import { getAllConfig, addConfigListener } from "./config-manager";
 
 import type { AppListItem } from "../types";
+import { isFullyKiosk } from "./fully-kiosk";
 
 const filePath = '/data/user/0/com.fullykiosk.emm/files/remote-admin-pass';
 const passwordKey = import.meta.env.VITE_PASS_KEY;
 const aad = 'gingim-booster-fully-kiosk-key:v1';
+let environmentMode = '';
+
+let exampleAppList: AppListItem[] | [] = [];
+
+(() => {
+
+    const cleanListener = addConfigListener((newConfig) => {
+
+        environmentMode = newConfig.environmentMode;
+
+        if (isFullyKiosk() === false && environmentMode === 'development') {
+            getExampleAppList().then((data) => {
+                exampleAppList = data;
+                cleanListener();
+            }).catch((error) => {
+                console.error('Error fetching example app list during initialization:', error);
+            });
+        }
+    });
+
+})();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function getFullyKioskPasswordOld() {
@@ -23,7 +45,9 @@ async function getFullyKioskPasswordOld() {
 
 async function getExampleAppList() {
 
-    return fetch('/example-app-list.json')
+    const currrntUrl = new URL(import.meta.url);
+
+    return fetch(currrntUrl.origin + '/example-app-list.json')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -61,12 +85,22 @@ async function getFullyKioskPassword() {
 
 export async function getAppsList() {
 
-    const environmentMode = getAllConfig().environmentMode;
+    if (environmentMode === '') {
+        const allConfig = getAllConfig();
+        environmentMode = allConfig.environmentMode;
+    }
 
-    if (environmentMode === 'development') {
-        const exampleAppList = await getExampleAppList();
+    if (isFullyKiosk() === false) {
+        if (environmentMode === 'development') {
 
-        return exampleAppList;
+            if (exampleAppList.length === 0) {
+                exampleAppList = await getExampleAppList();
+            }
+
+            return exampleAppList;
+        } else {
+            throw new Error('Not in Fully Kiosk environment.');
+        }
     }
 
     const password = await getFullyKioskPassword();

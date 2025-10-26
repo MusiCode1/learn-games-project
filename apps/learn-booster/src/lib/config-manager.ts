@@ -1,5 +1,6 @@
 import type { Config, OldConfig } from '../types';
 import { loadVideoUrls } from './video-loader';
+import { getActiveProfile, initializeProfiles, saveActiveProfileConfig } from './profile-manager';
 
 // מפתח לשמירה ב-localStorage
 const LOCAL_STORAGE_KEY = 'gingim-booster-config';
@@ -20,7 +21,7 @@ const defaultConfig: Config = {
     rewardDisplayDurationMs: 20 * 1000,
     turnsPerReward: 1,
     environmentMode: 'development',
-    
+
 
     // הגדרות הודעות ותזכורות
     notifications: {
@@ -104,6 +105,7 @@ export async function updateConfig(updates: Partial<Config>): Promise<Config> {
     }
 
     saveConfigToStorage();
+    syncActiveProfileSnapshot();
     notifyConfigListeners();
 
     return appConfig;
@@ -252,6 +254,12 @@ export async function initializeConfig(): Promise<Config> {
     // טעינה מ-localStorage
     loadConfigFromStorage();
 
+    await initializeProfiles(appConfig);
+    const activeProfile = getActiveProfile();
+    if (activeProfile) {
+        appConfig = cloneConfig(activeProfile.config);
+    }
+
     // טעינת רשימת סרטונים אם במצב וידאו וסופקו הפרמטרים הנדרשים
     if (appConfig.rewardType === 'video') {
 
@@ -261,6 +269,9 @@ export async function initializeConfig(): Promise<Config> {
 
     // סימון שמערכת ההגדרות אותחלה
     isConfigInitialized = true;
+
+    syncActiveProfileSnapshot();
+    notifyConfigListeners();
 
     return { ...appConfig };
 }
@@ -305,4 +316,18 @@ function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial
         }
     }
     return target;
+}
+
+function cloneConfig(config: Config): Config {
+    return typeof structuredClone === 'function'
+        ? structuredClone(config)
+        : JSON.parse(JSON.stringify(config));
+}
+
+function syncActiveProfileSnapshot(): void {
+    try {
+        saveActiveProfileConfig(appConfig);
+    } catch (error) {
+        console.warn('Unable to sync active profile config:', error);
+    }
 }

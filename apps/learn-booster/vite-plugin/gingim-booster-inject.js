@@ -11,8 +11,9 @@
  * mode: @mode 
  */
 
-(() =>{
-    if (window.location.hostname === 'gingim.net'){
-    const url = '@injectFileUrl';
-    fetch(url).then(r => r.text()).then(eval)
-}})();
+(() => {
+    if (window.location.hostname === 'gingim.net') {
+        const url = '@injectFileUrl';
+        fetch(url).then(r => r.text()).then(eval)
+    }
+})();

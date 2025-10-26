@@ -8,7 +8,7 @@
         document.head.appendChild(script);
     }
 
-    const url = 'https://dev-server.dev/src/main.ts';
+    const url = 'https://192.168.33.116/src/main.ts';
 
     loadExternalScript(url);
 })();

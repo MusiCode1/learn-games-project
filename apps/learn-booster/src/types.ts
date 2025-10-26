@@ -188,6 +188,34 @@ type DeepPartial<T> = {
 
 export type ConfigOverrides = DeepPartial<Config>;
 
+export interface Profile {
+  id: string;
+  name: string;
+  color?: string;
+  tags?: string[];
+  config: Config;
+  meta: {
+    createdAt: number;
+    updatedAt: number;
+  };
+}
+
+export interface ProfilesState {
+  schemaVersion: number;
+  profiles: Record<string, Profile>;
+  order: string[];
+  activeProfileId: string | null;
+  uiEnabled: boolean;
+  dirtyConfig: Config | null;
+}
+
+export interface ProfilesExportPayload {
+  schemaVersion: number;
+  profiles: Profile[];
+  activeProfileId: string | null;
+  uiEnabled: boolean;
+}
+
 export interface FullyKiosk {
   getFileList: (folder: string) => string;
   readFile: (path: string) => string;
