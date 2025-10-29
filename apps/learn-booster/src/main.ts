@@ -17,6 +17,13 @@ import type { Config, PlayerControls, TimerController } from "./types";
 import type { Component } from 'svelte';
 import { createTimer } from "./lib/utils/timer";
 
+declare global {
+    interface Window {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        GingimBoosterTools: any;
+    }
+}
+
 
 const DEV_SERVER_HOSTNAME = 'dev-server.dev',
     GAME_PAGE_URL = 'https://gingim.net/wp-content/uploads/new_games/';
@@ -42,7 +49,9 @@ async function main(): Promise<void> {
 
     if (!isDevServer && !isDeployServer && !isGingim) return;
 
-    window.getGingimBoosterConfig = getAllConfig;
+    window.GingimBoosterTools = {
+        getConfig: getAllConfig
+    };
 
 
     const mode = (devMode) ? 'development' : 'production';
