@@ -2,7 +2,7 @@ import * as store from "svelte/store";
 import type { Writable } from "svelte/store";
 
 import type { GameConfig, InjectionMethod } from "./game-config";
-import type { PlayerControls, Config, TimerController } from "../types";
+import type { PlayerControls, Config, TimerController, FullyKiosk } from "../types";
 import { injectCodeIntoFunction, getFunctionByPath } from "./inject-code-into-function";
 import { getGameConfig } from "./get-game-config";
 import { log } from "./logger.svelte";
@@ -10,6 +10,56 @@ import { sleep } from "./sleep";
 import { monitorFunctionCalls } from "./function-monitor";
 
 const AFTER_VIDEO_DELAY_MS = 2500;
+const FULLY_POLL_INTERVAL_MS = 1000;
+
+type FullyForegroundWatcher = {
+    promise: Promise<'fully'>;
+    cancel: () => void;
+};
+
+function createFullyForegroundWatcher(fullyApi: FullyKiosk | undefined): FullyForegroundWatcher | null {
+    if (!fullyApi || typeof fullyApi.isInForeground !== 'function') {
+        return null;
+    }
+
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    let hasSeenBackground = false;
+
+    const cancel = (): void => {
+        if (intervalId !== null) {
+            clearInterval(intervalId);
+            intervalId = null;
+        }
+    };
+
+    const promise = new Promise<'fully'>((resolve) => {
+        intervalId = setInterval(() => {
+            try {
+                const inForeground = fullyApi.isInForeground!();
+                if (typeof inForeground !== 'boolean') {
+                    return;
+                }
+
+                if (!hasSeenBackground) {
+                    if (!inForeground) {
+                        hasSeenBackground = true;
+                    }
+                    return;
+                }
+
+                if (inForeground) {
+                    cancel();
+                    resolve('fully');
+                }
+            } catch (error) {
+                cancel();
+                log('Failed to poll Fully foreground state:', (error as Error).message);
+            }
+        }, FULLY_POLL_INTERVAL_MS);
+    });
+
+    return { promise, cancel };
+}
 
 // ברירת מחדל גלובלית לשיטת הזרקה
 const DEFAULT_INJECTION_METHOD: InjectionMethod = 'monitor';
@@ -126,7 +176,7 @@ async function handleVideoReward(
     delay?: number
 ): Promise<void> {
 
-     playerControls.modalHasHidden.set(false);
+    playerControls.modalHasHidden.set(false);
     // מחכה לדיליי שהוגדר בקונפיג
     if (delay) await sleep(delay);
 
@@ -180,11 +230,31 @@ async function handleAppReward(
     // מציג את האפליקציה
     window.fully.startApplication(config.app.packageName);
 
+    const fullyWatcher = createFullyForegroundWatcher(window.fully);
+
     timer.configure(config.rewardDisplayDurationMs);
-    
+
+    const racePromises: Array<Promise<'timer' | 'fully'>> = [
+        timer.onDone().then(() => 'timer' as const),
+    ];
+
+    if (fullyWatcher) {
+        racePromises.push(fullyWatcher.promise);
+    }
+
     timer.start();
-    
-    await timer.onDone();
+
+    let result: 'timer' | 'fully' | null = null;
+    try {
+        result = await Promise.race(racePromises);
+    } finally {
+        timer.stop();
+        fullyWatcher?.cancel();
+    }
+
+    if (result === 'fully') {
+        log('Detected return to Fully Kiosk, stopping timer early');
+    }
 
     window.fully.bringToForeground();
 
@@ -317,40 +387,6 @@ function initializeInjectionByMethod(
 }
 
 /**
- * מזריק קוד למשחק באמצעות הזרקה ישירה לפונקציה
- * @deprecated השתמש ב-injectCode במקום
- */
-export function injectCodeDirectly(config: Config, playerControls: PlayerControls | undefined, timer: TimerController): void {
-    try {
-        // הזרקת קוד לפונקציית היצירה של המשחק
-        const createGamePath = 'PIXI.game.state.states.game.create';
-
-        injectCodeIntoFunction(createGamePath, null, async () => {
-            // בדיקת תמיכה במשחק לאחר אתחול המשחק
-            const gameConfig = getGameConfig(config);
-
-            if (!gameConfig) {
-                log('The game isn\'t supported!');
-                return;
-            }
-
-            log('The game is supported!');
-
-            const isGameInitialized = store.writable(true);
-
-            // יצירת פונקציית ההאנדלר
-            const handler = createGameTurnHandler(config, gameConfig, isGameInitialized, playerControls, timer);
-
-            // אתחול הזרקת הקוד בשיטה הישירה
-            initializeInjectionByMethod(gameConfig, handler, 'direct');
-        });
-    } catch (error) {
-        log('Failed to initialize game:', (error as Error).message);
-        throw error;
-    }
-}
-
-/**
  * מזריק קוד למשחק באמצעות השיטה המתאימה
  * @param config הגדרות המערכת
  * @param playerControls בקר הנגן (חובה רק עבור rewardType === 'video')
@@ -396,7 +432,9 @@ export function injectCode(
         // הזרקת קוד לפונקציית אתחול המשחק, כדי לסמן שהמשחק אותחל
         const initGameFnName = "create";
         const initGameFnPath = replaceLastLiteral(
-            gameConfig.triggerFunc.path, gameConfig.triggerFunc.name, initGameFnName);
+            gameConfig.triggerFunc.path,
+            gameConfig.triggerFunc.name,
+            initGameFnName);
 
         const initGameFnExists = getFunctionByPath(initGameFnPath);
         const isGameInitialized = store.writable(false);
@@ -406,7 +444,7 @@ export function injectCode(
             injectCodeIntoFunction(initGameFnPath, null, async () => {
                 await sleep(1000); // מחכים שנייה כדי לוודא שהמשחק אכן אותחל
                 isGameInitialized.set(true);
-                log('[gingim-booster] Game initialized');
+                log('Game initialized');
             });
 
             log(`Found game initialization function at path: ${initGameFnPath}`);

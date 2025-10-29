@@ -221,6 +221,7 @@ export interface FullyKiosk {
   readFile: (path: string) => string;
   getBooleanSetting: (key: string) => 'true' | 'false';
   setBooleanSetting: (key: string, value: boolean) => void;
+  isInForeground?: () => boolean;
   bringToForeground: (millis?: number) => void;
   startApplication(packageName: string, action?: string, url?: string): void;
   getStringRawSetting: (key: string) => string;
