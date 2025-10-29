@@ -2,6 +2,7 @@ import type { Config, VideoItem, VideoList } from '../types';
 import { extractGoogleDriveFolderId, getFolderVideosUrls } from './google-drive-video';
 import { shuffleArray } from './utils/shuffle-array';
 import { getFileList } from './fully-kiosk';
+import { log } from "./logger.svelte";
 
 const devMode = import.meta.env.DEV,
     selfUrl = import.meta.url;
@@ -165,7 +166,7 @@ export async function loadVideoUrls(
 ): Promise<VideoList> {
     // בדיקה אם במצב וידאו
     if (config.rewardType !== 'video') {
-        console.log('מצב אפליקציה, לא נטענים סרטונים');
+        log('מצב אפליקציה, לא נטענים סרטונים');
         return [];
     }
 
@@ -179,7 +180,7 @@ export async function loadVideoUrls(
 
                 // אם לא נמצאו סרטונים, ננסה לטעון מתיקיית ברירת המחדל
                 if (videoList.length === 0) {
-                    console.log('מנסה לטעון סרטונים מתיקיית ברירת המחדל');
+                    log('מנסה לטעון סרטונים מתיקיית ברירת המחדל');
                     videoList = await loadDefaultGoogleDriveVideos();
                 }
                 break;
@@ -201,7 +202,7 @@ export async function loadVideoUrls(
         if (videoList.length === 0) {
             console.warn('לא נמצאו סרטונים במקור שנבחר, מחזיר רשימה ריקה');
         } else {
-            console.log(`נטענו ${videoList.length} סרטונים`);
+            log(`נטענו ${videoList.length} סרטונים`);
         }
 
         // ערבוב הסרטונים
