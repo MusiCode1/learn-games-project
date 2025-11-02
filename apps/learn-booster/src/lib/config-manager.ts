@@ -16,6 +16,8 @@ const LOCAL_STORAGE_KEY = "gingim-booster-config";
 const GOOGLE_DRIVE_DEFAULT_FOLDER = import.meta.env
   .VITE_GOOGLE_DRIVE_DEFAULT_FOLDER;
 
+const SITE_DEFAULT_URL = import.meta.env.VITE_SITE_DEFAULT_UTL;
+
 // רשימת מאזינים לשינויים בקונפיגורציה
 type ConfigChangeListener = (config: Config) => void;
 const listeners: ConfigChangeListener[] = [];
@@ -82,6 +84,12 @@ export async function tempConfig(updates: Partial<Config>) {
   if (updates.video) {
     if (updates.video.googleDriveFolderUrl === "") {
       updates.video.googleDriveFolderUrl = GOOGLE_DRIVE_DEFAULT_FOLDER;
+    }
+  }
+
+  if (updates.booster) {
+    if (updates.booster.siteUrl === "") {
+      updates.booster.siteUrl = SITE_DEFAULT_URL;
     }
   }
 

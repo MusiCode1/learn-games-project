@@ -1,4 +1,7 @@
-import { writable, readable, type Readable } from 'svelte/store';
+import { writable, readable, get, type Readable } from 'svelte/store';
+
+import { msToTime } from "./ms-to-time"
+
 import type { TimerController } from '../../types';
 
 /**
@@ -7,6 +10,7 @@ import type { TimerController } from '../../types';
  */
 export function createTimer(): TimerController {
   const internalStore = writable(0);
+
   const time: Readable<number> = readable(0, (set) => {
     const unsubscribe = internalStore.subscribe(set);
     return unsubscribe;
@@ -16,7 +20,7 @@ export function createTimer(): TimerController {
   let expectedEndTime: number;
   let remainingTimeAtPause = 0;
   let resolvePromise: (() => void) | null = null;
-  
+
   function tick() {
     const remaining = Math.max(0, expectedEndTime - Date.now());
     internalStore.set(remaining);
@@ -66,12 +70,27 @@ export function createTimer(): TimerController {
     });
   }
 
-  return {
+  function subscribe(run: (value: string) => void) {
+    return time.subscribe((value) => {
+      run(msToTime(value));
+    });
+  }
+
+  function getTime() {
+
+    return msToTime(get(time));
+  }
+
+  const timer = {
     start,
     pause,
     stop,
     configure,
     onDone,
     time,
+    subscribe,
+    getTime
   };
+
+  return timer;
 }

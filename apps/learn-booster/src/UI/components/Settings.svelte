@@ -10,6 +10,7 @@
   import * as configManager from "../../lib/config-manager";
   import { log } from "../../lib/logger.svelte";
   import { isFullyKiosk } from "../../lib/fully-kiosk";
+  import { msToTime } from "../../lib/utils/ms-to-time";
   import { getAppsList as getAppsListFromFully } from "../../lib/get-app-list";
   import {
     addProfilesListener,
@@ -36,41 +37,27 @@
 
   const msToSec = (n: number) => Math.floor(n / 1000);
 
-  const isNotFullyKiosk = !isFullyKiosk();
-
-  const disabledAppMode =
-    config.environmentMode !== "development" && isNotFullyKiosk;
-
-  $inspect("disabledAppMode:", disabledAppMode);
-
-  function normalizeBoosterConfig(target: Config): Config {
-    const booster = target.booster ?? { siteUrl: "" };
-    const siteUrl =
-      typeof booster.siteUrl === "string"
-        ? booster.siteUrl
-        : String(booster.siteUrl ?? "");
-
-    return {
-      ...target,
-      booster: {
-        siteUrl: siteUrl.trim(),
-      },
-    };
-  }
-
   config = normalizeBoosterConfig(config);
+
+  let newConfig = $state(normalizeBoosterConfig(structuredClone(config)));
 
   let saveStatus = $state<"success" | "error" | null>(null);
   let saveStatusTimeoutHandle: NodeJS.Timeout;
-
-  let newConfig = $state(normalizeBoosterConfig(structuredClone(config)));
 
   let videoDisplayTime = $state(msToSec(config.rewardDisplayDurationMs));
 
   let videoDisplayTimeInSec = $derived(videoDisplayTime * 1000);
 
   let profilesState = $state(getProfilesState());
+
   let selectedProfileId = $state(profilesState.activeProfileId ?? "");
+
+  const isNotFullyKiosk = !isFullyKiosk();
+
+  const disabledAppMode =
+    config.environmentMode !== "development" && isNotFullyKiosk;
+
+  $inspect("disabledAppMode:", disabledAppMode);
 
   const orderedProfiles = $derived(
     profilesState.order
@@ -97,6 +84,21 @@
         selectedProfile.id !== profilesState.activeProfileId
     )
   );
+
+  function normalizeBoosterConfig(target: Config): Config {
+    const booster = target.booster ?? { siteUrl: "" };
+    const siteUrl =
+      typeof booster.siteUrl === "string"
+        ? booster.siteUrl
+        : String(booster.siteUrl ?? "");
+
+    return {
+      ...target,
+      booster: {
+        siteUrl: siteUrl.trim(),
+      },
+    };
+  }
 
   async function persistConfig(closeSettings = true) {
     try {
@@ -485,6 +487,7 @@
               </div>
             {/if}
           </section>
+
           <!-- סוג הפרס -->
           <section class="settings-card space-y-3 text-right">
             <div class="flex flex-col space-y-1 md:space-y-2">
@@ -738,29 +741,30 @@
                   שימושי כאשר התלמידים משחקים בפס ההתקדמות ו'תוקעים' אותו.
                 </p>
               </div>
-
-              <div class="flex flex-col space-y-1 md:space-y-2 text-right">
-                <button
-                  onclick={showVideo}
-                  class="w-full px-6 py-3 rounded-lg bg-gray-100 text-gray-800 text-base hover:bg-gray-200 transition-colors touch-manipulation"
-                >
-                  הצגת דוגמה
-                </button>
-                <p class="settings-help-text">
-                  השתמשו בתצוגה מקדימה כדי לוודא שהפרס טעון ושזמן ההצגה מתאים.
-                </p>
-              </div>
             </section>
           {/if}
+
+          <div
+            id="show-example"
+            class="flex flex-col space-y-1 md:space-y-2 text-right"
+          >
+            <button
+              onclick={showVideo}
+              class="w-full px-6 py-3 rounded-lg bg-gray-100 text-gray-800 text-base hover:bg-gray-200 transition-colors touch-manipulation"
+            >
+              הצגת דוגמה
+            </button>
+            <p class="settings-help-text">
+              השתמשו בתצוגה מקדימה כדי לוודא שהפרס טעון ושזמן ההצגה מתאים.
+            </p>
+          </div>
         </div>
         <div
           dir="ltr"
           class="text-center settings-card text-slate-500
                  flex flex-row justify-center items-center italic"
         >
-          <p>
-            Version: {config.appVersion}
-          </p>
+          <p>Version: {config.appVersion}</p>
           <p class="mx-3">•</p>
           <p>Developed by MusiCode</p>
           <p class="mx-3">•</p>

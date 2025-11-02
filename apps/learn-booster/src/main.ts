@@ -7,14 +7,15 @@ import { initializeConfig, tempConfig, getAllConfig } from "./lib/config-manager
 
 import {
     isVideoConfig,
+    isSiteConfig,
     injectCode,
     handleGameTurn
 } from "./lib/game-handler";
-import { ensureBoosterControls } from "./lib/booster-site";
+import { initializeSiteBoosterControls } from "./lib/booster-site";
 
 import VideoComponent from './UI/VideoMain.svelte';
 import SettingsComponent from "./UI/SettingsMain.svelte";
-import type { Config, PlayerControls, TimerController } from "./types";
+import type { Config, PlayerControls, TimerController, SiteBoosterControls } from "./types";
 import type { Component } from 'svelte';
 import { createTimer } from "./lib/utils/timer";
 
@@ -51,7 +52,9 @@ async function main(): Promise<void> {
     if (!isDevServer && !isDeployServer && !isGingim) return;
 
     window.GingimBoosterTools = {
-        getConfig: getAllConfig
+        getConfig: getAllConfig,
+        controler: undefined,
+        timer: undefined,
     };
 
 
@@ -63,7 +66,8 @@ async function main(): Promise<void> {
         const config = await initializeConfig();
 
         if (isIframe || isGamePage) {
-            await initGameRewardHandler(config);
+            const { timer, controller } = await initGameRewardHandler(config);
+            injectCode(config, timer, controller);
 
         } else if (isDevServer) {
 
@@ -83,18 +87,30 @@ main();
 async function initGameRewardHandler(config: Config) {
 
     const timer = createTimer();
-    let playerControls: PlayerControls | undefined = undefined;
-    const boosterControls = ensureBoosterControls(config, timer);
-
-    if (config.booster.siteUrl) {
-        boosterControls.setUrl(config.booster.siteUrl);
-    }
+    let controller: PlayerControls | SiteBoosterControls | undefined;
+    let app: ReturnType<typeof mountComponent> | undefined = undefined;
 
     if (isVideoConfig(config)) {
 
-        ({ playerControls } = initializeVideoPlayer(config, timer));
+        const videoPlayer = initializeVideoPlayer(config, timer);
+        controller = videoPlayer.playerControls;
+        app = videoPlayer.app;
     }
-    injectCode(config, playerControls, timer, boosterControls);
+
+    if (isSiteConfig(config)) {
+        const siteBooster = initializeSiteBoosterControls(config, timer);
+        controller = siteBooster.boosterController;
+        app = siteBooster;
+    }
+
+    window.GingimBoosterTools = {
+        ...window.GingimBoosterTools,
+        controller,
+        timer,
+        app
+    };
+
+    return { timer, app, controller };
 }
 
 function initializeVideoPlayer(config: Config, timer: TimerController) {
@@ -124,8 +140,7 @@ function initializeSettings(config: Config) {
 
         newConfig = await tempConfig(newConfig);
 
-        const timer = createTimer();
-        const { playerControls, app } = initializeVideoPlayer(newConfig, timer);
+        const { timer, controller, app } = await initGameRewardHandler(newConfig);
 
         newConfig = {
             ...newConfig,
@@ -138,7 +153,7 @@ function initializeSettings(config: Config) {
 
         const handleOptions = {
             config: newConfig,
-            playerControls,
+            controller,
             turnsCounter: 0,
             timer
         };
@@ -147,7 +162,7 @@ function initializeSettings(config: Config) {
         await handleGameTurn(handleOptions);
 
         // הסרת הקומפוננטה אחרי הזרקת הקוד
-        unmount(app);
+        if (app) unmount(app);
 
     };
 

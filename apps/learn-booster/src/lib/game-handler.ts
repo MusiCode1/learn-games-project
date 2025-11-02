@@ -2,7 +2,7 @@ import * as store from "svelte/store";
 import type { Writable } from "svelte/store";
 
 import type { GameConfig, InjectionMethod } from "./game-config";
-import type { PlayerControls, Config, TimerController, FullyKiosk, BoosterControls } from "../types";
+import type { PlayerControls, Config, TimerController, FullyKiosk, SiteBoosterControls } from "../types";
 import { injectCodeIntoFunction, getFunctionByPath } from "./inject-code-into-function";
 import { getGameConfig } from "./get-game-config";
 import { log } from "./logger.svelte";
@@ -70,7 +70,7 @@ interface BaseGameOptions {
     config: Config;
     turnsCounter: number;
     timer: TimerController;
-    boosterControls?: BoosterControls;
+    controller?: PlayerControls | SiteBoosterControls | undefined;
 }
 
 // אפשרויות עבור סוג תגמול אפליקציה
@@ -81,12 +81,14 @@ interface AppGameOptions extends BaseGameOptions {
 // אפשרויות עבור סוג תגמול וידאו
 interface VideoGameOptions extends BaseGameOptions {
     config: Config & { rewardType: 'video' };
-    playerControls: PlayerControls;
+    /* playerControls: PlayerControls; */
+    controller: PlayerControls;
 }
 
 interface SiteGameOptions extends BaseGameOptions {
     config: Config & { rewardType: 'site' };
-    boosterControls: BoosterControls;
+    /* boosterControls: SiteBoosterControls; */
+    controller: SiteBoosterControls;
 }
 
 interface UnknownGameOptions extends BaseGameOptions {
@@ -135,9 +137,8 @@ function createGameOptions(
     config: Config,
     gameConfig: GameConfig | undefined,
     turnsCounter: number,
-    playerControls: PlayerControls | undefined,
     timer: TimerController,
-    boosterControls: BoosterControls | undefined
+    controller?: PlayerControls | SiteBoosterControls | undefined
 ): GameOptions {
     // יצירת אובייקט האפשרויות הבסיסי
     const baseOptions: BaseGameOptions = {
@@ -145,14 +146,13 @@ function createGameOptions(
         turnsCounter,
         gameConfig,
         timer,
-        boosterControls
+        controller
     };
 
     // הוספת playerControls אם מדובר בתגמול וידאו
     if (isVideoConfig(config)) {
         return {
             ...baseOptions,
-            playerControls: playerControls!
         } as VideoGameOptions;
     }
 
@@ -160,10 +160,9 @@ function createGameOptions(
         return baseOptions as AppGameOptions;
     }
 
-    if (config.rewardType === 'site' && boosterControls) {
+    if (isSiteConfig(config)) {
         return {
             ...baseOptions,
-            boosterControls
         } as SiteGameOptions;
     }
 
@@ -288,8 +287,8 @@ async function handleAppReward(
     await sleep(AFTER_VIDEO_DELAY_MS);
 }
 
-async function handleBoosterReward(
-    boosterControls: BoosterControls | undefined,
+async function handleSiteBoosterReward(
+    boosterControls: SiteBoosterControls | undefined,
     config: Config,
     timer: TimerController,
     delay?: number
@@ -343,24 +342,23 @@ function replaceLastLiteral(str: string, search: string, replace: string): strin
  */
 export async function handleGameTurn(options: GameOptions): Promise<void> {
     // חילוץ שדות משותפים
-    const { gameConfig, config, timer, boosterControls } = options;
-
-    let rewardDisplayed = false;
+    const delay = options.gameConfig?.delay;
 
     if (isVideoOptions(options)) {
-        await handleVideoReward(options.playerControls, config, timer, gameConfig?.delay);
-        rewardDisplayed = true;
+        const { config, timer, controller } = options;
+
+        await handleVideoReward(controller, config, timer, delay);
+
     } else if (isAppOptions(options)) {
-        await handleAppReward(options.config, timer, gameConfig?.delay);
-        rewardDisplayed = true;
+        const { config, timer } = options;
+        await handleAppReward(config, timer, delay);
+
+    } else if (isSiteOptions(options)) {
+        const { config, timer, controller } = options;
+        await handleSiteBoosterReward(controller, config, timer, delay);
+
     }
 
-    await handleBoosterReward(
-        boosterControls,
-        config,
-        timer,
-        rewardDisplayed ? undefined : gameConfig?.delay
-    );
 }
 
 /**
@@ -369,13 +367,11 @@ export async function handleGameTurn(options: GameOptions): Promise<void> {
 export function createGameTurnHandler(
     config: Config,
     gameConfig: GameConfig,
-
     //משתנה שמחזיק האם המשחק אותחל
     // כדי שלא ירוץ מחזק בסיבוב הראשון של makeNewTurn
     isGameInitialized: Writable<boolean>,
-    playerControls: PlayerControls | undefined,
     timer: TimerController,
-    boosterControls: BoosterControls | undefined
+    controller?: PlayerControls | SiteBoosterControls | undefined
 ): AsyncFun {
 
     // === משתנים משותפים ===
@@ -388,7 +384,7 @@ export function createGameTurnHandler(
     const triggerFuncName = gameConfig.triggerFunc.name;
 
     // יצירת אובייקט האפשרויות
-    const gameOptions = createGameOptions(config, gameConfig, turnsCounter, playerControls, timer, boosterControls);
+    const gameOptions = createGameOptions(config, gameConfig, turnsCounter, timer, controller);
 
     // פונקציית ההאנדלר
     return async () => {
@@ -476,9 +472,8 @@ function initializeInjectionByMethod(
  */
 export function injectCode(
     config: Config,
-    playerControls: PlayerControls | undefined,
     timer: TimerController,
-    boosterControls: BoosterControls | undefined,
+    controller: PlayerControls | SiteBoosterControls | undefined,
     method?: InjectionMethod
 ): void {
     try {
@@ -540,9 +535,8 @@ export function injectCode(
             config,
             gameConfig,
             isGameInitialized,
-            playerControls,
             timer,
-            boosterControls
+            controller
         );
 
         // אתחול הזרקת הקוד לפי השיטה המתאימה

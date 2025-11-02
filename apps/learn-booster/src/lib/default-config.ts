@@ -2,6 +2,7 @@ import type { Config } from '../types';
 
 const GOOGLE_DRIVE_DEFAULT_FOLDER =
     import.meta.env.VITE_GOOGLE_DRIVE_DEFAULT_FOLDER
+const SITE_DEFAULT_URL = import.meta.env.VITE_SITE_DEFAULT_UTL;
 
 /**
  * ערכי ברירת מחדל של התצורה
@@ -39,7 +40,7 @@ const defaultConfig: Config = {
 
     // הגדרות מחזק אתר
     booster: {
-        siteUrl: '',
+        siteUrl: SITE_DEFAULT_URL ?? 'https://gingim.net/wp-content/uploads/new_games/tidy_up/',
     },
 
     // הגדרות מערכת

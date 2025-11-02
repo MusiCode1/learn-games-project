@@ -1,11 +1,12 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
-  import { writable } from "svelte/store";
+  import { writable, derived } from "svelte/store";
 
   import Modal from "./components/Modal.svelte";
   import LoadingSpinner from "./components/LoadingSpinner.svelte";
   import { sleep } from "../lib/sleep";
   import { addConfigListener, getAllConfig } from "../lib/config-manager";
+  import { msToTime } from "../lib/utils/ms-to-time";
 
   import type { Config, TimerController } from "../types";
 
@@ -38,11 +39,13 @@
   let iframeLoaded = $state(false);
   let iframeElement = $state<HTMLIFrameElement>();
   let lastUrl = "";
+  let timeLeft = $state("00:00");
+  timer.subscribe((time) => (timeLeft = time));
 
   const modalHasHidden = writable(false);
 
   $effect(() => {
-    const nextUrl = resolvedConfig.booster?.siteUrl ?? "";
+    const nextUrl = resolvedConfig.booster.siteUrl;
     if (nextUrl !== iframeUrl) {
       iframeUrl = nextUrl;
     }
@@ -101,7 +104,7 @@
   }
 
   function requestClose(): void {
-    modalHasHidden.set(true);
+    hideModal();
   }
 
   const boosterController = {
@@ -112,7 +115,7 @@
     modalHasHidden,
     getIframe(): HTMLIFrameElement | undefined {
       return iframeElement;
-    }
+    },
   };
 
   export { boosterController };
@@ -130,10 +133,15 @@
           class="flex items-center justify-between gap-3 px-5 py-3
                  bg-gradient-to-r from-gray-500 to-gray-600 text-white border-b border-gray-500"
         >
-          <div class="flex flex-col gap-1">
-            <h2 class="text-xl font-semibold">מחזק</h2>
+          <div class="flex flex-row gap-1">
+            <h2 class="text-xl font-semibold">מחזק דף אינטרנט</h2>
+            <h2 class="mx-2">•</h2>
+
+            <h2>{timeLeft}</h2>
+            <h2 class="mx-2">•</h2>
+
             {#if hostname}
-              <span class="text-xs text-gray-200">{hostname}</span>
+              <h2>{hostname}</h2>
             {/if}
           </div>
 
@@ -170,7 +178,9 @@
               {/if}
             </div>
           {:else}
-            <div class="flex items-center justify-center h-[60vh] text-gray-600 text-lg">
+            <div
+              class="flex items-center justify-center h-[60vh] text-gray-600 text-lg"
+            >
               לא הוגדרה כתובת מחזק
             </div>
           {/if}
@@ -192,7 +202,9 @@
   #booster-card {
     transform: scale(0.95);
     opacity: 0;
-    transition: transform 0.4s ease, opacity 0.4s ease;
+    transition:
+      transform 0.4s ease,
+      opacity 0.4s ease;
   }
 
   #booster-card.visible {

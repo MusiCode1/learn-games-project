@@ -49,6 +49,8 @@ export interface TimerController {
   configure: (durationMs: number) => void;
   onDone: () => Promise<void>;
   time: Readable<number>;
+  getTime: () => string;
+  subscribe: (run: (value: string) => void, invalidate?: (value?: string) => void) => () => void;
 }
 
 export interface PlayerControls {
@@ -57,6 +59,15 @@ export interface PlayerControls {
   toggle: () => void;
   video?: VideoController;
   modalHasHidden: Writable<boolean>;
+}
+
+export interface SiteBoosterControls {
+  show: () => void;
+  hide: () => void;
+  toggle: () => void;
+  setUrl: (url: string) => void;
+  modalHasHidden: Writable<boolean>;
+  getIframe: () => HTMLIFrameElement | null;
 }
 
 export type OldConfig = {
