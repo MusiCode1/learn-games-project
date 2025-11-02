@@ -2,7 +2,7 @@ import * as store from "svelte/store";
 import type { Writable } from "svelte/store";
 
 import type { GameConfig, InjectionMethod } from "./game-config";
-import type { PlayerControls, Config, TimerController, FullyKiosk } from "../types";
+import type { PlayerControls, Config, TimerController, FullyKiosk, BoosterControls } from "../types";
 import { injectCodeIntoFunction, getFunctionByPath } from "./inject-code-into-function";
 import { getGameConfig } from "./get-game-config";
 import { log } from "./logger.svelte";
@@ -70,6 +70,7 @@ interface BaseGameOptions {
     config: Config;
     turnsCounter: number;
     timer: TimerController;
+    boosterControls?: BoosterControls;
 }
 
 // אפשרויות עבור סוג תגמול אפליקציה
@@ -83,13 +84,17 @@ interface VideoGameOptions extends BaseGameOptions {
     playerControls: PlayerControls;
 }
 
+interface SiteGameOptions extends BaseGameOptions {
+    config: Config & { rewardType: 'site' };
+    boosterControls: BoosterControls;
+}
+
 interface UnknownGameOptions extends BaseGameOptions {
     config: Config & { rewardType: string };
-    playerControls: PlayerControls;
 }
 
 // איחוד הטיפוסים
-type GameOptions = VideoGameOptions | AppGameOptions | UnknownGameOptions;
+type GameOptions = VideoGameOptions | AppGameOptions | SiteGameOptions | UnknownGameOptions;
 
 // טיפוס לפונקציה אסינכרונית
 type AsyncFun = () => Promise<void>;
@@ -114,6 +119,15 @@ export function isAppConfig(config: Config): config is Config & { rewardType: 'a
     return config.rewardType === 'app';
 }
 
+// Type guard לבדיקה אם מדובר בקונפיגורציה של אתר
+export function isSiteConfig(config: Config): config is Config & { rewardType: 'site' } {
+    return config.rewardType === 'site';
+}
+
+export function isSiteOptions(options: GameOptions): options is SiteGameOptions {
+    return options.config.rewardType === 'site';
+}
+
 /**
  * יוצר אובייקט אפשרויות משחק בהתאם לסוג התגמול
  */
@@ -122,14 +136,16 @@ function createGameOptions(
     gameConfig: GameConfig | undefined,
     turnsCounter: number,
     playerControls: PlayerControls | undefined,
-    timer: TimerController
+    timer: TimerController,
+    boosterControls: BoosterControls | undefined
 ): GameOptions {
     // יצירת אובייקט האפשרויות הבסיסי
     const baseOptions: BaseGameOptions = {
         config,
         turnsCounter,
         gameConfig,
-        timer
+        timer,
+        boosterControls
     };
 
     // הוספת playerControls אם מדובר בתגמול וידאו
@@ -140,7 +156,18 @@ function createGameOptions(
         } as VideoGameOptions;
     }
 
-    return baseOptions as AppGameOptions;
+    if (isAppConfig(config)) {
+        return baseOptions as AppGameOptions;
+    }
+
+    if (config.rewardType === 'site' && boosterControls) {
+        return {
+            ...baseOptions,
+            boosterControls
+        } as SiteGameOptions;
+    }
+
+    return baseOptions as UnknownGameOptions;
 }
 
 /**
@@ -261,6 +288,49 @@ async function handleAppReward(
     await sleep(AFTER_VIDEO_DELAY_MS);
 }
 
+async function handleBoosterReward(
+    boosterControls: BoosterControls | undefined,
+    config: Config,
+    timer: TimerController,
+    delay?: number
+): Promise<void> {
+    const siteUrl = config.booster?.siteUrl?.trim();
+    if (!boosterControls || !siteUrl) {
+        return;
+    }
+
+    boosterControls.setUrl(siteUrl);
+
+    if (delay) await sleep(delay);
+
+    boosterControls.modalHasHidden.set(false);
+
+    timer.configure(config.rewardDisplayDurationMs);
+
+    let unsubscribe: store.Unsubscriber | undefined;
+
+    boosterControls.show();
+
+    await Promise.race([
+        timer.onDone(),
+        new Promise<void>((resolve) => {
+            unsubscribe = boosterControls.modalHasHidden.subscribe((hidden) => {
+                if (hidden) {
+                    unsubscribe?.();
+                    resolve();
+                    log('Booster modal was closed by user');
+                }
+            });
+        }),
+    ]).finally(() => {
+        unsubscribe?.();
+    });
+
+    boosterControls.hide();
+
+    await sleep(AFTER_VIDEO_DELAY_MS);
+}
+
 function replaceLastLiteral(str: string, search: string, replace: string): string {
     if (search === "") return str; // הימנע ממקרה קצה: "" נמצא "בסוף"
     const i = str.lastIndexOf(search);
@@ -273,13 +343,24 @@ function replaceLastLiteral(str: string, search: string, replace: string): strin
  */
 export async function handleGameTurn(options: GameOptions): Promise<void> {
     // חילוץ שדות משותפים
-    const { gameConfig, config, timer } = options;
+    const { gameConfig, config, timer, boosterControls } = options;
+
+    let rewardDisplayed = false;
 
     if (isVideoOptions(options)) {
         await handleVideoReward(options.playerControls, config, timer, gameConfig?.delay);
+        rewardDisplayed = true;
     } else if (isAppOptions(options)) {
         await handleAppReward(options.config, timer, gameConfig?.delay);
+        rewardDisplayed = true;
     }
+
+    await handleBoosterReward(
+        boosterControls,
+        config,
+        timer,
+        rewardDisplayed ? undefined : gameConfig?.delay
+    );
 }
 
 /**
@@ -293,7 +374,8 @@ export function createGameTurnHandler(
     // כדי שלא ירוץ מחזק בסיבוב הראשון של makeNewTurn
     isGameInitialized: Writable<boolean>,
     playerControls: PlayerControls | undefined,
-    timer: TimerController
+    timer: TimerController,
+    boosterControls: BoosterControls | undefined
 ): AsyncFun {
 
     // === משתנים משותפים ===
@@ -306,7 +388,7 @@ export function createGameTurnHandler(
     const triggerFuncName = gameConfig.triggerFunc.name;
 
     // יצירת אובייקט האפשרויות
-    const gameOptions = createGameOptions(config, gameConfig, turnsCounter, playerControls, timer);
+    const gameOptions = createGameOptions(config, gameConfig, turnsCounter, playerControls, timer, boosterControls);
 
     // פונקציית ההאנדלר
     return async () => {
@@ -396,6 +478,7 @@ export function injectCode(
     config: Config,
     playerControls: PlayerControls | undefined,
     timer: TimerController,
+    boosterControls: BoosterControls | undefined,
     method?: InjectionMethod
 ): void {
     try {
@@ -453,7 +536,14 @@ export function injectCode(
         }
 
         // יצירת פונקציית ההאנדלר
-        const handler = createGameTurnHandler(config, gameConfig, isGameInitialized, playerControls, timer);
+        const handler = createGameTurnHandler(
+            config,
+            gameConfig,
+            isGameInitialized,
+            playerControls,
+            timer,
+            boosterControls
+        );
 
         // אתחול הזרקת הקוד לפי השיטה המתאימה
         initializeInjectionByMethod(gameConfig, handler, injectionMethod);

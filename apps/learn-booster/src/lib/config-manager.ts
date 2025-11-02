@@ -1,17 +1,20 @@
-import { getActiveProfile, initializeProfiles, saveActiveProfileConfig } from './profile-manager';
-import { getDefaultConfig } from './default-config';
-import { loadVideoUrls } from './video-loader';
+import pkg from "../../package.json" with { type: "json" };
 
-import type { Config, OldConfig } from '../types';
+import {
+  getActiveProfile,
+  initializeProfiles,
+  saveActiveProfileConfig,
+} from "./profile-manager";
+import { getDefaultConfig } from "./default-config";
+import { loadVideoUrls } from "./video-loader";
 
+import type { Config } from "../types";
 
 // מפתח לשמירה ב-localStorage
-const LOCAL_STORAGE_KEY = 'gingim-booster-config';
+const LOCAL_STORAGE_KEY = "gingim-booster-config";
 
-const GOOGLE_DRIVE_DEFAULT_FOLDER =
-    import.meta.env.VITE_GOOGLE_DRIVE_DEFAULT_FOLDER
-
-
+const GOOGLE_DRIVE_DEFAULT_FOLDER = import.meta.env
+  .VITE_GOOGLE_DRIVE_DEFAULT_FOLDER;
 
 // רשימת מאזינים לשינויים בקונפיגורציה
 type ConfigChangeListener = (config: Config) => void;
@@ -35,20 +38,20 @@ let appConfig: Config = { ...defaultConfig };
  * @returns פונקציה להסרת המאזין
  */
 export function addConfigListener(callback: ConfigChangeListener): () => void {
-    listeners.push(callback);
-    return () => {
-        const index = listeners.indexOf(callback);
-        if (index !== -1) {
-            listeners.splice(index, 1);
-        }
-    };
+  listeners.push(callback);
+  return () => {
+    const index = listeners.indexOf(callback);
+    if (index !== -1) {
+      listeners.splice(index, 1);
+    }
+  };
 }
 
 /**
  * הודעה לכל המאזינים על שינוי בקונפיגורציה
  */
 function notifyConfigListeners(): void {
-    listeners.forEach(listener => listener({ ...appConfig }));
+  listeners.forEach((listener) => listener({ ...appConfig }));
 }
 
 /**
@@ -56,50 +59,45 @@ function notifyConfigListeners(): void {
  * @param updates עדכונים להגדרות
  */
 export async function updateConfig(updates: Partial<Config>): Promise<Config> {
-
-    if (updates.video) {
-
-        if (updates.video.googleDriveFolderUrl === '') {
-            updates.video.googleDriveFolderUrl = GOOGLE_DRIVE_DEFAULT_FOLDER;
-        }
+  if (updates.video) {
+    if (updates.video.googleDriveFolderUrl === "") {
+      updates.video.googleDriveFolderUrl = GOOGLE_DRIVE_DEFAULT_FOLDER;
     }
+  }
 
-    appConfig = deepMerge({ ...appConfig }, updates);
+  appConfig = deepMerge({ ...appConfig }, updates);
 
-    if (appConfig.rewardType === 'video') {
+  if (appConfig.rewardType === "video") {
+    await setVideosUrls(appConfig);
+  }
 
-        await setVideosUrls(appConfig);
-    }
+  saveConfigToStorage();
+  syncActiveProfileSnapshot();
+  notifyConfigListeners();
 
-    saveConfigToStorage();
-    syncActiveProfileSnapshot();
-    notifyConfigListeners();
-
-    return appConfig;
+  return appConfig;
 }
 
 export async function tempConfig(updates: Partial<Config>) {
-    if (updates.video) {
-
-        if (updates.video.googleDriveFolderUrl === '') {
-            updates.video.googleDriveFolderUrl = GOOGLE_DRIVE_DEFAULT_FOLDER;
-        }
+  if (updates.video) {
+    if (updates.video.googleDriveFolderUrl === "") {
+      updates.video.googleDriveFolderUrl = GOOGLE_DRIVE_DEFAULT_FOLDER;
     }
+  }
 
-    const tempConfig = deepMerge({ ...appConfig }, updates);
+  const tempConfig = deepMerge({ ...appConfig }, updates);
 
-    if (appConfig.rewardType === 'video') {
+  if (appConfig.rewardType === "video") {
+    await setVideosUrls(appConfig);
+  }
 
-        await setVideosUrls(appConfig);
-    }
-
-    return tempConfig;
+  return tempConfig;
 }
 
 async function setVideosUrls(systemConfig: Config) {
-    const videos = await loadVideoUrls(systemConfig);
+  const videos = await loadVideoUrls(systemConfig);
 
-    appConfig.video.videos = videos;
+  appConfig.video.videos = videos;
 }
 
 /**
@@ -107,31 +105,22 @@ async function setVideosUrls(systemConfig: Config) {
  * @returns האם הטעינה הצליחה
  */
 export function loadConfigFromStorage(): boolean {
+  try {
+    const storedConfig = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (!storedConfig) return false;
 
-    try {
-        const storedConfig = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (!storedConfig) return false;
+    const parsedConfig = JSON.parse(storedConfig);
+    if (typeof parsedConfig !== "object" || parsedConfig === null) return false;
 
-        const parsedConfig = JSON.parse(storedConfig);
-        if (typeof parsedConfig !== 'object' || parsedConfig === null) return false;
+    // מיזוג עם ברירת המחדל
+    appConfig = { ...defaultConfig, ...parsedConfig };
 
-        // בדיקה אם זה מבנה ישן או חדש
-        if ('mode' in parsedConfig) {
-            // המרה ממבנה ישן לחדש
-            const newConfig = convertOldConfigToNew(parsedConfig as OldConfig);
-            appConfig = { ...defaultConfig, ...newConfig };
-            saveConfigToStorage()
-        } else {
-            // מיזוג עם ברירת המחדל
-            appConfig = { ...defaultConfig, ...parsedConfig };
-        }
-
-        notifyConfigListeners();
-        return true;
-    } catch (error) {
-        console.error('שגיאה בטעינת הגדרות מ-localStorage:', error);
-        return false;
-    }
+    notifyConfigListeners();
+    return true;
+  } catch (error) {
+    console.error("שגיאה בטעינת הגדרות מ-localStorage:", error);
+    return false;
+  }
 }
 
 /**
@@ -139,120 +128,64 @@ export function loadConfigFromStorage(): boolean {
  * @returns האם השמירה הצליחה
  */
 export function saveConfigToStorage(): boolean {
-    try {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appConfig));
-        return true;
-    } catch (error) {
-        console.error('שגיאה בשמירת הגדרות ל-localStorage:', error);
-        return false;
-    }
+  try {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appConfig));
+    return true;
+  } catch (error) {
+    console.error("שגיאה בשמירת הגדרות ל-localStorage:", error);
+    return false;
+  }
 }
 
 /**
  * איפוס הגדרות לברירת המחדל
  */
 export function resetConfig(): void {
-    appConfig = { ...defaultConfig };
-    notifyConfigListeners();
-}
-
-/**
- * המרת קונפיגורציה ישנה לחדשה
- * @param oldConfig הקונפיגורציה הישנה
- * @returns קונפיגורציה חדשה
- */
-export function convertOldConfigToNew(oldConfig: OldConfig): Partial<Config> {
-    return {
-        rewardType: oldConfig.mode,
-        rewardDisplayDurationMs: oldConfig.videoDisplayTimeInMS,
-        turnsPerReward: oldConfig.turnsPerVideo,
-
-        notifications: {
-            endingNotification: {
-                text: 'הסרטון יסתיים בקרוב',
-                displayBeforeEndMs: 3000,
-                enabledFor: 'none',
-            },
-        },
-
-        video: {
-            videos: oldConfig.videoUrls.map(url => ({
-                url,
-                mimeType: oldConfig.type || 'video/mp4',
-            })),
-            source: oldConfig.videoSource,
-            googleDriveFolderUrl: oldConfig.googleDriveFolderUrl,
-            hideProgressBar: oldConfig.hideVideoProgress,
-        },
-
-        app: {
-            packageName: oldConfig.appName,
-        },
-
-        system: oldConfig.systemConfig,
-    };
-}
-
-/**
- * המרת קונפיגורציה חדשה לישנה (לתמיכה בקוד קיים)
- * @param newConfig הקונפיגורציה החדשה
- * @returns קונפיגורציה ישנה
- */
-export function convertNewConfigToOld(newConfig: Config): OldConfig {
-    return {
-        mode: newConfig.rewardType,
-        videoDisplayTimeInMS: newConfig.rewardDisplayDurationMs,
-        turnsPerVideo: newConfig.turnsPerReward,
-        videoUrls: newConfig.video.videos.map(video => video.url),
-        type: newConfig.video.videos[0]?.mimeType || 'video/mp4',
-        videoSource: newConfig.video.source,
-        googleDriveFolderUrl: newConfig.video.googleDriveFolderUrl,
-        hideVideoProgress: newConfig.video.hideProgressBar,
-        appName: newConfig.app.packageName,
-        systemConfig: newConfig.system,
-    };
+  appConfig = { ...defaultConfig };
+  notifyConfigListeners();
 }
 
 export async function initializeConfig(): Promise<Config> {
+  // איפוס למצב ברירת המחדל
+  resetConfig();
 
-    // איפוס למצב ברירת המחדל
-    resetConfig();
+  // טעינה מ-localStorage
+  loadConfigFromStorage();
 
-    // טעינה מ-localStorage
-    loadConfigFromStorage();
+  await initializeProfiles(appConfig);
+  const activeProfile = getActiveProfile();
+  if (activeProfile) {
+    appConfig = cloneConfig(activeProfile.config);
+  }
 
-    await initializeProfiles(appConfig);
-    const activeProfile = getActiveProfile();
-    if (activeProfile) {
-        appConfig = cloneConfig(activeProfile.config);
-    }
+  // טעינת רשימת סרטונים אם במצב וידאו וסופקו הפרמטרים הנדרשים
+  if (appConfig.rewardType === "video") {
+    // עדכון רשימת הסרטונים בקונפיג
+    await setVideosUrls(appConfig);
+  }
 
-    // טעינת רשימת סרטונים אם במצב וידאו וסופקו הפרמטרים הנדרשים
-    if (appConfig.rewardType === 'video') {
+  appConfig = { ...appConfig, appVersion: pkg.version };
 
-        // עדכון רשימת הסרטונים בקונפיג
-        await setVideosUrls(appConfig);
-    }
+  // סימון שמערכת ההגדרות אותחלה
+  isConfigInitialized = true;
 
-    // סימון שמערכת ההגדרות אותחלה
-    isConfigInitialized = true;
+  syncActiveProfileSnapshot();
+  notifyConfigListeners();
 
-    syncActiveProfileSnapshot();
-    notifyConfigListeners();
-
-    return { ...appConfig };
+  return { ...appConfig };
 }
-
 
 /**
  * קבלת סרטון אקראי מהרשימה
  */
-export function getRandomVideo(): { url: string; mimeType: string } | undefined {
-    const videos = appConfig.video.videos;
-    if (videos.length === 0) return undefined;
+export function getRandomVideo():
+  | { url: string; mimeType: string }
+  | undefined {
+  const videos = appConfig.video.videos;
+  if (videos.length === 0) return undefined;
 
-    const randomIndex = Math.floor(Math.random() * videos.length);
-    return videos[randomIndex];
+  const randomIndex = Math.floor(Math.random() * videos.length);
+  return videos[randomIndex];
 }
 
 /**
@@ -261,40 +194,54 @@ export function getRandomVideo(): { url: string; mimeType: string } | undefined 
  * @throws {Error} אם מערכת ההגדרות לא אותחלה
  */
 export function getAllConfig(): Readonly<Config> {
-    // בדיקה אם מערכת ההגדרות אותחלה
-    if (!isConfigInitialized) {
-        throw new Error('מערכת ההגדרות לא אותחלה. יש לקרוא ל-initializeConfig לפני השימוש ב-getAllConfig');
-    }
+  // בדיקה אם מערכת ההגדרות אותחלה
+  if (!isConfigInitialized) {
+    throw new Error(
+      "מערכת ההגדרות לא אותחלה. יש לקרוא ל-initializeConfig לפני השימוש ב-getAllConfig",
+    );
+  }
 
-    // יצירת עותק עמוק של ההגדרות
-    return Object.freeze(structuredClone(appConfig));
+  // יצירת עותק עמוק של ההגדרות
+  return Object.freeze(structuredClone(appConfig));
 }
 
 // עדכון רקורסיבי שמשמר את המבנה של תתי-אובייקטים
-function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial<T>): T {
-    for (const key in source) {
-        const sourceValue = source[key];
-        const targetValue = target[key];
+function deepMerge<T extends Record<string, unknown>>(
+  target: T,
+  source: Partial<T>,
+): T {
+  for (const key in source) {
+    const sourceValue = source[key];
+    const targetValue = target[key];
 
-        if (typeof sourceValue === 'object' && sourceValue !== null && typeof targetValue === 'object' && targetValue !== null && key in target) {
-            deepMerge(targetValue as Record<string, unknown>, sourceValue as Record<string, unknown>);
-        } else if (typeof target === 'object' && target !== null) {
-            target[key] = sourceValue as T[Extract<keyof T, string>];
-        }
+    if (
+      typeof sourceValue === "object" &&
+      sourceValue !== null &&
+      typeof targetValue === "object" &&
+      targetValue !== null &&
+      key in target
+    ) {
+      deepMerge(
+        targetValue as Record<string, unknown>,
+        sourceValue as Record<string, unknown>,
+      );
+    } else if (typeof target === "object" && target !== null) {
+      target[key] = sourceValue as T[Extract<keyof T, string>];
     }
-    return target;
+  }
+  return target;
 }
 
 function cloneConfig(config: Config): Config {
-    return typeof structuredClone === 'function'
-        ? structuredClone(config)
-        : JSON.parse(JSON.stringify(config));
+  return typeof structuredClone === "function"
+    ? structuredClone(config)
+    : JSON.parse(JSON.stringify(config));
 }
 
 function syncActiveProfileSnapshot(): void {
-    try {
-        saveActiveProfileConfig(appConfig);
-    } catch (error) {
-        console.warn('Unable to sync active profile config:', error);
-    }
+  try {
+    saveActiveProfileConfig(appConfig);
+  } catch (error) {
+    console.warn("Unable to sync active profile config:", error);
+  }
 }

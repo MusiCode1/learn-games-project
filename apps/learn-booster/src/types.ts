@@ -80,11 +80,13 @@ export type OldConfig = {
  * טיפוס המייצג את מבנה ההגדרות של המערכת
  */
 export type Config = {
+
+  appVersion: string;
   // הגדרות כלליות
   /**
    * סוג התגמול שיוצג למשתמש (סרטון או אפליקציה)
    */
-  rewardType: 'video' | 'app';
+  rewardType: 'video' | 'app' | 'site';
 
   /**
    * משך הזמן (במילישניות) להצגת התגמול
@@ -158,6 +160,14 @@ export type Config = {
      * שם החבילה (Package Name) של האפליקציה להפעלה
      */
     packageName?: string;
+  };
+
+  // הגדרות מחזק אתר
+  booster: {
+    /**
+     * כתובת האתר של מחזק האתר
+     */
+    siteUrl: string;
   };
 
   // הגדרות מערכת - לא מיועדות לשינוי ע"י המשתמש

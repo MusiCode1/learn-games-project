@@ -10,6 +10,7 @@ import {
     injectCode,
     handleGameTurn
 } from "./lib/game-handler";
+import { ensureBoosterControls } from "./lib/booster-site";
 
 import VideoComponent from './UI/VideoMain.svelte';
 import SettingsComponent from "./UI/SettingsMain.svelte";
@@ -83,12 +84,17 @@ async function initGameRewardHandler(config: Config) {
 
     const timer = createTimer();
     let playerControls: PlayerControls | undefined = undefined;
+    const boosterControls = ensureBoosterControls(config, timer);
+
+    if (config.booster.siteUrl) {
+        boosterControls.setUrl(config.booster.siteUrl);
+    }
 
     if (isVideoConfig(config)) {
 
         ({ playerControls } = initializeVideoPlayer(config, timer));
     }
-    injectCode(config, playerControls, timer);
+    injectCode(config, playerControls, timer, boosterControls);
 }
 
 function initializeVideoPlayer(config: Config, timer: TimerController) {

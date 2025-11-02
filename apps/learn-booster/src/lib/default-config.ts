@@ -7,6 +7,7 @@ const GOOGLE_DRIVE_DEFAULT_FOLDER =
  * ערכי ברירת מחדל של התצורה
  */
 const defaultConfig: Config = {
+    appVersion: '0.0.1',
     // הגדרות כלליות
     rewardType: 'video',
     rewardDisplayDurationMs: 20 * 1000,
@@ -34,6 +35,11 @@ const defaultConfig: Config = {
     // הגדרות אפליקציה
     app: {
         packageName: 'com.google.android.youtube',
+    },
+
+    // הגדרות מחזק אתר
+    booster: {
+        siteUrl: '',
     },
 
     // הגדרות מערכת

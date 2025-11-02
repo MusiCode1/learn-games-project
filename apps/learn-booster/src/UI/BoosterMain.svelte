@@ -1,0 +1,202 @@
+<script lang="ts">
+  import { onDestroy } from "svelte";
+  import { writable } from "svelte/store";
+
+  import Modal from "./components/Modal.svelte";
+  import LoadingSpinner from "./components/LoadingSpinner.svelte";
+  import { sleep } from "../lib/sleep";
+  import { addConfigListener, getAllConfig } from "../lib/config-manager";
+
+  import type { Config, TimerController } from "../types";
+
+  interface Props {
+    config?: Config;
+    timer: TimerController;
+  }
+
+  let { config, timer }: Props = $props();
+
+  let resolvedConfig = $state(config ?? getAllConfig());
+
+  const unsubscribe = addConfigListener((newConfig) => {
+    config = newConfig;
+  });
+
+  onDestroy(unsubscribe);
+
+  $effect(() => {
+    if (config) {
+      resolvedConfig = config;
+    }
+  });
+
+  let visible = $state(false);
+  let modalVisible = $state(false);
+  let cardVisible = $state(false);
+
+  let iframeUrl = $state("");
+  let iframeLoaded = $state(false);
+  let iframeElement = $state<HTMLIFrameElement>();
+  let lastUrl = "";
+
+  const modalHasHidden = writable(false);
+
+  $effect(() => {
+    const nextUrl = resolvedConfig.booster?.siteUrl ?? "";
+    if (nextUrl !== iframeUrl) {
+      iframeUrl = nextUrl;
+    }
+  });
+
+  $effect(() => {
+    if (iframeUrl !== lastUrl) {
+      lastUrl = iframeUrl;
+      iframeLoaded = false;
+    }
+  });
+
+  const hostname = $derived.by(() => {
+    if (!iframeUrl) return "";
+    try {
+      return new URL(iframeUrl).hostname;
+    } catch {
+      return "";
+    }
+  });
+
+  function handleIframeLoad(): void {
+    iframeLoaded = true;
+  }
+
+  async function showModal(): Promise<void> {
+    modalHasHidden.set(false);
+    visible = true;
+    await sleep(10);
+    modalVisible = true;
+    await sleep(400);
+    cardVisible = true;
+    timer.start();
+  }
+
+  async function hideModal(): Promise<void> {
+    timer.stop();
+    cardVisible = false;
+    await sleep(300);
+    modalVisible = false;
+    await sleep(300);
+    visible = false;
+    modalHasHidden.set(true);
+  }
+
+  async function toggle(): Promise<void> {
+    if (visible) {
+      await hideModal();
+    } else {
+      await showModal();
+    }
+  }
+
+  function setSiteUrl(url: string): void {
+    iframeUrl = url;
+  }
+
+  function requestClose(): void {
+    modalHasHidden.set(true);
+  }
+
+  const boosterController = {
+    show: showModal,
+    hide: hideModal,
+    toggle,
+    setUrl: setSiteUrl,
+    modalHasHidden,
+    getIframe(): HTMLIFrameElement | undefined {
+      return iframeElement;
+    }
+  };
+
+  export { boosterController };
+</script>
+
+<div id="booster-container" class:show={visible}>
+  <main class="min-h-screen flex items-center justify-center">
+    <Modal visible={modalVisible}>
+      <section
+        id="booster-card"
+        class="w-[90vw] md:w-[80vw] max-w-5xl bg-white rounded-2xl border-2 border-gray-500 overflow-hidden shadow-xl"
+        class:visible={cardVisible}
+      >
+        <header
+          class="flex items-center justify-between gap-3 px-5 py-3
+                 bg-gradient-to-r from-gray-500 to-gray-600 text-white border-b border-gray-500"
+        >
+          <div class="flex flex-col gap-1">
+            <h2 class="text-xl font-semibold">מחזק</h2>
+            {#if hostname}
+              <span class="text-xs text-gray-200">{hostname}</span>
+            {/if}
+          </div>
+
+          {#if resolvedConfig.system.enableHideModalButton}
+            <button
+              id="close-button"
+              type="button"
+              onclick={requestClose}
+              class="border border-red-700 bg-red-400 rounded-full aspect-square h-4 cursor-pointer"
+              aria-label="סגור את המחזק"
+            ></button>
+          {:else}
+            <div
+              id="close-button"
+              class="border border-gray-600 bg-gray-500 rounded-full aspect-square h-4 cursor-pointer"
+            ></div>
+          {/if}
+        </header>
+
+        <div id="content" class="relative bg-gray-200">
+          {#if iframeUrl}
+            <div id="iframe-wrapper" class="relative w-full h-[80vh]">
+              <iframe
+                bind:this={iframeElement}
+                src={iframeUrl || undefined}
+                class="w-full h-full border-0 bg-white"
+                allow="autoplay; fullscreen"
+                title={hostname || "Booster content"}
+                onload={handleIframeLoad}
+              ></iframe>
+
+              {#if !iframeLoaded}
+                <LoadingSpinner message="טוען את האתר..." />
+              {/if}
+            </div>
+          {:else}
+            <div class="flex items-center justify-center h-[60vh] text-gray-600 text-lg">
+              לא הוגדרה כתובת מחזק
+            </div>
+          {/if}
+        </div>
+      </section>
+    </Modal>
+  </main>
+</div>
+
+<style>
+  #booster-container {
+    display: none;
+  }
+
+  #booster-container.show {
+    display: block;
+  }
+
+  #booster-card {
+    transform: scale(0.95);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+  }
+
+  #booster-card.visible {
+    transform: scale(1);
+    opacity: 1;
+  }
+</style>
