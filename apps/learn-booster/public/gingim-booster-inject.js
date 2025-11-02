@@ -13,7 +13,13 @@
 
 (() => {
     if (window.location.hostname === 'gingim.net') {
-        const url = 'https://192.168.33.116/i.js';
+
+        const url = 'https://preview.gingim.tzlev.ovh/i.js'; 
+        import(url);
+
+        // old way
+        /* 
         fetch(url).then(r => r.text()).then(eval)
+        */
     }
 })();

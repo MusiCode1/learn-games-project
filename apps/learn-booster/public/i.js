@@ -17,7 +17,7 @@
 
     } else {
 
-        const url = 'https://dev-server.dev/src/main.ts'; loadExternalScript(url);
+        const url = 'https://preview.gingim.tzlev.ovh/src/main.ts'; loadExternalScript(url);
     }
 })();
 

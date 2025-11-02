@@ -53,10 +53,12 @@ export default function injectScriptPlugin(): Plugin {
 
       const baseUrl = `https://${domain}`,
         oldMainUrl = baseUrl + mainPath;
+      const injectFileUrl = baseUrl + '/i.js';
 
       const replacements = [
         { search: '@theUrl', replace: oldMainUrl },
         { search: '@mode', replace: mode },
+        { search: '@injectFileUrl', replace: injectFileUrl },
         { search: '@mainPath', replace: mainPathWithParam }
       ];
 
