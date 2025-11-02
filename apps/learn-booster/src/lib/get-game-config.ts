@@ -4,6 +4,8 @@ import { findFunctionInWindow } from "./object-finder";
 import { log } from "./logger.svelte";
 import type { Config } from "../types";
 
+const bestPath = 'window.components'
+
 /**
  * מחפש את קונפיגורציית המשחק המתאימה לפי נתיב
  * 
@@ -31,6 +33,28 @@ function findTriggerFunctionPath(functionName: string): string | undefined {
         });
 
         if (results.length > 0) {
+
+            if (results.length > 1) {
+                log(`נמצאו ${results.length} נתיבים לפונקציה ${functionName} `);
+
+                results.forEach((path, index) => {
+                    log(`נתיב ${index + 1}: ${path}`);
+                });
+
+                const findedBestPath = results.find(path => path.startsWith(bestPath));
+
+                if (findedBestPath) {
+                    log(`נבחר הנתיב הטוב ביותר: ${findedBestPath}`);
+                    return findedBestPath;
+                }
+
+                const path = results.pop() as string;
+                log(`לא נמצא נתיב מועדף, נבחר הנתיב האחרון: ${path}`);
+
+                log(`נמצאה הפונקציה ${functionName} בנתיב: ${path}`);
+                return path;
+            }
+
             const path = results[0];
             log(`נמצאה הפונקציה ${functionName} בנתיב: ${path}`);
             return path;

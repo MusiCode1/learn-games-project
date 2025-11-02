@@ -16,6 +16,6 @@
     "isolatedModules": true,
     "moduleDetection": "force"
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "tools/**.ts"],
+  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "tools/**.ts", "vite-plugin/**/*.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

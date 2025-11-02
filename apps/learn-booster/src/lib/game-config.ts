@@ -15,8 +15,6 @@ interface FunctionConfig {
     path: string
 };
 
-const rootPath = 'PIXI.game.state.states.game';
-
 const functionNames = [
     'makeNewTurn',
 
@@ -29,13 +27,18 @@ const functionNames = [
 
 ] as const;
 
+export const rootPath = [
+    'window.components.config.game.state.states.game',
+    'PIXI.game.state.states.game'
+];
+
 type FunctionKey = typeof functionNames[number];
 type FunctionsListType = Record<FunctionKey, FunctionConfig>;
 
 export const functionsList = Object.fromEntries(
     functionNames.map(name => [
         name,
-        { name, path: `${rootPath}.${name}` }
+        { name, path: `${rootPath[0]}.${name}` }
     ])
 ) as FunctionsListType;
 

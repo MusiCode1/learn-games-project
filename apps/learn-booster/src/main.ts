@@ -1,9 +1,19 @@
-import { unmount } from "svelte";
 
+import type { Config, PlayerControls, SiteBoosterControls } from "./types";
+import { initializeConfig, tempConfig, getAllConfig } from "./lib/config-manager";
 import { mountComponent, defaultOptions } from "./UI/component-composer";
 import { injectCodeIntoIframe } from "./lib/script-element-injection";
+import { cancelFullScreen } from "./lib/utils/cancel-full-screen";
+import { pushTagToIframe } from "./lib/inject-code-into-function";
+import { findFunctionInWindow } from "./lib/object-finder";
+import { getVideoPlayerApp } from "./lib/booster-video";
+import { createTimer } from "./lib/utils/timer";
 import { log } from "./lib/logger.svelte";
-import { initializeConfig, tempConfig, getAllConfig } from "./lib/config-manager";
+
+
+import type { Component } from 'svelte';
+
+
 
 import {
     isVideoConfig,
@@ -13,11 +23,9 @@ import {
 } from "./lib/game-handler";
 import { initializeSiteBoosterControls } from "./lib/booster-site";
 
-import VideoComponent from './UI/VideoMain.svelte';
+
 import SettingsComponent from "./UI/SettingsMain.svelte";
-import type { Config, PlayerControls, TimerController, SiteBoosterControls } from "./types";
-import type { Component } from 'svelte';
-import { createTimer } from "./lib/utils/timer";
+
 
 declare global {
     interface Window {
@@ -26,63 +34,112 @@ declare global {
     }
 }
 
+const selfUrl = import.meta.url;
+const selfUrlObj = new URL(selfUrl);
+const injectUrl = selfUrlObj.origin + '/i.js';
 
-const DEV_SERVER_HOSTNAME = 'dev-server.dev',
-    GAME_PAGE_URL = 'https://gingim.net/wp-content/uploads/new_games/';
-
-const hostname = window.location.hostname,
-    fullPath = window.location.href,
-    isIframe = window.self !== window.top,
-    selfUrl = import.meta.url,
-    isDevServer = (hostname === DEV_SERVER_HOSTNAME),
-    devMode = import.meta.env.DEV,
-    deployServer = import.meta.env.VITE_PRJ_DOMAIN,
-    isDeployServer = (hostname === deployServer),
-    isGingim = (hostname === 'gingim.net'),
-    isGamePage = (fullPath.includes(GAME_PAGE_URL));
 
 
 /**
  * הפונקציה הראשית של האפליקציה
  * מזהה את הסביבה ומאתחלת את המערכת בהתאם
  */
-async function main(): Promise<void> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function main(mode?: string): Promise<void> {
     "main-function";
 
-    if (!isDevServer && !isDeployServer && !isGingim) return;
+    if (window.GingimBoosterTools) return;
 
     window.GingimBoosterTools = {
         getConfig: getAllConfig,
-        controler: undefined,
+        controller: undefined,
         timer: undefined,
+        findFunctionInWindow,
     };
 
-
-    const mode = (devMode) ? 'development' : 'production';
-    log('Gingim-Booster is loaded in', mode, 'mode.');
 
     try {
         // אתחול מערכת ההגדרות בתחילת הריצה
         const config = await initializeConfig();
 
-        if (isIframe || isGamePage) {
+        const {
+            isDevServer, isDeployServer, isGingim,
+            isIframe, isGamePage, isGingimHomepage,
+            isGamesListPage, isBoosterIframe
+
+        } = config.envVals;
+
+        if (!isDevServer && !isDeployServer && !isGingim) return;
+
+        cancelFullScreen();
+
+        log('Gingim-Booster is loaded in', config.environmentMode, 'mode.');
+
+        // ניווט ישיר למשחק דרך פרמטר בכתובת
+        if (isGingimHomepage && !isIframe) {
+
+            const thisUrl = new URL(window.location.href);
+            const gameName = thisUrl.searchParams.get('gameName');
+
+            if (thisUrl.pathname === '/' && gameName) {
+
+                directLinkToGame(gameName);
+            }
+
+            // טעינת קוד המסמן את האייפריים כמחזק
+        } else if (isGamesListPage && isIframe && isBoosterIframe) {
+
+            pushTagToIframe();
+
+            // אין טעינת מחזק בעמוד משחק אם המשחק עצמו הוא מחזק
+        } else if (isGamePage && isIframe && isBoosterIframe) {
+
+            // אין טעינת מחזק אם המשחק משתמש כבר כמחזק
+            log('Booster iframe detected in game page, skipping booster injection.');
+
+            // טעינת מחזק בעמוד משחק רגיל
+        } else if (isGamePage || (isIframe && isGamePage && !isBoosterIframe)) {
+
             const { timer, controller } = await initGameRewardHandler(config);
             injectCode(config, timer, controller);
 
+            // טעינת מחזק בעמוד רשימת משחקים
+        } else if (isGamesListPage && !isIframe) {
+
+            injectCodeIntoIframe(injectUrl);
+            initializeSettings(config);
+
+            // טעינת מחזק בעמוד פיתוח
         } else if (isDevServer) {
 
             initializeSettings(config);
         } else {
-            injectCodeIntoIframe(selfUrl);
-            initializeSettings(config);
+            log('No booster injection conditions met, skipping initialization.');
         }
+
     } catch (error) {
         log('Failed to initialize system:', error);
         // TODO: להוסיף טיפול בשגיאות ברמת המערכת
     }
 }
 
-main();
+(() => {
+
+    const selfUrl = import.meta.url;
+
+    if (!selfUrl.includes('withESNext=true')) {
+        main();
+    }
+
+})();
+
+
+function directLinkToGame(gameName: string): void {
+    const gameUrl = `https://gingim.net/wp-content/uploads/new_games/${gameName}/?lang=heb`;
+    //window.open(gameUrl, '_self');
+    window.location.href = gameUrl;
+    return;
+}
 
 async function initGameRewardHandler(config: Config) {
 
@@ -92,9 +149,9 @@ async function initGameRewardHandler(config: Config) {
 
     if (isVideoConfig(config)) {
 
-        const videoPlayer = initializeVideoPlayer(config, timer);
+        const videoPlayer = getVideoPlayerApp(config, timer);
         controller = videoPlayer.playerControls;
-        app = videoPlayer.app;
+        app = videoPlayer.videoBoosterApp;
     }
 
     if (isSiteConfig(config)) {
@@ -113,26 +170,6 @@ async function initGameRewardHandler(config: Config) {
     return { timer, app, controller };
 }
 
-function initializeVideoPlayer(config: Config, timer: TimerController) {
-
-    const app = mountComponent({
-        elementId: 'playerRoot',
-        component: VideoComponent as unknown as Component,
-        props: { config, timer }
-    });
-
-    const playerControls = {
-        ...app.modalController,
-        get video() {
-            return app.modalController.getVideo();
-        }
-    } as PlayerControls;
-
-
-    log('video element is loaded!');
-
-    return { playerControls, app };
-}
 
 function initializeSettings(config: Config) {
 
@@ -158,11 +195,18 @@ function initializeSettings(config: Config) {
             timer
         };
 
-        // הזרקת קוד למשחק עם הגדרות בדיקה
+        window.GingimBoosterTools = {
+            ...window.GingimBoosterTools,
+            controller,
+            timer,
+            app
+        };
+
+        // טעינת מחזק לדוגמא
         await handleGameTurn(handleOptions);
 
         // הסרת הקומפוננטה אחרי הזרקת הקוד
-        if (app) unmount(app);
+        // if (app) unmount(app);
 
     };
 
@@ -180,7 +224,10 @@ function initializeSettings(config: Config) {
         ...settingsApp.settingsController
     };
 
-    window.settingsController = settingsController;
+    window.GingimBoosterTools = {
+        ...window.GingimBoosterTools,
+        settingsController
+    }
 
     log('settings element is loaded!');
 

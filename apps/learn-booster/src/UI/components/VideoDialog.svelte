@@ -142,8 +142,8 @@
           {@html PlayLogo}
         </div>
         <h2 class="text-xl font-bold text-white">וידאו</h2>
-        <p>•</p>
-        <p>{time}</p>
+        <p class="text-xl font-bold text-white">•</p>
+        <p class="text-xl font-bold text-white">{time}</p>
       </div>
 
       {#if config.system.enableHideModalButton}

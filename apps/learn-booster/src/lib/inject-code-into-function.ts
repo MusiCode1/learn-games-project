@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
+
+import { log } from "./logger.svelte";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface FunctionResult {
     func: Function;
@@ -80,6 +83,33 @@ export function injectCodeIntoFunction(
     if (resultObject) {
         wrapFunction(resultObject, fnCallbackBefore, fnCallbackAfter);
     }
+}
+
+export function pushTagToIframe() {
+    window.GingimBoosterTools = {};
+    const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.type !== 'childList') return;
+
+            for (const node of mutation.addedNodes) {
+
+                if (node.nodeName === 'IFRAME') {
+
+                    const nodeSrc = (node as HTMLIFrameElement).src;
+
+                    if (nodeSrc && nodeSrc.startsWith('https://gingim.net/')) {
+                        
+                        (node as HTMLIFrameElement).dataset.owner = "booster-iframe";
+                    }
+                }
+
+                log('Injected booster tag into iframe');
+            }
+        }
+    });
+
+
+    observer.observe(document.body, { childList: true, subtree: true });
 }
 
 

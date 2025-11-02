@@ -80,7 +80,7 @@ export function findFunctionInWindow(options: SearchOptions): string[] | SearchR
   if (!options.keyForSearch) {
     throw new Error('חובה לציין את המפתח לחיפוש (keyForSearch)');
   }
-  
+
   if (!options.valueType) {
     throw new Error('חובה לציין את סוג הערך לחיפוש (valueType)');
   }
@@ -311,3 +311,20 @@ if (typeof window !== 'undefined' && import.meta.url === window.location.href) {
   });
   console.log('אובייקטים:', resObjects);
 }
+
+const orgToString = findFunctionInWindow.toString;
+
+findFunctionInWindow.toString = () => {
+  const text = `
+findFunctionInWindow({
+  keyForSearch: string;
+  valueType: string;
+  debug?: boolean;
+  maxDepth?: number;
+  collectStats?: boolean;
+});
+`
+
+  console.log(text);
+  return orgToString;
+};

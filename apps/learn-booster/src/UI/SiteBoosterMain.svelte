@@ -9,10 +9,12 @@
   import { msToTime } from "../lib/utils/ms-to-time";
 
   import type { Config, TimerController } from "../types";
+  import { log } from "../lib/logger.svelte";
 
   interface Props {
     config?: Config;
     timer: TimerController;
+    onNewConfig: (newConfig: Config) => void;
   }
 
   let { config, timer }: Props = $props();
@@ -28,6 +30,7 @@
   $effect(() => {
     if (config) {
       resolvedConfig = config;
+      log("config update in site booster.");
     }
   });
 
@@ -67,8 +70,27 @@
     }
   });
 
-  function handleIframeLoad(): void {
+  function handleIframeLoad(ev: Event): void {
     iframeLoaded = true;
+
+    const doc = iframeElement?.contentDocument;
+    const win = iframeElement?.contentWindow;
+
+    // תחילת ניווט הבא (לפניunload):
+    win?.addEventListener("beforeunload", () => {
+      // timer.pause();
+      const target = ev.target as HTMLIFrameElement;
+
+      target.onload = (ev: Event) => {
+        handleIframeLoad(ev);
+      };
+    });
+
+    // אפשר גם לעקוב אחרי התקדמות:
+    doc?.addEventListener("readystatechange", () => {
+      if (doc.readyState === "interactive") timer.start();
+      if (doc.readyState === "complete") ""; // timer.pause();
+    });
   }
 
   async function showModal(): Promise<void> {
@@ -131,9 +153,10 @@
       >
         <header
           class="flex items-center justify-between gap-3 px-5 py-3
-                 bg-gradient-to-r from-gray-500 to-gray-600 text-white border-b border-gray-500"
+                 bg-gradient-to-r from-gray-500 to-gray-600
+                 text-white border-b border-gray-500"
         >
-          <div class="flex flex-row gap-1">
+          <div class="flex flex-row items-center gap-1">
             <h2 class="text-xl font-semibold">מחזק דף אינטרנט</h2>
             <h2 class="mx-2">•</h2>
 
@@ -150,7 +173,8 @@
               id="close-button"
               type="button"
               onclick={requestClose}
-              class="border border-red-700 bg-red-400 rounded-full aspect-square h-4 cursor-pointer"
+              class="border border-red-700 bg-red-400 rounded-full
+              aspect-square h-4 w-4 cursor-pointer"
               aria-label="סגור את המחזק"
             ></button>
           {:else}
@@ -168,9 +192,11 @@
                 bind:this={iframeElement}
                 src={iframeUrl || undefined}
                 class="w-full h-full border-0 bg-white"
-                allow="autoplay; fullscreen"
+                allow="autoplay;"
                 title={hostname || "Booster content"}
                 onload={handleIframeLoad}
+                name="booster-iframe"
+                data-owner="booster-iframe"
               ></iframe>
 
               {#if !iframeLoaded}

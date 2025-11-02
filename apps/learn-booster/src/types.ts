@@ -193,6 +193,23 @@ export type Config = {
      */
     disableGameCodeInjection: boolean;
   };
+
+  // ערכי סביבה ואינפורמציה על האפליקציה
+  envVals: {
+    hostname: string;
+    fullPath: string;
+    isIframe: boolean;
+    selfUrl: string;
+    isDevServer: boolean;
+    devMode: boolean;
+    deployServer: string;
+    isDeployServer: boolean;
+    isGingim: boolean;
+    isGamePage: boolean;
+    isGamesListPage: boolean;
+    isGingimHomepage: boolean;
+    isBoosterIframe: boolean;
+  };
 };
 
 export type VideoConfig = Config & { rewardType: 'video' };

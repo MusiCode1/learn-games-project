@@ -22,7 +22,7 @@ const SITE_DEFAULT_URL = import.meta.env.VITE_SITE_DEFAULT_UTL;
 type ConfigChangeListener = (config: Config) => void;
 const listeners: ConfigChangeListener[] = [];
 
-const defaultConfig = getDefaultConfig();
+export const defaultConfig = getDefaultConfig();
 
 /**
  * דגל המציין האם מערכת ההגדרות אותחלה
@@ -172,7 +172,11 @@ export async function initializeConfig(): Promise<Config> {
     await setVideosUrls(appConfig);
   }
 
-  appConfig = { ...appConfig, appVersion: pkg.version };
+  appConfig = {
+    ...appConfig, appVersion: pkg.version, envVals: {
+      ...getEnvVals()
+    }
+  };
 
   // סימון שמערכת ההגדרות אותחלה
   isConfigInitialized = true;
@@ -214,7 +218,7 @@ export function getAllConfig(): Readonly<Config> {
 }
 
 // עדכון רקורסיבי שמשמר את המבנה של תתי-אובייקטים
-function deepMerge<T extends Record<string, unknown>>(
+export function deepMerge<T extends Record<string, unknown>>(
   target: T,
   source: Partial<T>,
 ): T {
@@ -252,4 +256,34 @@ function syncActiveProfileSnapshot(): void {
   } catch (error) {
     console.warn("Unable to sync active profile config:", error);
   }
+}
+
+const DEV_SERVER_HOSTNAME = 'dev-server.dev',
+  GAME_PAGE_URL = '/wp-content/uploads/new_games/';
+
+function getEnvVals() {
+  const thisUrl = new URL(window.location.href),
+    hostname = window.location.hostname,
+    fullPath = window.location.href,
+    isIframe = window.self !== window.top,
+    selfUrl = import.meta.url,
+    isDevServer = (hostname === DEV_SERVER_HOSTNAME),
+    devMode = import.meta.env.DEV,
+    deployServer = import.meta.env.VITE_PRJ_DOMAIN as string,
+    isDeployServer = (hostname === deployServer),
+    isGingim = (hostname === 'gingim.net'),
+    isGamesListPage = (thisUrl.pathname.startsWith('/games')),
+    isGamePage = (fullPath.includes(GAME_PAGE_URL)),
+    isGingimHomepage = (isGingim && thisUrl.pathname === '/'),
+    isBoosterIframe = isIframe && (window.name === "booster-iframe" || (window.frameElement as HTMLElement)?.dataset?.owner === "booster-iframe");
+
+  return {
+    hostname, fullPath, isIframe,
+    selfUrl, isDevServer, devMode,
+    deployServer, isDeployServer,
+    isGingim, isGamePage,
+    isGamesListPage,
+    isGingimHomepage,
+    isBoosterIframe
+  };
 }
