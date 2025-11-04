@@ -209,6 +209,7 @@ export type Config = {
     isGamesListPage: boolean;
     isGingimHomepage: boolean;
     isBoosterIframe: boolean;
+    isDirectToGamePage: boolean;
   };
 };
 

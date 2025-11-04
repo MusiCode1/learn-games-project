@@ -65,7 +65,8 @@ export async function main(mode?: string): Promise<void> {
         const {
             isDevServer, isDeployServer, isGingim,
             isIframe, isGamePage, isGingimHomepage,
-            isGamesListPage, isBoosterIframe
+            isGamesListPage, isBoosterIframe,
+            isDirectToGamePage
 
         } = config.envVals;
 
@@ -76,7 +77,7 @@ export async function main(mode?: string): Promise<void> {
         log('Gingim-Booster is loaded in', config.environmentMode, 'mode.');
 
         // ניווט ישיר למשחק דרך פרמטר בכתובת
-        if (isGingimHomepage && !isIframe) {
+        if (!isIframe && (isGingimHomepage || isDirectToGamePage)) {
 
             const thisUrl = new URL(window.location.href);
             const gameName = thisUrl.searchParams.get('gameName');

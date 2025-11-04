@@ -275,15 +275,16 @@ function getEnvVals() {
     isGamesListPage = (thisUrl.pathname.startsWith('/games')),
     isGamePage = (fullPath.includes(GAME_PAGE_URL)),
     isGingimHomepage = (isGingim && thisUrl.pathname === '/'),
-    isBoosterIframe = isIframe && (window.name === "booster-iframe" || (window.frameElement as HTMLElement)?.dataset?.owner === "booster-iframe");
+    isBoosterIframe = isIframe && (window.name === "booster-iframe" || (window.frameElement as HTMLElement)?.dataset?.owner === "booster-iframe"),
+    isDirectToGamePage = (thisUrl.pathname.startsWith('/direct-to-game'));
 
   return {
     hostname, fullPath, isIframe,
     selfUrl, isDevServer, devMode,
     deployServer, isDeployServer,
-    isGingim, isGamePage,
+    isDirectToGamePage, isGingim,
+    isGamePage, isBoosterIframe,
     isGamesListPage,
     isGingimHomepage,
-    isBoosterIframe
   };
 }
