@@ -3,6 +3,7 @@ export interface Card {
     content: string; // The Hebrew letter
     isSelected: boolean;
     isMatched: boolean;
+    isError?: boolean;
 }
 
 export interface GameState {

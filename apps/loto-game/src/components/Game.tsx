@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Board from './Board';
 import type { GameState } from '../types';
 import { generateCards } from '../utils/gameLogic';
+import { playSuccess, playError } from '../utils/sound';
 
 const Game: React.FC = () => {
     const [gameState, setGameState] = useState<GameState>({
@@ -75,6 +76,7 @@ const Game: React.FC = () => {
 
             if (firstCard.content === secondCard.content) {
                 // Match found
+                playSuccess();
                 setTimeout(() => {
                     const matchedCards = [...newCards];
                     matchedCards[firstCardIndex].isMatched = true;
@@ -92,10 +94,12 @@ const Game: React.FC = () => {
 
                     if (gameState.matches + 1 === 10) {
                         setWon(true);
+                        playSuccess();
                     }
                 }, 500);
             } else {
                 // No match
+                playError();
                 const errorCards = [...newCards];
                 errorCards[firstCardIndex].isError = true;
                 errorCards[secondCardIndex].isError = true;
