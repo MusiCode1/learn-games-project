@@ -15,7 +15,7 @@ const Card: React.FC<CardProps> = ({ card, onClick, disabled }) => {
     };
 
     // Base styles
-    const baseClasses = "relative aspect-square cursor-pointer rounded-xl shadow-lg flex items-center justify-center text-4xl sm:text-5xl md:text-6xl font-bold transition-all duration-300 transform hover:scale-105 max-w-full max-h-full landscape:h-full landscape:w-auto portrait:w-full portrait:h-auto";
+    const baseClasses = "relative aspect-square cursor-pointer rounded-xl shadow-lg flex items-center justify-center text-[12vmin] font-bold transition-all duration-300 transform hover:scale-105 max-w-full max-h-full landscape:h-full landscape:w-auto portrait:w-full portrait:h-auto";
 
     // Dynamic styles based on state
     let stateClasses = "bg-white text-gray-800 border-2 border-blue-200";
