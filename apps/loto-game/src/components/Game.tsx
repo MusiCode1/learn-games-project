@@ -3,6 +3,7 @@ import Board from './Board';
 import type { GameState } from '../types';
 import { generateCards } from '../utils/gameLogic';
 import { playSuccess, playError } from '../utils/sound';
+import Confetti from 'react-confetti';
 
 const Game: React.FC = () => {
     const [gameState, setGameState] = useState<GameState>({
@@ -13,6 +14,15 @@ const Game: React.FC = () => {
     });
 
     const [won, setWon] = useState(false);
+    const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         startNewGame();
@@ -39,8 +49,6 @@ const Game: React.FC = () => {
 
         // Ignore if already matched or already selected
         if (clickedCard.isMatched || clickedCard.isSelected) {
-            // Optional: Deselect if clicking the same card again? 
-            // For now, let's say clicking a selected card deselects it.
             if (clickedCard.isSelected) {
                 const newCards = [...gameState.cards];
                 newCards[clickedCardIndex].isSelected = false;
@@ -128,36 +136,46 @@ const Game: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100 p-4">
-            <h1 className="text-4xl font-bold text-indigo-800 mb-8 font-sans">משחק לוטו אותיות</h1>
+        <div className="flex flex-col h-screen bg-gradient-to-br from-indigo-100 to-purple-100 overflow-hidden">
+            {won && <Confetti width={windowSize.width} height={windowSize.height} />}
 
-            <div className="mb-4 flex items-center gap-4">
-                <div className="bg-white px-4 py-2 rounded-lg shadow-md">
-                    <span className="text-gray-600">זוגות: </span>
-                    <span className="font-bold text-indigo-600">{gameState.matches}/10</span>
+            {/* Header Bar */}
+            <header className="bg-white shadow-md p-4 flex justify-between items-center z-10 shrink-0">
+                <h1 className="text-2xl font-bold text-indigo-800 font-sans">משחק לוטו אותיות</h1>
+
+                <div className="flex items-center gap-4">
+                    <div className="bg-indigo-50 px-4 py-2 rounded-lg border border-indigo-100">
+                        <span className="text-gray-600 ml-2">זוגות:</span>
+                        <span className="font-bold text-indigo-600 text-xl">{gameState.matches}/10</span>
+                    </div>
+                    <button
+                        onClick={startNewGame}
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow-md transition-all hover:scale-105 active:scale-95 font-bold"
+                    >
+                        משחק חדש
+                    </button>
                 </div>
-                <button
-                    onClick={startNewGame}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow-md transition-colors"
-                >
-                    משחק חדש
-                </button>
-            </div>
+            </header>
 
-            <Board
-                cards={gameState.cards}
-                onCardClick={handleCardClick}
-                isLocked={gameState.isLocked}
-            />
+            {/* Main Game Area */}
+            <main className="flex-grow flex items-center justify-center p-4 overflow-auto">
+                <div className="w-full max-w-7xl h-full flex items-center justify-center">
+                    <Board
+                        cards={gameState.cards}
+                        onCardClick={handleCardClick}
+                        isLocked={gameState.isLocked}
+                    />
+                </div>
+            </main>
 
             {won && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-                    <div className="bg-white p-8 rounded-2xl shadow-2xl text-center animate-bounce-in">
-                        <h2 className="text-4xl font-bold text-green-500 mb-4">כל הכבוד!</h2>
-                        <p className="text-xl text-gray-600 mb-6">מצאת את כל הזוגות!</p>
+                    <div className="bg-white p-8 rounded-2xl shadow-2xl text-center animate-bounce-in relative z-50">
+                        <h2 className="text-5xl font-bold text-green-500 mb-4">כל הכבוד!</h2>
+                        <p className="text-2xl text-gray-600 mb-8">מצאת את כל הזוגות!</p>
                         <button
                             onClick={startNewGame}
-                            className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl text-lg font-bold shadow-lg transition-transform hover:scale-105"
+                            className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-xl text-xl font-bold shadow-lg transition-transform hover:scale-105"
                         >
                             שחק שוב
                         </button>
