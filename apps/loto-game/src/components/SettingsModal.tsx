@@ -4,9 +4,11 @@ import { LETTERS } from '../utils/gameLogic';
 interface SettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (pairCount: number, selectedLetters: string[]) => void;
+    onSave: (pairCount: number, selectedLetters: string[], loopMode: 'finite' | 'infinite', totalRounds: number) => void;
     initialPairCount: number;
     initialSelectedLetters: string[];
+    initialLoopMode: 'finite' | 'infinite';
+    initialTotalRounds: number;
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -15,16 +17,22 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     onSave,
     initialPairCount,
     initialSelectedLetters,
+    initialLoopMode = 'finite',
+    initialTotalRounds = 1,
 }) => {
     const [pairCount, setPairCount] = useState(initialPairCount);
     const [selectedLetters, setSelectedLetters] = useState<string[]>(initialSelectedLetters);
+    const [loopMode, setLoopMode] = useState<'finite' | 'infinite'>(initialLoopMode);
+    const [totalRounds, setTotalRounds] = useState(initialTotalRounds);
 
     useEffect(() => {
         if (isOpen) {
             setPairCount(initialPairCount);
             setSelectedLetters(initialSelectedLetters);
+            setLoopMode(initialLoopMode);
+            setTotalRounds(initialTotalRounds);
         }
-    }, [isOpen, initialPairCount, initialSelectedLetters]);
+    }, [isOpen, initialPairCount, initialSelectedLetters, initialLoopMode, initialTotalRounds]);
 
     if (!isOpen) return null;
 
@@ -51,11 +59,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             return;
         }
 
-        // Validation: Ensure pair count is not more than available letters
-        const maxPairs = selectedLetters.length;
-        const finalPairCount = Math.min(pairCount, maxPairs);
-
-        onSave(finalPairCount, selectedLetters);
+        // Allow pair count to be larger than selected letters (letters will repeat)
+        onSave(pairCount, selectedLetters, loopMode, totalRounds);
     };
 
     return (
@@ -76,7 +81,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                             <input
                                 type="range"
                                 min="2"
-                                max={Math.min(20, selectedLetters.length)}
+                                max="20"
                                 value={pairCount}
                                 onChange={(e) => setPairCount(parseInt(e.target.value))}
                                 className="w-full h-2 bg-indigo-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
@@ -84,11 +89,45 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                             <span className="font-bold text-indigo-600 min-w-[2rem] text-center">{pairCount}</span>
                         </div>
                         <p className="text-sm text-gray-500 mt-2">
-                            מקסימום הזוגות מוגבל על ידי מספר האותיות שנבחרו.
+                            מספר הזוגות במשחק. אם נבחרו פחות אותיות, הן יחזרו על עצמן.
                         </p>
                     </section>
 
-                    {/* Letters Selection Section */}
+                    {/* Loop Settings Section */}
+                    <section>
+                        <h3 className="text-lg font-bold text-gray-800 mb-4">חזרות משחק</h3>
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    id="infiniteLoop"
+                                    checked={loopMode === 'infinite'}
+                                    onChange={(e) => setLoopMode(e.target.checked ? 'infinite' : 'finite')}
+                                    className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500"
+                                />
+                                <label htmlFor="infiniteLoop" className="text-gray-700 font-medium cursor-pointer">
+                                    משחק ללא הגבלה (אינסופי)
+                                </label>
+                            </div>
+
+                            <div className={`transition-opacity ${loopMode === 'infinite' ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
+                                <label className="block text-gray-700 font-medium mb-2">מספר סבבים:</label>
+                                <div className="flex items-center gap-4">
+                                    <input
+                                        type="range"
+                                        min="1"
+                                        max="10"
+                                        value={totalRounds}
+                                        onChange={(e) => setTotalRounds(parseInt(e.target.value))}
+                                        className="w-full h-2 bg-indigo-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                                    />
+                                    <span className="font-bold text-indigo-600 min-w-[2rem] text-center">{totalRounds}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+
                     <section>
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-bold text-gray-800">בחירת אותיות ({selectedLetters.length})</h3>

@@ -18,7 +18,12 @@ export function shuffle<T>(array: T[]): T[] {
 
 export function generateCards(pairCount: number = 10, availableLetters: string[] = LETTERS): Card[] {
     // Select random letters for the pairs from the available letters
-    const selectedLetters = shuffle(availableLetters).slice(0, pairCount);
+    // If pairCount > availableLetters.length, we need to repeat letters
+    let selectedLetters: string[] = [];
+    while (selectedLetters.length < pairCount) {
+        selectedLetters = [...selectedLetters, ...shuffle(availableLetters)];
+    }
+    selectedLetters = selectedLetters.slice(0, pairCount);
 
     const cards: Card[] = [];
 

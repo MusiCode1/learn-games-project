@@ -1,5 +1,13 @@
 /// <reference types="vite/client" />
 
+interface Window {
+    GameEvents: {
+        on: (event: string, handler: (data: any) => void) => void;
+        off: (event: string, handler: (data: any) => void) => void;
+        emit: (event: string, data: any) => void;
+    };
+}
+
 declare module 'react-confetti' {
     import React from 'react';
 

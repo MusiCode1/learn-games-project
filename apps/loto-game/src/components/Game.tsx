@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Board from './Board';
 import type { GameState } from '../types';
 import { generateCards, LETTERS } from '../utils/gameLogic';
-import { playSuccess, playError } from '../utils/sound';
+import { playSuccess, playError, playWin } from '../utils/sound';
 import Confetti from 'react-confetti';
 import SettingsModal from './SettingsModal';
+import { gameEvents } from '../utils/gameEvents';
+import { useGingimBooster } from '../hooks/useGingimBooster';
+import winnerLogo from '../assets/winner_logo.png';
 
 const Game: React.FC = () => {
     const [gameState, setGameState] = useState<GameState>({
@@ -17,11 +20,16 @@ const Game: React.FC = () => {
     const [settings, setSettings] = useState({
         pairCount: 10,
         selectedLetters: LETTERS,
+        loopMode: 'finite' as 'finite' | 'infinite',
+        totalRounds: 1,
     });
+    const [currentRound, setCurrentRound] = useState(1);
+    const [nextRoundTimer, setNextRoundTimer] = useState<number | null>(null);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     const [won, setWon] = useState(false);
     const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
+    const { triggerReward } = useGingimBooster();
 
     useEffect(() => {
         const handleResize = () => {
@@ -35,7 +43,7 @@ const Game: React.FC = () => {
         startNewGame();
     }, []);
 
-    const startNewGame = (newSettings = settings) => {
+    const startNewGame = (newSettings = settings, round = 1) => {
         const newCards = generateCards(newSettings.pairCount, newSettings.selectedLetters);
         setGameState({
             cards: newCards,
@@ -44,7 +52,28 @@ const Game: React.FC = () => {
             isLocked: false,
         });
         setWon(false);
+        setCurrentRound(round);
+        setNextRoundTimer(null);
     };
+
+    useEffect(() => {
+        let interval: number;
+        if (nextRoundTimer !== null && nextRoundTimer > 0) {
+            interval = window.setInterval(() => {
+                setNextRoundTimer((prev) => {
+                    if (prev === null || prev <= 1) {
+                        clearInterval(interval);
+                        // Start next round
+                        const nextRound = currentRound + 1;
+                        startNewGame(settings, nextRound);
+                        return null;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [nextRoundTimer, settings, currentRound]);
 
     const handleCardClick = (id: number) => {
         if (gameState.isLocked) return;
@@ -109,7 +138,20 @@ const Game: React.FC = () => {
 
                     if (gameState.matches + 1 === settings.pairCount) {
                         setWon(true);
-                        playSuccess();
+                        playWin();
+                        gameEvents.emit('gameComplete', {
+                            matches: gameState.matches + 1,
+                            totalPairs: settings.pairCount,
+                            timestamp: new Date().toISOString()
+                        });
+                        triggerReward();
+
+                        // Handle Loop Logic
+                        const hasNextRound = settings.loopMode === 'infinite' || currentRound < settings.totalRounds;
+
+                        if (hasNextRound) {
+                            setNextRoundTimer(5); // 5 seconds countdown
+                        }
                     }
                 }, 500);
             } else {
@@ -155,6 +197,18 @@ const Game: React.FC = () => {
                         <span className="text-gray-600 ml-2">זוגות:</span>
                         <span className="font-bold text-indigo-600 text-xl">{gameState.matches}/{settings.pairCount}</span>
                     </div>
+                    {settings.loopMode === 'finite' && settings.totalRounds > 1 && (
+                        <div className="bg-purple-50 px-4 py-2 rounded-lg border border-purple-100">
+                            <span className="text-gray-600 ml-2">סבב:</span>
+                            <span className="font-bold text-purple-600 text-xl">{currentRound}/{settings.totalRounds}</span>
+                        </div>
+                    )}
+                    {settings.loopMode === 'infinite' && (
+                        <div className="bg-purple-50 px-4 py-2 rounded-lg border border-purple-100">
+                            <span className="text-gray-600 ml-2">סבב:</span>
+                            <span className="font-bold text-purple-600 text-xl">{currentRound}</span>
+                        </div>
+                    )}
                     <button
                         onClick={() => setIsSettingsOpen(true)}
                         className="bg-gray-100 hover:bg-gray-200 text-indigo-600 p-2 rounded-lg shadow-sm transition-all hover:scale-105 active:scale-95"
@@ -187,15 +241,30 @@ const Game: React.FC = () => {
 
             {won && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-                    <div className="bg-white p-8 rounded-2xl shadow-2xl text-center animate-bounce-in relative z-50">
+                    <div className="bg-white p-8 rounded-2xl shadow-2xl text-center animate-bounce-in relative z-50 max-w-md w-full mx-4">
+                        <img src={winnerLogo} alt="Winner" className="w-32 h-32 mx-auto mb-4 object-contain drop-shadow-lg" />
                         <h2 className="text-5xl font-bold text-green-500 mb-4">כל הכבוד!</h2>
                         <p className="text-2xl text-gray-600 mb-8">מצאת את כל הזוגות!</p>
-                        <button
-                            onClick={() => startNewGame()}
-                            className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-xl text-xl font-bold shadow-lg transition-transform hover:scale-105"
-                        >
-                            שחק שוב
-                        </button>
+
+                        {nextRoundTimer !== null ? (
+                            <div className="mb-6">
+                                <p className="text-lg text-indigo-600 font-bold mb-2">הסבב הבא מתחיל בעוד:</p>
+                                <div className="text-4xl font-mono font-bold text-indigo-800">{nextRoundTimer}</div>
+                                <button
+                                    onClick={() => setNextRoundTimer(1)} // Trigger immediate next round
+                                    className="mt-4 text-sm text-gray-500 hover:text-indigo-600 underline"
+                                >
+                                    דלג והתחל מיד
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => startNewGame(settings, 1)}
+                                className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-xl text-xl font-bold shadow-lg transition-transform hover:scale-105 w-full"
+                            >
+                                שחק שוב
+                            </button>
+                        )}
                     </div>
                 </div>
             )}
@@ -203,14 +272,16 @@ const Game: React.FC = () => {
             <SettingsModal
                 isOpen={isSettingsOpen}
                 onClose={() => setIsSettingsOpen(false)}
-                onSave={(pairCount, selectedLetters) => {
-                    const newSettings = { pairCount, selectedLetters };
+                onSave={(pairCount, selectedLetters, loopMode, totalRounds) => {
+                    const newSettings = { pairCount, selectedLetters, loopMode, totalRounds };
                     setSettings(newSettings);
                     setIsSettingsOpen(false);
-                    startNewGame(newSettings);
+                    startNewGame(newSettings, 1);
                 }}
                 initialPairCount={settings.pairCount}
                 initialSelectedLetters={settings.selectedLetters}
+                initialLoopMode={settings.loopMode}
+                initialTotalRounds={settings.totalRounds}
             />
         </div>
     );
