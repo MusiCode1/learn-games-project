@@ -1,7 +1,7 @@
 import type { Card } from '../types';
 
 // Correcting the array and ensuring we have enough letters for 10 pairs
-const LETTERS = [
+export const LETTERS = [
     'א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט', 'י',
     'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ', 'ק', 'ר',
     'ש', 'ת'
@@ -16,9 +16,9 @@ export function shuffle<T>(array: T[]): T[] {
     return newArray;
 }
 
-export function generateCards(pairCount: number = 10): Card[] {
-    // Select random letters for the pairs
-    const selectedLetters = shuffle(LETTERS).slice(0, pairCount);
+export function generateCards(pairCount: number = 10, availableLetters: string[] = LETTERS): Card[] {
+    // Select random letters for the pairs from the available letters
+    const selectedLetters = shuffle(availableLetters).slice(0, pairCount);
 
     const cards: Card[] = [];
 

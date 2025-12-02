@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Board from './Board';
 import type { GameState } from '../types';
-import { generateCards } from '../utils/gameLogic';
+import { generateCards, LETTERS } from '../utils/gameLogic';
 import { playSuccess, playError } from '../utils/sound';
 import Confetti from 'react-confetti';
+import SettingsModal from './SettingsModal';
 
 const Game: React.FC = () => {
     const [gameState, setGameState] = useState<GameState>({
@@ -12,6 +13,12 @@ const Game: React.FC = () => {
         matches: 0,
         isLocked: false,
     });
+
+    const [settings, setSettings] = useState({
+        pairCount: 10,
+        selectedLetters: LETTERS,
+    });
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     const [won, setWon] = useState(false);
     const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
@@ -28,8 +35,8 @@ const Game: React.FC = () => {
         startNewGame();
     }, []);
 
-    const startNewGame = () => {
-        const newCards = generateCards(10); // 10 pairs = 20 cards
+    const startNewGame = (newSettings = settings) => {
+        const newCards = generateCards(newSettings.pairCount, newSettings.selectedLetters);
         setGameState({
             cards: newCards,
             selectedCards: [],
@@ -100,7 +107,7 @@ const Game: React.FC = () => {
                         isLocked: false,
                     }));
 
-                    if (gameState.matches + 1 === 10) {
+                    if (gameState.matches + 1 === settings.pairCount) {
                         setWon(true);
                         playSuccess();
                     }
@@ -146,10 +153,20 @@ const Game: React.FC = () => {
                 <div className="flex items-center gap-4">
                     <div className="bg-indigo-50 px-4 py-2 rounded-lg border border-indigo-100">
                         <span className="text-gray-600 ml-2">זוגות:</span>
-                        <span className="font-bold text-indigo-600 text-xl">{gameState.matches}/10</span>
+                        <span className="font-bold text-indigo-600 text-xl">{gameState.matches}/{settings.pairCount}</span>
                     </div>
                     <button
-                        onClick={startNewGame}
+                        onClick={() => setIsSettingsOpen(true)}
+                        className="bg-gray-100 hover:bg-gray-200 text-indigo-600 p-2 rounded-lg shadow-sm transition-all hover:scale-105 active:scale-95"
+                        title="הגדרות"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+                    <button
+                        onClick={() => startNewGame()}
                         className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow-md transition-all hover:scale-105 active:scale-95 font-bold"
                     >
                         משחק חדש
@@ -174,7 +191,7 @@ const Game: React.FC = () => {
                         <h2 className="text-5xl font-bold text-green-500 mb-4">כל הכבוד!</h2>
                         <p className="text-2xl text-gray-600 mb-8">מצאת את כל הזוגות!</p>
                         <button
-                            onClick={startNewGame}
+                            onClick={() => startNewGame()}
                             className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-xl text-xl font-bold shadow-lg transition-transform hover:scale-105"
                         >
                             שחק שוב
@@ -182,6 +199,19 @@ const Game: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            <SettingsModal
+                isOpen={isSettingsOpen}
+                onClose={() => setIsSettingsOpen(false)}
+                onSave={(pairCount, selectedLetters) => {
+                    const newSettings = { pairCount, selectedLetters };
+                    setSettings(newSettings);
+                    setIsSettingsOpen(false);
+                    startNewGame(newSettings);
+                }}
+                initialPairCount={settings.pairCount}
+                initialSelectedLetters={settings.selectedLetters}
+            />
         </div>
     );
 };
