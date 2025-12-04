@@ -8,26 +8,26 @@ export const words: WordData[] = [
     {
         id: '1',
         word: 'כלב',
-        imageUrl: 'https://placehold.co/400x400?text=Dog', // Placeholder
+        imageUrl: '/images/dog.png',
     },
     {
         id: '2',
         word: 'חתול',
-        imageUrl: 'https://placehold.co/400x400?text=Cat', // Placeholder
+        imageUrl: '/images/cat.png',
     },
     {
         id: '3',
         word: 'בית',
-        imageUrl: 'https://placehold.co/400x400?text=House', // Placeholder
+        imageUrl: '/images/house.png',
     },
     {
         id: '4',
         word: 'כדור',
-        imageUrl: 'https://placehold.co/400x400?text=Ball', // Placeholder
+        imageUrl: '/images/ball.png',
     },
     {
         id: '5',
         word: 'פרח',
-        imageUrl: 'https://placehold.co/400x400?text=Flower', // Placeholder
+        imageUrl: '/images/flower.png',
     }
 ];
