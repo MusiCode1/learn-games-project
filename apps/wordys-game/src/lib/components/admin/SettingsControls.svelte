@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { settings } from '$lib/stores/settings.svelte';
+	import { version } from '../../../../package.json';
 </script>
 
 <div class="space-y-6" dir="rtl">
+	<!-- Version Display -->
+	<div class="text-center text-xs text-slate-400 font-mono">
+		v{version}
+	</div>
 	<!-- Setting: Show Word -->
 	<div class="flex items-center justify-between">
 		<div class="space-y-1">
