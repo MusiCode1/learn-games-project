@@ -1,14 +1,5 @@
 // Sound utility using Web Audio API and SpeechSynthesis
 
-let audioContext: AudioContext | null = null;
-
-function getContext() {
-    if (!audioContext) {
-        audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
-    return audioContext;
-}
-
 export function speak(text: string) {
     if (!('speechSynthesis' in window)) return;
 
@@ -23,49 +14,21 @@ export function speak(text: string) {
 }
 
 export function playSuccess() {
-    const ctx = getContext();
-    if (!ctx) return;
-
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    // Nice major chord arpeggio (C5 - E5 - G5)
-    const now = ctx.currentTime;
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(523.25, now); // C5
-    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
-
-    gain.gain.setValueAtTime(0.1, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-
-    osc.start(now);
-    osc.stop(now + 0.5);
+    try {
+        const audio = new Audio('/sounds/success.mp3');
+        audio.volume = 0.5;
+        audio.play().catch(e => console.warn('Audio play failed (user interaction needed?):', e));
+    } catch (e) {
+        console.error('Error playing success sound:', e);
+    }
 }
 
 export function playError() {
-    const ctx = getContext();
-    if (!ctx) return;
-
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    const now = ctx.currentTime;
-
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(150, now); // Low buzz
-    osc.frequency.linearRampToValueAtTime(100, now + 0.2);
-
-    gain.gain.setValueAtTime(0.1, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-
-    osc.start(now);
-    osc.stop(now + 0.3);
+    try {
+        const audio = new Audio('/sounds/error.wav');
+        audio.volume = 0.3;
+        audio.play().catch(e => console.warn('Audio play failed (user interaction needed?):', e));
+    } catch (e) {
+        console.error('Error playing error sound:', e);
+    }
 }

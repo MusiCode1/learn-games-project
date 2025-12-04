@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { playError } from '$lib/utils/sound';
+
 	interface Props {
 		targetWord: string;
 		onSuccess: () => void;
@@ -29,6 +31,9 @@
 			}
 		} else {
 			// Error!
+			if (!isError) {
+				playError();
+			}
 			isError = true;
 		}
 	}

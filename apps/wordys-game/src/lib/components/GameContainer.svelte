@@ -5,18 +5,23 @@
 	import TypingInput from './TypingInput.svelte';
 	import Feedback from './Feedback.svelte';
 
+	import { playSuccess, speak } from '$lib/utils/sound';
+
 	let currentIndex = $state(0);
 	let showFeedback = $state(false);
 
 	// Derived state for current word
 	let currentWord = $derived(words[currentIndex]);
 
+	$effect(() => {
+		// Speak the word when it changes
+		speak(currentWord.word);
+	});
+
 	function handleSuccess() {
 		showFeedback = true;
-
-		// Play success sound (placeholder)
-		// const audio = new Audio('/sounds/success.mp3');
-		// audio.play();
+		playSuccess();
+		speak('כל הכבוד! ' + currentWord.word);
 
 		setTimeout(() => {
 			showFeedback = false;
