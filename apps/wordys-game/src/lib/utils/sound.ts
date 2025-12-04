@@ -1,16 +1,28 @@
 // Sound utility using Web Audio API and SpeechSynthesis
 
-export function speak(text: string) {
-    if (!('speechSynthesis' in window)) return;
+export function speak(text: string, interrupt = true): Promise<void> {
+    return new Promise((resolve) => {
+        if (!('speechSynthesis' in window)) {
+            resolve();
+            return;
+        }
 
-    // Cancel previous speech
-    window.speechSynthesis.cancel();
+        if (interrupt) {
+            window.speechSynthesis.cancel();
+        }
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'he-IL'; // Hebrew
-    utterance.rate = 0.9; // Slightly slower for clarity
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'he-IL'; // Hebrew
+        utterance.rate = 0.9; // Slightly slower for clarity
 
-    window.speechSynthesis.speak(utterance);
+        utterance.onend = () => resolve();
+        utterance.onerror = (e) => {
+            console.warn('Speech synthesis error:', e);
+            resolve();
+        };
+
+        window.speechSynthesis.speak(utterance);
+    });
 }
 
 export function playSuccess() {
