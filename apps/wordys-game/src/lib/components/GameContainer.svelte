@@ -1,59 +1,79 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { wordsStore } from '$lib/stores/words.svelte';
+
 	import ImageDisplay from './ImageDisplay.svelte';
 	import WordDisplay from './WordDisplay.svelte';
 	import TypingInput from './TypingInput.svelte';
 	import Feedback from './Feedback.svelte';
 	import AdminGate from './AdminGate.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
+	import type { Card } from '$lib/types';
 
 	import { playSuccess, speak } from '$lib/utils/sound';
+
+	let { cards, onExit } = $props<{ cards: Card[]; onExit?: () => void }>();
 
 	let currentIndex = $state(0);
 	let showFeedback = $state(false);
 	let typedValue = $state('');
 
-	// Derived state for current word
-	let currentWord = $derived(wordsStore.words[currentIndex]);
+	// Play Queue Logic
+	let playQueue = $state<Card[]>([]);
 
 	$effect(() => {
-		// Speak the word when it changes
-		if (currentWord) {
-			speak(currentWord.word);
-		}
+		// Initialize Queue when cards change or component mounts
+		initGame();
 	});
 
-	async function handleSuccess() {
-		showFeedback = true;
-		playSuccess();
+	function initGame() {
+		if (!cards || cards.length === 0) return;
 
-		// 1. Wait for sound (approx 1s)
-		await new Promise((r) => setTimeout(r, 1000));
-
-		// 2. Speak word
-		if (currentWord) {
-			await speak(currentWord.word);
+		const reps = settings.cardRepetitions;
+		if (reps === 0) {
+			// Unlimited: Initial queue acts as a buffer, but nextWord will refill/randomize
+			// Actually, for unlimited, let's just use the 'cards' array directly and pick random index
+			// But to keep 'currentIndex' logic similar, let's just generate a long random queue or just
+			// treat currentIndex as "cards completed" count and currentWord is derived differently.
+			// Simpler: Just generate a shuffled queue of, say, 10 items, and when reaching end, generate more?
+			// "Unlimited" -> Just pick random each time.
+			currentIndex = 0;
+			// For unlimited, we still need a "current card".
+			// Let's set initial one.
+			playQueue = [cards[Math.floor(Math.random() * cards.length)]];
+		} else {
+			// Finite repetitions
+			let queue: Card[] = [];
+			for (let i = 0; i < reps; i++) {
+				queue = [...queue, ...cards];
+			}
+			// Shuffle
+			queue = queue.sort(() => Math.random() - 0.5);
+			playQueue = queue;
+			currentIndex = 0;
 		}
-
-		// 3. Speak feedback
-		await speak('כל הכבוד!');
-
-		// 4. Wait before next word (1s)
-		await new Promise((r) => setTimeout(r, 1000));
-
-		showFeedback = false;
-		typedValue = ''; // Reset typed value on success
-		nextWord();
 	}
 
+	// Derived state for current word
+	let currentWord = $derived(playQueue[currentIndex]);
+
+	// ... (rest same)
+
 	function nextWord() {
-		if (currentIndex < wordsStore.words.length - 1) {
+		const reps = settings.cardRepetitions;
+
+		if (reps === 0) {
+			// Unlimited mode: Always add a new random card to the queue and advance
+			const randomCard = cards[Math.floor(Math.random() * cards.length)];
+			playQueue = [...playQueue, randomCard];
 			currentIndex++;
 		} else {
-			// Game Over / Restart
-			currentIndex = 0;
-			// Maybe show a "Game Complete" screen here
+			// Finite mode
+			if (currentIndex < playQueue.length - 1) {
+				currentIndex++;
+			} else {
+				// Game Over
+				if (onExit) onExit();
+			}
 		}
 	}
 </script>
