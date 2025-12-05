@@ -2,6 +2,7 @@ export class SettingsStore {
     showWord = $state(true);
     errorFeedback = $state(true);
     highlightCurrentChar = $state(true);
+    cardRepetitions = $state(2); // 0 = unlimited
 
     constructor() {
         // Load from localStorage if available (client-side only)
@@ -12,6 +13,7 @@ export class SettingsStore {
                 this.showWord = parsed.showWord ?? true;
                 this.errorFeedback = parsed.errorFeedback ?? true;
                 this.highlightCurrentChar = parsed.highlightCurrentChar ?? true;
+                this.cardRepetitions = parsed.cardRepetitions ?? 2;
             }
         }
 
@@ -22,7 +24,8 @@ export class SettingsStore {
                     localStorage.setItem('wordys-settings', JSON.stringify({
                         showWord: this.showWord,
                         errorFeedback: this.errorFeedback,
-                        highlightCurrentChar: this.highlightCurrentChar
+                        highlightCurrentChar: this.highlightCurrentChar,
+                        cardRepetitions: this.cardRepetitions
                     }));
                 }
             });

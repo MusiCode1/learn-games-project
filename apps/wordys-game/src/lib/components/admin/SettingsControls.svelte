@@ -70,4 +70,23 @@
 			/>
 		</button>
 	</div>
+
+	<!-- Setting: Card Repetitions -->
+	<div class="flex items-center justify-between border-t pt-4 mt-4">
+		<div class="space-y-1">
+			<div class="font-bold text-slate-800">חזרות לכרטיס</div>
+			<div class="text-sm text-slate-500">כמה פעמים כל כרטיס יופיע במשחק</div>
+		</div>
+		<select
+			bind:value={settings.cardRepetitions}
+			class="px-3 py-1 bg-slate-100 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 font-medium"
+		>
+			<option value={1}>1</option>
+			<option value={2}>2</option>
+			<option value={3}>3</option>
+			<option value={5}>5</option>
+			<option value={10}>10</option>
+			<option value={0}>♾️ ללא הגבלה</option>
+		</select>
+	</div>
 </div>
