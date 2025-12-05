@@ -8,6 +8,7 @@
 	<!-- <div class="text-center text-xs text-slate-400 font-mono">
 		v{$page.data.version}
 	</div> -->
+
 	<!-- Setting: Show Word -->
 	<div class="flex items-center justify-between">
 		<div class="space-y-1">
@@ -16,6 +17,7 @@
 		</div>
 		<button
 			dir="ltr"
+			aria-label="הצג מילה"
 			class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
 			class:bg-blue-600={settings.showWord}
 			class:bg-slate-200={!settings.showWord}
@@ -37,6 +39,7 @@
 		</div>
 		<button
 			dir="ltr"
+			aria-label="הדגשת אות נוכחית"
 			class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
 			class:bg-blue-600={settings.highlightCurrentChar}
 			class:bg-slate-200={!settings.highlightCurrentChar}
@@ -58,6 +61,7 @@
 		</div>
 		<button
 			dir="ltr"
+			aria-label="חיווי שגיאה"
 			class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
 			class:bg-blue-600={settings.errorFeedback}
 			class:bg-slate-200={!settings.errorFeedback}

@@ -58,6 +58,29 @@
 
 	// ... (rest same)
 
+	async function handleSuccess() {
+		showFeedback = true;
+		playSuccess();
+
+		// 1. Wait for sound (approx 1s)
+		await new Promise((r) => setTimeout(r, 1000));
+
+		// 2. Speak word
+		if (currentWord) {
+			await speak(currentWord.word);
+		}
+
+		// 3. Speak feedback
+		await speak('כל הכבוד!');
+
+		// 4. Wait before next word (1s)
+		await new Promise((r) => setTimeout(r, 1000));
+
+		showFeedback = false;
+		typedValue = ''; // Reset typed value on success
+		nextWord();
+	}
+
 	function nextWord() {
 		const reps = settings.cardRepetitions;
 
