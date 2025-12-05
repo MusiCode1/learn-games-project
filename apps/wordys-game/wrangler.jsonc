@@ -1,5 +1,7 @@
 {
     "$schema": "./node_modules/wrangler/config-schema.json",
+    "name": "wordys-game",
+    "pages_build_output_dir": ".svelte-kit/cloudflare",
     "compatibility_flags": [
         "nodejs_compat"
     ],
