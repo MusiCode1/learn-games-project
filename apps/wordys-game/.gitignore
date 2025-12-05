@@ -26,3 +26,5 @@ vite.config.ts.timestamp-*
 # Unused sounds
 unused_sounds/
 static/temp_sounds/
+temp
+temp/*
