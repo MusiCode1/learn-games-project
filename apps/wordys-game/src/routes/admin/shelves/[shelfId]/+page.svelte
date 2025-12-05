@@ -30,8 +30,8 @@
 	}
 
 	function toggleCover(boxId: string) {
-		if (!shelfId) return;
-		const isCover = shelf?.coverBoxId === boxId;
+		if (!shelfId || !shelf) return;
+		const isCover = shelf.coverBoxId === boxId;
 		shelvesStore.updateShelf(shelfId, shelf.name, undefined, isCover ? '' : boxId);
 	}
 

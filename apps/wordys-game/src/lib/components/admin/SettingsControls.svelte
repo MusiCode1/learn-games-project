@@ -5,9 +5,9 @@
 
 <div class="space-y-6" dir="rtl">
 	<!-- Version Display -->
-	<div class="text-center text-xs text-slate-400 font-mono">
+	<!-- <div class="text-center text-xs text-slate-400 font-mono">
 		v{$page.data.version}
-	</div>
+	</div> -->
 	<!-- Setting: Show Word -->
 	<div class="flex items-center justify-between">
 		<div class="space-y-1">

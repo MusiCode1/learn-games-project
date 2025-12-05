@@ -13,9 +13,9 @@
 	let newCardImage = $state<string | null>(null);
 	let newCardAudio = $state('');
 	let editingCardId = $state<string | null>(null);
-	let fileInput: HTMLInputElement;
+	let fileInput = $state<HTMLInputElement | null>(null);
 
-	let availableSounds = data.sounds;
+	let availableSounds = $derived(data.sounds);
 
 	function handleFileSelect(event: Event) {
 		const target = event.target as HTMLInputElement;
@@ -78,8 +78,8 @@
 	}
 
 	function toggleCover(cardId: string) {
-		if (!shelfId || !boxId) return;
-		const isCover = box?.coverCardId === cardId;
+		if (!shelfId || !boxId || !box) return;
+		const isCover = box.coverCardId === cardId;
 		shelvesStore.updateBox(shelfId, boxId, box.name, undefined, isCover ? '' : cardId);
 	}
 </script>
