@@ -1,5 +1,33 @@
 # יומן פיתוח - Wordy's
 
+## 2025-12-05 01:55
+### הושלמה גרסה v0.4 - ממשק ניהול ופריסה לענן
+
+המשחק כעת כולל ממשק ניהול מלא וזמין אונליין!
+
+**Live URL**: [https://wordys-game.pages.dev](https://wordys-game.pages.dev) 🚀
+
+#### מה בוצע?
+
+**1. ממשק ניהול (Admin Interface)**
+*   **כתובת**: `/admin` (מוגן ע"י `AdminGate` - מקצב הקשות).
+*   **ניהול מילים**: הוספה (כולל העלאת תמונה), מחיקה ואיפוס.
+*   **הגדרות**: שליטה מלאה על הגדרות המשחק מתוך הממשק.
+*   **ארכיטקטורה**: חלוקה ל-Sub-routes (`/admin/words`, `/admin/settings`) עם Layout משותף.
+
+**2. פריסה (Deployment)**
+*   המשחק נפרס ל-**Cloudflare Pages**.
+*   שימוש ב-`adapter-cloudflare` לביצועים מקסימליים.
+*   תהליך CI/CD אוטומטי מול GitHub.
+
+**3. תיקונים (Fixes)**
+*   **תצוגת טאבלט**: תוקנה בעיית חיתוך הממשק במסכים קטנים/בינוניים ע"י הוספת גלילה (`overflow-y-auto`) והקטנת מרווחים.
+*   **מצב מאוזן (Landscape)**: הוספת תמיכה בתצוגה רוחבית (תמונה לצד המילים) כדי למנוע גלילה ולנצל את המסך בצורה מיטבית.
+    ![Landscape Layout Fix](file:///D:/Users/User/.gemini/antigravity/brain/a45cad25-fcba-4ad6-97d3-dc044545ba79/landscape_layout_fix_check_1764893821981.png)
+*   **טעינת גרסה**: מעבר לטעינת `package.json` בצד השרת (`+layout.server.ts`) כדי למנוע שגיאות Vite.
+
+---
+
 ## 2025-12-04 23:51
 ### הושלמה גרסה v0.2 - סאונד, הגדרות וליטוש
 

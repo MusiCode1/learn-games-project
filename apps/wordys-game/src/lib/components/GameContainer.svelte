@@ -59,7 +59,7 @@
 </script>
 
 <div
-	class="h-screen w-full overflow-hidden bg-linear-to-b from-orange-100 to-yellow-50 flex flex-col items-center justify-center p-4 font-sans relative"
+	class="h-screen w-full bg-linear-to-b from-orange-100 to-yellow-50 flex flex-col items-center justify-center p-4 font-sans relative overflow-hidden"
 >
 	<!-- Settings Button with Gate -->
 	<div class="absolute top-4 left-4 z-20">
@@ -89,33 +89,36 @@
 	</div>
 
 	{#if currentWord}
-		<div class="w-full max-w-4xl space-y-8">
-			<!-- Header / Progress (Optional) -->
-			<div class="text-center text-slate-400 text-sm">
-				מילה {currentIndex + 1} מתוך {wordsStore.words.length}
+		<div
+			class="w-full max-w-6xl flex flex-col landscape:flex-row items-center justify-center gap-4 landscape:gap-12 landscape:px-8"
+		>
+			<!-- Image Section -->
+			<div class="w-full max-w-md landscape:w-1/2 landscape:max-w-lg flex justify-center">
+				<ImageDisplay src={currentWord.imageUrl} alt={currentWord.word} />
 			</div>
 
-			<ImageDisplay src={currentWord.imageUrl} alt={currentWord.word} />
-
-			<WordDisplay
-				word={currentWord.word}
-				currentIndex={// Calculate index of first mismatch or length if correct so far
-				(() => {
-					for (let i = 0; i < typedValue.length; i++) {
-						if (typedValue[i] !== currentWord.word[i]) return i;
-					}
-					return typedValue.length;
-				})()}
-			/>
-
-			<!-- Key prop forces re-render of input on word change to reset state -->
-			{#key currentWord.id}
-				<TypingInput
-					targetWord={currentWord.word}
-					onSuccess={handleSuccess}
-					bind:value={typedValue}
+			<!-- Controls Section -->
+			<div class="w-full landscape:w-1/2 flex flex-col items-center gap-6 landscape:gap-8">
+				<WordDisplay
+					word={currentWord.word}
+					currentIndex={// Calculate index of first mismatch or length if correct so far
+					(() => {
+						for (let i = 0; i < typedValue.length; i++) {
+							if (typedValue[i] !== currentWord.word[i]) return i;
+						}
+						return typedValue.length;
+					})()}
 				/>
-			{/key}
+
+				<!-- Key prop forces re-render of input on word change to reset state -->
+				{#key currentWord.id}
+					<TypingInput
+						targetWord={currentWord.word}
+						onSuccess={handleSuccess}
+						bind:value={typedValue}
+					/>
+				{/key}
+			</div>
 		</div>
 	{/if}
 
