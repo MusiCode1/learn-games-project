@@ -27,7 +27,7 @@
 				class="absolute top-1 inline-block h-4 w-4 rounded-full bg-white transition-all duration-200 shadow-sm"
 				class:left-1={!settings.showWord}
 				class:left-6={settings.showWord}
-			/>
+			></span>
 		</button>
 	</div>
 
@@ -49,7 +49,7 @@
 				class="absolute top-1 inline-block h-4 w-4 rounded-full bg-white transition-all duration-200 shadow-sm"
 				class:left-1={!settings.highlightCurrentChar}
 				class:left-6={settings.highlightCurrentChar}
-			/>
+			></span>
 		</button>
 	</div>
 
@@ -71,7 +71,7 @@
 				class="absolute top-1 inline-block h-4 w-4 rounded-full bg-white transition-all duration-200 shadow-sm"
 				class:left-1={!settings.errorFeedback}
 				class:left-6={settings.errorFeedback}
-			/>
+			></span>
 		</button>
 	</div>
 

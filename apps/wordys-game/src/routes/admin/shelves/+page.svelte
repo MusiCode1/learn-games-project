@@ -31,6 +31,10 @@
 			shelvesStore.deleteShelf(id);
 		}
 	}
+
+	function focus(node: HTMLElement) {
+		node.focus();
+	}
 </script>
 
 <div class="space-y-6">
@@ -91,7 +95,7 @@
 									type="text"
 									bind:value={editName}
 									class="w-full px-2 py-1 border rounded focus:outline-none focus:ring-1 focus:ring-orange-500"
-									autofocus
+									use:focus
 									onkeydown={(e) => e.key === 'Enter' && saveEdit(shelf.id)}
 								/>
 								<div class="flex items-center gap-2">
