@@ -54,12 +54,12 @@ export const defaultShelves: Shelf[] = [
                 color: '#F59E0B', // Amber
                 cards: [
                     { id: 'bread', word: 'לחם', imageUrl: getAssetUrl('cards/bread.png') },
-                    { id: 'omelet', word: 'חביתה', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'cheese', word: 'גבינה', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'schnitzel', word: 'שניצל', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'rice', word: 'אורז', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'pasta', word: 'פסטה', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'soup', word: 'מרק', imageUrl: getAssetUrl('cards/placeholder_temp.png') }
+                    { id: 'omelet', word: 'חביתה', imageUrl: getAssetUrl('cards/omelet.png') },
+                    { id: 'cheese', word: 'גבינה', imageUrl: getAssetUrl('cards/cheese.png') },
+                    { id: 'schnitzel', word: 'שניצל', imageUrl: getAssetUrl('cards/schnitzel.png') },
+                    { id: 'rice', word: 'אורז', imageUrl: getAssetUrl('cards/rice.png') },
+                    { id: 'pasta', word: 'פסטה', imageUrl: getAssetUrl('cards/pasta.png') },
+                    { id: 'soup', word: 'מרק', imageUrl: getAssetUrl('cards/soup.png') }
                 ]
             },
             {
@@ -67,11 +67,11 @@ export const defaultShelves: Shelf[] = [
                 name: 'שתייה',
                 color: '#06B6D4', // Cyan
                 cards: [
-                    { id: 'water', word: 'מים', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'juice', word: 'מיץ', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'milk', word: 'חלב', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'choco', word: 'שוקו', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'tea', word: 'תה', imageUrl: getAssetUrl('cards/placeholder_temp.png') }
+                    { id: 'water', word: 'מים', imageUrl: getAssetUrl('cards/water.png') },
+                    { id: 'juice', word: 'מיץ', imageUrl: getAssetUrl('cards/juice.png') },
+                    { id: 'milk', word: 'חלב', imageUrl: getAssetUrl('cards/milk.png') },
+                    { id: 'choco', word: 'שוקו', imageUrl: getAssetUrl('cards/choco.png') },
+                    { id: 'tea', word: 'תה', imageUrl: getAssetUrl('cards/tea.png') }
                 ]
             }
         ]
@@ -86,13 +86,13 @@ export const defaultShelves: Shelf[] = [
                 name: 'משפחה',
                 color: '#A78BFA', // Soft Purple
                 cards: [
-                    { id: 'dad', word: 'אבא', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'mom', word: 'אמא', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'grandpa', word: 'סבא', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'grandma', word: 'סבתא', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'uncle', word: 'דוד', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'aunt', word: 'דודה', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'baby', word: 'תינוק', imageUrl: getAssetUrl('cards/placeholder_temp.png') }
+                    { id: 'dad', word: 'אבא', imageUrl: getAssetUrl('cards/dad.png') },
+                    { id: 'mom', word: 'אמא', imageUrl: getAssetUrl('cards/mom.png') },
+                    { id: 'grandpa', word: 'סבא', imageUrl: getAssetUrl('cards/grandpa.png') },
+                    { id: 'grandma', word: 'סבתא', imageUrl: getAssetUrl('cards/grandma.png') },
+                    { id: 'uncle', word: 'דוד', imageUrl: getAssetUrl('cards/uncle.png') },
+                    { id: 'aunt', word: 'דודה', imageUrl: getAssetUrl('cards/aunt.png') },
+                    { id: 'baby', word: 'תינוק', imageUrl: getAssetUrl('cards/baby.png') }
                 ]
             },
             {
@@ -100,9 +100,9 @@ export const defaultShelves: Shelf[] = [
                 name: 'דמויות',
                 color: '#818CF8', // Indigo
                 cards: [
-                    { id: 'boy', word: 'ילד', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'girl', word: 'ילדה', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'friend_m', word: 'חבר', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
+                    { id: 'boy', word: 'ילד', imageUrl: getAssetUrl('cards/boy.png') },
+                    { id: 'girl', word: 'ילדה', imageUrl: getAssetUrl('cards/girl.png') },
+                    { id: 'friend_m', word: 'חבר', imageUrl: getAssetUrl('cards/friend_m.png') },
                     { id: 'friend_f', word: 'חברה', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
                     { id: 'teacher_m', word: 'מורה', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
                     { id: 'kindergarten_teacher', word: 'גננת', imageUrl: getAssetUrl('cards/placeholder_temp.png') }
@@ -151,7 +151,7 @@ export const defaultShelves: Shelf[] = [
                     { id: 'phone', word: 'טלפון', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
                     { id: 'computer', word: 'מחשב', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
                     { id: 'key', word: 'מפתח', imageUrl: getAssetUrl('cards/placeholder_temp.png') },
-                    { id: 'ball', word: 'כדור', imageUrl: getAssetUrl('cards/placeholder_temp.png') }
+                    { id: 'ball', word: 'כדור', imageUrl: getAssetUrl('cards/ball.png') }
                 ]
             },
             {
