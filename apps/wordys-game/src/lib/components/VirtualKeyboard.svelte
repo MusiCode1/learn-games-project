@@ -87,20 +87,20 @@
 				{/if}
 
 				{#each row as key}
+					{@const visible = isKeyVisible(key)}
 					<!-- Key Container: Uniform Size -->
 					<div class="relative w-[8%] h-12 sm:h-14 md:h-16 shrink-0 [container-type:inline-size]">
-						{#if isKeyVisible(key)}
-							<button
-								onclick={() => onKeyPress(key)}
-								class="absolute inset-0 w-full h-full bg-white rounded-lg
-								shadow-sm border border-slate-300 border-b-4 border-b-slate-400
-								active:border-b active:translate-y-1 hover:bg-slate-50 active:bg-slate-100
-								text-[50cqw] font-medium text-slate-800 transition-all flex items-center
-								justify-center p-0 leading-none"
-							>
-								{key}
-							</button>
-						{/if}
+						<button
+							onclick={() => visible && onKeyPress(key)}
+							disabled={!visible}
+							class="absolute inset-0 w-full h-full rounded-lg shadow-sm border border-b-4
+								   text-[50cqw] font-medium transition-all flex items-center justify-center p-0 leading-none
+								   {visible
+								? 'bg-white border-slate-300 border-b-slate-400 active:border-b active:translate-y-1 hover:bg-slate-50 active:bg-slate-100 text-slate-800'
+								: 'bg-slate-50 border-slate-300 border-b-slate-400 text-transparent cursor-default'}"
+						>
+							{key}
+						</button>
 					</div>
 				{/each}
 			</div>
