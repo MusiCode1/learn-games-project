@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
 import type { Shelf, Box, Card } from '$lib/types';
-import { words as initialWords } from '$lib/data/words';
+import { defaultShelves } from '$lib/data/words';
 
 class ShelvesStore {
     shelves = $state<Shelf[]>([]);
@@ -15,24 +15,7 @@ class ShelvesStore {
     }
 
     private getDefaultShelves(): Shelf[] {
-        // Create a default structure with initial words
-        const defaultBox: Box = {
-            id: crypto.randomUUID(),
-            name: 'כללי',
-            cards: initialWords.map(w => ({
-                id: w.id,
-                word: w.word,
-                imageUrl: w.imageUrl
-            }))
-        };
-
-        const defaultShelf: Shelf = {
-            id: crypto.randomUUID(),
-            name: 'מתחילים',
-            boxes: [defaultBox]
-        };
-
-        return [defaultShelf];
+        return defaultShelves;
     }
 
     private load() {
@@ -46,31 +29,7 @@ class ShelvesStore {
                 this.shelves = this.getDefaultShelves();
             }
         } else {
-            // Check for legacy migration
-            const legacyWords = localStorage.getItem('wordys_words');
-            if (legacyWords) {
-                try {
-                    const parsedWords = JSON.parse(legacyWords);
-                    const migratedBox: Box = {
-                        id: crypto.randomUUID(),
-                        name: 'מייבוא',
-                        cards: parsedWords
-                    };
-                    const migratedShelf: Shelf = {
-                        id: crypto.randomUUID(),
-                        name: 'מדף - ישן',
-                        boxes: [migratedBox]
-                    };
-                    this.shelves = [migratedShelf];
-                    // Optional: Clear legacy
-                    // localStorage.removeItem('wordys_words');
-                } catch (e) {
-                    console.error('Failed to migrate legacy words', e);
-                    this.shelves = this.getDefaultShelves();
-                }
-            } else {
-                this.shelves = this.getDefaultShelves();
-            }
+            this.shelves = this.getDefaultShelves();
             this.save();
         }
     }

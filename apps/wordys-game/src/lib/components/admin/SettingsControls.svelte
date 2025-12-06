@@ -93,4 +93,20 @@
 			<option value={0}>♾️ ללא הגבלה</option>
 		</select>
 	</div>
+
+	<!-- Setting: Virtual Keyboard Mode -->
+	<div class="flex items-center justify-between border-t pt-4 mt-4">
+		<div class="space-y-1">
+			<div class="font-bold text-slate-800">מקלדת וירטואלית</div>
+			<div class="text-sm text-slate-500">הצג מקלדת על המסך</div>
+		</div>
+		<select
+			bind:value={settings.virtualKeyboardMode}
+			class="px-3 py-1 bg-slate-100 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 font-medium"
+		>
+			<option value="none">ללא</option>
+			<option value="full">מלאה</option>
+			<option value="focused">ממוקדת (רק אותיות רלוונטיות)</option>
+		</select>
+	</div>
 </div>

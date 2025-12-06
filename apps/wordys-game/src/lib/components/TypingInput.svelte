@@ -17,31 +17,40 @@
 		inputRef?.focus();
 	});
 
+	let previousValue = '';
+
 	function handleInput(e: Event) {
 		const input = e.target as HTMLInputElement;
-		const currentVal = input.value;
-		const isDeletion = currentVal.length < value.length;
-		value = currentVal;
+		value = input.value;
+	}
+
+	$effect(() => {
+		// Detect changes in value
+		if (value === previousValue) return;
+
+		const isDeletion = value.length < previousValue.length;
+		previousValue = value;
 
 		// Check if the current input matches the beginning of the target word
-		if (targetWord.startsWith(currentVal)) {
+		if (targetWord.startsWith(value)) {
 			isError = false;
 
 			// Check for complete match
-			if (value === targetWord) {
+			if (value === targetWord && value.length > 0) {
 				onSuccess();
 			}
 		} else {
 			// Error!
-			// Always play sound and trigger shake on error, even if already in error state
+			// Always play sound and trigger shake on error
 			// BUT skip if user is deleting (correcting)
-			if (settings.errorFeedback && !isDeletion) {
+			// AND skip if value is empty (reset)
+			if (settings.errorFeedback && !isDeletion && value.length > 0) {
 				playError();
 			}
 			isError = true;
 			shakeTrigger++; // Increment to trigger animation replay
 		}
-	}
+	});
 </script>
 
 <div class="flex justify-center p-4">
@@ -57,6 +66,7 @@
 			{value}
 			oninput={handleInput}
 			dir="rtl"
+			style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;"
 		/>
 	{/key}
 </div>

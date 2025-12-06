@@ -3,6 +3,7 @@ export class SettingsStore {
     errorFeedback = $state(true);
     highlightCurrentChar = $state(true);
     cardRepetitions = $state(2); // 0 = unlimited
+    virtualKeyboardMode = $state<'none' | 'full' | 'focused'>('full'); // 'none' | 'full' | 'focused'
 
     constructor() {
         // Load from localStorage if available (client-side only)
@@ -14,6 +15,7 @@ export class SettingsStore {
                 this.errorFeedback = parsed.errorFeedback ?? true;
                 this.highlightCurrentChar = parsed.highlightCurrentChar ?? true;
                 this.cardRepetitions = parsed.cardRepetitions ?? 2;
+                this.virtualKeyboardMode = parsed.virtualKeyboardMode ?? 'full';
             }
         }
 
@@ -25,7 +27,8 @@ export class SettingsStore {
                         showWord: this.showWord,
                         errorFeedback: this.errorFeedback,
                         highlightCurrentChar: this.highlightCurrentChar,
-                        cardRepetitions: this.cardRepetitions
+                        cardRepetitions: this.cardRepetitions,
+                        virtualKeyboardMode: this.virtualKeyboardMode
                     }));
                 }
             });
