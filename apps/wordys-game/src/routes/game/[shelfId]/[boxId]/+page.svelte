@@ -27,10 +27,8 @@
 	});
 
 	function handleExit() {
-		// Navigate back to the box selection view in home page
-		// We might want to pass query params to restore state,
-		// but for now simple navigation is fine.
-		goto('/');
+		// Navigate back to the card selection view
+		goto(`/select/${shelfId}/${boxId}`);
 	}
 </script>
 
