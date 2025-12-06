@@ -12,6 +12,7 @@ trigger: always_on
 *   **אישור לפני ביצוע**: אין לבצע קומיט ללא אישור מפורש מהמשתמש.
 *   **סלקטיביות**: יש להוסיף ל-Stage (`git add`) **רק** את הקבצים ששונו או נוצרו במשימה הנוכחית. אין להשתמש ב-`git add .` באופן גורף.
 *   **הודעות קומיט**: הודעות הקומיט יהיו בעברית, ברורות ותמציתיות.
+*   יש לפעול עם הוורקפלואו /commit .
 
 ## 🔊 סאונד
 *   **קבצים אמיתיים**: אין להשתמש ב-Oscillators או צלילים מסונתזים. יש להשתמש בקבצי אודיו (MP3/WAV) מתוך תיקיית `static/sounds`.
@@ -20,3 +21,7 @@ trigger: always_on
 ## 🎨 עיצוב (Design)
 *   **Distraction-free**: העיצוב צריך להיות נקי, מינימליסטי ומונגש, מותאם לתלמידי חינוך מיוחד.
 *   **משוב ברור**: חיווי ויזואלי וקולי מיידי לכל פעולה (הצלחה/כישלון).
+
+אם אינך מבין את המטרה המרכזית של פרוייקט זה, קרא את קובץ README.md.
+
+בסוף משימה, יש לעדכן את הקובץ docs\walkthrough.md בפרטי העבודה שבוצעה. יש לפעול לפי הוורקפלואו /update_walkthrough.

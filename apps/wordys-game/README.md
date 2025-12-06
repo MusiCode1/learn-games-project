@@ -1,38 +1,26 @@
-# sv
+# Wordy's Game - משחק המילים
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Wordy's Game הוא משחק אינטראקטיבי ללימוד מילים.
 
-## Creating a project
+## מטרת המשחק
+מטרת המשחק היא ללמד ילדים עם צרכים מיוחדים להקליד מילים בשיטה גלובלית.
+בשיטה זו, התלמיד אינו נדרש להבין את הפונטיקה המדויקת של המילה, אלא לומד לזהות ולזכור את התבנית החזותית של האותיות המרכיבות אותה. כך, התלמיד יכול לכתוב מילים כדי לתקשר את צרכיו ורצונותיו באופן עצמאי.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## תכונות עיקריות
+- **ממשק נקי ומונגש**: עיצוב מינימליסטי המותאם למניעת הסחות דעת.
+- **משוב מיידי**: חיווי ויזואלי וקולי להצלחה.
+- **תמיכה בעברית**: ממשק מלא מימין לשמאל (RTL).
 
-```sh
-# create a new project in the current directory
-npx sv create
+## מפרט טכני (Tech Stack)
 
-# create a new project in my-app
-npx sv create my-app
-```
+הפרויקט בנוי באמצעות טכנולוגיות ווב מודרניות, בדגש על ביצועים וחווית פיתוח:
 
-## Developing
+*   **Framework**: [SvelteKit](https://kit.svelte.dev/)
+*   **UI Library**: [Svelte 5](https://svelte.dev/) (Runes for reactivity)
+*   **Language**: [TypeScript](https://www.typescriptlang.org/)
+*   **Styling**: [TailwindCSS 4](https://tailwindcss.com/)
+*   **Build Tool**: [Vite](https://vitejs.dev/)
+*   **Deployment**: Cloudflare Pages (via `@sveltejs/adapter-cloudflare`)
+*   **Testing**: Playwright & Vitest
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
