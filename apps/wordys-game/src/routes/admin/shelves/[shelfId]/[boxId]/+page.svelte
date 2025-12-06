@@ -222,7 +222,7 @@
 							<img
 								src={card.imageUrl}
 								alt={card.word}
-								class="w-full h-32 object-cover rounded-lg bg-white"
+								class="w-full h-32 object-cover object-top rounded-lg bg-white"
 							/>
 							<div class="w-full">
 								<h4 class="text-lg font-bold text-slate-800">{card.word}</h4>
@@ -234,9 +234,7 @@
 							</div>
 
 							<!-- Actions -->
-							<div
-								class="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
-							>
+							<div class="absolute top-2 left-2 flex gap-1 transition-opacity">
 								<button
 									onclick={() => toggleCover(card.id)}
 									class="p-2 bg-white/90 rounded-full shadow-sm hover:scale-110"

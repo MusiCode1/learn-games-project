@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { shelvesStore } from '$lib/stores/shelves.svelte';
 	import { fade } from 'svelte/transition';
+	import { getShelfImage } from '$lib/utils/image-helpers';
 
 	let newShelfName = $state('');
 	let isEditing = $state<string | null>(null);
@@ -68,6 +69,21 @@
 					style="border-top: 8px solid {shelf.color ?? '#ccc'}"
 					in:fade
 				>
+					<!-- Cover Image Area -->
+					<div
+						class="h-32 w-full bg-slate-100 flex items-center justify-center overflow-hidden relative border-b border-slate-100"
+					>
+						{#if getShelfImage(shelf)}
+							<img
+								src={getShelfImage(shelf)}
+								alt={shelf.name}
+								class="w-full h-full object-cover object-top"
+							/>
+						{:else}
+							<div class="text-3xl opacity-20">📚</div>
+						{/if}
+					</div>
+
 					<div class="p-6 flex-1">
 						{#if isEditing === shelf.id}
 							<div class="flex flex-col gap-2 mb-4">

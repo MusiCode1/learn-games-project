@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { shelvesStore } from '$lib/stores/shelves.svelte';
 	import { fade } from 'svelte/transition';
+	import { getBoxImage } from '$lib/utils/image-helpers';
 
 	let { shelfId } = $derived($page.params);
 	let shelf = $derived(shelvesStore.shelves.find((s) => s.id === shelfId));
@@ -93,6 +94,21 @@
 						style="border-top: 8px solid {box.color ?? '#ccc'}"
 						in:fade
 					>
+						<!-- Cover Image Area -->
+						<div
+							class="h-24 w-full bg-slate-100 flex items-center justify-center overflow-hidden relative border-b border-slate-100 rounded-t-lg -mt-4 -mx-4 mb-2"
+						>
+							{#if getBoxImage(box)}
+								<img
+									src={getBoxImage(box)}
+									alt={box.name}
+									class="w-full h-full object-cover object-top"
+								/>
+							{:else}
+								<div class="text-2xl opacity-20">📦</div>
+							{/if}
+						</div>
+
 						{#if isEditing === box.id}
 							<div class="flex flex-col gap-2">
 								<input

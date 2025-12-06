@@ -4,10 +4,12 @@ export const defaultShelves: Shelf[] = [
     {
         id: 'shelf-food',
         name: 'אוכל',
+        color: '#F97316', // Orange
         boxes: [
             {
                 id: 'box-sweets',
                 name: 'ממתקים וחטיפים',
+                color: '#F472B6', // Pink
                 cards: [
                     { id: 'chocolate', word: 'שוקולד', imageUrl: '/images/shelf_food/sweets/chocolate.png' },
                     { id: 'ice_cream', word: 'גלידה', imageUrl: '/images/shelf_food/sweets/ice_cream.png' },
@@ -21,6 +23,7 @@ export const defaultShelves: Shelf[] = [
             {
                 id: 'box-fruits',
                 name: 'פירות',
+                color: '#84CC16', // Lime Green
                 cards: [
                     { id: 'apple', word: 'תפוח', imageUrl: '/images/shelf_food/fruits/apple.png' },
                     { id: 'banana', word: 'בננה', imageUrl: '/images/shelf_food/fruits/banana.png' },
@@ -34,6 +37,7 @@ export const defaultShelves: Shelf[] = [
             {
                 id: 'box-vegetables',
                 name: 'ירקות',
+                color: '#10B981', // Emerald
                 cards: [
                     { id: 'cucumber', word: 'מלפפון', imageUrl: '/images/shelf_food/vegetables/cucumber.png' },
                     { id: 'tomato', word: 'עגבנייה', imageUrl: '/images/shelf_food/vegetables/tomato.png' },
@@ -46,6 +50,7 @@ export const defaultShelves: Shelf[] = [
             {
                 id: 'box-meals',
                 name: 'ארוחות',
+                color: '#F59E0B', // Amber
                 cards: [
                     { id: 'bread', word: 'לחם', imageUrl: '/images/shelf_food/meals/bread.png' },
                     { id: 'omelet', word: 'חביתה', imageUrl: '/images/placeholder_temp.png' },
@@ -59,6 +64,7 @@ export const defaultShelves: Shelf[] = [
             {
                 id: 'box-drinks',
                 name: 'שתייה',
+                color: '#06B6D4', // Cyan
                 cards: [
                     { id: 'water', word: 'מים', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'juice', word: 'מיץ', imageUrl: '/images/placeholder_temp.png' },
@@ -72,10 +78,12 @@ export const defaultShelves: Shelf[] = [
     {
         id: 'shelf-people',
         name: 'אנשים',
+        color: '#8B5CF6', // Purple
         boxes: [
             {
                 id: 'box-family',
                 name: 'משפחה',
+                color: '#A78BFA', // Soft Purple
                 cards: [
                     { id: 'dad', word: 'אבא', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'mom', word: 'אמא', imageUrl: '/images/placeholder_temp.png' },
@@ -89,6 +97,7 @@ export const defaultShelves: Shelf[] = [
             {
                 id: 'box-figures',
                 name: 'דמויות',
+                color: '#818CF8', // Indigo
                 cards: [
                     { id: 'boy', word: 'ילד', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'girl', word: 'ילדה', imageUrl: '/images/placeholder_temp.png' },
@@ -103,10 +112,12 @@ export const defaultShelves: Shelf[] = [
     {
         id: 'shelf-objects',
         name: 'חפצים',
+        color: '#3B82F6', // Blue
         boxes: [
             {
                 id: 'box-kitchenware',
                 name: 'כלי אוכל',
+                color: '#94A3B8', // Slate
                 cards: [
                     { id: 'plate', word: 'צלחת', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'cup', word: 'כוס', imageUrl: '/images/placeholder_temp.png' },
@@ -119,6 +130,7 @@ export const defaultShelves: Shelf[] = [
             {
                 id: 'box-furniture',
                 name: 'רהיטים',
+                color: '#D97706', // Brown/Amber
                 cards: [
                     { id: 'table', word: 'שולחן', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'chair', word: 'כיסא', imageUrl: '/images/placeholder_temp.png' },
@@ -131,6 +143,7 @@ export const defaultShelves: Shelf[] = [
             {
                 id: 'box-daily-equipment',
                 name: 'ציוד יומיומי',
+                color: '#38BDF8', // Sky
                 cards: [
                     { id: 'bag', word: 'תיק', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'glasses', word: 'משקפיים', imageUrl: '/images/placeholder_temp.png' },
@@ -143,6 +156,7 @@ export const defaultShelves: Shelf[] = [
             {
                 id: 'box-crafts',
                 name: 'יצירה וכתיבה',
+                color: '#FB7185', // Rose
                 cards: [
                     { id: 'paper', word: 'דף', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'pencil', word: 'עיפרון', imageUrl: '/images/placeholder_temp.png' },
@@ -157,10 +171,12 @@ export const defaultShelves: Shelf[] = [
     {
         id: 'shelf-clothes',
         name: 'בגדים',
+        color: '#EC4899', // Pink
         boxes: [
             {
                 id: 'box-clothing',
                 name: 'לבוש בסיסי',
+                color: '#E879F9', // Fuchsia
                 cards: [
                     { id: 'shirt', word: 'חולצה', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'pants', word: 'מכנסיים', imageUrl: '/images/placeholder_temp.png' },
@@ -173,6 +189,7 @@ export const defaultShelves: Shelf[] = [
             {
                 id: 'box-footwear',
                 name: 'הנעלה ואביזרים',
+                color: '#2DD4BF', // Teal
                 cards: [
                     { id: 'shoes', word: 'נעליים', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'sandals', word: 'סנדלים', imageUrl: '/images/placeholder_temp.png' },
@@ -186,10 +203,12 @@ export const defaultShelves: Shelf[] = [
     {
         id: 'shelf-concepts',
         name: 'מושגים ופעילויות',
+        color: '#EAB308', // Yellow
         boxes: [
             {
                 id: 'box-colors-warm',
                 name: 'צבעים - חם/בהיר',
+                color: '#FB923C', // Orange
                 cards: [
                     { id: 'red', word: 'אדום', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'yellow', word: 'צהוב', imageUrl: '/images/placeholder_temp.png' },
@@ -201,6 +220,7 @@ export const defaultShelves: Shelf[] = [
             {
                 id: 'box-colors-cold',
                 name: 'צבעים - קר/כהה',
+                color: '#60A5FA', // Blue
                 cards: [
                     { id: 'blue', word: 'כחול', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'green', word: 'ירוק', imageUrl: '/images/placeholder_temp.png' },
@@ -212,6 +232,7 @@ export const defaultShelves: Shelf[] = [
             {
                 id: 'box-communication',
                 name: 'תקשורת ובקשות',
+                color: '#A3E635', // Lime
                 cards: [
                     { id: 'yes', word: 'כן', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'no', word: 'לא', imageUrl: '/images/placeholder_temp.png' },
@@ -226,6 +247,7 @@ export const defaultShelves: Shelf[] = [
             {
                 id: 'box-actions',
                 name: 'פעולות',
+                color: '#F87171', // Red
                 cards: [
                     { id: 'eat', word: 'לאכול', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'drink', word: 'לשתות', imageUrl: '/images/placeholder_temp.png' },
@@ -239,6 +261,7 @@ export const defaultShelves: Shelf[] = [
             {
                 id: 'box-days',
                 name: 'ימות השבוע',
+                color: '#6366F1', // Indigo
                 cards: [
                     { id: 'sunday', word: 'יום ראשון', imageUrl: '/images/placeholder_temp.png' },
                     { id: 'monday', word: 'יום שני', imageUrl: '/images/placeholder_temp.png' },
