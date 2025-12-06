@@ -1,4 +1,4 @@
-// Sound utility using Web Audio API and SpeechSynthesis
+import { getAssetUrl } from '$lib/services/assets';
 
 export function speak(text: string, interrupt = true): Promise<void> {
     return new Promise((resolve) => {
@@ -27,7 +27,7 @@ export function speak(text: string, interrupt = true): Promise<void> {
 
 export function playSuccess() {
     try {
-        const audio = new Audio('/sounds/success.mp3');
+        const audio = new Audio(getAssetUrl('ui_sounds/success.mp3'));
         audio.volume = 0.5;
         audio.play().catch(e => console.warn('Audio play failed (user interaction needed?):', e));
     } catch (e) {
@@ -37,7 +37,7 @@ export function playSuccess() {
 
 export function playError() {
     try {
-        const audio = new Audio('/sounds/error.wav');
+        const audio = new Audio(getAssetUrl('ui_sounds/error.wav'));
         audio.volume = 0.3;
         audio.play().catch(e => console.warn('Audio play failed (user interaction needed?):', e));
     } catch (e) {

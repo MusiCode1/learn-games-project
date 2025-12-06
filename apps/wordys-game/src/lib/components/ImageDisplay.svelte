@@ -1,17 +1,21 @@
 <script lang="ts">
+	import { getAssetUrl } from '$lib/services/assets';
+
 	interface Props {
 		src: string;
 		alt: string;
 	}
 
 	let { src, alt }: Props = $props();
+
+	let assetSrc = $derived(getAssetUrl(src));
 </script>
 
 <div
 	class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white/50 w-full h-full bg-white"
 >
 	<img
-		{src}
+		src={assetSrc}
 		{alt}
 		class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
 	/>

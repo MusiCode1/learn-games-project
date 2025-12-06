@@ -28,3 +28,6 @@ unused_sounds/
 static/temp_sounds/
 temp
 temp/*
+
+# Local Asset Source
+wordys-assets-source/

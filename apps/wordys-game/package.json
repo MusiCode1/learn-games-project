@@ -1,7 +1,7 @@
 {
 	"name": "wordys-game",
 	"private": true,
-	"version": "0.4.0",
+	"version": "0.6.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
@@ -15,7 +15,8 @@
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
-		"test:e2e": "playwright test"
+		"test:e2e": "playwright test",
+		"sync:assets": "bun scripts/sync-assets.js"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.0",
