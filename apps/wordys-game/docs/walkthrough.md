@@ -1,5 +1,15 @@
 # יומן פיתוח - Wordy's
 
+## 10/12/2025 - ניקוי וארגון נכסים (Refactor)
+
+### שיפור קוד (Refactoring)
+
+- **VirtualKeyboard**: החלפת inline SVG של כפתור המחיקה בשימוש בקובץ נכס חיצוני (`backspace.svg`) לשיפור הקריאות.
+
+### תשתית (Infrastructure)
+
+- **.gitignore**: הוספת התעלמות מקבצי וידאו מקומיים (`static/videos/*`) להקטנת ה-Repo.
+
 ## 10/12/2025 - אינטגרציה של הגדרות Booster
 
 ### שיפורים ושילוב מערכת (Integration)

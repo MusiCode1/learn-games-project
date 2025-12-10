@@ -1,4 +1,5 @@
 <script lang="ts">
+	import backspace from '$lib/assets/backspace.svg';
 	interface Props {
 		onKeyPress: (char: string) => void;
 		onDelete: () => void;
@@ -50,6 +51,7 @@
 
 <!-- Removed unnecessary padding/margins -->
 <!-- Removed unnecessary padding/margins -->
+<!-- Removed unnecessary padding/margins -->
 <div
 	class="w-full bg-slate-200 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] select-none z-50"
 	dir="rtl"
@@ -59,29 +61,13 @@
 			<div class="flex justify-center gap-1.5 w-full">
 				<!-- Row 1: Backspace on Right (Beginning of RTL row) -->
 				{#if i === 0}
-					<div class="relative w-[8%] h-12 sm:h-14 md:h-16 shrink-0 [container-type:inline-size]">
-						<button
-							onclick={onDelete}
-							class="absolute inset-0 w-full h-full bg-slate-200 rounded-lg shadow-sm border border-slate-400 border-b-4 border-b-slate-500 active:border-b active:translate-y-1 hover:bg-slate-300 active:bg-slate-400
-									   flex items-center justify-center transition-all group"
-							aria-label="מחק"
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="24"
-								height="24"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
+					<div class="key-wrapper">
+						<button onclick={onDelete} class="key-base key-delete" aria-label="מחק">
+							<img
+								src={backspace}
+								alt="מחק"
 								class="text-slate-600 group-hover:text-red-500 transition-colors"
-							>
-								<path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-								<line x1="18" y1="9" x2="12" y2="15"></line>
-								<line x1="12" y1="9" x2="18" y2="15"></line>
-							</svg>
+							/>
 						</button>
 					</div>
 				{/if}
@@ -89,15 +75,11 @@
 				{#each row as key}
 					{@const visible = isKeyVisible(key)}
 					<!-- Key Container: Uniform Size -->
-					<div class="relative w-[8%] h-12 sm:h-14 md:h-16 shrink-0 [container-type:inline-size]">
+					<div class="key-wrapper max-w-20">
 						<button
 							onclick={() => visible && onKeyPress(key)}
 							disabled={!visible}
-							class="absolute inset-0 w-full h-full rounded-lg shadow-sm border border-b-4
-								   text-[50cqw] font-medium transition-all flex items-center justify-center p-0 leading-none
-								   {visible
-								? 'bg-white border-slate-300 border-b-slate-400 active:border-b active:translate-y-1 hover:bg-slate-50 active:bg-slate-100 text-slate-800'
-								: 'bg-slate-50 border-slate-300 border-b-slate-400 text-transparent cursor-default'}"
+							class="key-base key-char {visible ? 'is-visible' : 'is-hidden'}"
 						>
 							{key}
 						</button>
@@ -107,3 +89,33 @@
 		{/each}
 	</div>
 </div>
+
+<style>
+	@reference 'tailwindcss';
+
+		.key-wrapper {
+			@apply relative w-[8%] h-12 sm:h-14 md:h-16 shrink-0 @container;
+		}
+
+		.key-base {
+			@apply absolute inset-0 w-full h-full rounded-lg shadow-sm border border-b-4 transition-all flex items-center justify-center;
+		}
+
+		.key-delete {
+			@apply bg-slate-200 border-slate-400 border-b-slate-500
+				   active:border-b active:translate-y-1 hover:bg-slate-300 active:bg-slate-400;
+		}
+
+		.key-char {
+			@apply text-[4.5cqh] font-medium p-0 leading-none;
+		}
+
+		.key-char.is-visible {
+			@apply bg-white border-slate-300 border-b-slate-400 text-slate-800
+				   active:border-b active:translate-y-1 hover:bg-slate-50 active:bg-slate-100;
+		}
+
+		.key-char.is-hidden {
+			@apply bg-slate-50 border-slate-300 border-b-slate-400 text-transparent cursor-default;
+		}
+</style>
