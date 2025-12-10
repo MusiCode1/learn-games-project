@@ -6,10 +6,12 @@
 	import { page } from '$app/stores';
 
 	let { children } = $props();
+	import { BoosterContainer } from 'learn-booster-kit';
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<title>Wordy's</title>
 </svelte:head>
 
 <div class="min-h-screen bg-linear-to-b from-orange-100 to-yellow-50 font-sans relative" dir="rtl">
@@ -26,4 +28,5 @@
 		</AdminGate>
 	</div>
 	{@render children()}
+	<BoosterContainer />
 </div>

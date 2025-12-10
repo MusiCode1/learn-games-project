@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@source "../../../../packages/learn-booster-kit";
 
 @theme {
   --font-sans: "Rubik", "sans-serif";
