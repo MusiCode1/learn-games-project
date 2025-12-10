@@ -3,9 +3,11 @@
 	import { onMount } from 'svelte';
 	import { playSuccess } from '$lib/utils/sound';
 
-	let { onReplay, onExit } = $props<{
+	let { onReplay, onExit, onReward, rewardEnabled } = $props<{
 		onReplay: () => void;
 		onExit: () => void;
+		onReward?: () => void;
+		rewardEnabled?: boolean;
 	}>();
 
 	onMount(() => {
@@ -43,6 +45,16 @@
 				➡️ חזור למדף
 			</button>
 		</div>
+		{#if rewardEnabled && onReward}
+			<div class="w-full mt-2">
+				<button
+					onclick={onReward}
+					class="w-full py-4 px-6 bg-purple-500 hover:bg-purple-600 text-white text-xl font-bold rounded-2xl shadow-lg hover:shadow-purple-200 transition-all transform hover:-translate-y-1 animate-pulse"
+				>
+					🎁 המשך להפתעה
+				</button>
+			</div>
+		{/if}
 	</div>
 </div>
 

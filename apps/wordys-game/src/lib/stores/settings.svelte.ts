@@ -5,6 +5,11 @@ export class SettingsStore {
     cardRepetitions = $state(2); // 0 = unlimited
     virtualKeyboardMode = $state<'none' | 'full' | 'focused'>('full'); // 'none' | 'full' | 'focused'
 
+    // Booster Settings
+    boosterEnabled = $state(true);
+    wordsPerBooster = $state(3);
+    autoBoosterLoop = $state(false);
+
     constructor() {
         // Load from localStorage if available (client-side only)
         if (typeof localStorage !== 'undefined') {
@@ -16,6 +21,9 @@ export class SettingsStore {
                 this.highlightCurrentChar = parsed.highlightCurrentChar ?? true;
                 this.cardRepetitions = parsed.cardRepetitions ?? 2;
                 this.virtualKeyboardMode = parsed.virtualKeyboardMode ?? 'full';
+                this.boosterEnabled = parsed.boosterEnabled ?? true;
+                this.wordsPerBooster = parsed.wordsPerBooster ?? 3;
+                this.autoBoosterLoop = parsed.autoBoosterLoop ?? false;
             }
         }
 
@@ -28,7 +36,10 @@ export class SettingsStore {
                         errorFeedback: this.errorFeedback,
                         highlightCurrentChar: this.highlightCurrentChar,
                         cardRepetitions: this.cardRepetitions,
-                        virtualKeyboardMode: this.virtualKeyboardMode
+                        virtualKeyboardMode: this.virtualKeyboardMode,
+                        boosterEnabled: this.boosterEnabled,
+                        wordsPerBooster: this.wordsPerBooster,
+                        autoBoosterLoop: this.autoBoosterLoop
                     }));
                 }
             });
