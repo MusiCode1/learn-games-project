@@ -58,7 +58,7 @@
 		<input
 			bind:this={inputRef}
 			type="text"
-			class="w-full max-w-md text-center text-4xl p-4 rounded-xl border-4 outline-none transition-all duration-200
+			class="w-full text-center text-4xl p-4 rounded-xl border-4 outline-none transition-all duration-200
             {isError
 				? 'border-red-500 bg-red-50 animate-shake'
 				: 'border-blue-400 focus:border-blue-600 bg-white'}"

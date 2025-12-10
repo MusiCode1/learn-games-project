@@ -11,6 +11,7 @@
 
 	import { playSuccess, speak } from '$lib/utils/sound';
 	import VirtualKeyboard from './VirtualKeyboard.svelte';
+	import { BoosterContainer, boosterService } from 'learn-booster-kit';
 
 	let { cards, onExit } = $props<{ cards: Card[]; onExit?: () => void }>();
 
@@ -84,10 +85,20 @@
 
 		showFeedback = false;
 		typedValue = ''; // Reset typed value on success
+
 		nextWord();
 	}
 
-	function nextWord() {
+	function handleReward() {
+		// Manual trigger from CompletionScreen
+		if (settings.boosterEnabled) {
+			boosterService.triggerReward();
+		}
+
+		nextWord();
+	}
+
+	async function nextWord() {
 		const reps = settings.cardRepetitions;
 
 		if (reps === 0) {
@@ -100,14 +111,32 @@
 			if (currentIndex < playQueue.length - 1) {
 				currentIndex++;
 			} else {
-				// Game Over
-				isGameOver = true;
+				// End of Queue
+                if (settings.boosterEnabled && settings.autoBoosterLoop) {
+                    // Loop Mode: Trigger reward then restart immediately
+                    await boosterService.triggerReward();
+                    restartGame();
+                } else {
+				    // Standard Mode: Show Completion Screen
+				    isGameOver = true;
+                }
 			}
 		}
 	}
+
+	let containerWidth = $state(0);
+	let containerHeight = $state(0);
+
+	// Calculate Aspect Ratio: Width / Height
+	// Threshold: 0.85 (Triggers horizontal layout as soon as height is roughly equal to width + header space)
+	let aspectRatio = $derived(containerHeight > 0 ? containerWidth / containerHeight : 0);
+	$inspect(aspectRatio);
+	let isLandscape = $derived(aspectRatio > 1.3);
 </script>
 
 <div
+	bind:clientWidth={containerWidth}
+	bind:clientHeight={containerHeight}
 	class="h-screen w-full bg-linear-to-b from-orange-100 to-yellow-50 flex flex-col items-center relative overflow-hidden font-sans"
 >
 	{#if isGameOver}
@@ -116,29 +145,80 @@
 			onExit={() => {
 				if (onExit) onExit();
 			}}
+			onReward={() => handleReward()}
+			rewardEnabled={settings.boosterEnabled}
 		/>
 	{:else}
 		<!-- Game Content Wrapper (Padded) -->
-		<div class="flex-1 w-full flex flex-col items-center justify-center p-4 relative min-h-0">
+		<!-- שינוי ב-Flexbox:
+             min-h-0: קריטי כדי לאפשר התכווצות כשיש תוכן גולש
+             justify-center: מרכוז אנכי
+        -->
+		<div
+			id="gameContent"
+			class="flex-1 w-full flex flex-col items-center justify-center
+			p-2 md:p-4 relative min-h-0"
+		>
 			{#if currentWord}
 				<div
-					class="w-full max-w-[95vw] flex flex-col landscape:flex-row items-center justify-center gap-4 landscape:gap-8 landscape:px-4"
+					class="
+					{/* הקונטיינר הראשי של האלמנטים */ ''}
+					w-full max-w-[95vw] lg:max-w-[90vw] flex flex-col items-center
+					gap-4 transition-all duration-300 h-full
+                    {isLandscape ? 'flex-row gap-8 px-4' : ''}"
 				>
 					<!-- Image Section -->
+					<!-- לוגיקת גודל תמונה:
+                         במצב עמודה (Portrait):
+                           flex-1: תופס את כל הגובה הפנוי
+                           min-h-0: מאפשר הקטנה אם צריך
+                           w-full: רוחב מלא (עד המקסימום של הקונטיינר)
+                         במצב שורה (Landscape):
+                           flex-1: תופס את שארית הרוחב שנותרה מהם-Controls
+                    -->
 					<div
-						class="flex-shrink-1 landscape:w-auto max-h-[40vh] landscape:max-h-[80vh] flex justify-center"
+						id="imageSection"
+						class="flex items-center justify-center transition-all duration-300 w-full
+                        {isLandscape ? 'flex-1 h-full min-w-0' : 'flex-1 min-h-0'}"
 					>
 						<div
-							class="w-full max-w-sm aspect-square bg-white rounded-2xl shadow-xl border-4 border-white overflow-hidden"
+							class="
+                                bg-white rounded-2xl shadow-xl border-4 border-white overflow-hidden
+                                aspect-square
+                                transition-all duration-300
+                                {/* אילוץ גודל:
+                                   h-auto / w-auto בשילוב עם max-h/max-w מבטיח שהתמונה לא תחרוג
+                                   במצב שורה: max-h-full מבטיח שלא תחרוג מהגובה, w-auto שומר יחס
+                                   במצב עמודה: h-full מבטיח שתימתח לגובה המקסימלי האפשרי
+                                */ ''}
+                                {isLandscape
+								? 'max-h-full max-w-full w-auto h-auto object-contain'
+								: 'max-h-full max-w-full h-auto w-auto object-contain'}
+                            "
+							style="max-height: 100%; max-width: 100%;"
 						>
 							<ImageDisplay src={currentWord.imageUrl} alt={currentWord.word} />
 						</div>
 					</div>
 
 					<!-- Controls Section -->
-					<div class="flex-1 w-full flex flex-col items-center gap-6 landscape:gap-8 min-w-0">
+					<!-- לוגיקת אזור שליטה:
+                         במצב שורה (Landscape):
+                           flex-[1.5]: מקבל עדיפות גודל (פי 1.5 מהתמונה אם צריך)
+                           min-w-[40%]: מבטיח שלא יימעך מדי
+                         במצב עמודה (Portrait):
+                           flex-shrink-0: גודל טבעי לפי התוכן, לא מתכווץ
+                    -->
+					<div
+						id="controlsSection"
+						class="flex flex-col items-center gap-6 transition-all duration-300
+                        {isLandscape
+							? 'flex-[1.5] justify-center h-full min-w-[350px]'
+							: 'shrink-0 w-full pb-2'}"
+					>
 						<WordDisplay
 							word={currentWord.word}
+							compact={isLandscape}
 							currentIndex={// Calculate index of first mismatch or length if correct so far
 							(() => {
 								for (let i = 0; i < typedValue.length; i++) {
@@ -150,11 +230,13 @@
 
 						<!-- Key prop forces re-render of input on word change to reset state -->
 						{#key currentWord.id}
-							<TypingInput
-								targetWord={currentWord.word}
-								onSuccess={handleSuccess}
-								bind:value={typedValue}
-							/>
+							<div id="typingInputSection" class="w-full">
+								<TypingInput
+									targetWord={currentWord.word}
+									onSuccess={handleSuccess}
+									bind:value={typedValue}
+								/>
+							</div>
 						{/key}
 					</div>
 				</div>
@@ -166,7 +248,7 @@
 	<Feedback show={showFeedback} />
 
 	{#if settings.virtualKeyboardMode !== 'none'}
-		<div class="w-full mt-auto z-10">
+		<div class="w-full mt-auto z-10 shrink-0">
 			<VirtualKeyboard
 				mode={settings.virtualKeyboardMode}
 				targetWord={currentWord?.word}

@@ -5,11 +5,14 @@
 	interface Props {
 		word: string;
 		currentIndex?: number;
+		compact?: boolean;
 	}
 
-	let { word, currentIndex = 0 }: Props = $props();
+	let { word, currentIndex = 0, compact = false }: Props = $props();
 
 	let isLongWord = $derived(word.length > 5);
+
+	// $inspect(isLongWord, compact);
 
 	// Group characters into segments (words and spaces) to control wrapping
 	let segments = $derived.by(() => {
@@ -28,38 +31,52 @@
 	});
 </script>
 
-<div class="flex flex-wrap justify-center gap-x-6 gap-y-6 md:gap-8 p-2 md:p-6" dir="rtl">
+<!-- Gap Logic: gap-2 (8px) on mobile to save space, gap-6 (24px) on desktop for breathing room -->
+<!-- If Compact: force gap-2 always -->
+<!-- הסבר CSS:
+    flex-wrap: מאפשר שבירת שורות אם המילה ארוכה מדי
+    justify-center: מרכוז האלמנטים
+    p-2 / md:p-6: ריווח פנימי שגדל במסכים גדולים
+-->
+<div
+	id="wordDisplayContainer"
+	class="flex flex-wrap justify-center w-full p-2 md:p-6 transition-all duration-300 @container
+	{compact ? 'gap-x-2 gap-y-2' : 'gap-x-2 gap-y-2 md:gap-x-6 md:gap-y-6'}"
+	dir="rtl"
+>
 	{#each segments as segment}
 		<!-- Wrap words in a non-breaking flex container, allow spaces to flow -->
-		<div class="flex {segment.isSpace ? 'contents' : 'flex-nowrap gap-3'}">
+		<div class="flex {segment.isSpace ? 'contents' : 'flex-nowrap gap-2 md:gap-4'}">
 			{#each segment.text.split('') as char, i}
 				{@const globalIndex = segment.startIndex + i}
 				<div
+					id="charDisplay"
 					class="
-                flex items-center justify-center
-                {settings.highlightCurrentChar && globalIndex === currentIndex
+				flex items-center justify-center
+                {/* aspect-square/roughly portrait: אנו רוצים יחס של קלף (בערך 2:3 או 5:7) */ ''}
+                aspect-[5/7]
+                
+				{/* Sizing Logic (Container Queries):
+                   השתדרגנו ל-Container Queries (@container).
+                   כעת הגודל נקבע לפי רוחב המיכל (cqw) ולא רוחב המסך (vw).
+                   הסרנו את "תקרת הזכוכית" הנמוכה (80px), ועכשיו הכרטיס יכול לגדול עד 200px/150px
+                   בהתאם למקום הפנוי, אך שומר על מינימום קריא (45px).
+				*/ ''}
+				{isLongWord || compact
+						? 'w-[clamp(45px,11cqh,150px)] text-[clamp(1.5rem,12cqw,10rem)]'
+						: 'w-[clamp(60px,15cqw,220px)] text-[clamp(2rem,12cqw,10rem)]'}
+				
+				{settings.highlightCurrentChar && globalIndex === currentIndex
 						? 'bg-yellow-200 border-amber-600 ring-4 ring-amber-400 ring-opacity-50 scale-110 shadow-2xl animate-pulse-fast z-10'
 						: 'bg-yellow-200 border-amber-500'}
-                border-4 border-b-8
-                rounded-xl md:rounded-2xl
-                shadow-md
-                font-bold text-slate-900
-                select-none
-                transition-all duration-200
-                hover:-translate-y-1 hover:shadow-xl hover:border-amber-600
-            "
-					class:w-16={isLongWord}
-					class:h-24={isLongWord}
-					class:text-4xl={isLongWord}
-					class:md:w-24={isLongWord}
-					class:md:h-32={isLongWord}
-					class:md:text-7xl={isLongWord}
-					class:w-24={!isLongWord}
-					class:h-32={!isLongWord}
-					class:text-6xl={!isLongWord}
-					class:md:w-32={!isLongWord}
-					class:md:h-44={!isLongWord}
-					class:md:text-8xl={!isLongWord}
+				border-4 border-b-8
+				rounded-xl md:rounded-2xl
+				shadow-md
+				font-bold text-slate-900
+				select-none
+				transition-all duration-200
+				hover:-translate-y-1 hover:shadow-xl hover:border-amber-600
+			"
 					style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;"
 				>
 					{#if settings.showWord || globalIndex < currentIndex}
