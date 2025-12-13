@@ -19,6 +19,7 @@
 		"sync:assets": "bun scripts/sync-assets.js"
 	},
 	"dependencies": {
+		"dotenv": "^17.2.3",
 		"learn-booster-kit": "*"
 	},
 	"devDependencies": {
