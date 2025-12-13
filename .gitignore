@@ -9,3 +9,4 @@ coverage
 build
 unused_sounds
 **/.git.temp_hide/**
+logs/*
