@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import type { Card } from '$lib/types';
+	import { getCardImageUrl } from '$lib/services/assets';
 
 	const shelfId = $derived($page.params.shelfId);
 	const boxId = $derived($page.params.boxId);
@@ -142,7 +143,7 @@
 						class:opacity-75={!selectedCards.find((c) => c.id === card.id)}
 					>
 						<img
-							src={card.imageUrl}
+							src={getCardImageUrl(card.id)}
 							alt={card.word}
 							class="w-full h-full object-cover object-top"
 						/>

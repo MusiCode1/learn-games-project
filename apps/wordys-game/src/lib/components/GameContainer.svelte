@@ -9,7 +9,8 @@
 	import { settings } from '$lib/stores/settings.svelte';
 	import type { Card } from '$lib/types';
 
-	import { playSuccess, speak } from '$lib/utils/sound';
+	import { playSuccess, speak, playAudio } from '$lib/utils/sound';
+    import { getCardImageUrl, getCardAudioUrl } from '$lib/services/assets';
 	import VirtualKeyboard from './VirtualKeyboard.svelte';
 	import { BoosterContainer, boosterService } from 'learn-booster-kit';
 
@@ -72,9 +73,14 @@
 		// 1. Wait for sound (approx 1s)
 		await new Promise((r) => setTimeout(r, 1000));
 
-		// 2. Speak word
+		// 2. Speak word (or play recording)
 		if (currentWord) {
-			await speak(currentWord.word);
+            const audioUrl = getCardAudioUrl(currentWord.id);
+            if (audioUrl) {
+                await playAudio(audioUrl);
+            } else {
+			    await speak(currentWord.word);
+            }
 		}
 
 		// 3. Speak feedback
@@ -197,7 +203,7 @@
                             "
 							style="max-height: 100%; max-width: 100%;"
 						>
-							<ImageDisplay src={currentWord.imageUrl} alt={currentWord.word} />
+							<ImageDisplay src={getCardImageUrl(currentWord.id)} alt={currentWord.word} />
 						</div>
 					</div>
 

@@ -3,6 +3,7 @@
 	import { shelvesStore } from '$lib/stores/shelves.svelte';
 	import { slide, fade } from 'svelte/transition';
 	import type { PageData } from './$types';
+	import { getCardImageUrl } from '$lib/services/assets';
 
 	let { data }: { data: PageData } = $props();
 	let { shelfId, boxId } = $derived($page.params);
@@ -35,15 +36,15 @@
 				// Update existing
 				shelvesStore.updateCard(shelfId, boxId, editingCardId, {
 					word: newCardWord,
-					imageUrl: newCardImage,
-					audioUrl: newCardAudio ? `/sounds/${newCardAudio}` : undefined
+                    // Note: imageUrl is removed from Card type. 
+                    // To support "custom" images in future we'd need a different strategy or just rely on ID naming.
+                    // For now, ignoring manual image URL setting as it's auto-derived from ID.
 				});
 			} else {
 				// Add new
 				shelvesStore.addCard(shelfId, boxId, {
 					word: newCardWord,
-					imageUrl: newCardImage,
-					audioUrl: newCardAudio ? `/sounds/${newCardAudio}` : undefined
+                    // Same as above, strict ID based assets now.
 				});
 			}
 			resetForm();
@@ -53,9 +54,11 @@
 	function startEdit(card: any) {
 		editingCardId = card.id;
 		newCardWord = card.word;
-		newCardImage = card.imageUrl;
-		// Extract filename from path if exists, otherwise empty
-		newCardAudio = card.audioUrl ? card.audioUrl.replace('/sounds/', '') : '';
+		editingCardId = card.id;
+		newCardWord = card.word;
+		newCardImage = getCardImageUrl(card.id);
+		// Audio is mostly auto-derived too now, but keeping this simple for now or ignoring
+		newCardAudio = ''; 
 
 		// Scroll to form
 		window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -220,17 +223,13 @@
 							class:ring-yellow-400={box.coverCardId === card.id && editingCardId !== card.id}
 						>
 							<img
-								src={card.imageUrl}
+								src={getCardImageUrl(card.id)}
 								alt={card.word}
 								class="w-full h-32 object-cover object-top rounded-lg bg-white"
 							/>
 							<div class="w-full">
 								<h4 class="text-lg font-bold text-slate-800">{card.word}</h4>
-								{#if card.audioUrl}
-									<div class="text-xs text-slate-400 mt-1 flex items-center justify-center gap-1">
-										🔊 יש שמע
-									</div>
-								{/if}
+								<!-- Removed explicit audioUrl check as it's dynamic now. Could verify against manifest here if needed. -->
 							</div>
 
 							<!-- Actions -->
