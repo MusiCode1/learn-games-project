@@ -1,0 +1,32 @@
+📂 Project
+ ┣ 📂 src
+ ┣ ┣ 📂 UI
+ ┣ ┃ ┣ 
+
+
+
+
+
+
+
+
+
+
+📂 Project
+ ┣ 📂 src
+ ┃ ┣ 📂 components
+ ┃ ┃ ┣ 📜 Header.js
+ ┃ ┃ ┣ 📜 Footer.js
+ ┃ ┃ ┗ 📜 Button.js
+ ┃ ┣ 📂 pages
+ ┃ ┃ ┣ 📜 Home.js
+ ┃ ┃ ┗ 📜 About.js
+ ┃ ┗ 📜 App.js
+ ┣ 📂 styles
+ ┃ ┣ 📜 global.css
+ ┃ ┗ 📜 variables.css
+ ┣ 📂 utils
+ ┃ ┣ 📜 helpers.js
+ ┃ ┗ 📜 api.js
+ ┣ 📜 README.md
+ ┗ 📜 package.json

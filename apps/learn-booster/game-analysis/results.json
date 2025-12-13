@@ -1,0 +1,1398 @@
+[
+  {
+    "name": "כלי תחבורה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/transport?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){u(t,this,{bg:t.settings.isBlackScreen?\"black_mode_bg\":null}),this.clickSounds=[t.add.audio(\"click1\"),t.add.audio(\"click2\")],this.levels=[],this.currentLevel=void 0,t.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(this.onBgClick,this),t.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(this.onBgClick,this),this.startNewLevel()}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){this.levels.length||(this.levels=_.shuffle(t.lcfg.slice())),this.currentLevel&&(this.currentLevel.bg.destroy(),this.currentLevel.sound.destroy(),this.currentLevel.animSound.destroy(),this.currentLevel.parts.forEach(function(t){return t.destroy()}),this.currentLevel.layer.destroy());var e=this.levels.pop(),n=t.add.group(this.midLayer,e.name);\"backgrounds/bg_road.png\"===e.background&&(n.y=.2*t.h),\"backgrounds/bg_sea.png\"===e.background&&(n.y=.1*t.h);var r={hidden:!0,anchorMid:!0},o=e.items.map(function(e){var o=(0,i.default)({},e,r);return createSprite(t,n,o)}),u=createBg(t,this.backLayer,e.bgKey,this.onBgClick.bind(this));this.currentLevel={farAwayScaleReduction:e.farAwayScaleReduction,layer:n,bg:u,sound:t.add.sound(e.sound),animSound:t.add.sound(e.animSound),parts:o,currentPartIndex:0},t.settings.isBlackScreen&&(u.tint=0,u.width*=.981,u.height*=.9)}"
+      },
+      {
+        "name": "onBgClick",
+        "code": "function(){var e=this;if(this.currentLevel.bg.inputEnabled){if(this.currentLevel.currentPartIndex>=this.currentLevel.parts.length)return this.currentLevel.bg.inputEnabled=!1,this.currentLevel.sound&&this.currentLevel.sound.play(),void t.time.events.add(1.5*Phaser.Timer.SECOND,function(){e.playEndLevelAnimation()});var n=this.currentLevel.parts[this.currentLevel.currentPartIndex];if(this.currentLevel.currentPartIndex===this.currentLevel.parts.length-1){for(var r=0;r<this.currentLevel.currentPartIndex;r++)this.currentLevel.parts[r].visible=!1;n.anchor.setTo(.5,1),n.y+=n.height/2}n.visible=!0,this.playClickSound(),this.currentLevel.currentPartIndex++,this.currentLevel.currentPartIndex!==this.currentLevel.parts.length-1&&(0==t.settings.difficulty?this.onBgClick():1==t.settings.difficulty&&(this.currentLevel.currentPartIndex<Math.floor(this.currentLevel.parts.length/2)||this.currentLevel.currentPartIndex>Math.floor(this.currentLevel.parts.length/2))&&this.onBgClick())}}"
+      },
+      {
+        "name": "playEndLevelAnimation",
+        "code": "function(){this.currentLevel.animSound.loop=!0,this.currentLevel.animSound.play();var e=this.currentLevel.layer.children[this.currentLevel.layer.children.length-1],n=0-e.width/2,r=t.world.width+e.width/2,o=t.add.tween(e.scale).to({y:e.scale.y-.1},250*c,\"Linear\",!0,0,-1,!0);t.add.tween(e).to({x:n},3e3*c,\"Linear\",!0).onComplete.addOnce(function(){o.stop(),e.scale.setTo(e.scale.x+this.currentLevel.farAwayScaleReduction),e.x=r,o=t.add.tween(e.scale).to({y:e.scale.y-.05},250*c,\"Linear\",!0,0,-1,!0),t.add.tween(e).to({x:n},5e3*c,\"Linear\",!0).onComplete.addOnce(function(){o.stop(),this.currentLevel.animSound.stop(),this.startNewLevel()},this)},this)}"
+      },
+      {
+        "name": "playClickSound",
+        "code": "function(){var e=t.rnd.integerInRange(0,this.clickSounds.length-1);this.clickSounds[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.startNewLevel()}"
+      }
+    ]
+  },
+  {
+    "name": "בעלי חיים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/animals?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){i(t,this,{bg:t.settings.isBlackScreen?\"black_mode_bg\":null}),this.clickSounds=[t.add.audio(\"click1\"),t.add.audio(\"click2\")],this.levels=[],this.currentLevel=void 0,t.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(this.onBgClick,this),t.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(this.onBgClick,this),this.startNewLevel()}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){this.makeNewTurn(),this.levels.length||(this.levels=_.shuffle(t.lcfg.slice())),this.currentLevel&&(this.currentLevel.bg.destroy(),this.currentLevel.sound.destroy(),this.currentLevel.animSound.destroy(),this.currentLevel.parts.forEach(function(t){return t.destroy()}),this.currentLevel.layer.destroy());var e=this.levels.pop(),n=t.add.group(this.midLayer,e.name);\"backgrounds/bg_road.png\"===e.background&&(n.y=.2*t.h),\"backgrounds/bg_sea.png\"===e.background&&(n.y=.1*t.h);var o={hidden:!0,anchorMid:!0},i=e.items.map(function(e){var i=(0,r.default)({},e,o);return createSprite(t,n,i)}),u=createBg(t,this.backLayer,e.bgKey,this.onBgClick.bind(this));this.currentLevel={farAwayScaleReduction:e.farAwayScaleReduction,layer:n,bg:u,sound:t.add.sound(e.sound),animSound:t.add.sound(e.animSound),parts:i,currentPartIndex:0},t.settings.isBlackScreen&&(u.tint=0,u.width*=.981,u.height*=.9)}"
+      },
+      {
+        "name": "onBgClick",
+        "code": "function(){var e=this;if(this.currentLevel.bg.inputEnabled){if(this.currentLevel.currentPartIndex>=this.currentLevel.parts.length)return this.currentLevel.bg.inputEnabled=!1,this.currentLevel.sound&&this.currentLevel.sound.play(),void t.time.events.add(1.5*Phaser.Timer.SECOND,function(){e.playEndLevelAnimation()});var n=this.currentLevel.parts[this.currentLevel.currentPartIndex];if(this.currentLevel.currentPartIndex===this.currentLevel.parts.length-1){for(var r=0;r<this.currentLevel.currentPartIndex;r++)this.currentLevel.parts[r].visible=!1;n.anchor.setTo(.5,1),n.y+=n.height/2}n.visible=!0,this.playClickSound(),this.currentLevel.currentPartIndex++,this.currentLevel.currentPartIndex!==this.currentLevel.parts.length-1&&(0==t.settings.difficulty?this.onBgClick():1==t.settings.difficulty&&(this.currentLevel.currentPartIndex<Math.floor(this.currentLevel.parts.length/2)||this.currentLevel.currentPartIndex>Math.floor(this.currentLevel.parts.length/2))&&this.onBgClick())}}"
+      },
+      {
+        "name": "playEndLevelAnimation",
+        "code": "function(){this.currentLevel.animSound.loop=!0,this.currentLevel.animSound.play();var e=this.currentLevel.layer.children[this.currentLevel.layer.children.length-1],n=0-e.width/2,r=t.world.width+e.width/2,o=t.add.tween(e.scale).to({y:e.scale.y-.1},250*u,\"Linear\",!0,0,-1,!0);t.add.tween(e).to({x:n},3e3*u,\"Linear\",!0).onComplete.addOnce(function(){o.stop(),e.scale.setTo(e.scale.x+this.currentLevel.farAwayScaleReduction),e.x=r,o=t.add.tween(e.scale).to({y:e.scale.y-.05},250*u,\"Linear\",!0,0,-1,!0),t.add.tween(e).to({x:n},5e3*u,\"Linear\",!0).onComplete.addOnce(function(){o.stop(),this.currentLevel.animSound.stop(),this.startNewLevel()},this)},this)}"
+      },
+      {
+        "name": "playClickSound",
+        "code": "function(){var e=t.rnd.integerInRange(0,this.clickSounds.length-1);this.clickSounds[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.startNewLevel()}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){}"
+      }
+    ]
+  },
+  {
+    "name": "פאזל אנשים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/puzzle_people/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var t,n=this;if((0,o.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),this.bg&&(this.bg.visible=!1),this.textStyle={font:\"bold 100px Secular One\",boundsAlignH:\"center\",boundsAlignV:\"middle\",color:\"#ffffff\"},this.answerTextStyle={font:\"bold 90px Secular One\",boundsAlignH:\"center\",boundsAlignV:\"middle\",color:\"#000000\"},this.createSounds(),this.puzzles=appConfig.puzzles,this.sounds=new Object,this.puzzles.forEach(function(t){t.layer=e.add.group(),t.bg=e.add.sprite(0,0,\"bg_\"+t.name),t.layer.addChild(t.bg);for(var o=0;o<t.assets.length;o++)n[t.name+\"_\"+t.assets[o].name]&&t.assets[o].name,n[t.name+\"_\"+t.assets[o].name]=createSprite(e,t.layer,(0,i.default)({key:t.name+\"_\"+t.assets[o].name,anchorMid:!t.assets[o].anchor,pos:{x:t.assets[o].pos.x,y:t.assets[o].pos.y},size:{x:t.assets[o].size.x,y:t.assets[o].size.y},hidden:t.assets[o].isHidden,animations:[{name:\"play\",frame:Phaser.Animation.generateFrameNames(t.assets[o].name+\"00\",0,t.assets[o].frames,\"\",2),frameRate:24,loop:t.assets[o].isLoop,useNumericInd:void 0}]})),t.assets[o].alpha&&(n[t.name+\"_\"+t.assets[o].name].alpha=t.assets[o].alpha),t.assets[o].anchor&&n[t.name+\"_\"+t.assets[o].name].anchor.set(t.assets[o].anchor.x,t.assets[o].anchor.y),t.assets[o].index&&(n[t.name+\"_\"+t.assets[o].name+t.assets[o].index]=n[t.name+\"_\"+t.assets[o].name]);for(var a=0;a<t.sounds.length;a++)n.sounds[t.name+\"_\"+t.sounds[a]]=e.add.audio(t.name+\"_\"+t.sounds[a]);t.layer.visible=!1}),this.puzzles=_.shuffle(this.puzzles),this.partLayer=e.add.group(),this.parts=new Array,this.parts.push(createSprite(e,this.partLayer,(0,i.default)({key:\"puzzle_3\",pos:{x:.5,y:.232},size:{x:1,y:1},anchorMid:!0,callback:this.onPuzzle.bind(this)}))),this.parts.push(createSprite(e,this.partLayer,(0,i.default)({key:\"puzzle_2\",pos:{x:.5,y:.592},size:{x:1,y:1},anchorMid:!0,callback:this.onPuzzle.bind(this)}))),this.parts.push(createSprite(e,this.partLayer,(0,i.default)({key:\"puzzle_1\",pos:{x:.5,y:.845},size:{x:1,y:1},anchorMid:!0,callback:this.onPuzzle.bind(this)}))),this.bg_border=createSprite(e,this.partLayer,{key:\"bg_border\",pos:{x:0,y:1},size:{x:1,y:1}}),this.next=createSprite(e,this.partLayer,(0,i.default)({key:\"next\",anchorMid:!0,pos:\"eng\"!=e.cfg.game_lang_symb?{x:.12,y:.07}:{x:.88,y:.07},size:{x:.2,y:.2},hidden:!0,callback:this.makeNewTurn.bind(this),choosingFrame:1.05})),this.next.cb=this.makeNewTurn.bind(this),this.next.choosingFrame.visible=!1,this.again=createSprite(e,this.partLayer,(0,i.default)({key:\"again\",anchorMid:!0,pos:\"eng\"==e.cfg.game_lang_symb?{x:.12,y:.07}:{x:.88,y:.07},size:{x:.2,y:.2},hidden:!0,callback:this.makeAnimation.bind(this),choosingFrame:1.05})),this.again.cb=this.makeAnimation.bind(this),this.again.choosingFrame.visible=!1,this.mTurnCount=-1,this.boxOptions=this.parts,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat()):t=this.boxOptions.concat(),\"heb\"==e.cfg.game_lang_symb&&(t=t.reverse()),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var a=0;a<this.parts.length;a++)this.parts[a].choosingFrame&&(this.parts[a].choosingFrame.visible=!1);if(3==e.settings.isChooseMode)for(var s=0;s<this.parts.length;s++)this.parts[s].choosingFrame&&(this.parts[s].choosingFrame.visible=!1);this.cw&&(this.cw.visible=!0),this.makeNewTurn()}"
+      },
+      {
+        "name": "onOption",
+        "code": "function(t){if(t.isAgain||t.isNext)return t.choosingFrame&&(t.choosingFrame.visible=!1),void t.cb();3==e.settings.isChooseMode?t.visible=!1:this.parts[this.partsCount]&&(this.parts[this.partsCount].visible=!1),this.partsCount++,3==this.partsCount&&this.makeAnimation()}"
+      },
+      {
+        "name": "onPuzzle",
+        "code": "function(e){e.visible=!1,this.partsCount++,3==this.partsCount&&this.makeAnimation()}"
+      },
+      {
+        "name": "makeAnimation",
+        "code": "function(){this.again.visible=!1,this.next.visible=!1,this[this.puzzles[this.mTurnCount].name+\"Animation\"]&&this[this.puzzles[this.mTurnCount].name+\"Animation\"]()}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){arguments.length>0&&void 0!==arguments[0]&&arguments[0];this.partsCount=0,this.again.visible=!1,this.next.visible=!1,this.parts&&this.parts.forEach(function(e){e.visible=!0}),this.puzzles[this.mTurnCount]&&(this.puzzles[this.mTurnCount].layer.visible=!1),this.mTurnCount++,this.mTurnCount==this.puzzles.length&&(this.mTurnCount=0),this.puzzles[this.mTurnCount].layer.visible=!0,1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3&&(this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=this.parts.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig))}"
+      },
+      {
+        "name": "onImageOver",
+        "code": "function(t){if(!this.isDisabalingButtons){this.cw&&(this.cw.visible=!0);for(var n=0;n<this.parts.length;n++)this.parts[n]&&this.parts[n].choosingFrame&&(this.parts[n].choosingFrame.visible=!1);e.settings.isChooseMode2direct||t&&t.choosingFrame&&(t.choosingFrame.visible=!0)}}"
+      },
+      {
+        "name": "onImageOut",
+        "code": "function(e){e&&e.choosingFrame&&(e.choosingFrame.visible=!1)}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "swimmerAnimation",
+        "code": "function(){var t=this;this.swimmer_swimmer_1.alpha=1,this.swimmer_swimmer_2.alpha=0,this.swimmer_swimmer_2.x=this.swimmer_swimmer_2.originalPos.x,this.swimmer_swimmer_2.y=this.swimmer_swimmer_2.originalPos.y,this.swimmer_swimmer_2.scale.y=this.swimmer_swimmer_2.scale.x=this.swimmer_swimmer_2.originalScale;var n=e.add.graphics(0,0);n.beginFill(16711680),n.drawRect(e.w/2,0,.5*e.w,.6*e.h),n.drawRect(e.w/2-this.swimmer_swimmer_1.width,0,this.swimmer_swimmer_1.width,e.h),this.swimmer_swimmer_2.mask&&this.swimmer_swimmer_2.mask.destroy(),this.swimmer_swimmer_2.mask=n;var i=this.swimmer_swimmer_2.scale.x;e.add.tween(this.swimmer_swimmer_2).to({alpha:1},250,Phaser.Easing.Cubic.Out,!0,400),e.add.tween(this.swimmer_swimmer_1).to({alpha:0},250,Phaser.Easing.Cubic.Out,!0,500).onComplete.add(function(){t.sounds.swimmer_1.play(),e.add.tween(t.swimmer_swimmer_2).to({y:-t.swimmer_swimmer_2.height/2,x:(t.swimmer_swimmer_2.x+t.swimmer_adva.x)/2,angle:30},1300,Phaser.Easing.Cubic.Out,!0,200),e.add.tween(t.swimmer_swimmer_2.scale).to({y:.8*i,x:.8*i},2e3,Phaser.Easing.Cubic.Out,!0,200).onComplete.add(function(){t.swimmer_swimmer_2.angle=170,e.add.tween(t.swimmer_adva).to({alpha:1},500,Phaser.Easing.Cubic.Out,!0,500),t.swimmer_adva.animations.play(\"play\"),(0,a.setTimeout)(function(){return t.sounds.swimmer_2.play()},300),e.add.tween(t.swimmer_swimmer_2).to({y:e.h,x:t.swimmer_adva.x,angle:180},2e3,Phaser.Easing.Cubic.Out,!0,200),e.add.tween(t.swimmer_swimmer_2.scale).to({y:.6*i,x:.6*i},2e3,Phaser.Easing.Cubic.Out,!0,200).onComplete.add(function(){fadeOut(t.swimmer_adva),t.swimmer_swimmer_2.angle=0,t.swimmer_swimmer_2.y=t.swimmer_adva.y+t.swimmer_swimmer_2.height/2,t.sounds.swimmer_3.play(),e.add.tween(t.swimmer_swimmer_2).to({y:t.swimmer_adva.y+t.swimmer_swimmer_2.height/6},1250,Phaser.Easing.Cubic.Out,!0,0,2,!0).onComplete.add(function(){t.showbuttons()})})})})}"
+      },
+      {
+        "name": "waitressAnimation",
+        "code": "function(){var t=this;this.waitress_bottle.animations.frameName=\"bottle0001\",this.waitress_bottle.x=this.waitress_bottle.originalPos.x,this.waitress_bottle.y=this.waitress_bottle.originalPos.y,this.waitress_waitres_3.x=this.waitress_waitres_3.originalPos.x,this.waitress_waitres_3.y=this.waitress_waitres_3.originalPos.y,this.waitress_waitres_3.alpha=1;var n=function(n){e.add.tween(t.waitress_waitres_1).to({angle:2},200,Phaser.Easing.Cubic.Out,!0,0,0,!0,200).onComplete.add(function(){t.sounds.waitress_1.play(),e.add.tween(t.waitress_waitres_3).to({y:t.waitress_waitres_3.y-t.waitress_waitres_3.height,angle:t.waitress_waitres_3.angle-720},1e3,Phaser.Easing.Cubic.Out,!0,0,0,!0).onComplete.add(function(){n?n():i()})})},i=function(n){e.add.tween(t.waitress_waitres_1).to({angle:2},200,Phaser.Easing.Cubic.Out,!0,0,0,!0,200).onComplete.add(function(){e.add.tween(t.waitress_waitres_3).to({x:t.waitress_waitres_3.x+t.waitress_waitres_3.height,y:t.waitress_waitres_3.y-t.waitress_waitres_3.height,angle:t.waitress_waitres_3.angle-720},1e3,Phaser.Easing.Cubic.Out,!0).onComplete.add(function(){e.add.tween(t.waitress_waitres_3).to({y:t.waitress_bottle.y},700,Phaser.Easing.Cubic.In,!0).onComplete.add(function(){fadeOut(t.waitress_waitres_3),t.sounds.waitress_2.play(),(0,a.setTimeout)(function(){t.sounds.waitress_3.play()},1e3),t.waitress_bottle.animations.play(\"play\"),(0,a.setTimeout)(function(){t.showbuttons()},3500)})})})};n(function(){return n()})}"
+      },
+      {
+        "name": "tennisAnimation",
+        "code": "function(){var t=this;this.tennisCounter?this.tennisCounter++:this.tennisCounter=1,this.tennis_racquet,this.tennis_tennis_ball.x=this.tennis_tennis_ball.originalPos.x,this.tennis_tennis_ball.y=this.tennis_tennis_ball.originalPos.y,this.tennis_tennis_ball.scale.x=this.tennis_tennis_ball.scale.y=this.tennis_tennis_ball.originalScale;var n=function(n){e.add.tween(t.tennis_tennis_ball).to({y:t.tennis_tennis_ball.y-4*t.tennis_tennis_ball.height},1e3,Phaser.Easing.Cubic.Out,!0,0,0,!0),e.add.tween(t.tennis_racquet).to({angle:10},750,Phaser.Easing.Cubic.Out,!0,500,0,!0).onComplete.add(function(){n?n():i()})},i=function(){var n=t.tennis_tennis_ball.scale.x;e.add.tween(t.tennis_tennis_ball).to({y:t.tennis_tennis_ball.y-4*t.tennis_tennis_ball.height},750,Phaser.Easing.Cubic.Out,!0).onComplete.add(function(){e.add.tween(t.tennis_tennis_ball).to({y:t.tennis_racquet.y+2*t.tennis_tennis_ball.height},750,Phaser.Easing.Cubic.In,!0).onComplete.add(function(){t.sounds.tennis_1.play(),e.add.tween(t.tennis_tennis_ball).to({x:e.w+8*t.tennis_tennis_ball.width,y:.6*e.h},1e3,Phaser.Easing.Cubic.Out,!0),e.add.tween(t.tennis_tennis_ball.scale).to({x:8*n,y:8*n},750,Phaser.Easing.Cubic.Out,!0).onComplete.add(function(){1==t.tennisCounter?(0,a.setTimeout)(function(){return t.tennisAnimation()},1e3):2==t.tennisCounter&&(t.tennisCounter=null,(0,a.setTimeout)(function(){return t.showbuttons()},1e3))})})}),e.add.tween(t.tennis_racquet).to({angle:50},750,Phaser.Easing.Cubic.Out,!0).onComplete.add(function(){e.add.tween(t.tennis_racquet).to({angle:0},750,Phaser.Easing.Cubic.In,!0)})};n(function(){return n()})}"
+      },
+      {
+        "name": "teacherAnimation",
+        "code": "function(){var e=this;this.teacher_numbers.visible=!1,(0,a.setTimeout)(function(){e.teacher_numbers.visible=!0;var t=e.teacher_numbers.animations.play(\"play\");e.sounds.teacher_1.loopFull(),t.onComplete.add(function(){(0,a.setTimeout)(function(){e.showbuttons(),e.teacher_numbers.visible=!1},1500)},e)},750)}"
+      },
+      {
+        "name": "boxingAnimation",
+        "code": "function(){var t=this;this.sounds.boxing_1.play(),e.add.tween(this.boxing_box_man).to({y:this.boxing_box_man.y-this.boxing_box_man.height/4},500,Phaser.Easing.Cubic.Out,!0,0,0,!0).onComplete.add(function(){e.add.tween(t.boxing_box_man).to({y:t.boxing_box_man.y-t.boxing_box_man.height/4},500,Phaser.Easing.Cubic.Out,!0,0,0,!0).onComplete.add(function(){e.add.tween(t.boxing_box_man).to({y:t.boxing_box_man.y-t.boxing_box_man.height/4},500,Phaser.Easing.Cubic.Out,!0,0,0,!0).onComplete.add(function(){e.add.tween(t.boxing_box_man).to({y:t.boxing_box_man.y-t.boxing_box_man.height/4},500,Phaser.Easing.Cubic.Out,!0,0,0,!0).onComplete.add(function(){(0,a.setTimeout)(function(){return t.showbuttons()},1500)})})})})}"
+      },
+      {
+        "name": "golfAnimation",
+        "code": "function(){var t=this;this.golf_golf_girl,this.golf_golf_bat,this.golf_golf_ball,this.golf_golf_glove;var n=this.golf_golf_bat.scale.y;this.golf_golf_ball.x=this.golf_golf_ball.originalPos.x,this.golf_golf_ball.y=this.golf_golf_ball.originalPos.y,this.puzzles[this.mTurnCount].layer.bringToTop(this.golf_golf_bat),this.puzzles[this.mTurnCount].layer.bringToTop(this.golf_glove),this.puzzles[this.mTurnCount].layer.bringToTop(this.golf_golf_ball),this.puzzles[this.mTurnCount].layer.bringToTop(this.golf_golf_hole),e.add.tween(this.golf_golf_bat).to({angle:30},1e3,Phaser.Easing.Cubic.In,!0).onComplete.add(function(){e.add.tween(t.golf_golf_bat.scale).to({y:1.3*n},500,Phaser.Easing.Cubic.Out,!0,350),e.add.tween(t.golf_golf_bat).to({angle:-27},500,Phaser.Easing.Cubic.Out,!0,350).onComplete.add(function(){t.sounds.golf_1.play()}),e.add.tween(t.golf_golf_ball).to({x:e.w*(18.5/24),y:.85*e.h},1e3,Phaser.Easing.Cubic.Out,!0,800).onComplete.add(function(){t.sounds.golf_2.play(),e.add.tween(t.golf_golf_ball).to({y:t.golf_golf_bat.y+2*t.golf_golf_bat.height},500,Phaser.Easing.None,!0,100).onComplete.add(function(){(0,a.setTimeout)(function(){return t.showbuttons()},1500),e.add.tween(t.golf_golf_bat).to({angle:0},500,Phaser.Easing.Cubic.Out,!0),e.add.tween(t.golf_golf_bat.scale).to({y:n,x:n},500,Phaser.Easing.Cubic.Out,!0)})})})}"
+      },
+      {
+        "name": "basketAnimation",
+        "code": "function(){this.basketCounter?this.basketCounter++:this.basketCounter=1,this.puzzles[this.mTurnCount].layer.bringToTop(this.basket_ball),this.puzzles[this.mTurnCount].layer.bringToTop(this.basket_basket_net);this.basket_ball.x,this.basket_ball.y;this.basket_ball.x=this.basket_ball.originalPos.x,this.basket_ball.y=this.basket_ball.originalPos.y,this.basket_ball.scale.x=this.basket_ball.scale.y=this.basket_ball.originalScale,this.basket_player,this.basket_basket_net,this.puzzles[this.mTurnCount].layer.bringToTop(this.police_car2);var t=this,n=function(n){e.add.tween(t.basket_ball.scale).to({y:.9*t.basket_ball.scale.y},150,Phaser.Easing.None,!0,0,0,!0).onComplete.add(function(){(0,a.setTimeout)(function(){return t.sounds.basket_1.play()},490),e.add.tween(t.basket_ball).to({angle:t.basket_ball.angle+360},500,Phaser.Easing.Cubic.Out,!0),e.add.tween(t.basket_ball).to({y:t.basket_ball.y-1.5*t.basket_ball.height},500,Phaser.Easing.Cubic.Out,!0,0,0,!0).onComplete.add(function(){n?n():i()})})};n(function(){return n()});var i=function(){var n=t.basket_ball.scale.x;e.add.tween(t.basket_ball.scale).to({y:.95*t.basket_ball.scale.y},90,Phaser.Easing.None,!0,0,0,!0).onComplete.add(function(){t.sounds.basket_2.play(),e.add.tween(t.basket_ball.scale).to({x:.7*n,y:.7*n},1e3,Phaser.Easing.None,!0),e.add.tween(t.basket_ball).to({angle:360},1e3,Phaser.Easing.None,!0),e.add.tween(t.basket_ball).to({x:(2*t.basket_player.x+6*t.basket_basket_net.x)/8,y:t.basket_basket_net.y-2*t.basket_ball.height},500,Phaser.Easing.None,!0).onComplete.add(function(){e.add.tween(t.basket_ball).to({x:t.basket_basket_net.x,y:t.basket_basket_net.y},500,Phaser.Easing.None,!0).onComplete.add(function(){e.add.tween(t.basket_ball).to({y:.8*e.h},900,Phaser.Easing.None,!0).onComplete.add(function(){1==t.basketCounter?(0,a.setTimeout)(function(){return t.basketAnimation()},1e3):2==t.basketCounter&&(t.basketCounter=null,(0,a.setTimeout)(function(){return t.showbuttons()},1e3))})})})})}}"
+      },
+      {
+        "name": "athleteAnimation",
+        "code": "function(){var t=this;this.athleteCounter?this.athleteCounter++:this.athleteCounter=1,this.sounds.athlete_1.loopFull(),this.athlete_athlete,this.athlete_hula_hoop;var n=this.athlete_hula_hoop.x,i=this.athlete_hula_hoop.y;e.add.tween(this.athlete_hula_hoop).to({angle:this.athlete_hula_hoop.angle-360},500,Phaser.Easing.None,!0).onComplete.add(function(){e.add.tween(t.athlete_hula_hoop).to({angle:t.athlete_hula_hoop.angle-360},500,Phaser.Easing.None,!0).onComplete.add(function(){e.add.tween(t.athlete_hula_hoop).to({y:2*-t.athlete_hula_hoop.height,x:e.w},750,Phaser.Easing.None,!0,300),t.athlete_timer=new Array;for(var o=function(n){(r=e.time.create(!1)).loop(2e3+100*n,function(){var e=t[\"athlete_back_light\"+(n+1)];e.visible=!e.visible},t),r.start(),t.athlete_timer.push(r)},s=0;s<3;s++){var r;o(s)}e.add.tween(t.athlete_hula_hoop).to({angle:t.athlete_hula_hoop.angle-360},500,Phaser.Easing.None,!0).onComplete.add(function(){e.add.tween(t.athlete_athlete.scale).to({y:.95*t.athlete_athlete.scale.y},150,Phaser.Easing.None,!0,500,0,!0).onComplete.add(function(){e.add.tween(t.athlete_athlete).to({y:t.athlete_athlete.y-t.athlete_athlete.height/4},500,Phaser.Easing.None,!0).onComplete.add(function(){e.add.tween(t.athlete_athlete).to({y:t.athlete_athlete.originalPos.y},500,Phaser.Easing.None,!0).onComplete.add(function(){e.add.tween(t.athlete_athlete.scale).to({y:.95*t.athlete_athlete.scale.y},150,Phaser.Easing.None,!0,500,0,!0).onComplete.add(function(){e.add.tween(t.athlete_hula_hoop).to({y:i,x:n},750,Phaser.Easing.None,!0).onComplete.add(function(){1==t.athleteCounter?(0,a.setTimeout)(function(){return t.athleteAnimation()},1e3):2==t.athleteCounter&&(t.athleteCounter=null,(0,a.setTimeout)(function(){return t.showbuttons()},1e3)),t.athlete_timer.forEach(function(e){e.stop()})})})})})})})})})}"
+      },
+      {
+        "name": "policeAnimation",
+        "code": "function(){this.sounds.police_1.loopFull(),this.puzzles[this.mTurnCount].layer.bringToTop(this.police_car2),this.police_car2.scale.x*=-1,this.police_car1.scale.x*=-1;this.police_car2.x,this.police_car1.x,this.police_car1.scale.x,this.police_car2.scale.x;var t=this,n=function(n){t.police_car2.scale.x*=-1,t.police_car1.scale.x*=-1;var i=t.police_car2.x,o=t.police_car1.x,a=t.police_car1.y;t.police_car1.y=t.police_car2.y,t.police_car2.y=a,t.puzzles[t.mTurnCount].layer.bringToTop(t.police_police_man);var s=t.police_car1.y>t.police_car2.y?t.police_car1:t.police_car2;t.police_car1.y<t.police_car2.y?t.police_car1:t.police_car2;t.puzzles[t.mTurnCount].layer.bringToTop(s),e.add.tween(t.police_car1).to({x:i},5e3,Phaser.Easing.None,!0),e.add.tween(t.police_car2).to({x:o},5e3,Phaser.Easing.None,!0,5e3).onComplete.add(function(){n?n():(t.police_car2.scale.x*=-1,t.police_car1.scale.x*=-1,t.sounds.police_1.stop(),t.showbuttons())})};n(function(){return n()})}"
+      },
+      {
+        "name": "showbuttons",
+        "code": "function(){this.startNewLevel(),this.again.visible=!0,this.again.isAgain=!0,this.next.visible=!0,this.next.isNext=!0;var t=[this.again,this.next];1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3&&(this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig))}"
+      }
+    ]
+  },
+  {
+    "name": "פאזל שני חלקים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/puzzle_3/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var e=this;u(t,this),this.clickSounds=[t.add.audio(\"click1\"),t.add.audio(\"click2\")],this.items=t.lcfg.items,this.items=_.shuffle(this.items),this.currentItem=void 0,this.turnNum=-1,this.sounds=new Object,this.items.forEach(function(n){e.sounds[n.name]=t.add.audio(n.name)}),this.puzzles=t.lcfg.puzzles.map(function(n){var r={remain:0,layer:t.add.group(e.frontLayer,\"puzzle_\"+n.length),parts:[]},i=n.map(function(e){var n=createSprite(t,r.layer,(0,o.default)({hidden:!0,anchorMid:!0},e));return n});return r.parts=i,r.remain=r.parts.length,r}),this.puzzle=void 0,this.startNewLevel()}"
+      },
+      {
+        "name": "mapClickPuzzlePart",
+        "code": "function(){var e=t.getItemPositionPercentage({x:t.input.x,y:t.input.y},9),n=e.y>.5?0:1,r=1/(this.puzzle.parts.length/2);2===this.puzzle.parts.length&&(n=0,r=.5);var i=Math.floor(e.x/r);2===this.puzzle.parts.length&&(i=0==i?1:0),this.onPuzzleClick(n*this.puzzle.parts.length/2+i)}"
+      },
+      {
+        "name": "clickAnyPuzzlePart",
+        "code": "function(){var t=this.puzzle.parts.findIndex(function(t){return t.visible});this.onPuzzleClick(t)}"
+      },
+      {
+        "name": "onPuzzleClick",
+        "code": "function(e){this.puzzle.parts[e].visible&&(this.playClickSound(),this.puzzle.parts[e].visible=!1,this.puzzle.remain--,0===this.puzzle.remain&&this.playEndLevelAnimation(),1<=t.settings.isChooseMode&&t.settings.isChooseMode<=3&&this.updateChooseWindowItems(this.puzzle.parts.filter(function(t){return t.visible})))}"
+      },
+      {
+        "name": "setCurrentPuzzle",
+        "code": "function(){this.puzzle=this.puzzles[t.settings.difficulty],this.puzzle.remain=this.puzzle.parts.length,this.puzzle.parts.forEach(function(t){return t.visible=!0})}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){this.makeNewTurn(),this.turnNum++,this.turnNum>=this.items.length&&(this.turnNum=0),this.currentItem=this.items[this.turnNum],this.puzzle&&this.puzzle.parts&&this.puzzle.parts.forEach(function(t){return t.visible=!1}),this.setCurrentPuzzle(),this.currentSprite&&this.currentSprite.destroy(),this.currentSprite=createSprite(t,this.midLayer,(0,o.default)({key:this.currentItem.name,anchorMid:!0,pos:{x:.5,y:.5},size:{x:.5,y:.5}}));var e=createBg(t,this.backLayer,\"bg\");if(e.inputEnabled=!0,e.events.onInputDown.add(this.mapClickPuzzlePart,this),1<=t.settings.isChooseMode&&t.settings.isChooseMode<=3){this.chooseWindowConfig.items=this.puzzle.parts,this.chooseWindowConfig.clickHandler=function(t){this.onPuzzleClick(this.puzzle.parts.indexOf(t))};var n=_.clone(this.chooseWindowConfig);t.settings.isChooseMode2direct&&(n.tint=0),this.doChooseMode(t.settings.isChooseMode,n)}}"
+      },
+      {
+        "name": "playEndLevelAnimation",
+        "code": "function(){var e=this;this.sounds[this.currentItem.name].play();var n=this.currentItem.tween;switch(n){case\"x\":t.add.tween(this.currentSprite).to({x:this.currentSprite.x+this.currentSprite.width/20},500,Phaser.Easing.None,!0,0,2,!0).onComplete.add(function(){setTimeout(function(){return e.startNewLevel()},500)});break;case\"y\":t.add.tween(this.currentSprite).to({y:this.currentSprite.y-this.currentSprite.height/20},500,Phaser.Easing.None,!0,0,2,!0).onComplete.add(function(){setTimeout(function(){return e.startNewLevel()},500)});break;case\"angle\":t.add.tween(this.currentSprite).to({angle:5},500,Phaser.Easing.None,!0,0,2,!0).onComplete.add(function(){setTimeout(function(){return e.startNewLevel()},500)});break;case\"scale\":var r=1.05*this.currentSprite.scale.x;t.add.tween(this.currentSprite.scale).to({x:r,y:r},500,Phaser.Easing.None,!0,0,2,!0).onComplete.add(function(){setTimeout(function(){return e.startNewLevel()},500)})}}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.startNewLevel()}"
+      },
+      {
+        "name": "playClickSound",
+        "code": "function(){var e=t.rnd.integerInRange(0,this.clickSounds.length-1);this.clickSounds[e].play()}"
+      }
+    ]
+  },
+  {
+    "name": "מחק וגלה בעלי חיים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/earase_animals/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var t=this;removeAllTimers(),(0,o.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),this.createSounds(),e.shared.nextBtn.visible=!1,document.body.style.overflow=\"hidden\",this.turnNum=-1,this.sounds=new Object,this.items=appConfig.items,this.items=_.shuffle(this.items),this.items.forEach(function(n){t.sounds[n+\"1\"]=e.add.audio(n+\"1\"),t.sounds[n]=e.add.audio(n)}),e.canvas.addEventListener(\"touchmove\",function(e){return t.onMouseMove(e)}),e.canvas.addEventListener(\"mousemove\",function(e){return t.onMouseMove(e)}),e.input.mouse.mouseMoveCallback=function(){return t.onMouseMove()},this.positions=[{x:.15,y:.15,isChecked:!1},{x:.15,y:.85,isChecked:!1},{x:.85,y:.15,isChecked:!1},{x:.85,y:.85,isChecked:!1},{x:.5,y:.5,isChecked:!1},{x:.5,y:.15,isChecked:!1},{x:.5,y:.85,isChecked:!1},{x:.85,y:.5,isChecked:!1},{x:.15,y:.5,isChecked:!1}],this.positions.forEach(function(e){}),this.rect=e.canvas.getBoundingClientRect(),e.settings.isChooseMode>0&&(this.key2=e.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),this.key2.onDown.add(function(){return t.onEnter()},this),this.key1=e.input.keyboard.addKey(Phaser.Keyboard.ENTER),this.key1.onDown.add(function(){return t.onEnter()},this),e.input.onDown.add(function(){return t.onEnter()},this)),this.makeNewTurn()}"
+      },
+      {
+        "name": "onEnter",
+        "code": "function(){this.isHappend||(this.isHappend=!0,this.onShowAnimation())}"
+      },
+      {
+        "name": "getAnimAndPlay",
+        "code": "function(e,t){if(console.log(\"mc >> \"+e),e.name&&console.log(\"mc.name >> \"+e.name),e.name&&e.name==t&&(console.log(\"mc.play() >> \"),e.play()),e.children)for(var n=0;n<e.children.length;n++)this.getAnimAndPlay(e.children[n],t)}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){var t=this;this.ok=!1,this.isHappend=!1,this.turnNum++,this.positions.forEach(function(e){e.isChecked=!1}),this.currentImage=this.items[this.turnNum],this.innerDoc,this.back&&this.back.destroy(),this.back=createSprite(e,this.midLayer,{key:this.currentImage,anchorMid:!0,size:{x:1,y:1},pos:{x:.5,y:.5}}),this.gr&&this.gr.destroy(),this.gr=e.add.graphics(),this.gr.beginFill(16711680),this.gr.drawCircle(e.w/2,e.h/2,50),this.back.mask=this.gr,this.ifrm=document.createElement(\"iframe\"),this.ifrm.setAttribute(\"src\",\"./res/\"+this.currentImage+\"/\"+this.currentImage+\".html\"),this.ifrm.style.visibility=\"hidden\",this.ifrm.onload=function(){t.innerDoc=t.ifrm.contentDocument||t.ifrm.contentWindow.document,t.innerDoc.body.style.overflow=\"hidden\",t.innerWindow=t.ifrm.contentWindow},document.body.appendChild(this.ifrm)}"
+      },
+      {
+        "name": "contAnim",
+        "code": "function(){var e=this;if(!this.ok){console.log(\"ok contAnim\"),this.ok=!0;var t=this.innerDoc.getElementById(\"canvas\"),n=this.innerDoc.getElementById(\"animation_container\");console.log(\"rect\",this.rect),t.style.width=this.rect.width+\"px\",t.style.height=this.rect.height+\"px\",n.style.width=this.rect.width+\"px\",n.style.height=this.rect.height+\"px\",this.ifrm.style.visibility=\"visible\",this.getAnimAndPlay(this.innerWindow.stage,\"animToPlay\"),(0,i.setTimeout)(function(){e.sounds[e.currentImage+\"1\"].play()},2e3),this.sounds[this.currentImage].play(),(0,i.setTimeout)(function(){document.body.removeChild(e.ifrm),e.makeNewTurn()},1e4)}}"
+      },
+      {
+        "name": "onShowAnimation",
+        "code": "function(){var e=this;console.log(\"onShowAnimation\"),this.ifrm.style.width=this.rect.width+\"px\",this.ifrm.style.height=this.rect.height+\"px\",this.ifrm.style.top=this.rect.y+\"px\",this.ifrm.style.left=this.rect.x+\"px\",this.ifrm.style.pointerEvents=\"none\",this.ifrm.style.position=\"absolute\",this.ifrm.style.visibility=\"hidden\",(0,i.setTimeout)(function(){return e.contAnim()},500)}"
+      },
+      {
+        "name": "makeAccessability",
+        "code": "function(){var t;if(this.circlesArr=[this.currentS],this.boxOptions=this.circlesArr,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat().reverse()):t=this.boxOptions.concat().reverse(),\"heb\"==e.cfg.game_lang_symb&&(t=t.reverse()),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var n=0;n<this.circlesArr.length;n++)this.circlesArr[n].choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);if(3==e.settings.isChooseMode)for(var o=0;o<this.circlesArr.length;o++)this.circlesArr[o].choosingFrame&&(this.circlesArr[o].choosingFrame.visible=!1);this.cw&&(this.cw.visible=!0),this.mTurnCount++,this.startTriggerMode(e.settings.isChooseMode)}"
+      },
+      {
+        "name": "onImageOver",
+        "code": "function(t){if(this.cw&&(this.cw.visible=!0),!this.isDisabalingButtons){for(var n=0;n<this.circlesArr.length;n++)t&&t.choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);e.settings.isChooseMode2direct||t&&t.choosingFrame&&(t.choosingFrame.visible=!0)}}"
+      },
+      {
+        "name": "onImageOut",
+        "code": "function(e){e&&e.choosingFrame&&(e.choosingFrame.visible=!1)}"
+      },
+      {
+        "name": "onMouseMove",
+        "code": "function(t){if(!this.ok){if(t)var n=e.input.x,o=e.input.y;else var n=e.input.mousePointer.x,o=e.input.mousePointer.y;this.gr.drawCircle(n,o,225);var i=0;this.positions.forEach(function(t){var r=t.x*e.w,s=t.y*e.h,a=Phaser.Math.distance(r,s,n,o);a<112.5&&(t.isChecked=!0),t.isChecked&&i++}),i!=this.positions.length||this.isHappend||(this.isHappend=!0,this.onShowAnimation())}}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "onWrongAnswer",
+        "code": "function(){var t=this;fadeIn(this.x,500),(0,i.setTimeout)(function(){fadeOut(t.x),t.isDisabalingButtons=!1,t.startTriggerMode(e.settings.isChooseMode)},1500),this.makeWrongSound()}"
+      },
+      {
+        "name": "onRightAnswer",
+        "code": "function(t){var n=this;this.answerText=e.add.text(this.exreciseText.x+this.exreciseText.width/2,0,this.score,this.textStyle),this.answerText.anchor.set(.5),this.answerText.y-=this.exreciseText.height/2,this.answerText.x+=this.answerText.width/2,this.answerText.stroke=\"#000000\",this.answerText.strokeThickness=6,this.answerText.addColor(\"#ffffff\",0),e.add.tween(this.answerText).to({y:this.exreciseText.y},2e3,Phaser.Easing.Bounce.Out,!0).onComplete.add(function(){(0,i.setTimeout)(function(){return n.makeNewTurn()},3e3)}),fadeIn(this.v,500),(0,i.setTimeout)(function(){return fadeOut(n.v)},2500),this.makeGoodSound()}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeEffectSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundEffectsArr.length);this.soundEffectsArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  },
+  {
+    "name": "מחקו וגלו תחפושות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/earase_purim?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var t=this;removeAllTimers(),(0,o.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),this.bg&&(this.bg.tint=0),this.createSounds(),this.music=new Object,this.isSound=0;for(var n=1;n<=4;n++)this.music[n-1]=e.add.audio(\"music_\"+n),this.music[n-1].currentTime=601;this.count=4,e.shared.nextBtn&&(e.shared.nextBtn.visible=!1),document.body.style.overflow=\"hidden\",this.turnNum=-1,this.sounds=new Object,this.items=appConfig.items,this.items=_.shuffle(this.items),this.items.forEach(function(n){t.sounds[n]=e.add.audio(n)}),this.horn&&this.horn.parent&&this.horn.parent.removeChild(this.horn),this.horn=createSprite(e,this.frontLayer,{key:\"horn\"+this.isSound,anchorMid:!0,callback:this.onHorn.bind(this),size:{x:.1,y:.1},pos:{x:.05,y:.94}}),e.canvas.addEventListener(\"touchmove\",function(e){return t.onMouseMove(e)}),e.canvas.addEventListener(\"mousemove\",function(e){return t.onMouseMove(e)}),e.input.mouse.mouseMoveCallback=function(){return t.onMouseMove()},this.positions=[{x:.15,y:.15,isChecked:!1},{x:.15,y:.85,isChecked:!1},{x:.85,y:.15,isChecked:!1},{x:.85,y:.85,isChecked:!1},{x:.5,y:.5,isChecked:!1},{x:.5,y:.15,isChecked:!1},{x:.5,y:.85,isChecked:!1},{x:.85,y:.5,isChecked:!1},{x:.15,y:.5,isChecked:!1}],this.positions.forEach(function(e){}),this.rect=e.canvas.getBoundingClientRect(),e.settings.isChooseMode>0&&(this.key2=e.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),this.key2.onDown.add(function(){return t.onEnter()},this),this.key1=e.input.keyboard.addKey(Phaser.Keyboard.ENTER),this.key1.onDown.add(function(){return t.onEnter()},this),e.input.onDown.add(function(){return t.onEnter()},this)),this.makeNewTurn()}"
+      },
+      {
+        "name": "onHorn",
+        "code": "function(){0==this.isSound?this.isSound=1:this.isSound=0,console.log(this.isSound),this.horn&&this.horn.parent&&this.horn.parent.removeChild(this.horn),this.horn=createSprite(e,this.frontLayer,{key:\"horn\"+this.isSound,anchorMid:!0,callback:this.onHorn.bind(this),size:{x:.1,y:.1},pos:{x:.05,y:.94}})}"
+      },
+      {
+        "name": "onEnter",
+        "code": "function(){}"
+      },
+      {
+        "name": "onShowAnimation",
+        "code": "function(){for(var t=this,n=1;n<=4;n++)this.music[n-1].stop();this.sounds[this.currentImage]&&this.sounds[this.currentImage].play(),this.gr.drawRect(0,0,e.w,e.h),e.add.tween(this.back.scale).to({x:1.3*this.back.scale.x,y:1.3*this.back.scale.y},1500,Phaser.Easing.None,!0,0,1,!0).onComplete.add(function(){(0,i.setTimeout)(function(){t.makeNewTurn()},3e3)})}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){this.ok=!1,this.isHappend=!1,this.turnNum++,this.turnNum>=this.items.length&&(this.turnNum=0),this.positions.forEach(function(e){e.isChecked=!1}),this.currentImage=this.items[this.turnNum],this.innerDoc,this.back&&this.back.destroy(),this.back=createSprite(e,this.midLayer,{key:this.currentImage,anchorMid:!0,size:{x:1,y:1},pos:{x:.5,y:.5}}),this.gr&&this.gr.destroy(),this.gr=e.add.graphics(),this.gr.beginFill(16711680),this.gr.drawCircle(e.w/2,e.h/2,50),this.back.mask=this.gr}"
+      },
+      {
+        "name": "makeAccessability",
+        "code": "function(){var t;if(this.circlesArr=[this.currentS],this.boxOptions=this.circlesArr,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat().reverse()):t=this.boxOptions.concat().reverse(),\"heb\"==e.cfg.game_lang_symb&&(t=t.reverse()),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var n=0;n<this.circlesArr.length;n++)this.circlesArr[n].choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);if(3==e.settings.isChooseMode)for(var o=0;o<this.circlesArr.length;o++)this.circlesArr[o].choosingFrame&&(this.circlesArr[o].choosingFrame.visible=!1);this.cw&&(this.cw.visible=!0),this.mTurnCount++,this.startTriggerMode(e.settings.isChooseMode)}"
+      },
+      {
+        "name": "onImageOver",
+        "code": "function(t){if(this.cw&&(this.cw.visible=!0),!this.isDisabalingButtons){for(var n=0;n<this.circlesArr.length;n++)t&&t.choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);e.settings.isChooseMode2direct||t&&t.choosingFrame&&(t.choosingFrame.visible=!0)}}"
+      },
+      {
+        "name": "onImageOut",
+        "code": "function(e){e&&e.choosingFrame&&(e.choosingFrame.visible=!1)}"
+      },
+      {
+        "name": "onMouseMove",
+        "code": "function(t){if(0!=e.shared.isSound&&1==this.isSound&&(601!=this.music[(this.count-1)%4].currentTime||this.isHappend||(this.music[this.count%4].play(),this.count++)),!this.ok){if(t)var n=e.input.x,o=e.input.y;else var n=e.input.mousePointer.x,o=e.input.mousePointer.y;this.gr.drawCircle(n,o,225);var i=0;this.positions.forEach(function(t){var r=t.x*e.w,s=t.y*e.h,a=Phaser.Math.distance(r,s,n,o);a<112.5&&(t.isChecked=!0),t.isChecked&&i++}),i!=this.positions.length||this.isHappend||(this.isHappend=!0,this.onShowAnimation())}}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeEffectSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundEffectsArr.length);this.soundEffectsArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  },
+  {
+    "name": "פנס",
+    "url": "https://gingim.net/wp-content/uploads/new_games/flash_light/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var t=this;removeAllTimers(),(0,o.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),this.createSounds(),this.isSound=0,e.shared.nextBtn.visible=!1,document.body.style.overflow=\"hidden\",this.turnNum=-1,this.sounds=new Object,this.music=new Object;for(var n=1;n<=4;n++)this.music[n-1]=e.add.audio(\"music_\"+n),this.music[n-1].currentTime=601;this.count=4,this.items=appConfig.items,this.items=_.shuffle(this.items),this.horn&&this.horn.parent&&this.horn.parent.removeChild(this.horn),this.horn=createSprite(e,this.frontLayer,{key:\"horn\"+this.isSound,anchorMid:!0,callback:this.onHorn.bind(this),size:{x:.1,y:.1},pos:{x:.05,y:.94}}),e.canvas.addEventListener(\"mousemove\",function(e){return t.onMouseMove(e)}),e.input.mouse.mouseMoveCallback=function(){return t.onMouseMove()},e.settings.isChooseMode>0&&(this.key2=e.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),this.key2.onDown.add(function(){return t.onEnter()},this),this.key1=e.input.keyboard.addKey(Phaser.Keyboard.ENTER),this.key1.onDown.add(function(){return t.onEnter()},this),e.input.onDown.add(function(){return t.onEnter()},this)),this.next&&this.next.destroy();var i=\"eng\"==e.cfg.game_lang_symb?.08:.92;this.next=createSprite(e,this.frontLayer,{key:\"next\",anchorMid:!0,size:{x:.1,y:.1},pos:{x:i,y:.08},callback:this.makeNewTurn.bind(this)}),i>.5&&(this.next.scale.x*=-1),this.makeNewTurn()}"
+      },
+      {
+        "name": "onHorn",
+        "code": "function(){0==this.isSound?this.isSound=1:this.isSound=0,this.horn&&this.horn.parent&&this.horn.parent.removeChild(this.horn),this.horn=createSprite(e,this.frontLayer,{key:\"horn\"+this.isSound,anchorMid:!0,callback:this.onHorn.bind(this),size:{x:.1,y:.1},pos:{x:.05,y:.94}})}"
+      },
+      {
+        "name": "onEnter",
+        "code": "function(){}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){this.ok=!1,this.isHappend=!1,this.turnNum++,this.turnNum>=this.items.length&&(this.turnNum=0),console.log(\"this.turnNum\",this.turnNum),console.log(\"this.items\",this.items),this.currentImage=this.items[this.turnNum],console.log(\"this.currentImage\",this.currentImage),this.innerDoc,this.back&&this.back.destroy(),this.back=createSprite(e,this.midLayer,{key:this.currentImage,anchorMid:!0,size:{x:1,y:1},pos:{x:.5,y:.5}}),this.gr&&this.gr.destroy(),this.gr=e.add.graphics(),this.gr.beginFill(16711680),this.gr.drawCircle(e.input.mousePointer.x,e.input.mousePointer.y,250),this.back.mask=this.gr}"
+      },
+      {
+        "name": "makeAccessability",
+        "code": "function(){var t;if(this.circlesArr=[this.currentS],this.boxOptions=this.circlesArr,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat().reverse()):t=this.boxOptions.concat().reverse(),\"heb\"==e.cfg.game_lang_symb&&(t=t.reverse()),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var n=0;n<this.circlesArr.length;n++)this.circlesArr[n].choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);if(3==e.settings.isChooseMode)for(var o=0;o<this.circlesArr.length;o++)this.circlesArr[o].choosingFrame&&(this.circlesArr[o].choosingFrame.visible=!1);this.cw&&(this.cw.visible=!0),this.mTurnCount++,this.startTriggerMode(e.settings.isChooseMode)}"
+      },
+      {
+        "name": "onImageOver",
+        "code": "function(t){if(this.cw&&(this.cw.visible=!0),!this.isDisabalingButtons){for(var n=0;n<this.circlesArr.length;n++)t&&t.choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);e.settings.isChooseMode2direct||t&&t.choosingFrame&&(t.choosingFrame.visible=!0)}}"
+      },
+      {
+        "name": "onImageOut",
+        "code": "function(e){e&&e.choosingFrame&&(e.choosingFrame.visible=!1)}"
+      },
+      {
+        "name": "onMouseMove",
+        "code": "function(t){if(0!=e.shared.isSound&&1==this.isSound&&601==this.music[(this.count-1)%4].currentTime&&(this.music[this.count%4].play(),this.count++),!this.ok){if(t)var n=e.input.x,o=e.input.y;else var n=e.input.mousePointer.x,o=e.input.mousePointer.y;this.gr&&this.gr.clear(),this.gr&&this.gr.drawCircle(n,o,225)}}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "onWrongAnswer",
+        "code": "function(){var t=this;fadeIn(this.x,500),(0,i.setTimeout)(function(){fadeOut(t.x),t.isDisabalingButtons=!1,t.startTriggerMode(e.settings.isChooseMode)},1500),this.makeWrongSound()}"
+      },
+      {
+        "name": "onRightAnswer",
+        "code": "function(t){var n=this;this.answerText=e.add.text(this.exreciseText.x+this.exreciseText.width/2,0,this.score,this.textStyle),this.answerText.anchor.set(.5),this.answerText.y-=this.exreciseText.height/2,this.answerText.x+=this.answerText.width/2,this.answerText.stroke=\"#000000\",this.answerText.strokeThickness=6,this.answerText.addColor(\"#ffffff\",0),e.add.tween(this.answerText).to({y:this.exreciseText.y},2e3,Phaser.Easing.Bounce.Out,!0).onComplete.add(function(){(0,i.setTimeout)(function(){return n.makeNewTurn()},3e3)}),fadeIn(this.v,500),(0,i.setTimeout)(function(){return fadeOut(n.v)},2500),this.makeGoodSound()}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeEffectSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundEffectsArr.length);this.soundEffectsArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  },
+  {
+    "name": "מחק וגלה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/earase_2/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var t=this;removeAllTimers(),(0,o.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),this.bg&&(this.bg.tint=0),this.createSounds(),this.music=new Object,this.isSound=0;for(var n=1;n<=4;n++)this.music[n-1]=e.add.audio(\"music_\"+n),this.music[n-1].currentTime=601;this.count=4,e.shared.nextBtn&&(e.shared.nextBtn.visible=!1),document.body.style.overflow=\"hidden\",this.turnNum=-1,this.sounds=new Object,this.items=appConfig.items,this.items=_.shuffle(this.items),this.items.forEach(function(n){t.sounds[n]=e.add.audio(n)}),this.horn&&this.horn.parent&&this.horn.parent.removeChild(this.horn),this.horn=createSprite(e,this.frontLayer,{key:\"horn\"+this.isSound,anchorMid:!0,callback:this.onHorn.bind(this),size:{x:.1,y:.1},pos:{x:.05,y:.94}}),e.canvas.addEventListener(\"touchmove\",function(e){return t.onMouseMove(e)}),e.canvas.addEventListener(\"mousemove\",function(e){return t.onMouseMove(e)}),e.input.mouse.mouseMoveCallback=function(){return t.onMouseMove()},this.positions=[{x:.15,y:.15,isChecked:!1},{x:.15,y:.85,isChecked:!1},{x:.85,y:.15,isChecked:!1},{x:.85,y:.85,isChecked:!1},{x:.5,y:.5,isChecked:!1},{x:.5,y:.15,isChecked:!1},{x:.5,y:.85,isChecked:!1},{x:.85,y:.5,isChecked:!1},{x:.15,y:.5,isChecked:!1}],this.positions.forEach(function(e){}),this.rect=e.canvas.getBoundingClientRect(),e.settings.isChooseMode>0&&(this.key2=e.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR),this.key2.onDown.add(function(){return t.onEnter()},this),this.key1=e.input.keyboard.addKey(Phaser.Keyboard.ENTER),this.key1.onDown.add(function(){return t.onEnter()},this),e.input.onDown.add(function(){return t.onEnter()},this)),this.makeNewTurn()}"
+      },
+      {
+        "name": "onHorn",
+        "code": "function(){0==this.isSound?this.isSound=1:this.isSound=0,console.log(this.isSound),this.horn&&this.horn.parent&&this.horn.parent.removeChild(this.horn),this.horn=createSprite(e,this.frontLayer,{key:\"horn\"+this.isSound,anchorMid:!0,callback:this.onHorn.bind(this),size:{x:.1,y:.1},pos:{x:.05,y:.94}})}"
+      },
+      {
+        "name": "onEnter",
+        "code": "function(){}"
+      },
+      {
+        "name": "onShowAnimation",
+        "code": "function(){for(var t=this,n=1;n<=4;n++)this.music[n-1].stop();this.sounds[this.currentImage]&&this.sounds[this.currentImage].play(),this.gr.drawRect(0,0,e.w,e.h),e.add.tween(this.back.scale).to({x:1.3*this.back.scale.x,y:1.3*this.back.scale.y},1500,Phaser.Easing.None,!0,0,1,!0).onComplete.add(function(){(0,i.setTimeout)(function(){t.makeNewTurn()},3e3)})}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){this.ok=!1,this.isHappend=!1,this.turnNum++,this.turnNum>=this.items.length&&(this.turnNum=0),this.positions.forEach(function(e){e.isChecked=!1}),this.currentImage=this.items[this.turnNum],this.innerDoc,this.back&&this.back.destroy(),this.back=createSprite(e,this.midLayer,{key:this.currentImage,anchorMid:!0,size:{x:1,y:1},pos:{x:.5,y:.5}}),this.gr&&this.gr.destroy(),this.gr=e.add.graphics(),this.gr.beginFill(16711680),this.gr.drawCircle(e.w/2,e.h/2,50),this.back.mask=this.gr}"
+      },
+      {
+        "name": "makeAccessability",
+        "code": "function(){var t;if(this.circlesArr=[this.currentS],this.boxOptions=this.circlesArr,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat().reverse()):t=this.boxOptions.concat().reverse(),\"heb\"==e.cfg.game_lang_symb&&(t=t.reverse()),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var n=0;n<this.circlesArr.length;n++)this.circlesArr[n].choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);if(3==e.settings.isChooseMode)for(var o=0;o<this.circlesArr.length;o++)this.circlesArr[o].choosingFrame&&(this.circlesArr[o].choosingFrame.visible=!1);this.cw&&(this.cw.visible=!0),this.mTurnCount++,this.startTriggerMode(e.settings.isChooseMode)}"
+      },
+      {
+        "name": "onImageOver",
+        "code": "function(t){if(this.cw&&(this.cw.visible=!0),!this.isDisabalingButtons){for(var n=0;n<this.circlesArr.length;n++)t&&t.choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);e.settings.isChooseMode2direct||t&&t.choosingFrame&&(t.choosingFrame.visible=!0)}}"
+      },
+      {
+        "name": "onImageOut",
+        "code": "function(e){e&&e.choosingFrame&&(e.choosingFrame.visible=!1)}"
+      },
+      {
+        "name": "onMouseMove",
+        "code": "function(t){if(0!=e.shared.isSound&&1==this.isSound&&(601!=this.music[(this.count-1)%4].currentTime||this.isHappend||(this.music[this.count%4].play(),this.count++)),!this.ok){if(t)var n=e.input.x,o=e.input.y;else var n=e.input.mousePointer.x,o=e.input.mousePointer.y;this.gr.drawCircle(n,o,225);var i=0;this.positions.forEach(function(t){var r=t.x*e.w,s=t.y*e.h,a=Phaser.Math.distance(r,s,n,o);a<112.5&&(t.isChecked=!0),t.isChecked&&i++}),i!=this.positions.length||this.isHappend||(this.isHappend=!0,this.onShowAnimation())}}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeEffectSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundEffectsArr.length);this.soundEffectsArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  },
+  {
+    "name": "מה קרה?",
+    "url": "https://gingim.net/wp-content/uploads/new_games/touch_n_look?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){removeAllTimers(),this.levels=appConfig.levels,this.levels=_.shuffle(this.levels),(0,o.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),e.shared.nextBtn.visible=!1,this.turnNum=-1,this.sounds=new Object;for(var t=0;t<this.levels.length;t++)this.sounds[this.levels[t].sound]=e.add.audio(this.levels[t].sound);this.makeNewTurn()}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){console.log(\"this.turnNum >> \",this.turnNum),this.spritesArr&&this.spritesArr.forEach(function(e){e.destroy()}),this.spritesArr=new Array,this.circlesArr=new Array,this.turnNum++,this.turnNum>=this.levels.length&&(this.turnNum=0),console.log(\"this.turnNum >> \",this.turnNum),this.currentLevel=this.levels[this.turnNum],this.howMany=e.rnd.between(1,3),console.log(\"this.currentLevel >> \",this.currentLevel.name),this[\"make_\"+this.currentLevel.name]?(console.log(\"make!!!! >> \",this.currentLevel.name),this[\"make_\"+this.currentLevel.name]()):this.make_apple(),this.makeAccessability()}"
+      },
+      {
+        "name": "make_egg",
+        "code": "function(){for(var t=0,n=this.currentLevel.positions,o=0;o<this.howMany;o++){var s=createSprite(e,this.midLayer,(0,i.default)({key:this.currentLevel.mainItem,pos:n[o],size:{x:this.currentLevel.size,y:this.currentLevel.size},anchorMid:!0}));s.inputEnabled=!0,s.events.onInputOver.add(this.onOption.bind(this),this),this.circlesArr.push(s),this.spritesArr.push(s);var a=createSprite(e,this.midLayer,(0,i.default)({key:\"egg_2\",pos:n[o],size:{x:this.currentLevel.size/2,y:this.currentLevel.size/2},anchorMid:!0}));a.x=s.x,a.y=s.y-s.height/3,s.cvr=a}this.overFunc=function(n){var i=this;n.isTouched||(n.isTouched=!0,this.sounds[this.currentLevel.sound].play(),e.add.tween(n.cvr).to({y:n.cvr.y-50},1e3,Phaser.Easing.Cubic.Out,!0,0,0,!0).onComplete.add(function(){e.add.tween(n.cvr).to({y:-n.cvr.height,x:n.cvr.x+2*n.cvr.width,angle:90},2e3,Phaser.Easing.None,!0).onComplete.add(function(){fadeOut(n,550),i.circlesArr.splice(i.circlesArr.indexOf(n),1),i.makeAccessability(),++t==i.howMany&&(0,r.setTimeout)(function(){return i.makeNewTurn()},1e3)})}))}}"
+      },
+      {
+        "name": "make_gingerbread",
+        "code": "function(){this.make_apple()}"
+      },
+      {
+        "name": "make_candy",
+        "code": "function(){this.make_apple()}"
+      },
+      {
+        "name": "make_apple",
+        "code": "function(){for(var t=0,n=this.currentLevel.positions,o=0;o<this.howMany;o++){var s=createSprite(e,this.midLayer,(0,i.default)({key:this.currentLevel.mainItem,pos:n[o],size:{x:this.currentLevel.size,y:this.currentLevel.size},anchorMid:!0}));s.inputEnabled=!0,s.events.onInputOver.add(this.onOption.bind(this),this),this.circlesArr.push(s),this.spritesArr.push(s)}this.overFunc=function(n){var i=this;n.isTouched||(n.isTouched=!0,this.sounds[this.currentLevel.sound].play(),e.add.tween(n).to({angle:720},4e3,Phaser.Easing.None,!0),e.add.tween(n).to({y:n.y-n.height/1.5},1e3,Phaser.Easing.None,!0,0,1,!0).onComplete.add(function(){fadeOut(n,550),i.circlesArr.splice(i.circlesArr.indexOf(n),1),i.makeAccessability(),++t==i.howMany&&(0,r.setTimeout)(function(){return i.makeNewTurn()},1e3)}))}}"
+      },
+      {
+        "name": "make_duck",
+        "code": "function(){for(var t=0,n=this.currentLevel.positions,o=0;o<this.howMany;o++){var s=createSprite(e,this.midLayer,(0,i.default)({key:this.currentLevel.mainItem,pos:n[o],size:{x:this.currentLevel.size,y:this.currentLevel.size},anchorMid:!0}));s.inputEnabled=!0,s.events.onInputOver.add(this.onOption.bind(this),this),this.circlesArr.push(s),this.spritesArr.push(s);var a=createSprite(e,s,(0,i.default)({key:\"duck_2\",size:{x:this.currentLevel.size,y:this.currentLevel.size},anchorMid:!0}));a.x=0,a.y=160,s.dck2=a,this.spritesArr.push(a);var c=createSprite(e,s,(0,i.default)({key:\"duck_1\",size:{x:this.currentLevel.size,y:this.currentLevel.size},anchorMid:!0}));c.x=0,c.y=60,s.dck=c,this.spritesArr.push(c);var u=e.add.graphics(0,0);u.beginFill(16711680),u.drawRect(s.x-.9*s.width/2,s.y-s.height/5,.9*s.width,s.height/2),this.spritesArr.push(u),c.mask=u}this.overFunc=function(n){var i=this;n.isTouched||(n.isTouched=!0,this.sounds[this.currentLevel.sound].play(),e.add.tween(n.dck).to({angle:60},1e3,Phaser.Easing.None,!0).onComplete.add(function(){e.add.tween(n.dck).to({x:n.dck.x+50,y:n.y+n.height/2},1e3,Phaser.Easing.None,!0).onComplete.add(function(){i.circlesArr.splice(i.circlesArr.indexOf(n),1),i.makeAccessability(),++t==i.howMany&&(0,r.setTimeout)(function(){return i.makeNewTurn()},1e3)})}))}}"
+      },
+      {
+        "name": "make_rain",
+        "code": "function(){for(var t=0,n=this.currentLevel.positions,o=0;o<this.howMany;o++){var s=createSprite(e,this.midLayer,(0,i.default)({key:this.currentLevel.mainItem,pos:n[o],size:{x:this.currentLevel.size,y:this.currentLevel.size},anchorMid:!0}));s.inputEnabled=!0,s.events.onInputOver.add(this.onOption.bind(this),this),this.circlesArr.push(s),this.spritesArr.push(s)}this.overFunc=function(n){var o=this;if(!n.isTouched){n.isTouched=!0,this.sounds[this.currentLevel.sound].play();for(var s=0;s<40;s++){var a=createSprite(e,this.midLayer,(0,i.default)({key:\"cloud_3\",size:{x:.04,y:.04}}));a.y=n.y,a.x=n.x-.9*n.width/2+.8*n.width*Math.random(),e.add.tween(a).to({y:e.h+a.height},1e3,Phaser.Easing.None,!0,75*s)}n.parent.addChild(n),(0,r.setTimeout)(function(){o.circlesArr.splice(o.circlesArr.indexOf(n),1),o.makeAccessability(),fadeOut(n),++t==o.howMany&&(0,r.setTimeout)(function(){return o.makeNewTurn()},1e3)},3e3)}}}"
+      },
+      {
+        "name": "make_truck",
+        "code": "function(){this.make_vehicle()}"
+      },
+      {
+        "name": "make_train",
+        "code": "function(){this.make_vehicle()}"
+      },
+      {
+        "name": "make_bicycle",
+        "code": "function(){this.make_vehicle()}"
+      },
+      {
+        "name": "make_balloon",
+        "code": "function(){for(var t=0,n=this.currentLevel.positions,i=0;i<this.howMany;i++){var o=createSprite(e,this.midLayer,{key:\"duck_3\",pos:n[i],size:{x:.2,y:.2},anchorMid:!0});o.inputEnabled=!0,o.events.onInputOver.add(this.onOption.bind(this),this),this.circlesArr.push(o),this.spritesArr.push(o),o.alpha=0;var s=createSprite(e,this.midLayer,{key:this.currentLevel.mainItem,pos:n[i],size:{x:this.currentLevel.size,y:this.currentLevel.size},anchorMid:!0,animations:[{name:this.currentLevel.mainItem,frame:Phaser.Animation.generateFrameNames(this.currentLevel.mainItem+\"00\",0,this.currentLevel.frames,\"\",2),frameRate:12,loop:!1,useNumericInd:void 0}]});o.anim=s,this.spritesArr.push(s)}this.overFunc=function(e){var n=this;if(!e.isTouched){e.isTouched=!0,this.sounds[this.currentLevel.sound].play();e.anim.scale.x;var i=e.anim.animations.play(this.currentLevel.mainItem);i.onComplete.add(function(){n.circlesArr.splice(n.circlesArr.indexOf(e),1),n.makeAccessability(),e.anim.destroy(),console.log(\"anim end\"),++t==n.howMany&&(0,r.setTimeout)(function(){return n.makeNewTurn()},1e3)})}}}"
+      },
+      {
+        "name": "make_vehicle",
+        "code": "function(){for(var t=0,n=this.currentLevel.positions,o=0;o<this.howMany;o++){var s=createSprite(e,this.midLayer,(0,i.default)({key:this.currentLevel.mainItem,pos:n[o],size:{x:this.currentLevel.size,y:this.currentLevel.size}}));s.anchor.set(.5,1),s.inputEnabled=!0,s.events.onInputOver.add(this.onOption.bind(this),this),this.circlesArr.push(s),this.spritesArr.push(s)}this.overFunc=function(n){var i=this;if(!n.isTouched){n.isTouched=!0,this.sounds[this.currentLevel.sound].play();var o=n.scale.y;e.add.tween(n.scale).to({y:1.02*o},150,Phaser.Easing.None,!0,0,99999999,!0),e.add.tween(n).to({x:-n.width},5e3,Phaser.Easing.None,!0).onComplete.add(function(){t++,i.circlesArr.splice(i.circlesArr.indexOf(n),1),i.makeAccessability(),t==i.howMany&&(0,r.setTimeout)(function(){return i.makeNewTurn()},1e3)})}}}"
+      },
+      {
+        "name": "make_sun",
+        "code": "function(){for(var t=0,n=_.sample(this.currentLevel.positions,this.howMany),o=0;o<this.howMany;o++){var s=createSprite(e,this.midLayer,(0,i.default)({key:this.currentLevel.mainItem,pos:n[o],anchorMid:!0,size:{x:this.currentLevel.size,y:this.currentLevel.size}}));this.circlesArr.push(s),this.spritesArr.push(s),s.inputEnabled=!0,s.events.onInputOver.add(this.onOption.bind(this),this);var a=createSprite(e,s,(0,i.default)({key:\"sun_2\",pos:n[o],anchorMid:!0,size:{x:this.currentLevel.size/2,y:this.currentLevel.size/2}}));a.y=a.x=0,a.alpha=0,this.spritesArr.push(a),s.sun2=a;var c=createSprite(e,this.midLayer,(0,i.default)({key:\"sun_3\",pos:n[o],anchorMid:!0,size:{x:this.currentLevel.size/3,y:this.currentLevel.size/3}}));c.y=s.y-20,c.x=s.x,c.alpha=0,this.spritesArr.push(c),s.sun3=c}this.overFunc=function(n){var i=this;n.isTouched||(n.isTouched=!0,this.sounds[this.currentLevel.sound].play(),e.add.tween(n.sun2).to({alpha:1},750,Phaser.Easing.None,!0).onComplete.add(function(){e.add.tween(n.sun3).to({alpha:1},750,Phaser.Easing.None,!0).onComplete.add(function(){e.add.tween(n).to({angle:360},2500,Phaser.Easing.None,!0),e.add.tween(n.sun2).to({angle:-360},2500,Phaser.Easing.None,!0).onComplete.add(function(){t++,fadeOut(n),fadeOut(n.sun3),i.circlesArr.splice(i.circlesArr.indexOf(n),1),i.makeAccessability(),t==i.howMany&&(0,r.setTimeout)(function(){return i.makeNewTurn()},2e3)})})}))}}"
+      },
+      {
+        "name": "make_rocket1",
+        "code": "function(){this.make_rocket()}"
+      },
+      {
+        "name": "make_rocket2",
+        "code": "function(){this.make_rocket()}"
+      },
+      {
+        "name": "make_rocket3",
+        "code": "function(){this.make_rocket()}"
+      },
+      {
+        "name": "make_rocket4",
+        "code": "function(){this.make_rocket()}"
+      },
+      {
+        "name": "make_rocket",
+        "code": "function(){for(var t=0,n=this.currentLevel.positions,o=0;o<this.howMany;o++){var s=createSprite(e,this.midLayer,(0,i.default)({key:this.currentLevel.mainItem,pos:n[o],anchorMid:!0,size:{x:this.currentLevel.size,y:this.currentLevel.size}}));s.inputEnabled=!0,s.events.onInputOver.add(this.onOption.bind(this),this),this.circlesArr.push(s),this.spritesArr.push(s)}this.overFunc=function(n){var i=this;n.isTouched||(n.isTouched=!0,this.sounds[this.currentLevel.sound].play(),e.add.tween(n).to({y:-n.height},1e3,Phaser.Easing.None,!0).onComplete.add(function(){t++,i.circlesArr.splice(i.circlesArr.indexOf(n),1),i.makeAccessability(),t==i.howMany&&(0,r.setTimeout)(function(){return i.makeNewTurn()},1e3)}))}}"
+      },
+      {
+        "name": "make_frog",
+        "code": "function(){this.up_down()}"
+      },
+      {
+        "name": "make_bird",
+        "code": "function(){this.make_plane()}"
+      },
+      {
+        "name": "make_plane",
+        "code": "function(){for(var t=0,n=_.sample(this.currentLevel.positions,this.howMany),o=0;o<this.howMany;o++){var s=createSprite(e,this.midLayer,(0,i.default)({key:this.currentLevel.mainItem,pos:n[o],anchorMid:!0,size:{x:this.currentLevel.size,y:this.currentLevel.size}}));s.inputEnabled=!0,s.events.onInputOver.add(this.onOption.bind(this),this),this.circlesArr.push(s),this.spritesArr.push(s)}this.overFunc=function(n){var i=this;n.isTouched||(n.isTouched=!0,this.sounds[this.currentLevel.sound].play(),e.add.tween(n).to({x:-n.width},5e3,Phaser.Easing.None,!0).onComplete.add(function(){n.scale.x=-n.scale.x,e.add.tween(n).to({x:e.w-n.width},5e3,Phaser.Easing.None,!0).onComplete.add(function(){t++,i.circlesArr.splice(i.circlesArr.indexOf(n),1),i.makeAccessability(),t==i.howMany&&(0,r.setTimeout)(function(){return i.makeNewTurn()},2500)})}),e.add.tween(n).to({y:n.y-n.height/4},700,Phaser.Easing.None,!0,200,10,!0))}}"
+      },
+      {
+        "name": "make_shavshevet",
+        "code": "function(){for(var t=0,n=_.sample(this.currentLevel.positions,this.howMany),o=0;o<this.howMany;o++){var s=createSprite(e,this.midLayer,(0,i.default)({key:this.currentLevel.mainItem,pos:n[o],anchorMid:!0,size:{x:this.currentLevel.size,y:this.currentLevel.size}}));this.spritesArr.push(s);var a=createSprite(e,s,(0,i.default)({key:\"shav_1\",pos:n[o],anchorMid:!0,size:{x:this.currentLevel.size,y:this.currentLevel.size}}));a.y=-s.height/s.scale.y/2,a.x=0,a.inputEnabled=!0,a.events.onInputOver.add(this.onOption.bind(this),this),a.shav=s,this.circlesArr.push(a),this.spritesArr.push(a)}this.overFunc=function(n){var i=this;n.isTouched||(n.isTouched=!0,this.sounds[this.currentLevel.sound].play(),e.add.tween(n).to({angle:-3600},5e3,Phaser.Easing.None,!0).onComplete.add(function(){fadeOut(n,1e3),fadeOut(n.shav,1e3),e.add.tween(n).to({y:n.y-n.height},1e3,Phaser.Easing.None,!0).onComplete.add(function(){t++,i.circlesArr.splice(i.circlesArr.indexOf(n),1),i.makeAccessability(),t==i.howMany&&(0,r.setTimeout)(function(){return i.makeNewTurn()},2500)})}))}}"
+      },
+      {
+        "name": "make_ball",
+        "code": "function(){this.up_down()}"
+      },
+      {
+        "name": "up_down",
+        "code": "function(){for(var t=0,n=_.sample(this.currentLevel.positions,this.howMany),o=0;o<this.howMany;o++){var s=createSprite(e,this.midLayer,(0,i.default)({key:this.currentLevel.mainItem,pos:n[o],anchorMid:!0,size:{x:this.currentLevel.size,y:this.currentLevel.size}}));s.inputEnabled=!0,s.events.onInputOver.add(this.onOption.bind(this),this),this.circlesArr.push(s),this.spritesArr.push(s)}this.overFunc=function(n){var i=this;n.isTouched||(n.isTouched=!0,this.sounds[this.currentLevel.sound].play(),e.add.tween(n).to({y:n.y-n.height},800,Phaser.Easing.None,!0,0,2,!0).onComplete.add(function(){fadeOut(n,1e3),t++,i.circlesArr.splice(i.circlesArr.indexOf(n),1),i.makeAccessability(),t==i.howMany&&(0,r.setTimeout)(function(){return i.makeNewTurn()},1e3)}))}}"
+      },
+      {
+        "name": "makeAccessability",
+        "code": "function(){var t;if(this.boxOptions=this.circlesArr,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat().reverse()):t=this.boxOptions.concat().reverse(),\"heb\"==e.cfg.game_lang_symb&&(t=t.reverse()),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var n=0;n<this.circlesArr.length;n++)this.circlesArr[n].choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);if(3==e.settings.isChooseMode)for(var i=0;i<this.circlesArr.length;i++)this.circlesArr[i].choosingFrame&&(this.circlesArr[i].choosingFrame.visible=!1);this.cw&&(this.cw.visible=!0),this.mTurnCount++,this.startTriggerMode(e.settings.isChooseMode)}"
+      },
+      {
+        "name": "onImageOver",
+        "code": "function(t){if(this.cw&&(this.cw.visible=!0),!this.isDisabalingButtons){for(var n=0;n<this.circlesArr.length;n++)t&&t.choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);e.settings.isChooseMode2direct||t&&t.choosingFrame&&(t.choosingFrame.visible=!0)}}"
+      },
+      {
+        "name": "onImageOut",
+        "code": "function(e){e&&e.choosingFrame&&(e.choosingFrame.visible=!1)}"
+      },
+      {
+        "name": "onOption",
+        "code": "function(e){this.overFunc(e)}"
+      },
+      {
+        "name": "stopAnimation",
+        "code": "function(){this.isDecreasing=!0}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "onWrongAnswer",
+        "code": "function(){this.makeWrongSound()}"
+      },
+      {
+        "name": "onRightAnswer",
+        "code": "function(e){this.makeGoodSound()}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  },
+  {
+    "name": "פאזל",
+    "url": "https://gingim.net/wp-content/uploads/new_games/puzzle_2?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var t=this;a(e,this),this.clickSounds=[e.add.audio(\"click1\"),e.add.audio(\"click2\")],this.levels=[],this.currentLevel=void 0,this.puzzles=e.lcfg.puzzles.map(function(n){var r={remain:0,layer:e.add.group(t.frontLayer,\"puzzle_\"+n.length),parts:[]},i=n.map(function(t){var n=createSprite(e,r.layer,(0,o.default)({hidden:!0,anchorMid:!0},t));return n});return r.parts=i,r.remain=r.parts.length,r}),this.puzzle=void 0,createBg(e,this.buttonsLayer,\"bg\"),this.startNewLevel()}"
+      },
+      {
+        "name": "mapClickPuzzlePart",
+        "code": "function(){var t=e.getItemPositionPercentage({x:e.input.x,y:e.input.y},9),n=t.y>.5?0:1,r=1/(this.puzzle.parts.length/2);2===this.puzzle.parts.length&&(n=0,r=.5);var i=Math.floor(t.x/r);2===this.puzzle.parts.length&&(i=0==i?1:0),this.onPuzzleClick(n*this.puzzle.parts.length/2+i)}"
+      },
+      {
+        "name": "clickAnyPuzzlePart",
+        "code": "function(){var e=this.puzzle.parts.findIndex(function(e){return e.visible});this.onPuzzleClick(e)}"
+      },
+      {
+        "name": "onPuzzleClick",
+        "code": "function(t){this.puzzle.parts[t].visible&&(this.playClickSound(),this.puzzle.parts[t].visible=!1,this.puzzle.remain--,0===this.puzzle.remain&&this.playEndLevelAnimation(),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3&&this.updateChooseWindowItems(this.puzzle.parts.filter(function(e){return e.visible})))}"
+      },
+      {
+        "name": "setCurrentPuzzle",
+        "code": "function(){this.puzzle=this.puzzles[e.settings.difficulty],this.puzzle.remain=this.puzzle.parts.length,this.puzzle.parts.forEach(function(e){return e.visible=!0})}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){this.makeNewTurn(),this.puzzle&&this.puzzle.parts&&this.puzzle.parts.forEach(function(e){return e.visible=!1}),this.setCurrentPuzzle(),this.levels.length||(this.levels=_.shuffle(e.lcfg.levels.slice())),this.currentLevel&&(this.currentLevel.bg.destroy(),this.currentLevel.sound.destroy(),this.currentLevel.animSound.destroy(),this.currentLevel.parts.forEach(function(e){return e.destroy()}),this.currentLevel.layer.destroy());var t=this.levels.pop(),n=e.add.group(this.midLayer,t.name),r={anchorMid:!0},i=t.items.map(function(t){var i=(0,o.default)({},t,r);return createSprite(e,n,i)});if(\"whale\"===t.name){var a=i[1],u=i[2];a.addChild(u),a.anchor.setTo(.5,1),e.checkItemSize(a,.4,.4),a.y+=a.height/2,a.scale.setTo(0)}var c=createBg(e,this.backLayer,t.bgKey);if(c.inputEnabled=!0,c.events.onInputDown.add(this.mapClickPuzzlePart,this),this.currentLevel={name:t.name,layer:n,bg:c,sound:e.add.sound(t.sound),animSound:e.add.sound(t.animSound),parts:i,currentPartIndex:0},1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3){this.chooseWindowConfig.items=this.puzzle.parts,this.chooseWindowConfig.clickHandler=function(e){this.onPuzzleClick(this.puzzle.parts.indexOf(e))};var s=_.clone(this.chooseWindowConfig);e.settings.isChooseMode2direct&&(s.tint=0),this.doChooseMode(e.settings.isChooseMode,s)}}"
+      },
+      {
+        "name": "playEndLevelAnimation",
+        "code": "function(){var t=this,n=this.startNewLevel.bind(this);switch(this.currentLevel.name){case\"lion\":var r=this.currentLevel.layer.children[1],i=this.currentLevel.layer.children[2],o=i.x;r.x=-r.width/2,e.add.tween(r).to({x:e.w+r.width/2},5e3*u,\"Linear\",!0),e.add.tween(i).to({x:-i.width/2},1e3*u,\"Linear\",!0).onComplete.addOnce(function(){t.currentLevel.layer.addChildAt(i,0),i.x=e.w+i.width/2,e.checkItemSize(i,.3,.3),e.add.tween(i).to({x:-i.width/2},2500*u,\"Linear\",!0).onComplete.addOnce(function(){t.currentLevel.layer.addChildAt(i,2),i.x=e.w+i.width/2,e.checkItemSize(i,.5,.5),e.add.tween(i).to({x:o},2e3*u,\"Linear\",!0).onComplete.addOnce(n)})}),this.currentLevel.animSound.play();break;case\"road\":var a=this.currentLevel.layer.children[0];this.currentLevel.animSound.play(),e.time.events.add(3e3*u,function(){return t.currentLevel.animSound.play()}),e.add.tween(a.scale).to({x:2*a.scale.x,y:2*a.scale.y},6e3*u,\"Linear\",!0).onComplete.addOnce(n);break;case\"bicycle\":var c=this.currentLevel.layer.children[0],s=function(n){e.time.events.add(1250*u,function(){t.currentLevel.animSound.play(),n&&n()})};this.currentLevel.animSound.play(),s(function(){return s(function(){return s(function(){return s(function(){return s()})})})}),e.add.tween(c).to({x:-c.width/2},7e3*u,\"Linear\",!0).onComplete.addOnce(n);break;case\"umbrella\":var l=this.currentLevel.layer.children[0],f=this.currentLevel.layer.children[2],d=e.calcItemPosition(l,.357,.751),p=e.calcItemPosition(f,.523,.67);this.currentLevel.animSound.play(),e.time.events.add(5e3*u,function(){return t.currentLevel.animSound.play()});var h=e.add.tween(f).to({y:p.y},1e3*u,Phaser.Easing.Bounce.Out,!0,0,-1,!0);e.add.tween(l).to({x:d.x},1e4*u,\"Linear\",!0).onComplete.addOnce(function(){h.stop(),n()});break;case\"swing\":var v=this.currentLevel.layer.children[this.currentLevel.layer.children.length-1],y=e.calcItemPosition(v,.335,.734);y.angle=15;var m=e.calcItemPosition(v,.748,.741);m.angle=-25;var z=function(n){return t.currentLevel.animSound.play(),e.add.tween(v).to(y,1e3,\"Linear\",!0,0,0,!0).onComplete.addOnce(function(){return n()})},g=function(t){return e.add.tween(v).to(m,1250,\"Linear\",!0,0,0,!0).onComplete.addOnce(function(){return t()})};z(function(){g(function(){z(function(){g(function(){z(n)})})})});break;case\"trampoline\":var v=this.currentLevel.layer.children[this.currentLevel.layer.children.length-1],x=e.calcItemPosition(v,.5,.5),w=e.add.tween(v).to({angle:360},1e3*u,\"Linear\",!1),L=e.add.tween(v).to({y:x.y},1e3*u,\"Linear\",!0,0,0,!0),b=function(){return e.time.events.add(1e3*u,function(){return t.currentLevel.animSound.play()}),L.start()};b().onComplete.addOnce(function(){b().onComplete.addOnce(function(){b().onComplete.addOnce(function(){w.start().onComplete.addOnce(function(){b().onComplete.addOnce(function(){n()})})})})});break;case\"whale\":var C=this.currentLevel.layer.children[0],O=this.currentLevel.layer.children[1],S=e.calcItemPosition(C,.575,.265),P=O.position.x,k=e.calcItemSize(O,.4,.4),_=e.calcItemPosition(C,.378,.694),M=e.calcItemPosition(C,.662,.694);O.scale.setTo(0);var j=function(n){t.currentLevel.animSound.play(),e.add.tween(C).to({y:S.y},1e3*u,\"Linear\",!0,0,0,!0),e.add.tween(O.scale).to({x:1/k,y:1/k},1e3*u,\"Linear\",!0).onComplete.addOnce(function(){var t=O.children[0];t.scale.setTo(1/k),O.parent.addChild(t),e.add.tween(O).to({alpha:0,x:_.x},1e3*u,\"Linear\",!0),e.add.tween(t).to({alpha:0,x:M.x},1e3*u,\"Linear\",!0).onComplete.addOnce(function(){t.x=P,t.scale.setTo(0),t.alpha=1,O.x=P,O.scale.setTo(0),O.alpha=1,O.addChild(t),n&&n()})})};j(function(){return j(function(){return j(function(){return n()})})});break;case\"catamaran\":var I=this.currentLevel.layer.children[0];this.currentLevel.animSound.play(),e.add.tween(I).to({x:-I.width/2},1e4*u,\"Linear\",!0).onComplete.addOnce(n)}}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.startNewLevel()}"
+      },
+      {
+        "name": "playClickSound",
+        "code": "function(){var t=e.rnd.integerInRange(0,this.clickSounds.length-1);this.clickSounds[t].play()}"
+      }
+    ]
+  },
+  {
+    "name": "תפוס אותי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/catch_me/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){removeAllTimers(),this.currentItem=appConfig.difficulty.items[e.settings.difficulty0],(0,i.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg_\"+this.currentItem.name,chooseWindow:!0}),this.createSounds(),e.shared.nextBtn&&(e.shared.nextBtn.visible=!1),this.turnNum=-1,this.sounds=new Object,this.musicSound=e.add.audio(\"music\"),this.currentItem.arr=new Array;for(var t=0;t<this.currentItem.number+1;t++){var n=t;t<10&&(n=\"0\"+t);var o=createSprite(e,this.midLayer,{key:this.currentItem.name+n,anchorMid:!0,callback:this.onOption.bind(this),size:{x:.2,y:.2},pos:{x:.5,y:.5},hidden:!0,shadow:!0});o.choosingFrame&&(o.choosingFrame.visible=!1),this.currentItem.arr.push(o)}this.currentItem.arr=_.shuffle(this.currentItem.arr),this.makeNewTurn()}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){this.musicSound.pause(),this.isDisabalingButtons=!1,this.currentItem.arr.forEach(function(e){e.isTofly=!1,e.visible=!1,e.angle=0}),this.counter=0,this.turnNum++,this.turnNum>=this.currentItem.arr.length&&(this.turnNum=0),this.currentS=this.currentItem.arr[this.turnNum],this.currentS.visible=!0,this.currentS.x=e.rnd.between(this.currentS.width/2,e.w-this.currentS.width),this.currentS.y=e.rnd.between(this.currentS.height/2,e.h-this.currentS.height),this.tween=e.add.tween(this.currentS).to({y:this.currentS.y+e.h/20},1e3,Phaser.Easing.None,!0,0,999999,!0),this.makeAccessability()}"
+      },
+      {
+        "name": "makeAccessability",
+        "code": "function(){var t;if(this.circlesArr=[this.currentS],this.boxOptions=this.circlesArr,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat().reverse()):t=this.boxOptions.concat().reverse(),\"heb\"==e.cfg.game_lang_symb&&(t=t.reverse()),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var n=0;n<this.circlesArr.length;n++)this.circlesArr[n].choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);if(3==e.settings.isChooseMode)for(var i=0;i<this.circlesArr.length;i++)this.circlesArr[i].choosingFrame&&(this.circlesArr[i].choosingFrame.visible=!1);this.cw&&(this.cw.visible=!0),this.mTurnCount++,this.startTriggerMode(e.settings.isChooseMode)}"
+      },
+      {
+        "name": "onImageOver",
+        "code": "function(t){if(this.cw&&(this.cw.visible=!0),!this.isDisabalingButtons){for(var n=0;n<this.circlesArr.length;n++)t&&t.choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);e.settings.isChooseMode2direct||t&&t.choosingFrame&&(t.choosingFrame.visible=!0)}}"
+      },
+      {
+        "name": "onImageOut",
+        "code": "function(e){e&&e.choosingFrame&&(e.choosingFrame.visible=!1)}"
+      },
+      {
+        "name": "onOption",
+        "code": "function(t){if(t)if(this.isDisabalingButtons)console.log(\"back\");else{if(this.makeEffectSound(),this.tween.stop(),this.counter++,3==this.counter)return t.visible=!1,void this.makeAnimation();var n=e.w-this.currentS.width,i=this.currentS.width,o=e.rnd.between(i,n);this.currentS.x=o,this.currentS.y=e.rnd.between(this.currentS.height,e.h-this.currentS.height),this.tween=e.add.tween(this.currentS).to({y:this.currentS.y+e.h/20},1e3,Phaser.Easing.None,!0,0,999999,!0)}}"
+      },
+      {
+        "name": "makeAnimation",
+        "code": "function(){var t=this;this.isDisabalingButtons=!0,this.musicSound.play(),this.removeTriggerEvents(),this.decreasing=.025,this.isDecreasing=!1,this.flying=new Array;Math.min(12,this.currentItem.arr.length);for(var n=0;n<5;n++)this.flying.push(this.currentItem.arr[n]);for(var i=function(n){t.flying[n].x=.75*e.w,t.flying[n].y=e.h+t.flying[n].height/2,t.flying[n].visible=!0,t.flying[n].angle=90,t.flying[n].rotAngle=0,e.add.tween(t.flying[n]).to({y:e.h/2},1e3,Phaser.Easing.None,!0,800*n).onComplete.add(function(){t.flying[n].isTofly=!0,n==t.flying.length-1&&(t.isIncreasing=!0)})},r=0;r<this.flying.length;r++)i(r);this.nowAnimation=!0,(0,o.setTimeout)(function(){return t.stopAnimation()},1e3*this.flying.length)}"
+      },
+      {
+        "name": "stopAnimation",
+        "code": "function(){this.isDecreasing=!0}"
+      },
+      {
+        "name": "update",
+        "code": "function(){var t=this;if(this.currentItem.arr&&this.currentItem.arr.forEach(function(e){e.shadow&&(e.shadow.x=15,e.shadow.y=15,e.shadow.tint=0)}),this.nowAnimation&&this.flying){this.isDecreasing?this.decreasing-=.001:this.isIncreasing&&(this.decreasing+=1e-4),this.decreasing<=0&&(this.decreasing=0),this.ang=this.decreasing;for(var n=function(n){t.flying[n].isTofly&&(t.flying[n].angle-=t.ang*(180/Math.PI),t.flying[n].rotAngle-=t.ang,t.flying[n].x=e.w/2+Math.cos(t.flying[n].rotAngle)*e.w/4,t.flying[n].y=e.h/2+Math.sin(t.flying[n].rotAngle)*e.w/4),0==t.decreasing&&(t.flying[n].isTofly=!1,t.isDecreasing=!1,t.isIncreasing=!1,t.nowAnimation=!1,e.add.tween(t.flying[n]).to({angle:t.flying[n].angle+90},500,Phaser.Easing.None,!0,250).onComplete.add(function(){e.add.tween(t.flying[n]).to({x:e.w/2+Math.cos(t.flying[n].rotAngle)*e.w/1.5,y:e.h/2+Math.sin(t.flying[n].rotAngle)*e.w/1.5},1500,Phaser.Easing.Cubic.Out,!0,1e3,1,!0).onComplete.add(function(){n==t.flying.length-1&&(0,o.setTimeout)(function(){return t.makeNewTurn()},1e3)})}))},i=0;i<this.flying.length;i++)n(i)}}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "onWrongAnswer",
+        "code": "function(){var t=this;fadeIn(this.x,500),(0,o.setTimeout)(function(){fadeOut(t.x),t.isDisabalingButtons=!1,t.startTriggerMode(e.settings.isChooseMode)},1500),this.makeWrongSound()}"
+      },
+      {
+        "name": "onRightAnswer",
+        "code": "function(t){var n=this;this.isDisabalingButtons=!0,this.answerText=e.add.text(this.exreciseText.x+this.exreciseText.width/2,0,this.score,this.textStyle),this.answerText.anchor.set(.5),this.answerText.y-=this.exreciseText.height/2,this.answerText.x+=this.answerText.width/2,this.answerText.stroke=\"#000000\",this.answerText.strokeThickness=6,this.answerText.addColor(\"#ffffff\",0),e.add.tween(this.answerText).to({y:this.exreciseText.y},2e3,Phaser.Easing.Bounce.Out,!0).onComplete.add(function(){(0,o.setTimeout)(function(){return n.makeNewTurn()},3e3)}),fadeIn(this.v,500),(0,o.setTimeout)(function(){return fadeOut(n.v)},2500),this.makeGoodSound()}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeEffectSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundEffectsArr.length);this.soundEffectsArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  },
+  {
+    "name": "תפוס אותי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/catch_hanuka/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){removeAllTimers(),this.currentItem=appConfig.difficulty.items[e.settings.difficulty0],(0,i.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg_\"+this.currentItem.name,chooseWindow:!0}),this.createSounds(),e.shared.nextBtn&&(e.shared.nextBtn.visible=!1),this.turnNum=-1,this.sounds=new Object,this.musicSound=e.add.audio(\"music\"),this.currentItem.arr=new Array;for(var t=0;t<this.currentItem.number+1;t++){var n=t;t<10&&(n=\"0\"+t);var o=createSprite(e,this.midLayer,{key:this.currentItem.name+n,anchorMid:!0,callback:this.onOption.bind(this),size:{x:.2,y:.2},pos:{x:.5,y:.5},hidden:!0,shadow:!0});o.choosingFrame&&(o.choosingFrame.visible=!1),this.currentItem.arr.push(o)}this.currentItem.arr=_.shuffle(this.currentItem.arr),this.makeNewTurn()}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){this.musicSound.pause(),this.isDisabalingButtons=!1,this.currentItem.arr.forEach(function(e){e.isTofly=!1,e.visible=!1,e.angle=0}),this.counter=0,this.turnNum++,this.turnNum>=this.currentItem.arr.length&&(this.turnNum=0),this.currentS=this.currentItem.arr[this.turnNum],this.currentS.visible=!0,this.currentS.x=e.rnd.between(this.currentS.width/2,e.w-this.currentS.width),this.currentS.y=e.rnd.between(this.currentS.height/2,e.h-this.currentS.height),this.tween=e.add.tween(this.currentS).to({y:this.currentS.y+e.h/20},1e3,Phaser.Easing.None,!0,0,999999,!0),this.makeAccessability()}"
+      },
+      {
+        "name": "makeAccessability",
+        "code": "function(){var t;if(this.circlesArr=[this.currentS],this.boxOptions=this.circlesArr,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat().reverse()):t=this.boxOptions.concat().reverse(),\"heb\"==e.cfg.game_lang_symb&&(t=t.reverse()),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var n=0;n<this.circlesArr.length;n++)this.circlesArr[n].choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);if(3==e.settings.isChooseMode)for(var i=0;i<this.circlesArr.length;i++)this.circlesArr[i].choosingFrame&&(this.circlesArr[i].choosingFrame.visible=!1);this.cw&&(this.cw.visible=!0),this.mTurnCount++,this.startTriggerMode(e.settings.isChooseMode)}"
+      },
+      {
+        "name": "onImageOver",
+        "code": "function(t){if(this.cw&&(this.cw.visible=!0),!this.isDisabalingButtons){for(var n=0;n<this.circlesArr.length;n++)t&&t.choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);e.settings.isChooseMode2direct||t&&t.choosingFrame&&(t.choosingFrame.visible=!0)}}"
+      },
+      {
+        "name": "onImageOut",
+        "code": "function(e){e&&e.choosingFrame&&(e.choosingFrame.visible=!1)}"
+      },
+      {
+        "name": "onOption",
+        "code": "function(t){if(t)if(this.isDisabalingButtons)console.log(\"back\");else{if(this.makeEffectSound(),this.tween.stop(),this.counter++,3==this.counter)return t.visible=!1,void this.makeAnimation();var n=e.w-this.currentS.width,i=this.currentS.width,o=e.rnd.between(i,n);this.currentS.x=o,this.currentS.y=e.rnd.between(this.currentS.height,e.h-this.currentS.height),this.tween=e.add.tween(this.currentS).to({y:this.currentS.y+e.h/20},1e3,Phaser.Easing.None,!0,0,999999,!0)}}"
+      },
+      {
+        "name": "makeAnimation",
+        "code": "function(){var t=this;this.isDisabalingButtons=!0,this.musicSound.play(),this.removeTriggerEvents(),this.decreasing=.025,this.isDecreasing=!1,this.flying=new Array;Math.min(12,this.currentItem.arr.length);for(var n=0;n<5;n++)this.flying.push(this.currentItem.arr[n]);for(var i=function(n){t.flying[n].x=.75*e.w,t.flying[n].y=e.h+t.flying[n].height/2,t.flying[n].visible=!0,t.flying[n].angle=90,t.flying[n].rotAngle=0,e.add.tween(t.flying[n]).to({y:e.h/2},1e3,Phaser.Easing.None,!0,800*n).onComplete.add(function(){t.flying[n].isTofly=!0,n==t.flying.length-1&&(t.isIncreasing=!0)})},r=0;r<this.flying.length;r++)i(r);this.nowAnimation=!0,(0,o.setTimeout)(function(){return t.stopAnimation()},1e3*this.flying.length)}"
+      },
+      {
+        "name": "stopAnimation",
+        "code": "function(){this.isDecreasing=!0}"
+      },
+      {
+        "name": "update",
+        "code": "function(){var t=this;if(this.currentItem.arr&&this.currentItem.arr.forEach(function(e){e.shadow&&(e.shadow.x=15,e.shadow.y=15,e.shadow.tint=0)}),this.nowAnimation&&this.flying){this.isDecreasing?this.decreasing-=.001:this.isIncreasing&&(this.decreasing+=1e-4),this.decreasing<=0&&(this.decreasing=0),this.ang=this.decreasing;for(var n=function(n){t.flying[n].isTofly&&(t.flying[n].angle-=t.ang*(180/Math.PI),t.flying[n].rotAngle-=t.ang,t.flying[n].x=e.w/2+Math.cos(t.flying[n].rotAngle)*e.w/4,t.flying[n].y=e.h/2+Math.sin(t.flying[n].rotAngle)*e.w/4),0==t.decreasing&&(t.flying[n].isTofly=!1,t.isDecreasing=!1,t.isIncreasing=!1,t.nowAnimation=!1,e.add.tween(t.flying[n]).to({angle:t.flying[n].angle+90},500,Phaser.Easing.None,!0,250).onComplete.add(function(){e.add.tween(t.flying[n]).to({x:e.w/2+Math.cos(t.flying[n].rotAngle)*e.w/1.5,y:e.h/2+Math.sin(t.flying[n].rotAngle)*e.w/1.5},1500,Phaser.Easing.Cubic.Out,!0,1e3,1,!0).onComplete.add(function(){n==t.flying.length-1&&(0,o.setTimeout)(function(){return t.makeNewTurn()},1e3)})}))},i=0;i<this.flying.length;i++)n(i)}}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "onWrongAnswer",
+        "code": "function(){var t=this;fadeIn(this.x,500),(0,o.setTimeout)(function(){fadeOut(t.x),t.isDisabalingButtons=!1,t.startTriggerMode(e.settings.isChooseMode)},1500),this.makeWrongSound()}"
+      },
+      {
+        "name": "onRightAnswer",
+        "code": "function(t){var n=this;this.isDisabalingButtons=!0,this.answerText=e.add.text(this.exreciseText.x+this.exreciseText.width/2,0,this.score,this.textStyle),this.answerText.anchor.set(.5),this.answerText.y-=this.exreciseText.height/2,this.answerText.x+=this.answerText.width/2,this.answerText.stroke=\"#000000\",this.answerText.strokeThickness=6,this.answerText.addColor(\"#ffffff\",0),e.add.tween(this.answerText).to({y:this.exreciseText.y},2e3,Phaser.Easing.Bounce.Out,!0).onComplete.add(function(){(0,o.setTimeout)(function(){return n.makeNewTurn()},3e3)}),fadeIn(this.v,500),(0,o.setTimeout)(function(){return fadeOut(n.v)},2500),this.makeGoodSound()}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeEffectSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundEffectsArr.length);this.soundEffectsArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  },
+  {
+    "name": "הפתעה בקופסה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/box?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var t=this;(0,o.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),e.shared.nextBtn&&(e.shared.nextBtn.visible=!1),this.sounds=new Object,this.createSounds(),this.isMouseBlock=!1,this.isMoving=!1,this.turnNum=0,this.animationsArr=new Array,e.settings.isChooseMode2direct=!1;for(var n=0;n<appConfig.animations.length;n++){var i=appConfig.animations[n];this.animationsArr[n]=createSprite(e,this.backLayer,{key:i.name,anchorMid:!0,pos:{x:0,y:0},size:{x:i.scale,y:i.scale},hidden:!0,animations:[{name:\"walk\",frame:Phaser.Animation.generateFrameNames(i.name+\"00\",0,i.frames,\"\",2),frameRate:24,loop:!0,useNumericInd:void 0}]}),this.sounds[i.name]=e.add.audio(i.name)}if(this.animationsArr=shuffleArray(this.animationsArr),this.animationsArr[this.turnNum].anchor.y=1,this.kidWithbox=createSprite(e,this.backLayer,{key:\"main\",anchorMid:!0,pos:{x:-.178,y:.245},size:{x:.3,y:.3},callback:function(){return t.onBox()},animations:[{name:\"walk\",frame:Phaser.Animation.generateFrameNames(\"kid00\",0,17,\"\",2),frameRate:24,loop:!0,useNumericInd:void 0}]}),this.boxOptions=new Array,this.boxOptions.push(this.kidWithbox),this.cw&&(this.cw.visible=!1),this.makeAccesability(),this.originalKidPosition=new Phaser.Point,this.originalKidPosition=this.kidWithbox.position.clone(),this.cover=createSprite(e,this.backLayer,{key:\"cover\",anchorMid:!0,pos:{x:0,y:0},size:{x:.19,y:.19},callback:function(){return t.onBox()}}),this.makeNextMove(),0==e.settings.isChooseMode){var a=e.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);a.onDown.add(function(){return t.onBox()},this);var r=e.input.keyboard.addKey(Phaser.Keyboard.ENTER);r.onDown.add(function(){return t.onBox()},this)}}"
+      },
+      {
+        "name": "update",
+        "code": "function(){this.isMoving?(this.cover.x=this.kidWithbox.x+e.w/e.wOrig*62,this.cover.y=this.kidWithbox.y-e.h/e.hOrig*120):(this.kidWithbox.x=this.tempPos.x,this.kidWithbox.y=this.tempPos.y),this.cw&&(this.cw.visible=!1)}"
+      },
+      {
+        "name": "onBox",
+        "code": "function(t){var n=this;if(!(this.isMouseBlock||this.kidWithbox.x<=50)){this.isMouseBlock=!0;var o=this.cover.x;this.cover.y;o+=e.w/e.wOrig*250,-250,this.animationsArr[this.turnNum].visible=!0,this.animationsArr[this.turnNum].scale.set(.2*this.animationsArr[this.turnNum].originalScale),this.animationsArr[this.turnNum].x=this.kidWithbox.x+e.w/e.wOrig*85,this.animationsArr[this.turnNum].y=this.kidWithbox.y,console.log(\"this.turnNum >> \"+this.turnNum),e.add.tween(this.cover).to({x:o,y:-250,angle:90},750,Phaser.Easing.None,!0),this.origHeight=this.kidWithbox.height,this.makeGoodSound(),this.onStop(),this.isMoving?this.doTheTweens():setTimeout(function(){return n.doTheTweens()},500)}}"
+      },
+      {
+        "name": "doTheTweens",
+        "code": "function(){var t=e.w/e.wOrig,n=this.animationsArr[this.turnNum].originalScale*t;n<1&&(n=1),e.add.tween(this.kidWithbox).to({alpha:0},500,Phaser.Easing.None,!0),e.add.tween(this.kidWithbox.scale).to({y:.1*this.kidWithbox.originalScale,x:.1*this.kidWithbox.originalScale},400,Phaser.Easing.None,!0),e.add.tween(this.animationsArr[this.turnNum]).to({y:e.h*(1/3),x:e.w/2},350,Phaser.Easing.Cubic.Out,!0).onComplete.add(this.onGoDown,this),e.add.tween(this.animationsArr[this.turnNum].scale).to({y:n,x:n},1050,Phaser.Easing.Cubic.Out,!0)}"
+      },
+      {
+        "name": "onGoDown",
+        "code": "function(){e.add.tween(this.animationsArr[this.turnNum]).to({y:e.h/2},700,Phaser.Easing.Cubic.In,!0).onComplete.add(this.onStartAnim,this)}"
+      },
+      {
+        "name": "onStartAnim",
+        "code": "function(){var e=this;this.sounds[this.animationsArr[this.turnNum].key].play(),this.animationsArr[this.turnNum].animations.play(\"walk\"),setTimeout(function(){return e.makeNextMove()},4e3)}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundTimes=0,this.lastSound=this.soundGoodArr[e],this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "soundStopped",
+        "code": "function(){this.soundTimes++,this.soundTimes<=3?this.makeWrongSound():this.lastSound=null}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){makeRandomSound(this.soundGoodArr)}"
+      },
+      {
+        "name": "makeSwitch",
+        "code": "function(){}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){if(!this.isMoving){this.makeNewTurn(),this.tweenManager,e.tweens,e.tweenManager,this.sounds[this.animationsArr[this.turnNum].key].stop(),this.kidWithbox.x=this.originalKidPosition.x,this.kidWithbox.y=this.originalKidPosition.y,this.kidWithbox.scale.set(this.kidWithbox.originalScale),this.kidWithbox.alpha=1,this.cover.angle=0,this.animationsArr[this.turnNum].visible=!1,this.animationsArr[this.turnNum].scale.set(this.animationsArr[this.turnNum].originalScale);var t=e.rnd.integerInRange(e.w/e.wOrig*200,e.h/e.hOrig*800);this.kidWithbox.animations.play(\"walk\"),this.mainTween=e.add.tween(this.kidWithbox).to({x:t},10*t,Phaser.Easing.None,!0).onComplete.add(this.onStop,this),this.isMoving=!0,this.turnNum++,this.turnNum==this.animationsArr.length&&(this.turnNum=0),this.isMouseBlock=!1}}"
+      },
+      {
+        "name": "makeAccesability",
+        "code": "function(){1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3&&(this.chooseWindowConfig.items=this.boxOptions.concat().reverse(),this.chooseWindowConfig.clickHandler=function(e){this.onBox(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig))}"
+      },
+      {
+        "name": "onshloop",
+        "code": "function(){console.log(\"JJJ\")}"
+      },
+      {
+        "name": "onStop",
+        "code": "function(){this.isMoving=!1,this.tempPos=this.kidWithbox.position.clone(),this.kidWithbox.animations.stop(null,!0)}"
+      },
+      {
+        "name": "createSounds",
+        "code": "function(){this.soundWrongArr=new Array,this.soundGoodArr=new Array;for(var t=0;t<appConfig.sounds.right.length;t++)this.soundGoodArr[t]=e.add.audio(\"sound_right\"+(t+1));for(var n=0;n<appConfig.sounds.wrong.length;n++)this.soundWrongArr[n]=e.add.audio(\"sound_wrong\"+(n+1))}"
+      }
+    ]
+  },
+  {
+    "name": "לחץ וסע",
+    "url": "https://gingim.net/wp-content/uploads/new_games/touch_go/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var t=this;removeAllTimers(),this.items=new Array,this.sounds=new Object,appConfig.items.forEach(function(n){t.items.push(n.image),t.sounds[n.image]=e.add.audio(n.sound)}),(0,i.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),e.shared.nextBtn.visible=!1,this.makeNewTurn()}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){this.circlesArr&&this.circlesArr.forEach(function(e){e.choosingFrame&&e.choosingFrame.destroy(),e.destroy()}),this.circlesArr=new Array,this.isMovie=!1;for(var t,n=_.sample(this.items,4),i=0;i<n.length;i++){this.circlesArr[i]=createSprite(e,this.midLayer,(0,o.default)({key:n[i],anchorMid:!0,pos:{x:.9,y:.05+.23*i},size:{x:.22,y:.22},callback:this.onOption.bind(this)})),this.circlesArr[i].anchor.set(.5,1);var r=this.circlesArr[i].scale.y;e.add.tween(this.circlesArr[i].scale).to({y:1.02*r},150,Phaser.Easing.None,!0,0,99999999,!0)}if(this.redSquare&&this.redSquare.destroy(),this.boxOptions=this.circlesArr,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat().reverse()):t=this.boxOptions.concat().reverse(),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.redSquare=e.add.graphics(0,0),this.redSquare.lineStyle(5,16711680),this.redSquare.drawCircle(0,-this.circlesArr[0].height/2,1.1*this.circlesArr[0].width),this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var s=0;s<this.circlesArr.length;s++)this.circlesArr[s].choosingFrame&&(this.circlesArr[s].choosingFrame.visible=!1);if(3==e.settings.isChooseMode){for(var a=0;a<this.circlesArr.length;a++)this.circlesArr[a].choosingFrame&&(this.circlesArr[a].choosingFrame.visible=!1);this.redSquare.visible=!1}this.cw&&(this.cw.visible=!1),this.mTurnCount++,this.startTriggerMode(e.settings.isChooseMode)}"
+      },
+      {
+        "name": "makeMovie",
+        "code": "function(){var t=this,n=_.sample(this.items,1);this.movietruck&&this.movietruck.destroy(),this.movietruck=createSprite(e,this.midLayer,(0,o.default)({key:n,pos:{x:-.1,y:.5},anchorMid:!0,size:{x:-.4,y:.4}})),this.movietruck.x=e.w+this.movietruck.width,this.sounds[n]&&this.sounds[n].loopFull(),this.cw&&(this.cw.visible=!1);var i=this.movietruck.scale.y;e.add.tween(this.movietruck.scale).to({y:1.02*i},150,Phaser.Easing.None,!0,0,99999999,!0),e.add.tween(this.movietruck).to({x:-this.movietruck.width},5500,Phaser.Easing.None,!0).onComplete.add(function(){t.sounds[n]&&t.sounds[n].stop(),t.movietruck.scale.x*=-1,e.add.tween(t.movietruck).to({x:e.w-t.movietruck.width},5500,Phaser.Easing.None,!0).onComplete.add(function(){fadeOut(t.movietruck),t.makeNewTurn()})})}"
+      },
+      {
+        "name": "onOption",
+        "code": "function(t){var n=this;this.isMoving,this.redSquare&&(this.redSquare.visible=!1),this.isMoving=!0,this.sounds[t.key]&&this.sounds[t.key].play(),e.add.tween(t).to({x:t.x-e.w/3},1500,Phaser.Easing.Cubic.Out,!0).onComplete.add(function(){var o;n.sounds[t.key].stop(),t.x<-t.width/4&&(n.circlesArr.splice(n.circlesArr.indexOf(t),1),fadeOut(t),(0,r.setTimeout)(function(){return t.destroy()},250),n.circlesArr[0]),n.isMoving=!1,n.boxOptions=n.circlesArr,n.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,o=n.boxOptions.concat().reverse()):o=n.boxOptions.concat().reverse(),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3&&(n.chooseWindowConfig.imgOverCB=n.onImageOver,n.chooseWindowConfig.imgOutCB=n.onImageOut,n.chooseWindowConfig.items=o.concat(),n.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},n.doChooseMode(e.settings.isChooseMode,n.chooseWindowConfig)),n.circlesArr.length<1&&!n.isMovie&&n.makeMovie(),3!=e.settings.isChooseMode&&e.settings.isChooseMode>0?n.redSquare&&(n.redSquare.visible=!0):n.redSquare&&(n.redSquare.visible=!1)})}"
+      },
+      {
+        "name": "onImageOver",
+        "code": "function(t){if(this.cw&&(this.cw.visible=!1),!this.isDisabalingButtons){3==e.settings.isChooseMode?(this.redSquare&&(this.redSquare.visible=!0),this.redSquare&&(this.redSquare.x=t.x),this.redSquare&&(this.redSquare.y=t.y)):this.redSquare&&(this.redSquare.visible=!1),this.isMoving;for(var n=0;n<this.circlesArr.length;n++)this.circlesArr[n]&&this.circlesArr[n].choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1,this.circlesArr[n].choosingFrame.x=this.circlesArr[n].x,this.circlesArr[n].choosingFrame.y=this.circlesArr[n].y);e.settings.isChooseMode2direct||t&&t.choosingFrame&&(t.choosingFrame.visible=!0)}}"
+      },
+      {
+        "name": "onImageOut",
+        "code": "function(e){e&&e.choosingFrame&&(e.choosingFrame.visible=!1)}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  },
+  {
+    "name": "סדר את החדר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/tidy_up/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){removeAllTimers(),(0,i.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),this.positions=[{x:.25,y:.25},{x:.75,y:.25},{x:.25,y:.75},{x:.75,y:.75}],this.createSounds(),this.turnNum=-1,this.sounds=new Object,this.box=createSprite(e,this.midLayer,(0,o.default)({key:\"box_small\",anchorMid:!0,pos:{x:.5,y:.5},size:{x:.3,y:.3}})),this.boxBig=createSprite(e,this.midLayer,(0,o.default)({key:\"box_large\",anchorMid:!0,pos:{x:.5,y:.5},size:{x:.5,y:.5},hidden:!0})),this.boxBigBottom=createSprite(e,this.frontLayer,(0,o.default)({key:\"box_large_bottom\",anchorMid:!0,pos:{x:.5,y:.5},size:{x:.5,y:.5},hidden:!0})),this.makeNewTurn()}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){var t=this;this.isDisabalingButtons=!1,this.box.visible=!0,this.boxBig.visible=!1,this.boxBigBottom.visible=!1;var n,i=e.rnd.between(0,this.positions.length-1);for(this.box.x=this.positions[i].x*e.w,this.box.y=(1-this.positions[i].y)*e.h;(n=e.rnd.between(0,this.positions.length-1))==i;);var r=e.rnd.between(0,appConfig.numOfPhotos);this.item&&this.item.destroy();var a,s=r;if(r<10&&(s=\"0\"+r),this.item=createSprite(e,this.midLayer,(0,o.default)({key:\"img_\"+s,anchorMid:!0,pos:{x:this.positions[n].x,y:this.positions[n].y},size:{x:.25,y:.25},callback:this.onOption.bind(this)})),0==e.settings.isChooseMode&&(this.item.inputEnabled=!0,this.item.input.enableDrag(),this.item.events.onDragStop.add(function(){return t.onDragStop(t.item)},this)),this.circlesArr=[this.item],this.boxOptions=this.circlesArr,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,a=this.boxOptions.concat().reverse()):a=this.boxOptions.concat().reverse(),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=a.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var c=0;c<this.circlesArr.length;c++)this.circlesArr[c].choosingFrame&&(this.circlesArr[c].choosingFrame.visible=!1);if(3==e.settings.isChooseMode)for(var l=0;l<this.circlesArr.length;l++)this.circlesArr[l].choosingFrame&&(this.circlesArr[l].choosingFrame.visible=!1);this.cw&&(this.cw.visible=!0),this.mTurnCount++,this.startTriggerMode(e.settings.isChooseMode)}"
+      },
+      {
+        "name": "onDragStop",
+        "code": "function(e){var t=Math.sqrt((e.x-this.box.x)*(e.x-this.box.x)+(e.y-this.box.y)*(e.y-this.box.y));t<this.box.width/2&&this.onRightAnswer(e)}"
+      },
+      {
+        "name": "onImageOver",
+        "code": "function(t){if(this.cw&&(this.cw.visible=!0),!this.isDisabalingButtons){for(var n=0;n<this.circlesArr.length;n++)t&&t.choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);e.settings.isChooseMode2direct||t&&t.choosingFrame&&(t.choosingFrame.visible=!0)}}"
+      },
+      {
+        "name": "onImageOut",
+        "code": "function(e){e&&e.choosingFrame&&(e.choosingFrame.visible=!1)}"
+      },
+      {
+        "name": "onOption",
+        "code": "function(t){var n=this;t&&0!=e.settings.isChooseMode&&(this.isDisabalingButtons||(this.isDisabalingButtons=!0,e.add.tween(t).to({y:this.box.y,x:this.box.x},2e3,Phaser.Easing.None,!0).onComplete.add(function(){(0,r.setTimeout)(function(){return n.makeMovie(t)},0)})))}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "onWrongAnswer",
+        "code": "function(){this.makeWrongSound()}"
+      },
+      {
+        "name": "onRightAnswer",
+        "code": "function(e){this.makeMovie(e)}"
+      },
+      {
+        "name": "makeMovie",
+        "code": "function(t){var n=this;this.makeGoodSound(),this.isDisabalingButtons=!0,this.box.visible=!1,t.x=e.w/2,t.y=-t.height,this.boxBig.visible=!0,this.boxBigBottom.visible=!0,e.add.tween(t).to({y:this.boxBig.y+t.height/4},2500,Phaser.Easing.None,!0).onComplete.add(function(){(0,r.setTimeout)(function(){return n.makeNewTurn()},3e3)})}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  },
+  {
+    "name": "כלי נגינה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/music/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){removeAllTimers(),this.levels=appConfig.levels,this.levels=_.shuffle(this.levels),(0,i.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),e.shared.nextBtn.visible=!1,this.turnNum=-1,this.sounds=new Object;for(var t=0;t<this.levels.length;t++)this.sounds[this.levels[t].sound]=e.add.audio(this.levels[t].sound);this.makeNewTurn()}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){console.log(\"this.turnNum >> \",this.turnNum),this.spritesArr&&this.spritesArr.forEach(function(e){e.destroy()}),this.spritesArr=new Array,this.circlesArr=new Array,this.turnNum++,this.turnNum>=this.levels.length&&(this.turnNum=0),console.log(\"this.turnNum >> \",this.turnNum),this.currentLevel=this.levels[this.turnNum],this.howMany=e.rnd.between(1,3),console.log(\"this.currentLevel >> \",this.currentLevel.name),this.makeMusicTurn(),this.makeAccessability()}"
+      },
+      {
+        "name": "makeMusicTurn",
+        "code": "function(){this.howMany=1;for(var t=this.currentLevel.positions,n=0;n<this.howMany;n++){var i=createSprite(e,this.midLayer,(0,o.default)({key:this.currentLevel.mainItem,pos:t[n],size:{x:this.currentLevel.size,y:this.currentLevel.size},anchorMid:!0,animations:[{loop:!0,name:\"anim\",frameRate:24,useNumericInd:void 0}]}));i.inputEnabled=!0,i.events.onInputOver.add(this.onOption.bind(this),this),this.circlesArr.push(i),this.spritesArr.push(i)}this.overFunc=function(t){var n=this;if(!t.isTouched){t.isTouched=!0,this.sounds[this.currentLevel.sound].play(),t.animations.play(\"anim\");var o=3*t.scale.x;e.add.tween(t.scale).to({y:o,x:o},500,Phaser.Easing.None,!0),e.add.tween(t).to({y:e.h/2,x:e.w/2},500,Phaser.Easing.None,!0).onComplete.add(function(){(0,r.setTimeout)(function(){n.sounds[n.currentLevel.sound].stop(),n.makeNewTurn()},5e3)})}}}"
+      },
+      {
+        "name": "makeAccessability",
+        "code": "function(){var t;if(this.boxOptions=this.circlesArr,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat().reverse()):t=this.boxOptions.concat().reverse(),\"heb\"==e.cfg.game_lang_symb&&(t=t.reverse()),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var n=0;n<this.circlesArr.length;n++)this.circlesArr[n].choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);if(3==e.settings.isChooseMode)for(var o=0;o<this.circlesArr.length;o++)this.circlesArr[o].choosingFrame&&(this.circlesArr[o].choosingFrame.visible=!1);this.cw&&(this.cw.visible=!0),this.mTurnCount++,this.startTriggerMode(e.settings.isChooseMode)}"
+      },
+      {
+        "name": "onImageOver",
+        "code": "function(t){if(this.cw&&(this.cw.visible=!0),!this.isDisabalingButtons){for(var n=0;n<this.circlesArr.length;n++)t&&t.choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);e.settings.isChooseMode2direct||t&&t.choosingFrame&&(t.choosingFrame.visible=!0)}}"
+      },
+      {
+        "name": "onImageOut",
+        "code": "function(e){e&&e.choosingFrame&&(e.choosingFrame.visible=!1)}"
+      },
+      {
+        "name": "onOption",
+        "code": "function(e){this.overFunc(e)}"
+      },
+      {
+        "name": "stopAnimation",
+        "code": "function(){this.isDecreasing=!0}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "onWrongAnswer",
+        "code": "function(){this.makeWrongSound()}"
+      },
+      {
+        "name": "onRightAnswer",
+        "code": "function(e){this.makeGoodSound()}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  },
+  {
+    "name": "כדורסל",
+    "url": "https://gingim.net/wp-content/uploads/new_games/basketball_ce/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){(0,i.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),e.shared.exitBtn.events.onInputDown.add(this.removeVideo,this),e.shared.nextBtn.visible=!1,this.textStyle={font:\"bold 130px Secular One\",boundsAlignH:\"center\",boundsAlignV:\"middle\",color:\"#ff0000\"},this.answerTextStyle={font:\"bold 90px Anton\",boundsAlignH:\"center\",boundsAlignV:\"middle\",color:\"#ffffff\"},this.createSounds(),this.mTurnCount=0,this.balls=4,this.circlesArr=new Array,this.boxOptions=new Array,this.isFirst=!0,this.nadSpeed=0,this.basket=createSprite(e,this.backLayer,(0,o.default)({key:\"basket_1\",pos:{x:.5,y:.69},size:{x:.29,y:.29},anchorMid:!0})),this.net=createSprite(e,this.backLayer,(0,o.default)({key:\"basket_2\",pos:{x:.5,y:.59},size:{x:.23,y:.23}})),this.net.anchor.set(.5,0),this.makeNewTurn()}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){this.mTurnCount=0;for(var t=0;t<this.circlesArr.length;t++)this.circlesArr[t].destroy(),this.circlesArr[t].choosingFrame&&this.circlesArr[t].choosingFrame.destroy(),fadeIn(this.circlesArr[t],1e3);this.xPosition=.2;for(var n=0;n<this.balls;n++)this.circlesArr[n]=createSprite(e,this.backLayer,(0,o.default)({key:\"ball\",anchorMid:!0,pos:{x:this.xPosition,y:.17},size:{x:.18,y:.18},callback:this.onOption.bind(this),choosingFrame:1.2})),this.xPosition+=.2;this.makeAccessability()}"
+      },
+      {
+        "name": "makeAccessability",
+        "code": "function(){var t;if(this.boxOptions=this.circlesArr,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat().reverse()):t=this.boxOptions.concat().reverse(),\"heb\"==e.cfg.game_lang_symb&&(t=t.reverse()),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var n=0;n<this.circlesArr.length;n++)this.circlesArr[n].choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);if(3==e.settings.isChooseMode)for(var o=0;o<this.circlesArr.length;o++)this.circlesArr[o].choosingFrame&&(this.circlesArr[o].choosingFrame.visible=!1);this.cw&&(this.cw.visible=!0)}"
+      },
+      {
+        "name": "update",
+        "code": "function(){this.isWheel&&(this.nadSpeed+=.01,this.nadned.angle+=this.nadSpeed)}"
+      },
+      {
+        "name": "onImageOver",
+        "code": "function(t){this.cw;for(var n=0;n<this.circlesArr.length;n++)t&&t.choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);e.settings.isChooseMode2direct||t&&t.choosingFrame&&(t.choosingFrame.visible=!0)}"
+      },
+      {
+        "name": "onImageOut",
+        "code": "function(e){e&&e.choosingFrame&&(e.choosingFrame.visible=!1)}"
+      },
+      {
+        "name": "onOption",
+        "code": "function(e){e&&(e.choosingFrame.visible=!1,this.removeTriggerEvents(),this.destroyChooseWindow(),this.onRightAnswer(e))}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "onRightAnswer",
+        "code": "function(t){var n=this;e.add.tween(t.scale).to({x:.8*t.scale.x,y:.8*t.scale.x},1500,Phaser.Easing.none,!0),e.add.tween(t).to({x:this.basket.x+t.width/4,y:.2*e.h,angle:-360},1500,Phaser.Easing.none,!0).onComplete.add(function(){n.net.parent.addChild(n.net),n.makeGoodSound(),e.add.tween(t).to({x:n.basket.x-t.width/5,y:.8*e.h,angle:-720},1500,Phaser.Easing.Bounce.Out,!0),e.add.tween(n.net.scale).to({y:.95*n.net.scale.x},300,Phaser.Easing.none,!0,250,0,!0),(0,r.setTimeout)(function(){return n.onDisappear(t)},2e3)})}"
+      },
+      {
+        "name": "onDisappear",
+        "code": "function(t){var n=this;e.add.tween(t).to({alpha:0},1500,Phaser.Easing.None,!0),this.mTurnCount++;var o=this.circlesArr.indexOf(t);this.circlesArr.splice(o,1),this.mTurnCount>=this.balls?(0,r.setTimeout)(function(){return n.addMovie()},4e3):this.makeAccessability()}"
+      },
+      {
+        "name": "addMovie",
+        "code": "function(){this.video=this.add.video(\"video\"),this.video.onComplete.add(this.onVideoFinished,this),this.video.currentTime=0,this.sprite=this.video.addToWorld(e.world.centerX,e.world.centerY,.5,.5,.8,.8),this.midLayer.addChild(this.sprite),this.video.play()}"
+      },
+      {
+        "name": "onVideoFinished",
+        "code": "function(){this.removeVideo(),this.makeNewTurn()}"
+      },
+      {
+        "name": "removeVideo",
+        "code": "function(){try{this.video&&(this.video.currentTime=0,this.sprite.destroy(),this.video.destroy())}catch(e){console.log(e)}}"
+      },
+      {
+        "name": "exitGame",
+        "code": "function(){this.removeVideo(),e.leaveState()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      }
+    ]
+  },
+  {
+    "name": "מכוניות מירוץ",
+    "url": "https://gingim.net/wp-content/uploads/new_games/car_race/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var t=this;removeAllTimers(),this.items=new Array,this.sounds=new Object,appConfig.items.forEach(function(n){t.items.push(n.image),t.sounds[n.image]=e.add.audio(n.sound)}),this.sounds.run=e.add.audio(\"run\"),(0,i.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),e.shared.nextBtn.visible=!1,this.makeNewTurn()}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){this.circlesArr&&this.circlesArr.forEach(function(e){e.choosingFrame&&e.choosingFrame.destroy(),e.destroy()}),this.circlesArr=new Array,this.isMovie=!1;for(var t,n=this.items,i=0;i<n.length;i++){this.circlesArr[i]=createSprite(e,this.midLayer,(0,o.default)({key:n[i],anchorMid:!0,pos:{x:.8,y:.05+.23*i},size:{x:.35,y:.35},callback:this.onOption.bind(this)})),this.circlesArr[i].anchor.set(.5,1);var r=this.circlesArr[i].scale.y;e.add.tween(this.circlesArr[i].scale).to({y:1.02*r},150,Phaser.Easing.None,!0,0,99999999,!0)}if(this.redSquare&&this.redSquare.destroy(),this.boxOptions=this.circlesArr,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat().reverse()):t=this.boxOptions.concat().reverse(),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.redSquare=e.add.graphics(0,0),this.redSquare.lineStyle(5,16711680),this.redSquare.drawCircle(0,-this.circlesArr[0].height/2,1.1*this.circlesArr[0].width),this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var s=0;s<this.circlesArr.length;s++)this.circlesArr[s].choosingFrame&&(this.circlesArr[s].choosingFrame.visible=!1);if(3==e.settings.isChooseMode){for(var a=0;a<this.circlesArr.length;a++)this.circlesArr[a].choosingFrame&&(this.circlesArr[a].choosingFrame.visible=!1);this.redSquare.visible=!1}this.cw&&(this.cw.visible=!1),this.mTurnCount++,this.startTriggerMode(e.settings.isChooseMode)}"
+      },
+      {
+        "name": "makeMovie",
+        "code": "function(){var t=this,n=_.sample(this.items,1);this.movietruck&&this.movietruck.destroy(),this.movietruck=createSprite(e,this.midLayer,(0,o.default)({key:n,pos:{x:-.1,y:.5},anchorMid:!0,size:{x:-.4,y:.4}})),this.movietruck.x=e.w+this.movietruck.width,this.sounds[n]&&this.sounds[n].loopFull(),this.cw&&(this.cw.visible=!1);var i=this.movietruck.scale.y;e.add.tween(this.movietruck.scale).to({y:1.02*i},150,Phaser.Easing.None,!0,0,99999999,!0),e.add.tween(this.movietruck).to({x:-this.movietruck.width},5500,Phaser.Easing.None,!0).onComplete.add(function(){t.sounds[n]&&t.sounds[n].stop(),t.movietruck.scale.x*=-1,e.add.tween(t.movietruck).to({x:e.w-t.movietruck.width},5500,Phaser.Easing.None,!0).onComplete.add(function(){fadeOut(t.movietruck),t.makeNewTurn()})})}"
+      },
+      {
+        "name": "startRace",
+        "code": "function(){for(var t=this,n=this.items,i=3e3,s=0;s<n.length;s++){this.circlesArr[s]=createSprite(e,this.midLayer,(0,o.default)({key:n[s],anchorMid:!0,pos:{x:1.2,y:.05+.23*s},size:{x:.35,y:.35}})),this.circlesArr[s].anchor.set(.5,1);var a=this.circlesArr[s].scale.y;e.add.tween(this.circlesArr[s].scale).to({y:1.02*a},150,Phaser.Easing.None,!0,0,99999999,!0)}for(var c=function(s){t.sounds[t.circlesArr[s].key]&&t.sounds[t.circlesArr[s].key].play(),i=1e3*(2*Math.random()+3),console.log(i),e.add.tween(t.circlesArr[s]).to({x:-t.circlesArr[s].width/2},i,Phaser.Easing.None,!0).onComplete.add(function(){t.circlesArr[s].x=e.w+t.circlesArr[s].width/2}),(0,r.setTimeout)(function(){t.circlesArr[s].destroy(),t.circlesArr[s]=createSprite(e,t.midLayer,(0,o.default)({key:n[s],anchorMid:!0,pos:{x:1.2,y:.05+.23*s},size:{x:.35,y:.35},callback:t.onOption.bind(t)})),t.circlesArr[s].anchor.set(.5,1);var i=t.circlesArr[s].scale.y;e.add.tween(t.circlesArr[s].scale).to({y:1.02*i},150,Phaser.Easing.None,!0,0,99999999,!0),e.add.tween(t.circlesArr[s]).to({x:.8*e.w},1e3,Phaser.Easing.None,!0).onComplete.add(function(){t.makeNewTurn()})},4e3)},d=0;d<this.circlesArr.length;d++)c(d)}"
+      },
+      {
+        "name": "onOption",
+        "code": "function(t){var n=this;this.isMoving,this.redSquare&&(this.redSquare.visible=!1),this.isMoving=!0,this.sounds[t.key]&&this.sounds[t.key].play(),e.add.tween(t).to({x:t.x-e.w},4e3,Phaser.Easing.Cubic.Out,!0).onComplete.add(function(){var o;n.sounds[t.key].stop(),t.x<-t.width/4&&(n.circlesArr.splice(n.circlesArr.indexOf(t),1),fadeOut(t),(0,r.setTimeout)(function(){return t.destroy()},250),n.circlesArr[0]),n.isMoving=!1,n.boxOptions=n.circlesArr,n.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,o=n.boxOptions.concat().reverse()):o=n.boxOptions.concat().reverse(),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3&&(n.chooseWindowConfig.imgOverCB=n.onImageOver,n.chooseWindowConfig.imgOutCB=n.onImageOut,n.chooseWindowConfig.items=o.concat(),n.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},n.doChooseMode(e.settings.isChooseMode,n.chooseWindowConfig)),n.circlesArr.length<1&&!n.isMovie&&n.startRace(),3!=e.settings.isChooseMode&&e.settings.isChooseMode>0?n.redSquare&&(n.redSquare.visible=!0):n.redSquare&&(n.redSquare.visible=!1)})}"
+      },
+      {
+        "name": "onImageOver",
+        "code": "function(t){if(this.cw&&(this.cw.visible=!1),!this.isDisabalingButtons){3==e.settings.isChooseMode?(this.redSquare&&(this.redSquare.visible=!0),this.redSquare&&(this.redSquare.x=t.x),this.redSquare&&(this.redSquare.y=t.y)):this.redSquare&&(this.redSquare.visible=!1),this.isMoving;for(var n=0;n<this.circlesArr.length;n++)this.circlesArr[n]&&this.circlesArr[n].choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1,this.circlesArr[n].choosingFrame.x=this.circlesArr[n].x,this.circlesArr[n].choosingFrame.y=this.circlesArr[n].y);e.settings.isChooseMode2direct||t&&t.choosingFrame&&(t.choosingFrame.visible=!0)}}"
+      },
+      {
+        "name": "onImageOut",
+        "code": "function(e){e&&e.choosingFrame&&(e.choosingFrame.visible=!1)}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  },
+  {
+    "name": "תמונות מנגנות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/music_cause_effect2?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var t=this;removeAllTimers(),this.currentItem=appConfig.difficulty.items[e.settings.difficulty0],(0,i.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg_\"+this.currentItem.name,chooseWindow:!0}),this.createSounds(),e.shared.nextBtn&&(e.shared.nextBtn.visible=!1),this.turnNum=-1,this.sounds=new Object,p=appConfig.images.sky[e.settings.difficulty0],f=appConfig.images.earth[e.settings.difficulty0];var n=e.add.audioSprite(\"harp\"),o=e.add.audioSprite(\"glock\"),r=e.add.audioSprite(\"kalimba\"),a=e.add.audioSprite(\"vibes\");m=[n,o,r,a],this.input.mouse.mouseMoveCallback=function(){return t.onMouseMove()},e.canvas.addEventListener(\"mousemove\",function(e){return t.onMouseMove(e)}),e.canvas.addEventListener(\"touchmove\",function(e){return t.onMouseMove(e)}),this.musicSound=e.add.audio(\"music\"),this.currentItem.arr=new Array;for(var s=0;s<this.currentItem.number+1;s++){s<10&&\"0\"+s}this.currentItem.arr=_.shuffle(this.currentItem.arr),this.makeNewTurn()}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){this.musicSound.pause(),this.isDisabalingButtons=!1,this.currentItem.arr.forEach(function(e){e.isTofly=!1,e.visible=!1,e.angle=0}),this.counter=0,this.turnNum++,this.turnNum>=this.currentItem.arr.length&&(this.turnNum=0),this.currentS=this.currentItem.arr[this.turnNum],this.currentS.visible=!0,this.currentS.x=e.rnd.between(this.currentS.width/2,e.w-this.currentS.width),this.currentS.y=e.rnd.between(this.currentS.height/2,e.h-this.currentS.height),this.tween=e.add.tween(this.currentS).to({y:this.currentS.y+e.h/20},1e3,Phaser.Easing.None,!0,0,999999,!0),this.makeAccessability()}"
+      },
+      {
+        "name": "makeAccessability",
+        "code": "function(){var t;if(this.circlesArr=[this.currentS],this.boxOptions=this.circlesArr,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat().reverse()):t=this.boxOptions.concat().reverse(),\"heb\"==e.cfg.game_lang_symb&&(t=t.reverse()),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3)this.chooseWindowConfig.items=t.concat(),this.chooseWindowConfig.clickHandler=function(e){this.onOption(e)},this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig);else for(var n=0;n<this.circlesArr.length;n++)this.circlesArr[n].choosingFrame&&(this.circlesArr[n].choosingFrame.visible=!1);if(3==e.settings.isChooseMode)for(var i=0;i<this.circlesArr.length;i++)this.circlesArr[i].choosingFrame&&(this.circlesArr[i].choosingFrame.visible=!1);this.cw&&(this.cw.visible=!0),this.mTurnCount++,this.startTriggerMode(e.settings.isChooseMode)}"
+      },
+      {
+        "name": "onMouseMove",
+        "code": "function(t){if(\"game\"==e.state.current){var n=e.input.activePointer.x,i=e.input.activePointer.y;(h=i<400?p:f)!=g&&(d=h[Math.floor(Math.random()*h.length)],++s==m.length&&(s=0)),g=h;var o=appConfig.difficulty.items[e.settings.difficulty0].name;if(Math.abs(c-n)>75||Math.abs(u-i)>75){if(n>50&&n<e.width-50&&i>50&&i<e.height-50){this.newShape=e.add.sprite(n,i,o+\"01\"),this.newShape.scale.set(.7,.7),this.newShape.anchor.set(.5,.5),e.add.tween(this.newShape).to({alpha:0},1500,\"Linear\",!0),e.add.tween(this.newShape.scale).to({x:.2,y:.2},2250,\"Linear\",!0),this.newShape.loadTexture(o+d,0);var r=Math.round(n/(e.width/4));r>4?r=4:r<0&&(r=0),r!=a&&m[s].play(l[r]),a=r}c=n,u=i}}}"
+      },
+      {
+        "name": "onOption",
+        "code": "function(t){if(t&&!this.isDisabalingButtons){if(this.makeEffectSound(),this.tween.stop(),this.counter++,3==this.counter)return t.visible=!1,void this.makeAnimation();var n=e.w-this.currentS.width,i=this.currentS.width,o=e.rnd.between(i,n);this.currentS.x=o,this.currentS.y=e.rnd.between(this.currentS.height,e.h-this.currentS.height),this.tween=e.add.tween(this.currentS).to({y:this.currentS.y+e.h/20},1e3,Phaser.Easing.None,!0,0,999999,!0)}}"
+      },
+      {
+        "name": "makeAnimation",
+        "code": "function(){var t=this;this.isDisabalingButtons=!0,this.musicSound.play(),this.removeTriggerEvents(),this.decreasing=.025,this.isDecreasing=!1,this.flying=new Array;Math.min(12,this.currentItem.arr.length);for(var n=0;n<5;n++)this.flying.push(this.currentItem.arr[n]);for(var i=function(n){t.flying[n].x=.75*e.w,t.flying[n].y=e.h+t.flying[n].height/2,t.flying[n].visible=!0,t.flying[n].angle=90,t.flying[n].rotAngle=0,e.add.tween(t.flying[n]).to({y:e.h/2},1e3,Phaser.Easing.None,!0,800*n).onComplete.add(function(){t.flying[n].isTofly=!0,n==t.flying.length-1&&(t.isIncreasing=!0)})},r=0;r<this.flying.length;r++)i(r);this.nowAnimation=!0,(0,o.setTimeout)(function(){return t.stopAnimation()},1e3*this.flying.length)}"
+      },
+      {
+        "name": "stopAnimation",
+        "code": "function(){this.isDecreasing=!0}"
+      },
+      {
+        "name": "update",
+        "code": "function(){var t=this;if(e.input.activePointer.isDown&&this.onMouseMove(),this.currentItem.arr&&this.currentItem.arr.forEach(function(e){e.shadow&&(e.shadow.x=15,e.shadow.y=15,e.shadow.tint=0)}),this.nowAnimation&&this.flying){this.isDecreasing?this.decreasing-=.001:this.isIncreasing&&(this.decreasing+=1e-4),this.decreasing<=0&&(this.decreasing=0),this.ang=this.decreasing;for(var n=function(n){t.flying[n].isTofly&&(t.flying[n].angle-=t.ang*(180/Math.PI),t.flying[n].rotAngle-=t.ang,t.flying[n].x=e.w/2+Math.cos(t.flying[n].rotAngle)*e.w/4,t.flying[n].y=e.h/2+Math.sin(t.flying[n].rotAngle)*e.w/4),0==t.decreasing&&(t.flying[n].isTofly=!1,t.isDecreasing=!1,t.isIncreasing=!1,t.nowAnimation=!1,e.add.tween(t.flying[n]).to({angle:t.flying[n].angle+90},500,Phaser.Easing.None,!0,250).onComplete.add(function(){e.add.tween(t.flying[n]).to({x:e.w/2+Math.cos(t.flying[n].rotAngle)*e.w/1.5,y:e.h/2+Math.sin(t.flying[n].rotAngle)*e.w/1.5},1500,Phaser.Easing.Cubic.Out,!0,1e3,1,!0).onComplete.add(function(){n==t.flying.length-1&&(0,o.setTimeout)(function(){return t.makeNewTurn()},1e3)})}))},i=0;i<this.flying.length;i++)n(i)}}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "onWrongAnswer",
+        "code": "function(){var t=this;fadeIn(this.x,500),(0,o.setTimeout)(function(){fadeOut(t.x),t.isDisabalingButtons=!1,t.startTriggerMode(e.settings.isChooseMode)},1500),this.makeWrongSound()}"
+      },
+      {
+        "name": "onRightAnswer",
+        "code": "function(t){var n=this;this.isDisabalingButtons=!0,this.answerText=e.add.text(this.exreciseText.x+this.exreciseText.width/2,0,this.score,this.textStyle),this.answerText.anchor.set(.5),this.answerText.y-=this.exreciseText.height/2,this.answerText.x+=this.answerText.width/2,this.answerText.stroke=\"#000000\",this.answerText.strokeThickness=6,this.answerText.addColor(\"#ffffff\",0),e.add.tween(this.answerText).to({y:this.exreciseText.y},2e3,Phaser.Easing.Bounce.Out,!0).onComplete.add(function(){(0,o.setTimeout)(function(){return n.makeNewTurn()},3e3)}),fadeIn(this.v,500),(0,o.setTimeout)(function(){return fadeOut(n.v)},2500),this.makeGoodSound()}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeEffectSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundEffectsArr.length);this.soundEffectsArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  },
+  {
+    "name": "צביעת מספרים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/painting_numbers/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var t=this;removeAllTimers(),(0,i.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg2\",chooseWindow:!0}),this.createSounds(),this.numbers=[];for(var n=0;n<10;n++)this.numbers[n]=n+1;e.shared.nextBtn.visible=!1,document.body.style.overflow=\"hidden\",this.turnNum=-1,this.sounds=new Object,this.numberSounds={};for(var o=1;o<11;o++)this.numberSounds[o]=e.add.audio(o);this.soundTwinkle=e.add.audio(\"sound_twinkle\"),this.starAnimation=createSprite(e,null,{key:\"star_animation\",anchorMid:!0,hidden:!0,pos:{x:.5,y:.5},scale:1,animations:[{name:\"star\",frame:Phaser.Animation.generateFrameNames(\"stars_explode_\",100,126,\"\",0),frameRate:24,loop:!0,useNumericInd:void 0}]}),e.canvas.addEventListener(\"touchmove\",function(e){return t.onMouseMove(e)}),e.canvas.addEventListener(\"mousemove\",function(e){return t.onMouseMove(e)}),e.input.mouse.mouseMoveCallback=function(){return t.onMouseMove()},this.positions=[[{x:374/e.width,y:311/e.height,isChecked:!1},{x:595/e.width,y:103/e.height,isChecked:!1},{x:574/e.width,y:668/e.height,isChecked:!1}],[{x:335/e.width,y:318/e.height,isChecked:!1},{x:514/e.width,y:98/e.height,isChecked:!1},{x:717/e.width,y:310/e.height,isChecked:!1},{x:300/e.width,y:633/e.height,isChecked:!1},{x:728/e.width,y:612/e.height,isChecked:!1},{x:527/e.width,y:426/e.height,isChecked:!1}],[{x:369/e.width,y:279/e.height,isChecked:!1},{x:726/e.width,y:259/e.height,isChecked:!1},{x:460/e.width,y:374/e.height,isChecked:!1},{x:735/e.width,y:544/e.height,isChecked:!1},{x:519/e.width,y:675/e.height,isChecked:!1},{x:340/e.width,y:462/e.height,isChecked:!1}],[{x:323/e.width,y:98/e.height,isChecked:!1},{x:336/e.width,y:461/e.height,isChecked:!1},{x:606/e.width,y:99/e.height,isChecked:!1},{x:605/e.width,y:430/e.height,isChecked:!1},{x:761/e.width,y:418/e.height,isChecked:!1},{x:606/e.width,y:674/e.height,isChecked:!1}],[{x:706/e.width,y:165/e.height,isChecked:!1},{x:383/e.width,y:110/e.height,isChecked:!1},{x:356/e.width,y:390/e.height,isChecked:!1},{x:697/e.width,y:369/e.height,isChecked:!1},{x:728/e.width,y:579/e.height,isChecked:!1},{x:311/e.width,y:533/e.height,isChecked:!1},{x:538/e.width,y:677/e.height,isChecked:!1}],[{x:696/e.width,y:209/e.height,isChecked:!1},{x:749/e.width,y:479/e.height,isChecked:!1},{x:527/e.width,y:667/e.height,isChecked:!1},{x:529/e.width,y:313/e.height,isChecked:!1},{x:289/e.width,y:372/e.height,isChecked:!1},{x:390/e.width,y:118/e.height,isChecked:!1}],[{x:274/e.width,y:156/e.height,isChecked:!1},{x:737/e.width,y:150/e.height,isChecked:!1},{x:527/e.width,y:391/e.height,isChecked:!1},{x:300/e.width,y:381/e.height,isChecked:!1},{x:712/e.width,y:381/e.height,isChecked:!1},{x:468/e.width,y:665/e.height,isChecked:!1}],[{x:347/e.width,y:160/e.height,isChecked:!1},{x:369/e.width,y:369/e.height,isChecked:!1},{x:708/e.width,y:160/e.height,isChecked:!1},{x:522/e.width,y:374/e.height,isChecked:!1},{x:285/e.width,y:496/e.height,isChecked:!1},{x:517/e.width,y:664/e.height,isChecked:!1},{x:737/e.width,y:532/e.height,isChecked:!1},{x:654/e.width,y:369/e.height,isChecked:!1},{x:526/e.width,y:95/e.height,isChecked:!1}],[{x:343/e.width,y:526/e.height,isChecked:!1},{x:650/e.width,y:529/e.height,isChecked:!1},{x:657/e.width,y:371/e.height,isChecked:!1},{x:660/e.width,y:130/e.height,isChecked:!1},{x:519/e.width,y:95/e.height,isChecked:!1},{x:283/e.width,y:303/e.height,isChecked:!1},{x:430/e.width,y:451/e.height,isChecked:!1}],[{x:224/e.width,y:321/e.height,isChecked:!1},{x:375/e.width,y:205/e.height,isChecked:!1},{x:359/e.width,y:570/e.height,isChecked:!1},{x:636/e.width,y:180/e.height,isChecked:!1},{x:520/e.width,y:381/e.height,isChecked:!1},{x:629/e.width,y:578/e.height,isChecked:!1},{x:779/e.width,y:374/e.height,isChecked:!1}]],this.makeNewTurn()}"
+      },
+      {
+        "name": "getAnimAndPlay",
+        "code": "function(e,t){if(e.name,e.name&&e.name==t&&e.play(),e.children)for(var n=0;n<e.children.length;n++)this.getAnimAndPlay(e.children[n],t)}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){this.ok=!1,this.isHappend=!1,this.turnNum++,this.turnNum>9&&(this.turnNum=0),this.positions[this.turnNum].forEach(function(e){e.isChecked=!1}),this.currentNumber=\"num\"+this.numbers[this.turnNum],this.numberSounds[this.numbers[this.turnNum]].play(),this.innerDoc,this.back&&this.back.destroy(),this.back=createSprite(e,this.midLayer,{key:this.currentNumber,anchorMid:!0,size:{x:.8,y:.8},pos:{x:.5,y:.5}}),this.gr&&this.gr.destroy(),this.gr=e.add.graphics(),this.gr.beginFill(16777215),this.gr.drawCircle(e.w/2,e.h/2,0),this.back.mask=this.gr,this.front=createSprite(e,this.midLayer,{key:this.currentNumber,anchorMid:!0,size:{x:.8,y:.8},pos:{x:.5,y:.5}}),this.front.tint=0,this.front.alpha=.3}"
+      },
+      {
+        "name": "onShowAnimation",
+        "code": "function(){var t=this;this.starAnimation.visible=!0,this.starAnimation.animations.play(\"star\"),this.numberSounds[this.numbers[this.turnNum]].play(),this.soundTwinkle.play(),this.front.tint=16777215,e.add.tween(this.front).to({alpha:1},1300,\"Linear\",!0),(0,o.setTimeout)(function(){t.starAnimation.visible=!1,t.back.destroy(),t.front.destroy(),t.makeNewTurn()},3700)}"
+      },
+      {
+        "name": "onMouseMove",
+        "code": "function(t){if(!this.ok){var n=e.input.activePointer.x,i=e.input.activePointer.y;this.gr.drawCircle(n,i,220);var o=0;this.positions[this.turnNum].forEach(function(t){var r=t.x*e.w,a=t.y*e.h,s=Phaser.Math.distance(r,a,n,i);s<110&&(t.isChecked=!0),t.isChecked&&o++}),o!=this.positions[this.turnNum].length||this.isHappend||(this.isHappend=!0,this.onShowAnimation())}}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "onWrongAnswer",
+        "code": "function(){var t=this;fadeIn(this.x,500),(0,o.setTimeout)(function(){fadeOut(t.x),t.isDisabalingButtons=!1,t.startTriggerMode(e.settings.isChooseMode)},1500),this.makeWrongSound()}"
+      },
+      {
+        "name": "onRightAnswer",
+        "code": "function(t){var n=this;this.answerText=e.add.text(this.exreciseText.x+this.exreciseText.width/2,0,this.score,this.textStyle),this.answerText.anchor.set(.5),this.answerText.y-=this.exreciseText.height/2,this.answerText.x+=this.answerText.width/2,this.answerText.stroke=\"#000000\",this.answerText.strokeThickness=6,this.answerText.addColor(\"#ffffff\",0),e.add.tween(this.answerText).to({y:this.exreciseText.y},2e3,Phaser.Easing.Bounce.Out,!0).onComplete.add(function(){(0,o.setTimeout)(function(){return n.makeNewTurn()},3e3)}),fadeIn(this.v,500),(0,o.setTimeout)(function(){return fadeOut(n.v)},2500),this.makeGoodSound()}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeEffectSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundEffectsArr.length);this.soundEffectsArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  },
+  {
+    "name": "צְבִיעַת אוֹתִיּוֹת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/painting_letters/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var t=this;removeAllTimers(),(0,o.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),this.letters=[];for(var n=0;n<26;n++)this.letters[n]=n;this.turnNum=-1,e.shared.nextBtn.visible=!1,this.letterSounds={};for(var i=0;i<26;i++)this.letterSounds[i]=e.add.audio(i);this.soundTwinkle=e.add.audio(\"sound_twinkle\"),this.starAnimation=createSprite(e,null,{key:\"star_animation\",anchorMid:!0,hidden:!0,pos:{x:.5,y:.5},scale:1,animations:[{name:\"star\",frame:Phaser.Animation.generateFrameNames(\"stars_explode_\",100,126,\"\",0),frameRate:24,loop:!0,useNumericInd:void 0}]}),e.canvas.addEventListener(\"touchmove\",function(e){return t.onMouseMove(e)}),e.canvas.addEventListener(\"mousemove\",function(e){return t.onMouseMove(e)}),e.input.mouse.mouseMoveCallback=function(){return t.onMouseMove()},this.positions=[[{x:.3,y:.2},{x:.37,y:.29},{x:.3,y:.8},{x:.35,y:.6},{x:.71,y:.8},{x:.55,y:.56},{x:.63,y:.36},{x:.7,y:.19}],[{x:.31,y:.24},{x:.59,y:.24},{x:.63,y:.48},{x:.69,y:.79},{x:.5,y:.79},{x:.33,y:.79}],[{x:.42,y:.23},{x:.53,y:.23},{x:.56,y:.42},{x:.56,y:.6},{x:.56,y:.76},{x:.37,y:.79}],[{x:.31,y:.22},{x:.44,y:.22},{x:.66,y:.22},{x:.57,y:.43},{x:.57,y:.68},{x:.56,y:.81}],[{x:.31,y:.22},{x:.48,y:.22},{x:.66,y:.3},{x:.66,y:.58},{x:.66,y:.76},{x:.34,y:.51},{x:.34,y:.8}],[{x:.37,y:.22},{x:.5,y:.22},{x:.5,y:.5},{x:.5,y:.81}],[{x:.4,y:.19},{x:.54,y:.29},{x:.49,y:.56},{x:.49,y:.81}],[{x:.3,y:.21},{x:.35,y:.8},{x:.35,y:.54},{x:.51,y:.22},{x:.67,y:.3},{x:.68,y:.57},{x:.68,y:.8}],[{x:.52,y:.39},{x:.31,y:.65},{x:.69,y:.24},{x:.7,y:.57},{x:.59,y:.81},{x:.31,y:.22}],[{x:.39,y:.21},{x:.49,y:.46}],[{x:.34,y:.2},{x:.34,y:.8},{x:.62,y:.23},{x:.64,y:.53},{x:.57,y:.79}],[{x:.38,y:.16},{x:.49,y:.84},{x:.51,y:.31},{x:.62,y:.46},{x:.54,y:.64}],[{x:.32,y:.56},{x:.38,y:.29},{x:.62,y:.26},{x:.68,y:.54},{x:.62,y:.78},{x:.34,y:.78}],[{x:.48,y:.23},{x:.32,y:.77},{x:.6,y:.5},{x:.53,y:.78}],[{x:.3,y:.21},{x:.34,y:.36},{x:.64,y:.26},{x:.69,y:.59},{x:.4,y:.74}],[{x:.69,y:.22},{x:.47,y:.6},{x:.67,y:.67},{x:.57,y:.77},{x:.4,y:.29},{x:.29,y:.77}],[{x:.31,y:.21},{x:.48,y:.54},{x:.66,y:.22},{x:.36,y:.79},{x:.65,y:.67}],[{x:.3,y:.2},{x:.59,y:.45},{x:.66,y:.23},{x:.64,y:.78},{x:.31,y:.79},{x:.45,y:.45}],[{x:.35,y:.17},{x:.37,y:.85},{x:.64,y:.17},{x:.65,y:.49},{x:.5,y:.65},{x:.37,y:.41}],[{x:.33,y:.23},{x:.63,y:.81},{x:.59,y:.25},{x:.63,y:.5}],[{x:.72,y:.21},{x:.5,y:.62},{x:.72,y:.64},{x:.61,y:.79},{x:.5,y:.62},{x:.36,y:.79},{x:.28,y:.58},{x:.28,y:.21},{x:.5,y:.21}],[{x:.3,y:.22},{x:.24,y:.79},{x:.37,y:.49},{x:.67,y:.28},{x:.68,y:.77}],[{x:.37,y:.15},{x:.6,y:.82},{x:.6,y:.5}],[{x:.29,y:.22},{x:.43,y:.78},{x:.64,y:.24},{x:.68,y:.69},{x:.33,y:.53}],[{x:.34,y:.19},{x:.48,y:.47},{x:.63,y:.31},{x:.63,y:.79}],[{x:.36,y:.17},{x:.52,y:.38},{x:.6,y:.18},{x:.49,y:.63},{x:.55,y:.84}]],this.startPlace={x:0,y:0},this.endPlace={x:0,y:0},this.makeNewTurn()}"
+      },
+      {
+        "name": "getAnimAndPlay",
+        "code": "function(e,t){if(e.name,e.name&&e.name==t&&e.play(),e.children)for(var n=0;n<e.children.length;n++)this.getAnimAndPlay(e.children[n],t)}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){this.ok=!1,this.isHappend=!1,this.turnNum++,this.turnNum>26&&(this.turnNum=0),this.positions[this.turnNum].forEach(function(e){e.isChecked=!1}),this.currentColoredNumber=\"c_num\"+this.letters[this.turnNum],this.gr&&this.gr.destroy(),this.gr=e.add.graphics(),this.gr.beginFill(16777215),this.gr.drawCircle(e.w/2,e.h/2,0),this.letterSounds[this.letters[this.turnNum]].play(),this.innerDoc,this.back&&this.back.destroy(),this.back=createSprite(e,this.midLayer,{key:this.currentColoredNumber,anchorMid:!0,size:{x:.8,y:.8},pos:{x:.5,y:.5}}),this.back.mask=this.gr,this.front=createSprite(e,this.midLayer,{key:this.currentColoredNumber,anchorMid:!0,size:{x:.8,y:.8},pos:{x:.5,y:.5}}),this.front.tint=0,this.front.alpha=.3}"
+      },
+      {
+        "name": "onShowAnimation",
+        "code": "function(){var t=this;this.starAnimation.visible=!0,this.starAnimation.animations.play(\"star\"),this.letterSounds[this.letters[this.turnNum]].play(),this.soundTwinkle.play(),this.front.tint=16777215,e.add.tween(this.front).to({alpha:1},1300,\"Linear\",!0),(0,i.setTimeout)(function(){t.starAnimation.visible=!1,t.back.destroy(),t.front.destroy(),t.makeNewTurn()},3700)}"
+      },
+      {
+        "name": "onMouseMove",
+        "code": "function(t){var n=this,o=e.input.activePointer.x,r=e.input.activePointer.y;this.gr.drawCircle(o,r,220);var a=0;try{this.positions[this.letters[this.turnNum]].forEach(function(t){var n=t.x*e.w,i=t.y*e.h,s=Phaser.Math.distance(n,i,o,r);s<110&&(t.isChecked=!0),t.isChecked&&a++}),a!=this.positions[this.letters[this.turnNum]].length||this.isHappend||(this.isHappend=!0,this.onShowAnimation())}catch(t){this.positions[this.letters[0]].forEach(function(t){var n=t.x*e.w,i=t.y*e.h,s=Phaser.Math.distance(n,i,o,r);s<110&&(t.isChecked=!0),t.isChecked&&a++}),a!=this.positions[this.letters[0]].length||this.isHappend||(this.isHappend=!0,this.starAnimation.visible=!0,this.starAnimation.animations.play(\"star\"),this.letterSounds[this.letters[0]].play(),this.soundTwinkle.play(),this.front.tint=16777215,e.add.tween(this.front).to({alpha:1},1300,\"Linear\",!0),(0,i.setTimeout)(function(){n.starAnimation.visible=!1,n.back.destroy(),n.front.destroy(),n.makeNewTurn()},3700))}}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){}"
+      },
+      {
+        "name": "onWrongAnswer",
+        "code": "function(){}"
+      },
+      {
+        "name": "onRightAnswer",
+        "code": "function(e){}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeEffectSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundEffectsArr.length);this.soundEffectsArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){}"
+      }
+    ]
+  },
+  {
+    "name": "נדנדה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/seesaw_action_reaction/?lang=heb",
+    "functions": [
+      {
+        "name": "create",
+        "code": "function(){var t;c=!1,this.girlAudio=e.add.audio(\"sound_girl_fly\"),this.boyAudio=e.add.audio(\"sound_boy_fly\"),this.bothAudio=e.add.audio(\"sound_both_fly\"),(0,i.default)(e,this,{bg:e.settings.isBlackScreen?null:\"bg\",chooseWindow:!0}),e.shared.nextBtn.visible=!1,this.textStyle={font:\"bold 100px Secular One\",boundsAlignH:\"center\",boundsAlignV:\"middle\",color:\"#ffffff\"},this.answerTextStyle={font:\"bold 90px Anton\",boundsAlignH:\"center\",boundsAlignV:\"middle\",color:\"#ffffff\"},this.score=0,this.createSounds(),this.numbers=e.settings.numbers,this.mTurnCount=0,this.boxOptions=new Array,this.isFirst=!0,this.nadSpeed=0,this.nadned=createSprite(e,this.midLayer,(0,o.default)({key:\"nadned\",pos:{x:.5,y:.4},size:{x:.75,y:.75}})),this.nadned.angle=20,this.base=createSprite(e,this.midLayer,(0,o.default)({key:\"base\",anchorMid:!0,pos:{x:.5,y:.4},size:{x:.4,y:.4}})),this.base.anchor.set(.5,.05),this.nadned.anchor.set(.5,.77),this.loop=createSprite(e,this.backLayer,(0,o.default)({key:\"loop\",pos:{x:.2,y:.18},size:{x:.3,y:.3},anchorMid:!0,callback:this.makeHappyShitHappen.bind(this)})),this.boy=createSprite(e,this.nadned,(0,o.default)({key:\"boy\",pos:{x:.5,y:.5},size:{x:.3,y:.3},anchorMid:!0,callback:this.doFlipsBoy.bind(this)})),this.boy.x=-300,this.boy.y=-70,this.girl=createSprite(e,this.nadned,(0,o.default)({key:\"girl\",pos:{x:.5,y:.5},size:{x:.3,y:.3},anchorMid:!0,callback:this.doFlipsGirl.bind(this)})),this.girl.x=295,this.girl.y=-60,this.boxOptions.length>2||1==e.settings.isChooseMode?(e.settings.isChooseMode2direct=!1,t=this.boxOptions.concat().reverse()):t=this.boxOptions.concat().reverse(),\"heb\"==e.cfg.game_lang_symb&&(t=t.reverse()),1<=e.settings.isChooseMode&&e.settings.isChooseMode<=3&&(this.chooseWindowConfig.imgOverCB=this.onImageOver,this.chooseWindowConfig.imgOutCB=this.onImageOut,this.chooseWindowConfig.items=t.concat()),3==e.settings.isChooseMode&&(this.chooseWindowConfig.items=[this.girl,this.boy,this.loop],this.chooseWindowConfig.clickHandler=this.flipSomeone,this.doChooseMode(e.settings.isChooseMode,this.chooseWindowConfig)),this.cw&&(this.cw.visible=!0),this.scoreBar.destroy(),this.makeAccessability()}"
+      },
+      {
+        "name": "makeNewTurn",
+        "code": "function(){this.mTurnCount++,fadeIn(this.scoreBar,1e3),e.add.tween(this.boy).to({x:-300,y:-70},1500,Phaser.Easing.None,!0,200),e.add.tween(this.nadned).to({angle:20},1e3,Phaser.Easing.Bounce.Out,!0),this.tempLetter&&this.tempLetter.destroy(),this.isFirst=!0,this.boxOptions=new Array,this.targets=new Array,this.targetNum=0,this.isDisabalingButtons=!1;for(var t=new Array,n=0,o=0;o<11;o++)for(var i=0;i<this.numbers.length;i++)t[n]=o*this.numbers[i],n++;t=_.uniq(t),t=_.without(t,0,1);_.sample(t,1);this.startTriggerMode(e.settings.isChooseMode)}"
+      },
+      {
+        "name": "makeAccessability",
+        "code": "function(){if(1==e.settings.isChooseMode||2==e.settings.isChooseMode){var t=e.input.keyboard.addKey(Phaser.Keyboard.ENTER),n=e.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);2==e.settings.isChooseMode?(t.onDown.add(this.makeHappyShitHappen,this),n.onDown.add(this.toggleBoyGirl,this)):t.onDown.add(function(){var t=e.rnd.integerInRange(0,1);switch(t){case 0:this.makeHappyShitHappen();case 1:this.toggleBoyGirl()}},this)}}"
+      },
+      {
+        "name": "update",
+        "code": "function(){this.isWheel&&(this.nadSpeed+=.01,this.nadned.angle+=this.nadSpeed)}"
+      },
+      {
+        "name": "getExercise",
+        "code": "function(e){var t=_.range(11),n=_.sample(t,1)[0],o=_.sample(this.numbers,1)[0],i=n*o;if(Math.random()>.5){console.log(\"random >> \");var a=o;o=n,n=a}console.log(\"a1 >> \",n,\"a2 >> \",o,\"score >> \",i);var r={first:n,second:o,total:i,text:n.toString()+\"x \"+o.toString()+\" = \"};return r}"
+      },
+      {
+        "name": "toggleBoyGirl",
+        "code": "function(){s?(this.doFlipsBoy(),s=!1):(this.doFlipsGirl(),s=!0)}"
+      },
+      {
+        "name": "startNewLevel",
+        "code": "function(){e.sound.stopAll(),e.tweens.removeAll()}"
+      },
+      {
+        "name": "onWrongAnswer",
+        "code": "function(t){var n=this,o=t.text.text;o*this.exercise.second>this.exercise.total?(e.add.tween(this.girl).to({y:this.girl.y-20},500,Phaser.Easing.Cubic.Out,!0,1200,0,!0),e.add.tween(this.nadned).to({angle:-15},2400,Phaser.Easing.Bounce.Out,!0).onComplete.add(function(){(0,a.setTimeout)(function(){return fadeOut(n.tempLetter)},2200),e.add.tween(n.nadned).to({angle:20},1800,Phaser.Easing.Bounce.Out,!0,2200).onComplete.add(function(){n.isDisabalingButtons=!1,n.startTriggerMode(e.settings.isChooseMode)})})):(e.add.tween(this.boy).to({y:this.boy.y-20},500,Phaser.Easing.Cubic.Out,!0,450,0,!0),e.add.tween(this.nadned).to({angle:15},900,Phaser.Easing.Bounce.Out,!0).onComplete.add(function(){(0,a.setTimeout)(function(){return fadeOut(n.tempLetter)},2200),e.add.tween(n.nadned).to({angle:20},800,Phaser.Easing.Bounce.Out,!0,2200).onComplete.add(function(){n.isDisabalingButtons=!1,n.startTriggerMode(e.settings.isChooseMode)})})),this.makeWrongSound()}"
+      },
+      {
+        "name": "doFlipsBoy",
+        "code": "function(){var t=this;c||(c=!0,e.add.tween(this.nadned).to({angle:0},1500,Phaser.Easing.Cubic.Out,!0).onComplete.add(function(){e.add.tween(t.nadned).to({angle:20},1500,Phaser.Easing.Bounce.Out,!0),e.add.tween(t.boy).to({y:t.boy.y-100},1e3,Phaser.Easing.None,!0,500,0,!0),e.add.tween(t.boy).to({angle:-360},2e3,Phaser.Easing.None,!0,500).onComplete.add(function(){e.add.tween(t.nadned).to({angle:0},1e3,Phaser.Easing.Bounce.Out,!0).onComplete.add(function(){c=!1})})}),this.boyAudio.play())}"
+      },
+      {
+        "name": "doFlipsGirl",
+        "code": "function(){var t=this;c||(c=!0,e.add.tween(this.girl).to({y:this.girl.y-100},900,Phaser.Easing.None,!0,100,0,!0),e.add.tween(this.girl).to({angle:360},1800,Phaser.Easing.None,!0,100),e.add.tween(this.nadned).to({angle:0},1500,Phaser.Easing.Cubic.Out,!0).onComplete.add(function(){e.add.tween(t.nadned).to({angle:20},1500,Phaser.Easing.Bounce.Out,!0).onComplete.add(function(){c=!1})}),this.girlAudio.play())}"
+      },
+      {
+        "name": "flipSomeone",
+        "code": "function(e){\"girl\"==e.key?this.doFlipsGirl():\"boy\"==e.key?this.doFlipsBoy():this.makeHappyShitHappen()}"
+      },
+      {
+        "name": "onRightAnswer",
+        "code": "function(e){this.makeGoodSound(),this.scoreBar.showNext(),this.mTurnCount%5!=0?this.doFlipsBoy():this.makeHappyShitHappen()}"
+      },
+      {
+        "name": "makeHappyShitHappen",
+        "code": "function(){var t=this;c||(c=!0,this.bothAudio.play(),fadeOut(this.scoreBar,1e3),e.add.tween(this.girl).to({y:this.girl.y-100},900,Phaser.Easing.None,!0,100,0,!0),e.add.tween(this.girl).to({angle:360},1800,Phaser.Easing.None,!0,100),e.add.tween(this.nadned).to({angle:0},1500,Phaser.Easing.Cubic.Out,!0).onComplete.add(function(){e.add.tween(t.nadned).to({angle:20},1500,Phaser.Easing.Bounce.Out,!0),e.add.tween(t.boy).to({y:t.boy.y-100},1e3,Phaser.Easing.None,!0,500,0,!0),e.add.tween(t.boy).to({angle:-360},2e3,Phaser.Easing.None,!0,500).onComplete.add(function(){e.add.tween(t.nadned).to({angle:-30},1400,Phaser.Easing.Bounce.Out,!0),e.add.tween(t.girl).to({y:t.girl.y-700},1e3,Phaser.Easing.None,!0,500),e.add.tween(t.boy).to({x:t.boy.x-1e3},2e3,Phaser.Easing.None,!0,1350).onComplete.add(function(){e.add.tween(t.girl).to({y:-60},1e3,Phaser.Easing.None,!0,100).onComplete.add(function(){e.add.tween(t.nadned).to({angle:740},4e3,Phaser.Easing.None,!0).onComplete.add(function(){(0,a.setTimeout)(function(){t.scoreBar.hideAll(),t.makeNewTurn(),c=!1},1e3)})})})})}))}"
+      },
+      {
+        "name": "finnished",
+        "code": "function(){}"
+      },
+      {
+        "name": "makeWrongSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundWrongArr.length);this.soundWrongArr[e].play()}"
+      },
+      {
+        "name": "makeGoodSound",
+        "code": "function(){var e=Math.floor(Math.random()*this.soundGoodArr.length);this.soundGoodArr[e].play()}"
+      },
+      {
+        "name": "makeNextMove",
+        "code": "function(){this.makeNewTurn()}"
+      }
+    ]
+  }
+]

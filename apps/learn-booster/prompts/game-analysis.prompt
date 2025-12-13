@@ -1,0 +1,76 @@
+# איתור וניתוח משחק חדש
+
+## מטרה
+
+זיהוי וניתוח משחק חדש במערכת, איתור פונקציות מעבר שלב והוספתן לקובץ התצורה.
+
+## שלבים
+
+1. פתיחת המשחק וזיהוי שמו:
+   - השתמש ב-playwright כדי לגשת ל-iframe של המשחק
+   - מצא את שם המשחק מתוך ה-URL
+
+2. ניתוח פונקציות המשחק:
+   - השתמש ב-playwright_evaluate כדי לקבל את כל הפונקציות במשחק
+   פונקציות המשחק נמצאות בתוך `PIXI.game.state.states.game`.
+   
+
+```javascript
+   Object.keys(game).filter(key => typeof game[key] === 'function')
+```
+
+3. זיהוי פונקציות מעבר שלב:
+   - בחן את הפונקציות וזהה את אלו הרלוונטיות למעבר שלב
+   - הוסף console.log לפונקציות הרלוונטיות כדי לוודא שהן אכן נקראות במעבר שלב
+   
+
+```javascript
+   const originalFunc = game[funcName];
+   game[funcName] = function(...args) {
+       console.log('Function called:', funcName);
+       return originalFunc.apply(this, args);
+   }
+```
+
+4. הוספת פונקציית מעבר שלב ל-game-config:
+   - הוסף את הפונקציה הרלוונטית לרשימת הפונקציות ב-functionsList
+   
+
+```typescript
+   functionName: {
+       name: 'functionName',
+       path: rootPath + '.functionName'
+   }
+   ```
+
+5. הגדרת המשחק עם פונקציית מעבר השלב:
+   - הוסף את המשחק למערך gameConfigs עם הפרמטרים הבאים:
+
+     * gameName: שם המשחק כפי שמופיע ב-URL
+     * triggerFunc: הפונקציה שזיהית כפונקציית מעבר שלב
+     * delay: השהייה של 5 שניות (5 * 1000)
+     * gameUrlPath: נתיב ה-URL של המשחק
+
+## דוגמה
+
+```typescript
+// הוספת פונקציה ל-functionsList
+playEndLevelAnimation: {
+    name: 'playEndLevelAnimation',
+    path: rootPath + '.playEndLevelAnimation'
+}
+
+// הוספת המשחק ל-gameConfigs
+{
+    gameName: 'puzzle_2',
+    triggerFunc: functionsList.playEndLevelAnimation,
+    delay: 5 * 1000,
+    gameUrlPath: '/wp-content/uploads/new_games/puzzle_2/'
+}
+```
+
+## הערות
+
+* חשוב לוודא שהפונקציה שנבחרה אכן נקראת במעבר שלב
+* יש להקפיד על שמירת המבנה האחיד של הקובץ
+* יש לשמור על עקביות בפורמט השמות והנתיבים

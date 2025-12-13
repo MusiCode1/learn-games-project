@@ -1,0 +1,48 @@
+[
+  {
+    "id": 147567,
+    "name": "חִסּוּר בִּמְאֻנָּךְ",
+    "result": {
+      "gameName": "default",
+      "triggerFunc": {
+        "name": "makeNewTurn",
+        "path": "PIXI.game.state.states.game.makeNewTurn"
+      },
+      "delay": 100,
+      "injectionMethod": "direct"
+    },
+    "url": "https://gingim.net/wp-content/uploads/new_games/vertical_sub1?lang=heb"
+  },
+  {
+    "id": 147555,
+    "name": "Numbers",
+    "result": {
+      "gameName": "default",
+      "triggerFunc": {
+        "name": "makeNewTurn",
+        "path": "PIXI.game.state.states.game.makeNewTurn"
+      },
+      "delay": 100,
+      "injectionMethod": "direct"
+    },
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_numbers_L?lang=eng"
+  },
+  {
+    "id": 147522,
+    "name": "Food",
+    "result": false,
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_food_L?lang=eng"
+  },
+  {
+    "id": 145456,
+    "name": "הַרְכָּבַת מִשְׁפָּט מִמִּלִּים",
+    "result": false,
+    "url": "https://gingim.net/wp-content/uploads/new_games/sentence_hulam/?lang=heb"
+  },
+  {
+    "id": 145781,
+    "name": "הַצִּיּוּר",
+    "result": false,
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_paint?lang=heb"
+  }
+]

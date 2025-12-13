@@ -1,0 +1,6492 @@
+[
+  {
+    "id": "147567",
+    "name": "חִסּוּר בִּמְאֻנָּךְ",
+    "description": "דו, תלת וארבע ספרתי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/vertical_sub1?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/02/vertical_sub2.png",
+    "categories": [
+      "1",
+      "167"
+    ]
+  },
+  {
+    "id": "147555",
+    "name": "Numbers",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_numbers_L?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/writing_words_numbers1.png",
+    "categories": [
+      "21",
+      "127",
+      "1"
+    ]
+  },
+  {
+    "id": "147522",
+    "name": "Food",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_food_L?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/writing_words_food1-1.png",
+    "categories": [
+      "21",
+      "127",
+      "1"
+    ]
+  },
+  {
+    "id": "145456",
+    "name": "הַרְכָּבַת מִשְׁפָּט מִמִּלִּים",
+    "description": "חולם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sentence_hulam/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/01/sentence_hulam-1.png",
+    "categories": [
+      "1",
+      "17",
+      "113"
+    ]
+  },
+  {
+    "id": "145781",
+    "name": "הַצִּיּוּר",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_paint?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/02/movie_paint.png",
+    "categories": [
+      "1",
+      "123",
+      "19"
+    ]
+  },
+  {
+    "id": "145447",
+    "name": "הַרְכָּבַת מִשְׁפָּט מִמִּלִּים",
+    "description": "סגול וצירה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sentence_tzere/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/01/sentence_tzere-1.png",
+    "categories": [
+      "1",
+      "17",
+      "113"
+    ]
+  },
+  {
+    "id": "145565",
+    "name": "מִצְאוּ אֶת הַמִּלָּה",
+    "description": "מצאו את המילה הזהה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/same_words_first?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/01/same_words_first.png",
+    "categories": [
+      "1",
+      "113"
+    ]
+  },
+  {
+    "id": "144497",
+    "name": "יוֹתֵר אוֹ פָּחוֹת 2",
+    "description": "יותר או פחות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/more_less2?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/01/more_less2.png",
+    "categories": [
+      "1",
+      "15",
+      "61"
+    ]
+  },
+  {
+    "id": "144504",
+    "name": "הַרְכָּבַת מִשְׁפָּט מִמִּלִּים",
+    "description": "חיריק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sentence_hirik/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/01/sentence_hirik-1.png",
+    "categories": [
+      "1",
+      "17",
+      "113"
+    ]
+  },
+  {
+    "id": "144489",
+    "name": "מחק וגלה 2",
+    "description": "הזז את העכבר וגלה את התמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/earase_3/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/01/earaser2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "89804",
+    "name": "צְבִיעַת אוֹתִיּוֹת",
+    "description": "צבעו את האותיות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/painting_letters/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/10/painting_letters.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "280",
+    "name": "לָחֲצוּ וְלִמְדוּ",
+    "description": "הכרת האותיות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/click_learn?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/01/button_learn.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "281",
+    "name": "שֵׁם הָאוֹתִיּוֹת",
+    "description": "שם האותיות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/name_letters?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/01/button_names.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "282",
+    "name": "כְּתִיבַת אוֹתִיּוֹת",
+    "description": "כתיבת אותיות - דפוס",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_letters_heb_dfus/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/01/button_dfus_letters.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "289",
+    "name": "כְּתִיבַת אוֹתִיּוֹת",
+    "description": "כתיבת אותיות - כתב",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_letters_heb/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/01/button_ktav_letters.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "291",
+    "name": "הֲבָרָה שׁוֹנָה",
+    "description": "איזו מילה מתחילה בהברה שונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sound_it_out/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/01/button_diff_0-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "581",
+    "name": "מִצְאוּ אֶת הָאוֹתִיּוֹת",
+    "description": "מצא את האותיות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/find_letters/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_find_letters_1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "582",
+    "name": "אוֹתִיּוֹת וְכִוּוּנִים",
+    "description": "מצאו את האות בכיוון הנכון",
+    "url": "https://gingim.net/wp-content/uploads/new_games/letter_directions/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_flip2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "583",
+    "name": "כְּתָב - דְּפוּס",
+    "description": "כתב - דפוס",
+    "url": "https://gingim.net/wp-content/uploads/new_games/lower_uppercase?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_ktav.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "584",
+    "name": "הַתְחָלָה דּוֹמָה",
+    "description": "מה מתחיל אותו דבר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/start_same/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_start_same.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "135289",
+    "name": "צְלִיל בְּתוֹךְ מִלָּה",
+    "description": "קמץ פתח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/middle_sound_kamatz/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/11/middle_kamatz.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "138004",
+    "name": "צְלִיל בְּתוֹךְ מִלָּה",
+    "description": "חיריק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/middle_sound_hirik/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/11/middle_hirik.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "142023",
+    "name": "צְלִיל בְּתוֹךְ מִלָּה",
+    "description": "צירה וסגול",
+    "url": "https://gingim.net/wp-content/uploads/new_games/middle_sound_segol/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/12/middle_sound_segol.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "142460",
+    "name": "צְלִיל בְּתוֹךְ מִלָּה",
+    "description": "חולם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/middle_sound_hulam/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/12/middle_hulam.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "142466",
+    "name": "צְלִיל בְּתוֹךְ מִלָּה",
+    "description": "שורוק וקובוץ",
+    "url": "https://gingim.net/wp-content/uploads/new_games/middle_sound_shuruk/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/12/middle_shoruk.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "586",
+    "name": "צְלִיל בְּתוֹךְ מִלָּה",
+    "description": "כל התנועות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/middle_sound/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_avara_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "587",
+    "name": "הַתְאָמָה",
+    "description": "התאמת אות לאות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/match_letters/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_match_3.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "588",
+    "name": "מָה רְאִיתֶם?",
+    "description": "משחק זכרון אותיות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_letters/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_remember1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "98069",
+    "name": "סֵדֶר הָאוֹתִיּוֹת",
+    "description": "סדרו את האותיות לפי סדר ה א' ב'",
+    "url": "https://gingim.net/wp-content/uploads/new_games/letters_line/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/12/abc__heb_order.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "589",
+    "name": "חֲרוּזִים",
+    "description": "מה מתחרז עם....",
+    "url": "https://gingim.net/wp-content/uploads/new_games/rhymes/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/04/button_rhymes3.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "98119",
+    "name": "אות פותחת",
+    "description": "מה מתחיל ב...",
+    "url": "https://gingim.net/wp-content/uploads/new_games/first_letter/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_first_letter_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "591",
+    "name": "אוֹת סוֹגֶרֶת",
+    "description": "מה מסתיים ב...",
+    "url": "https://gingim.net/wp-content/uploads/new_games/ending_sound?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_ending_sound1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "116973",
+    "name": "זִכָּרוֹן אוֹתִיּוֹת דְּפוּס",
+    "description": "משחק זכרון אותיות דפוס",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_letters_heb_dfus?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/07/memory_letters_dfus.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "116966",
+    "name": "זִכָּרוֹן אוֹתִיּוֹת כְּתַב",
+    "description": "משחק זכרון אותיות כתב",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_letters_heb?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/07/memory_letters_heb.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "374",
+    "name": "תְּמוּנָה-מִלָּה קָמָץ פָּתַח",
+    "description": "התאמת תמונה-מילה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_pic/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_word_pic.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "375",
+    "name": "תְּמוּנָה-מִלָּה חִירִיק",
+    "description": "התאמת תמונה-מילה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_pic_2/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_word_pic_hirik-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "592",
+    "name": "תְּמוּנָה-מִלָּה צֵירֶה וְסָגֹל",
+    "description": "התאמת תמונה למילה - מילים בצירה וסגול",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_pic_3/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_word_pic_segol.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "593",
+    "name": "תְּמוּנָה-מִלָּה חוֹלָם",
+    "description": "התאמת תמונה למילה - מילים בחולם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_pic_4/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_word_pic_holam.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "594",
+    "name": "תְּמוּנָה-מִלָּה שׁוּרוּק",
+    "description": "התאמת תמונה למילה, מילים בשורוק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_pic_5/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_word_pic_shuruk.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "595",
+    "name": "מִלָּה-תְּמוּנָה קָמָץ פָּתַח",
+    "description": "התאמת מילה לתמונה - בעלי חיים - קמץ פתח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/pic-word/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_word_pic_2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "596",
+    "name": "מִלָּה - תְּמוּנָה - חִירִיק",
+    "description": "התאמת מילה לתמונה - בעלי חיים - חיריק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/pic-word-hirik/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/04/Untitled-1-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "597",
+    "name": "מִלָּה - תְּמוּנָה - צֵירֶה וְסֶגּוֹל",
+    "description": "התאמת מילה לתמונה - בעלי חיים - צירה סגול",
+    "url": "https://gingim.net/wp-content/uploads/new_games/pic-word-zere/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_word_pic3-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "598",
+    "name": "מִלָּה - תְּמוּנָה - חוֹלֵם",
+    "description": "התאמת מילה לתמונה - בעלי חיים - חולם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/pic-word-holam/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_word_pic4.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "600",
+    "name": "מִלָּה - תְּמוּנָה - אֹכֶל וְעוֹד",
+    "description": "התאמת מילים ללא ניקוד לתמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/pic-word-food+/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_word_pic5.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "46334",
+    "name": "זוּגוֹת - קָמָץ",
+    "description": "לוטו - תמונה מילה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/kamatzh_levels/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/05/kamatzh.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "46336",
+    "name": "זוּגוֹת - חִירִיק",
+    "description": "לוטו - תמונה מילה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/hirik_levels/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/05/hirik.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "46341",
+    "name": "זוּגוֹת - צֵירֶה",
+    "description": "לוטו - תמונה מילה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/zere_levels/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/05/zere.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "51355",
+    "name": "זוּגוֹת - חוֹלָם",
+    "description": "לוטו - תמונה מילה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/hulam_levels/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/07/holam_levels.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "51366",
+    "name": "זוּגוֹת - שׁוּרוּק וְקֻבּוּץ",
+    "description": "לוטו - תמונה מילה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/shuruk_levels/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/07/shuruk_levels.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "124213",
+    "name": "תְּנוּעָה - מִלָּה",
+    "description": "איזה צליל של תנועה יש במילה?",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cards_vowels/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/09/matching_cards_vowels.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "124284",
+    "name": "תְּנוּעָה - תְּמוּנָה",
+    "description": "איזה צליל של תנועה יש במילה?",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cards_vowels_pic?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/09/matching_cards_vowels_pics.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "145565",
+    "name": "מִצְאוּ אֶת הַמִּלָּה",
+    "description": "מצאו את המילה הזהה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/same_words_first?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/01/same_words_first.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "601",
+    "name": "זוּגוֹת מִלָּה-תְּמוּנָה",
+    "description": "זוגות מילה-תמונה לפי תנועות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cards_words/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_matching_cards_words.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "604",
+    "name": "מִצְאוּ אֶת הַמִּלָּה",
+    "description": "בחר במילה ששמעת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/find_word/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_find_word.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "605",
+    "name": "צְלִיל פּוֹתֵחַ",
+    "description": "התאמת צליל פותח לתמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/begining_letters?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_startA.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "606",
+    "name": "מִלִּים דּוֹמוֹת",
+    "description": "מילים דומות חזותית",
+    "url": "https://gingim.net/wp-content/uploads/new_games/similar_words/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_similar_words.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "44729",
+    "name": "נִשְׁמַע אוֹתוֹ דָּבָר",
+    "description": "מילים הומופוניות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/homophone_words/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/05/homo.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "607",
+    "name": "מִשְׁפָּט - תְּמוּנָה - קָמָץ פָּתַח",
+    "description": "התאמת משפט לתמונה. קמץ פתח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/right_wrong/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_right_wrong.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "116044",
+    "name": "מִשְׁפָּט - תְּמוּנָה - חִירִיק",
+    "description": "התאמת משפט לתמונה - חיריק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/right_wrong_hirik?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/06/right_wrong_hirik.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "113677",
+    "name": "מִשְׁפָּט - תְּמוּנָה צֵירֶה-סָגֹל",
+    "description": "התאמת משפט לתמונה - צירה-סגול",
+    "url": "https://gingim.net/wp-content/uploads/new_games/right_wrong_zere?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/05/Pic_sen_zere.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "116051",
+    "name": "מִשְׁפָּט - תְּמוּנָה - חוֹלָם",
+    "description": "התאמת משפט לתמונה - חולם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/right_wrong_holam?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/06/right_wrong_holam.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "116045",
+    "name": "מִשְׁפָּט - תְּמוּנָה - שׁוּרוּק",
+    "description": "התאמת משפט לתמונה - שורוק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/right_wrong_shuruk?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/06/right_wrong_shuruk.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "608",
+    "name": "מִשְׁפָּט - תְּמוּנָה",
+    "description": "התאמת משפט לתמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/right_wrong_2/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_right_wrong2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "610",
+    "name": "הַרְכָּבַת מִשְׁפָּט מִמִּלִּים",
+    "description": "הרכבת משפט ממילים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_to_sentence/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_wts.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "611",
+    "name": "בְּנִיַּת מִשְׁפָּט",
+    "description": "בניית משפט ממילים קמץ פתח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sentences/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/sentences.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "144504",
+    "name": "הַרְכָּבַת מִשְׁפָּט מִמִּלִּים",
+    "description": "חיריק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sentence_hirik/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/01/sentence_hirik-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "145447",
+    "name": "הַרְכָּבַת מִשְׁפָּט מִמִּלִּים",
+    "description": "סגול וצירה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sentence_tzere/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/01/sentence_tzere-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "145456",
+    "name": "הַרְכָּבַת מִשְׁפָּט מִמִּלִּים",
+    "description": "חולם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sentence_hulam/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/01/sentence_hulam-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "612",
+    "name": "בְּנִיַּת מִשְׁפָּט 2",
+    "description": "בניית משפט ממילים - כל התנועות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sentences2/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/sentences2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "613",
+    "name": "מָה קָרָה לַנֹּעַם?",
+    "description": "השלמת משפט עם מילות קישור ומילות יחס",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_noam/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_fillin.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "614",
+    "name": "מִלִּים דּוֹמוֹת-שׁוֹנוֹת",
+    "description": "השלמת משפט - מילים דומות - שונות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/same_diff3/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_same.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "615",
+    "name": "מִלִּים דּוֹמוֹת-שׁוֹנוֹת 2",
+    "description": "השלמת משפט - מילים דומות - שונות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/same_diff1?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_erez-same.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "616",
+    "name": "מִלִּים דּוֹמוֹת-שׁוֹנוֹת",
+    "description": "מילים דומות - שונות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/same_diff/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_same2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "617",
+    "name": "דְּגוּשׁוֹת-רָפוֹת",
+    "description": "חידות  - דגושות - רפות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/dagesh/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_dagesh.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "618",
+    "name": "מִיּוּן מִלִּים",
+    "description": "מיון מילים לקבוצות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sort_words?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_sort_words.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "619",
+    "name": "מִיּוּן מִלִּים 2",
+    "description": "מיון מילים לקבוצות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sort_words_2/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_sort_words2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "38410",
+    "name": "מִלִּים מְפֹרָקוֹת",
+    "description": "חיבור תחילת מילה לסוף מילה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/split_words/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/03/split_words.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "98640",
+    "name": "אֵיזוֹ מִלָּה יוֹצֵאת דֹּפֶן?",
+    "description": "איזו מילה אינה שייכת למשפחת המילים?",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_oddoneout/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/12/word_oddoneout.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "100750",
+    "name": "תִּפְזֹרֶת רְגָשׁוֹת",
+    "description": "מצאו את המילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_hunt/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/12/emotions.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "103245",
+    "name": "מָה פֵּרוּשׁ הַמִּלָּה?",
+    "description": "בחרו את הפרוש הנכון מבין הפרושים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/meaning_of_word/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/01/meaningofword.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "135939",
+    "name": "מִשְׁפָּחוֹת מִלִּים",
+    "description": "התאמת מילים לאותיות השורש",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sort_words_shoresh/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/11/sort_shoresh-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "376",
+    "name": "הַקָּמָץ וְהַפֶּתַח",
+    "description": "ראשית הקריאה - קמץ - פתח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_kamatzh/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_kamatzh.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "131650",
+    "name": "לָמָּה בָּרַח הָעַכְבָּר?",
+    "description": "סיפור קצר לראשית הקריאה קמץ פתח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_mouse?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/10/story_mouse.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "114410",
+    "name": "הַכַּלְבָּה",
+    "description": "סיפור קצר - ראשית הקריאה - קמץ פתח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_dog?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/05/dog.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "377",
+    "name": "הַדַּיָּג",
+    "description": "סיפור בקמץ פתח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_fisherman/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_story_fisherman.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "620",
+    "name": "הַנַּעַל",
+    "description": "סיפור לראשית הקריאה קמץ פתח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_shoe/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_giant.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "621",
+    "name": "מַעְיָן וְהַכַּלְבָּה",
+    "description": "סיפור לראשית הקריאה קמץ פתח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_maayan/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_maayan.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "622",
+    "name": "שַׁחַר וְהַצָּב",
+    "description": "סיפור לראשית הקריאה, קמץ פתח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_turtle/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_turtle.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "623",
+    "name": "הַסַּל",
+    "description": "סיפור לראשית הקריאה קמץ פתח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_basket/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_basket.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "624",
+    "name": "הַחִירִיק",
+    "description": "סיפור החיריק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_hirik/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_hirik.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "625",
+    "name": "מַתָּנָה",
+    "description": "סיפור לראשית הקריאה קמץ פתח וחיריק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_present/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_present.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "874",
+    "name": "הַפִּיצָה",
+    "description": "סיפור לראשית הקריאה, קמץ פתח וחיריק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_pizza/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_pizza.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "626",
+    "name": "אֲבִישַׁי וְהַנְּמָלָה",
+    "description": "סיפור לראשית הקריאה, קמץ פתח וחיריק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_ant/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_ant.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "628",
+    "name": "עָמִית וְהַזִּקִּית",
+    "description": "סיפור לראשית הקריאה קמץ פתח וחיריק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_lizard/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_lizard.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "629",
+    "name": "צֵירֶה וְסֶגּוֹל",
+    "description": "סיפור צירה, סגול",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_segol/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_segol.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "630",
+    "name": "מִי הִשְׁמִיעַ רַעַשׁ?",
+    "description": "סיפור לראשית הקריאה - קמץ, חיריק וצירה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_shadow/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_shadow.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "631",
+    "name": "כֶּלֶב וכֶּבֶשֹ",
+    "description": "סיפור לראשית הקריאה - צירה סגול",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_dog_sheep/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_dog_sheep.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "632",
+    "name": "אֶרֶז וְהַפֶּתֶק",
+    "description": "סיפור לראשית הקריאה קמץ פתח, צירה סגול",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_note/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_erez.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "644",
+    "name": "בַּחֶדֶר שֶׁל אֵלֶּה",
+    "description": "סיפור לראשית הקריאה קמץ פתח חיריק צירה וסגול",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_ella/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_ella.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "645",
+    "name": "הַכֶּלֶב שֶׁל אֶרֶז",
+    "description": "סיפור לראשית הקריאה צירה סגול",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_erez/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_erezdog.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "118077",
+    "name": "בַּדֶּרֶך לְבֵית הַסֵּפֶר",
+    "description": "סיפור לראשית הקריאה קמץ, צירה, וחולם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_school?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/07/school.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "646",
+    "name": "הַחוֹלָם",
+    "description": "סיפור לראשית הקריאה - חולם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_holam2/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "647",
+    "name": "אַלּוֹן וְהַיָּרֵחַ",
+    "description": "סיפור לראשית הקריאה, לחיזוק פתח גנובה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_alon/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_alon.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "648",
+    "name": "הַקִּפּוֹד וְהָאַרְנָב",
+    "description": "סיפור לראשית הקריאה קמץ חיריק וחולם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_hedgehog/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_kipod.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "649",
+    "name": "הַנְּסִיכָה",
+    "description": "סיפור לראשית הקריאה - קמץ,חיריק,חולם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/princess/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_princess.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "650",
+    "name": "הַצְּבָעִים שֶׁל רוֹנִית",
+    "description": "סיפור לראשית הקריאה לתרגול קמץ חיריק וחולם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_ronit/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_story_ronit.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "651",
+    "name": "לָבִיא וְהַקּוֹף",
+    "description": "סיפור לראשית הקריאה קמץ חולם וחיריק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_monkey/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_monkey.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "652",
+    "name": "הַחֲלוֹם שֶׁל מְאוֹר",
+    "description": "סיפור לראשית הקריאה קמץ וחולם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_dream/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_dream.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "653",
+    "name": "הִלָּה וְהַחֲמוֹר",
+    "description": "סיפור לראשית הקריאה קמץ חיריק וחולם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_donkey/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_donkey.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "656",
+    "name": "הַשּׁוּרוּק",
+    "description": "סיפור לראשית הקריאה - שורוק קבוץ",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_shuruk/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_shuruk.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "658",
+    "name": "הַיַּתּוּשׁ",
+    "description": "סיפור לראשית הקריאה שורוק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_mosquito/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_nosquito.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "659",
+    "name": "הַגֻּלּוֹת",
+    "description": "סיפור לראשית הקריאה - שורוק קובוץ",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_marbles/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_marbles.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "661",
+    "name": "אִמּוּן כַּדּוּרְסַל",
+    "description": "סיפור לתרגול שורוק קובוץ",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_basketball/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_basketball.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "662",
+    "name": "יוֹם הֻלֶּדֶת",
+    "description": "סיפור לראשית הקריאה - שורוק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_birthday/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_birthday.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "660",
+    "name": "טִפּוֹת הַגֶּשֶׁם",
+    "description": "סיפור לחורף לתרגול מילים רטובות - מילים ב ט'",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_rain/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_rain.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "666",
+    "name": "הַקַּמְצָן",
+    "description": "בדיחה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_cheap/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_cheap.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "667",
+    "name": "הַמִּבְחָן",
+    "description": "בדיחה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_test/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_test.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "668",
+    "name": "הַיַּבָּשׁוֹת",
+    "description": "בדיחה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_world/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_world.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "72931",
+    "name": "הֶחָתוּל בְּמִצְרַיִם הָעַתִּיקָה",
+    "description": "טקסט מידעי קצר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_bastet/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/10/bastet.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "72999",
+    "name": "הַמֵּדוּזָה",
+    "description": "טקסט מידעי קצר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_jellyfish/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/10/jellyfish.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "94414",
+    "name": "הַאִם הַתֻּכִּים יְכוֹלִים לְדַבֵּר?",
+    "description": "טקסט מידעי קצר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_parrot/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/11/parrot.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "88520",
+    "name": "הַסֻּכִּי",
+    "description": "טקסט מידעי קצר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_suki/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/10/suki.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "88513",
+    "name": "הָאוֹקְיָנוֹס",
+    "description": "טקסט מידעי קצר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_ocean/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/10/ocean.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "105578",
+    "name": "מִדְבָּרִיוֹת",
+    "description": "טקסט מידעי קצר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_desert/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/02/desert.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "101808",
+    "name": "הַוִיקִינְגִים",
+    "description": "טקסט מידעי קצר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_viking?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/12/viking.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "98631",
+    "name": "הָאֶסְקִימוֹאִים",
+    "description": "טקסט מידעי קצר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_eskimo/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/12/story_eskimo.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "100123",
+    "name": "הַכַּדּוּרֶגֶל הָאַנְגְּלִי",
+    "description": "טקסט מידעי קצר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_football/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/12/football.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "378",
+    "name": "הַדִּינוֹזָאוּרִים",
+    "description": "טקסט מידעי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_dino/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_story_dino.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "663",
+    "name": "כַּדּוּר פּוֹרֵחַ",
+    "description": "טקסט מידעי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_hotair_balloon/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_hot_air_balloon.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "665",
+    "name": "הַקִּפּוֹד",
+    "description": "טקסט מידעי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_kipod?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_story_kipod.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "1709",
+    "name": "הָאַרְיֵה",
+    "description": "טקסט מידעי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_lion_info/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/06/ICONS.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "29773",
+    "name": "הָעַצְלָן",
+    "description": "טקסט מידעי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_sloths/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/02/azlan.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "38874",
+    "name": "הַדָּג הַגָּדוֹל בְּיוֹתֵר בְּעוֹלָם",
+    "description": "טקסט מידעי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_fish/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/03/fish.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "41283",
+    "name": "יְמָנִיִּים וּשְׂמָאלִיִּים",
+    "description": "טקסט מידעי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_right_left/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/04/right_left.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "46325",
+    "name": "הַפִּינְגְּוִין הַקֵּיסָרִי",
+    "description": "טקסט מידעי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_penguin/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/05/penguin.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "51369",
+    "name": "גְּלִידָה, אַרְטִיק וְקַרְטִיב",
+    "description": "טקסט מידעי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/story_icecream/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/07/icecream.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "379",
+    "name": "בָּלוֹן בּוֹרֵחַ",
+    "description": "תרגול הקלדה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/balloon_letters/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_balloon.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "669",
+    "name": "הַקְלָדָה עַל הַקֶּרַח",
+    "description": "תרגול הקלדה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/penguin_letters/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_penguin.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "670",
+    "name": "בָּלוֹן בּוֹרֵחַ",
+    "description": "תרגול הקלדה עם מקלדת וירטואלית",
+    "url": "https://gingim.net/wp-content/uploads/new_games/balloon_letters2?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_balloon_letters2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "671",
+    "name": "הַקְלָדָה עַל הַקֶּרַח",
+    "description": "תרגול הקלדה עם מקלדת וירטואלית",
+    "url": "https://gingim.net/wp-content/uploads/new_games/penguin_letters2/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_penguin_letters2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "676",
+    "name": "הַקְלָדַת מִלִּים",
+    "description": "תרגול הקלדת מילים עם מקלדת וירטואלית",
+    "url": "https://gingim.net/wp-content/uploads/new_games/popcorn_words2?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_popcorn_words2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "675",
+    "name": "הַקְלָדַת מִלִּים",
+    "description": "תרגול הקלדת מילים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/popcorn_words/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_popcorn_words.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "674",
+    "name": "כּוֹתְבִים מִלִּים",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_letters?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_writing_level1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "673",
+    "name": "כּוֹתְבִים מִלִּים",
+    "description": "כתיבת מילים, מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_writing_level2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "132680",
+    "name": "יְמוֹת הַשָּׁבוּעַ",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_days_L?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/writing_days1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "672",
+    "name": "יְמוֹת הַשָּׁבוּעַ",
+    "description": "כתיבת מילים - מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_days?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/writing_days2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "132764",
+    "name": "כּוֹתְבִים מִלִּים - צְבָעִים",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_colors_L?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/10/writing_colors1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "680",
+    "name": "כּוֹתְבִים מִלִּים - צְבָעִים",
+    "description": "כתיבת מילים- מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_colors/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/10/writing_colors2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "681",
+    "name": "גִּנַּת הָאוֹתִיּוֹת",
+    "description": "השלמת אות חסרה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/missing/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_missingletter.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "682",
+    "name": "בּוֹנִים מִלִּים",
+    "description": "בונים מילה מאותיות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/letters_to_word/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_letters_word.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "109633",
+    "name": "כּוֹתְבִים מִלִּים א'",
+    "description": "כתיבת מילים מאתגרות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_list?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/03/WWlist.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "109645",
+    "name": "כּוֹתְבִים מִלִּים ב'",
+    "description": "כתיבת מילים מאתגרות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_list2?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/03/WWlist2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "115684",
+    "name": "כּוֹתְבִים מִלִּים ג'",
+    "description": "כתיבת מילים מאתגרות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_list3?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/06/WWlist3.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "683",
+    "name": "הַסִּפּוּר שֶׁלִּי",
+    "description": "בחר תמונות, וכתוב סיפור",
+    "url": "https://gingim.net/wp-content/uploads/new_games/myStory/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_mystory.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "688",
+    "name": "הַשְׁמָטוֹת",
+    "description": "השמטת צליל במילה, מודעות פונולוגית",
+    "url": "https://gingim.net/wp-content/uploads/new_games/drop/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_drop.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "687",
+    "name": "הֲפָכִים",
+    "description": "מה ההפך מ....",
+    "url": "https://gingim.net/wp-content/uploads/new_games/opposites/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_opposites_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "686",
+    "name": "מילים נרדפות",
+    "description": "בחירה של מילה נרדפת מתוך 4 תשובות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/synonym/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_synonym1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "685",
+    "name": "מִלִּים נִרְדָּפוֹת - כְּתִיבָה",
+    "description": "כתיבת מילים נרדפות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/synonym2/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_synonym2-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "89787",
+    "name": "יָחִיד - רַבִּים",
+    "description": "כתבו את המילה ברבים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/plural_singular/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/10/plural-s.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "684",
+    "name": "תָּלוּי עַל מֶתַח",
+    "description": "נחשו את המילה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/hangman/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_hangman.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "133335",
+    "name": "מִלִּים לְשַׁבָּת",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sabbath_L?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/10/sabbath1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "98065",
+    "name": "מִלִּים לְשַׁבָּת",
+    "description": "כתיבת מילים מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sabbath/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/10/sabbath2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "381",
+    "name": "מִלִּים לְרֹאשׁ הַשָּׁנָה",
+    "description": "כתיבת מילים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/rosh-hashana/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_rsana.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "690",
+    "name": "מִלָּה-תְּמוּנָה-חַגֵּי תִּשְׁרֵי",
+    "description": "התאמת תמונה למילה - חגי תשרי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cards_tishrei/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_matching_words_tishrei.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "697",
+    "name": "מִלִּים לְיוֹם כִּפּוּר",
+    "description": "כתיבת מילים ליום כיפור",
+    "url": "https://gingim.net/wp-content/uploads/new_games/kippur/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_kipur.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "696",
+    "name": "מִלִּים לְסֻכּוֹת",
+    "description": "כתיבת מילים לסוכות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sukot/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_sukkot.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "128934",
+    "name": "תִּפְזֹרֶת חַגֵּי תִּשְׁרֵי",
+    "description": "מצאו את המילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_hunt_tishrey?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/09/word_hunt_tishrey.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "133418",
+    "name": "מִלִּים שֶׁל סְתַו",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/autumn_L?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/10/stav1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "695",
+    "name": "מִלִּים שֶׁל סְתַו",
+    "description": "כתיבת מילים מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/autumn/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/10/stav2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "694",
+    "name": "הַחֹרֶף מַגִּיעַ",
+    "description": "בחרו את התשובה הנכונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/winter/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_winter_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "134823",
+    "name": "מִלִּים רְטֻבּוֹת",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/wet_words_L?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/11/wetL1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "693",
+    "name": "מִלִּים רְטֻבּוֹת",
+    "description": "כתיבת מילים מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/wet_words/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/11/wetL2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "102167",
+    "name": "תִּפְזֹרֶת חֹרֶף",
+    "description": "מצאו את המילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_hunt_winter/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/01/WH_winter.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "134809",
+    "name": "מִלִּים שֶׁל חֹרֶף",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/winter_words_L?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/11/winterL1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "692",
+    "name": "מִלִּים שֶׁל חֹרֶף",
+    "description": "כתיבת מילים מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/winter_words/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/11/winterL2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "143145",
+    "name": "מִלִּים שֶׁל חֲנֻכָּה",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/hanuka_L/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/hunuka_l.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "691",
+    "name": "מִלִּים שֶׁל חֲנֻכָּה",
+    "description": "כתיבת מילים מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/hanuka/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/hanuka2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "138009",
+    "name": "תִּפְזֹרֶת חֲנֻכָּה",
+    "description": "מצאו את המילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_hunt_hanuka/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/11/word_hunt_hanuka.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "102298",
+    "name": "תִּפְזֹרֶת טו בִּשְׁבָט",
+    "description": "מצאו את המילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_hunt_tubsvat/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/01/tubsvatword.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "143155",
+    "name": "מִלִּים לְט\"ו בִּשְׁבָט",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/tubsvat_L/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/tu-bsvat1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "705",
+    "name": "מִלִּים לְט\"ו בִּשְׁבָט",
+    "description": "כתיבת מילים מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/tubsvat/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/tu-bsvat2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "704",
+    "name": "נְטִיעוֹת",
+    "description": "השלמת מילים במשפט שקשורות לנטיעות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/tubsvat2?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_tubishvat.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "108283",
+    "name": "תִּפְזֹרֶת לְפוּרִים",
+    "description": "מצאו את המילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_hunt_purim?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/03/word-hunt-purim.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "143159",
+    "name": "מִלִּים לְפוּרִים",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/purim_l/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/purim1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "702",
+    "name": "מִלִּים לְפוּרִים",
+    "description": "כתיבת מילים מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/purim/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/purim2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "703",
+    "name": "הַתַּחְפֹּשֶׂת שֶׁל אִיתַי",
+    "description": "השלמת משפט - סיפור לפורים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/itai/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_itai_1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "701",
+    "name": "סִפּוּר חַג הַפֶּסַח",
+    "description": "השלמת משפט - סיפור לפסח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/passover2/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_passover2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "143166",
+    "name": "מִלִּים לְפֶסַח",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/passover_L?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/pesach1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "700",
+    "name": "מִלִּים לְפֶסַח",
+    "description": "כתיבת מילים מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/passover/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/pesach2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "110614",
+    "name": "תִּפְזֹרֶת לְפֶסַח",
+    "description": "מצאו את המילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_hunt_passover?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/03/passover.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "143170",
+    "name": "יוֹם הָעַצְמָאוּת",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/Independence_day_L?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/yomA1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "38415",
+    "name": "יוֹם הָעַצְמָאוּת",
+    "description": "כתיבת מילים מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/Independence_day/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/yomA2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "112785",
+    "name": "תִּפְזֹרֶת יוֹם הָעַצְמָאוּת",
+    "description": "מצאו את המילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/wh_Independence_Day?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/05/wh_Independence_Day.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "113666",
+    "name": "תִּפְזֹרֶת לג בָּעֹמֶר",
+    "description": "מצאו את המילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_hunt_omer?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/05/WH_omer.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "143249",
+    "name": "ל\"ג בָּעוֹמֶר",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/omer_L?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/LG1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "699",
+    "name": "ל\"ג בָּעוֹמֶר",
+    "description": "כתיבת מילים מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/omer/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/LG2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "114505",
+    "name": "שְׂדֵה הָאוֹתִיּוֹת",
+    "description": "משחק לחג שבועות - השלמת אות חסרה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/missing_savuot?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/05/missing_s.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "114403",
+    "name": "תִּפְזֹרֶת שָׁבוּעוֹת",
+    "description": "מצאו את המילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_hunt_savuot?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/05/savuot5-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "143260",
+    "name": "מִלִּים לְשָׁבוּעוֹת",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/savuot_L?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/savuot1L.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "698",
+    "name": "מִלִּים לְשָׁבוּעוֹת",
+    "description": "כתיבת מילים מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/savuot/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/savuot2L.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "143305",
+    "name": "מִלִּים לַקַּיִץ",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/summer_L?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/summer1L.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "51371",
+    "name": "מִלִּים לַקַּיִץ",
+    "description": "כתיבת מילים מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/summer/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/summer2L.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "115677",
+    "name": "תִּפְזֹרֶת קַּיִץ",
+    "description": "מצאו את המילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_hunt_summer?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/06/summer2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "415",
+    "name": "צְבִיעַת מִסְפָּרִים",
+    "description": "הזז את העכבר וצבע את המספרים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/painting_numbers/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_painting_numbers.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "276",
+    "name": "מְנִיָּה",
+    "description": "מניה בתחום ה- 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/count_10?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/01/button_counting1_1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "277",
+    "name": "כְּתִיבַת מִסְפָּרִים",
+    "description": "כתיבת מספרים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_numbers/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/01/button_writing_numbers.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "278",
+    "name": "לוֹטוֹ מִסְפָּרִים",
+    "description": "לוטו מספרים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_numbers?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/01/button_number_match.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "116984",
+    "name": "זִכָּרוֹן מִסְפָּרִים",
+    "description": "משחק זכרון מספרים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_numbers2?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/07/memory_num.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "279",
+    "name": "מִצְאוּ אֶת הַמִּסְפָּרִים",
+    "description": "מצאו את המספרים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/find_numbers/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/01/button_find_num.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "336",
+    "name": "מִסְפָּר - כַּמּוּת",
+    "description": "מניה בתחום ה- 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/quantity_up/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/button_counting2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "337",
+    "name": "מוֹנִים בְּכֵּיף",
+    "description": "מניה, קבוצות וקבוצה כוללת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/num_objects/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/buton_numobjects.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "338",
+    "name": "סְפָרוֹת וְכִוּוּנִים",
+    "description": "מצא את הספרה בכיוון הנכון",
+    "url": "https://gingim.net/wp-content/uploads/new_games/number_directions/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/button_num_dir_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "339",
+    "name": "לוֹטוֹ כַּמּוּת - מִסְפָּר",
+    "description": "התאמת כמות למספר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_numbers2?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/buton_number_match2_h.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "48",
+    "name": "מְנִיָּה בַּחַוָּה",
+    "description": "התאמת מספר לכמות עד 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/quantity/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/01/button_counting4_3.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "340",
+    "name": "מִשְׂחַק זִכָּרוֹן",
+    "description": "משחק זכרון - מספרים עד 20",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_numbers?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/button_counting3_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "341",
+    "name": "רֶצֶף הַמִּסְפָּרִים 1-10",
+    "description": "רצף המספרים בתחום ה- 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/number_line/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/number_line10h.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "342",
+    "name": "רֶצֶף הַמִּסְפָּרִים 10-20",
+    "description": "רצף המספרים 10-20",
+    "url": "https://gingim.net/wp-content/uploads/new_games/number_line_20/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/button_numberlinh20.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "487",
+    "name": "רֶצֶף הַמִּסְפָּרִים 10 - 0",
+    "description": "השלמת מספרים ברצף המספרים 0-10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/number_line_5/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_numberlineh1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "488",
+    "name": "רֶצֶף הַמִּסְפָּרִים 2",
+    "description": "השלמת מספרים ברצף המספרים 0-10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/number_line_flipflop/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_numberline2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "118073",
+    "name": "מָבוֹךְ מִסְפָּרִים",
+    "description": "רצף המספרים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/numbers_maze?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/07/numbers_maze.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "489",
+    "name": "רֶצֶף הַמִּסְפָּרִים 10-20",
+    "description": "השלמת מספרים ברצף המספרים 10-20",
+    "url": "https://gingim.net/wp-content/uploads/new_games/number_line_10-20/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_numberlineh20_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "490",
+    "name": "רֶצֶף הַמִּסְפָּרִים 3",
+    "description": "רצף המספרים, 0-100 עשרות שלמות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/number_line_10/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_numberline3_1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "491",
+    "name": "רֶצֶף הַמִּסְפָּרִים 4",
+    "description": "רצף המספרים, 0-100 עשרות שלמות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/number_line_flipflop_10/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_numberline4h.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "492",
+    "name": "רֶצֶף הַמִּסְפָּרִים + 2",
+    "description": "רצף המספרים 1-100 ועוד 2",
+    "url": "https://gingim.net/wp-content/uploads/new_games/number_line_diverse/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_numberline2h.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "493",
+    "name": "רֶצֶף הַמִּסְפָּרִים + 5",
+    "description": "רצף המספרים 1-100 ועוד 5",
+    "url": "https://gingim.net/wp-content/uploads/new_games/number_line_diverse5/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_numberline5.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "494",
+    "name": "יוֹתֵר אוֹ פָּחוֹת",
+    "description": "יותר או פחות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/more_less/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_counting6_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "144497",
+    "name": "יוֹתֵר אוֹ פָּחוֹת 2",
+    "description": "יותר או פחות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/more_less2?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/01/more_less2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "495",
+    "name": "דָּגִים וּמִסְפָּרִים",
+    "description": "מנייה בתחום ה- 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/fish_and_more/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_counting7_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "496",
+    "name": "זוּגִי / אִי-זוּגִי",
+    "description": "זוגי או אי-זוגי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/even_odd/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_even.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "497",
+    "name": "גָּדוֹל / קָטָן / שָׁוֶה",
+    "description": "גדול, קטן או שווה עד 100",
+    "url": "https://gingim.net/wp-content/uploads/new_games/bigger_smaller/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_moreless.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "498",
+    "name": "הוֹקִי קֶרַח",
+    "description": "מספרים עד 100 בחר במספר הגדול/קטן ביותר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/hockey/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_hockey.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "499",
+    "name": "לוּחַ הַמֵּאָה",
+    "description": "החזר את המספרים למקומם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/number_chart?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_numberchart.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "500",
+    "name": "מִלָּה - מִסְפָּר",
+    "description": "התאמה בין מילה למספר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cards_placeValue1/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_placevalue1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "104144",
+    "name": "דְּרָקוֹן הַמִּסְפָּרִים",
+    "description": "מבנה עשרוני עשרות ויחידות התאמה כמות למספר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/placeValue_tetris/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/01/tetris-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "501",
+    "name": "מִבְנֶה עֶשְׂרוֹנִי",
+    "description": "מיקום ספרת יחידות, עשרות, מאות ואלפים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/placeValue_plane/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_placevalue2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "502",
+    "name": "בְּנִיַּת מִסְפָּר",
+    "description": "מבנה עשרוני",
+    "url": "https://gingim.net/wp-content/uploads/new_games/number_write/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_placevalue3.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "44719",
+    "name": "בְּדִידִים וּמִסְפָּרִים",
+    "description": "כתיבת מספר בהתאם לכמות המוצגת בבדידים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/placeValue_cubes/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/05/PV_cubes-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "32966",
+    "name": "יְחִידוֹת וַעֲשָׂרוֹת",
+    "description": "כתיבת מספר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/placeValue_eggs?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/02/dodo2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "1708",
+    "name": "בַּקָּפִיטֶרְיָה",
+    "description": "תשלום במטבעות ושטרות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/money/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/06/ICONS-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "116987",
+    "name": "עֵרֶךְ מַטְבְּעוֹת",
+    "description": "מצאו זוגות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cards_money?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/07/matching_money.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "110171",
+    "name": "כַּמָּה כֶּסֶף יֵשׁ לִי?",
+    "description": "התאמת סכום כסף לכמות מוצגת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/placeValue_money?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/03/PVM.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "348",
+    "name": "חִבּוּר חִסּוּר - גּוֹל 10",
+    "description": "חיבור וחיסור בתחום ה- 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/football_plus/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/goal.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "505",
+    "name": "בַּחַוָּה",
+    "description": "תרגילי חיבור בתחום ה – 10 בעזרת המחשה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/farm/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_animals.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "507",
+    "name": "וְעוֹד אֶחָד",
+    "description": "חיבור בעשרת ראשונה ועוד אחד עם המחשה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/farm_plus_one/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_onemore.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "513",
+    "name": "קֻבִּיּוֹת",
+    "description": "בניית תרגילי חיבור בתחום ה - 10 בעזרת המחשה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/dice/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/buton_dice.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "562",
+    "name": "הַשְׁלָמָה לְ-10",
+    "description": "תרגילי חיבור - השלמה ל 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/making_ten/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_making_ten.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "514",
+    "name": "יַעַר הַתַּרְגִּילִים",
+    "description": "התאמת תרגיל חיבור לתבנית בתחום ה 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/forest_match/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_forest.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "516",
+    "name": "חִבּוּר סַל עַד 10",
+    "description": "תרגילי חיבור עד 10 תרגיל עם נעלם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/basketball_plus/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/basketball10.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "512",
+    "name": "קְלִיעָה לַמַּטָּרָה",
+    "description": "תרגילי חיבור בתחום ה - 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/darts_plus?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_darts_subh.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "509",
+    "name": "לוּחַ אֶתְגָּר",
+    "description": "בניית תרגילי חיבור/חיסור בתחום ה – 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/notes/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_memos.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "52287",
+    "name": "חִבּוּר חִסּוּר - גּוֹל 20",
+    "description": "חיבור וחיסור בתחום ה- 20",
+    "url": "https://gingim.net/wp-content/uploads/new_games/football_plus_20?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/08/goal20.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "52290",
+    "name": "הַשְׁלָמָה לְ-20",
+    "description": "תרגילי חיבור - השלמה ל 20",
+    "url": "https://gingim.net/wp-content/uploads/new_games/making_twenty/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/08/making_twenty.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "52279",
+    "name": "חִבּוּר סַל עַד 20",
+    "description": "תרגילי חיבור עד 20. תרגיל עם נעלם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/basketball_plus_20?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/08/basketball20.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "93839",
+    "name": "קְלִיעָה לַמַּטָּרָה",
+    "description": "חיבור עד 20. מצאו תרגיל מתאים לתוצאה במטרה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/darts_plus_20/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/11/darts20.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "93841",
+    "name": "לוּחַ אֶתְגָּר",
+    "description": "בניית תרגילי חבור חסור בתחום ה-20",
+    "url": "https://gingim.net/wp-content/uploads/new_games/notes_20/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/11/notes-20.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "511",
+    "name": "נַדְנֵדַת חִבּוּר",
+    "description": "תרגיל עם נעלם בתחום ה - 100",
+    "url": "https://gingim.net/wp-content/uploads/new_games/seesaw_plus/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_seesaw.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "518",
+    "name": "סְקִי חִבּוּר",
+    "description": "חיבור עד 100 בחר בתשובה המתאימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/ski_plus/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_ski_plus.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "517",
+    "name": "כַּדּוּרֶגֶל חִבּוּר",
+    "description": "תרגול חיבור עד 100",
+    "url": "https://gingim.net/wp-content/uploads/new_games/soccer2_plus/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_soccer_plus.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "111026",
+    "name": "חִידוֹת חִבּוּר",
+    "description": "כתבו ליד כל סוכריה את הערך שלה, בהתאם לתרגילים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/math_quest?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/04/math_quest-2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "136958",
+    "name": "חִבּוּר בִּמְאֻנָּךְ",
+    "description": "דו, תלת וארבע ספרתי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/vertical_addition?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/11/vertical_addition-2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "566",
+    "name": "בְּעָיוֹת מִלּוּלִיּוֹת",
+    "description": "חידות חשבוניות בתחום ה 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/snakes_and_ladders_mini_maths/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_snake_math_1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "348",
+    "name": "חִבּוּר חִסּוּר - גּוֹל 10",
+    "description": "חיבור וחיסור בתחום ה- 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/football_plus/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/goal.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "510",
+    "name": "דָּגִים",
+    "description": "חיסור עם המחשה בתחום ה- 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/fish_box/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_fish_1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "361",
+    "name": "בְּחוֹף הַיָּם",
+    "description": "תרגילי חיסור בתחום ה – 10 בעזרת המחשה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/beach/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_beach.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "508",
+    "name": "פָּחוֹת אֶחָד",
+    "description": "חיסור בעשרה ראשונה פחות אחד עם המחשה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/beach_minus_one/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_oneless.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "519",
+    "name": "חִסּוּר סַל",
+    "description": "תרגילי חיסור עם נעלם עד 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/basketball_minus/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/buton_basket_sub.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "560",
+    "name": "קְלִיעָה לַמַּטָּרָה",
+    "description": "חיסור עד 10. מצאו תרגיל מתאים לתוצאה במטרה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/darts_minus/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_darts_sub.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "509",
+    "name": "לוּחַ אֶתְגָּר",
+    "description": "בניית תרגילי חיבור/חיסור בתחום ה – 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/notes/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_memos.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "52287",
+    "name": "חִבּוּר חִסּוּר - גּוֹל 20",
+    "description": "חיבור וחיסור בתחום ה- 20",
+    "url": "https://gingim.net/wp-content/uploads/new_games/football_plus_20?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/08/goal20.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "93837",
+    "name": "קְלִיעָה לַמַּטָּרָה",
+    "description": "חיסור עד 20. מצאו תרגיל מתאים לתוצאה במטרה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/darts_minus_20/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/11/darts-20.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "93826",
+    "name": "חִסּוּר סַל",
+    "description": "חיסור עם נעלם עד 20",
+    "url": "https://gingim.net/wp-content/uploads/new_games/basketball_minus_20/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/11/basketball-20.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "93841",
+    "name": "לוּחַ אֶתְגָּר",
+    "description": "בניית תרגילי חבור חסור בתחום ה-20",
+    "url": "https://gingim.net/wp-content/uploads/new_games/notes_20/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/11/notes-20.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "561",
+    "name": "נַדְנֵדַת חִסּוּר",
+    "description": "חיסור עם נעלם עד 100",
+    "url": "https://gingim.net/wp-content/uploads/new_games/seesaw_minus/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_seesawsub.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "564",
+    "name": "סְקִי חִסּוּר",
+    "description": "תרגול חיסור עד 100",
+    "url": "https://gingim.net/wp-content/uploads/new_games/ski_minus/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_sski.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "565",
+    "name": "כַּדּוּרֶגֶל חִסּוּר",
+    "description": "תרגול חיסור עד 100",
+    "url": "https://gingim.net/wp-content/uploads/new_games/soccer2_minus/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_soccer_sub.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "515",
+    "name": "מִפְלֶצֶת עֲשָׂרוֹת",
+    "description": "חיסור בעשרות שלמות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/monster/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_monster.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "147567",
+    "name": "חִסּוּר בִּמְאֻנָּךְ",
+    "description": "דו, תלת וארבע ספרתי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/vertical_sub1?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/02/vertical_sub2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "566",
+    "name": "בְּעָיוֹת מִלּוּלִיּוֹת",
+    "description": "חידות חשבוניות בתחום ה 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/snakes_and_ladders_mini_maths/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_snake_math_1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "111037",
+    "name": "חִידוֹת חִסּוּר",
+    "description": "כתבו ליד כל סוכריה את הערך שלה, בהתאם לתרגילים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/math_quest_subtract?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/04/math_quest_sub.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "367",
+    "name": "כֶּפֶל וְחִלּוּק - גּוֹל",
+    "description": "הבנת חוקיות פעולות כפל וחילוק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/football_mult/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_xgoal_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "141965",
+    "name": "כֶּפֶל מָתוֹק",
+    "description": "תרגול כפל עם המחשה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/candy_multi/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/12/candy_multi-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "572",
+    "name": "סְקִי כֶּפֶל",
+    "description": "תרגול כפל בתחום המאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/ski_mult/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_ski_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "571",
+    "name": "כֶּפֶל סַל",
+    "description": "תרגול כפל עם נעלם בתחום המאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/basketball_mult/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/buton_multiball.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "570",
+    "name": "נַדְנֵדַת הַכֶּפֶל",
+    "description": "תרגול כפל עם נעלם בתחום המאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/seesaw/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_xseesaw.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "568",
+    "name": "מַטָּרָה כְּפוּלָה",
+    "description": "תרגול כפל בתחום המאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/darts_multiple/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_xdarts_1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "368",
+    "name": "כַּדּוּרכֶּפֶל",
+    "description": "תרגול כפל בתחום המאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/soccer2_mult/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_soccer_mult.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "38456",
+    "name": "בָּאוּלִינְג כֶּפֶל",
+    "description": "השלימו מספר כופל חסר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/making_ten_multi?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/03/making_ten_mul.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "110177",
+    "name": "לוּחַ הַכֶּפֶל",
+    "description": "השלימו את המספרים החסרים בלוח הכפל",
+    "url": "https://gingim.net/wp-content/uploads/new_games/multi_chart?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/03/multi_chart.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "111039",
+    "name": "תִּפְזֹרֶת כֶּפֶל",
+    "description": "מצאו את המספרים בטבלה, שמרכיבים את התרגילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/multi_hunt?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/04/multi_hunt.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "111032",
+    "name": "חִידוֹת כֶּפֶל",
+    "description": "כתבו ליד כל סוכריה את הערך שלה, בהתאם לתרגילים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/math_quest_multi?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/04/math_quest_multi.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "53130",
+    "name": "חִלּוּק סֻכָּרִיּוֹת",
+    "description": "המחשה של תרגילי חילוק",
+    "url": "https://gingim.net/wp-content/uploads/new_games/forest_match_div/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/09/forest_match_div.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "576",
+    "name": "נַדְנֵדַת חִלּוּק",
+    "description": "תרגול חילוק עם נעלם בתחום המאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/seesaw_div/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_seesawdiv.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "575",
+    "name": "כַּדּוּרֶגֶל חִלּוּק",
+    "description": "תרגול חילוק בתחום המאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/soccer2_div/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_soccer_div.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "574",
+    "name": "חִלּוּק סַל",
+    "description": "תרגול חילוק עם נעלם בתחום המאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/basketball_divide?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_divball-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "573",
+    "name": "סְקִי חִלּוּק",
+    "description": "תרגול חילוק בתחום המאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/ski_divide/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_dski.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "38836",
+    "name": "בָּאוּלִינְג חִלּוּק",
+    "description": "השלימו מספר מחלק חסר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/making_ten_div?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/03/making_ten_div.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "577",
+    "name": "חִלּוּק מַטָּרָה",
+    "description": "מצאו תרגיל מתאים לתוצאה במטרה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/darts_divide/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_darts_divide.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "292",
+    "name": "בחר",
+    "description": "מצא את התמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/find_word_image/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/01/button_find_sp.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "234",
+    "name": "התאמה",
+    "description": "התאמה-מצא שני קלפים זהים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cards/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/button_matching_cardshs.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "293",
+    "name": "קולות וצלילים",
+    "description": "קולות וצלילים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sounds?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/01/button_sounds2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "329",
+    "name": "הלבשה בצבעים",
+    "description": "זיהוי צבעים, זכרון שמיעתי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/dress_up/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/button_dressup2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "330",
+    "name": "הולכים לים",
+    "description": "זכרון שמיעתי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/gotothebeach?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/button_gotothebeach.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "457",
+    "name": "מיון",
+    "description": "מיון לקטגוריות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/categories/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_sorting2_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "458",
+    "name": "חפץ - פעולה",
+    "description": "חפץ - פעולה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/objects/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_object-verb.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "459",
+    "name": "מה שייך ?",
+    "description": "התאמת חפץ לפעולה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/pairs/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_pair2_sp.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "460",
+    "name": "יוצא דופן",
+    "description": "קטגוריות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/odd_one_out/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_odd2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "461",
+    "name": "מי היה ראשון?",
+    "description": "מה היה ראשון? שני? אחרון?",
+    "url": "https://gingim.net/wp-content/uploads/new_games/whos_first/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_remember_sp.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "462",
+    "name": "מה שייך ?",
+    "description": "שייכות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/belong/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_set2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "463",
+    "name": "הסיפור שלי",
+    "description": "בחר תמונות, וכתוב סיפור",
+    "url": "https://gingim.net/wp-content/uploads/new_games/myStory/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_mystory2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "107883",
+    "name": "הַמִּסְעָדָה שֶׁלָּנוּ",
+    "description": "הזמנת אוכל במסעדה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/restaurant4_heb?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/02/button_restaurant-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "464",
+    "name": "הבנת הוראות 1",
+    "description": "זכרון אודיטורי רמה 1",
+    "url": "https://gingim.net/wp-content/uploads/new_games/auditory1/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_auditory1_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "465",
+    "name": "הבנת הוראות 2",
+    "description": "זכרון אודיטורי רמה 2",
+    "url": "https://gingim.net/wp-content/uploads/new_games/auditory2/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_auditory2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "466",
+    "name": "מיון לחדרים",
+    "description": "מיון חפצים לחדר המתאים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/rooms/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_rooms.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "107042",
+    "name": "עוֹשִׂים סֵדֶר",
+    "description": "מיון",
+    "url": "https://gingim.net/wp-content/uploads/new_games/suitcase?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/02/suitcase.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "93620",
+    "name": "פֵּרוֹת וִירָקוֹת",
+    "description": "מיון פירות וירקות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/fruit_veg/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/11/fruit-veg.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "93625",
+    "name": "רָהִיטִים וּכְלֵי מִטְבָּח",
+    "description": "מיון רהיטים וכלי מטבח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/furniture_kitchen/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/11/furniture_kitchen.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "93636",
+    "name": "כְּלֵי תַּחְבּוּרָה",
+    "description": "מיון כלי תחבורה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sort_transport/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/11/transport.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "93631",
+    "name": "כְּלִי נְגִינָה וַעֲבוֹדָה",
+    "description": "מיון כלי נגינה ועבודה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/instruments/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/11/instruments.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "477",
+    "name": "קיץ - חורף",
+    "description": "מיון תמונות חורף-קיץ",
+    "url": "https://gingim.net/wp-content/uploads/new_games/summer_winter/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_summer_winter.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "467",
+    "name": "מצא את ההבדלים",
+    "description": "מצא את ההבדלים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/spot_the_differences/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_spot.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "468",
+    "name": "מושגי מרחב",
+    "description": "מושגי מרחב",
+    "url": "https://gingim.net/wp-content/uploads/new_games/prepositions/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_prepositions1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "469",
+    "name": "מושגי מרחב 2",
+    "description": "מושגי מרחב",
+    "url": "https://gingim.net/wp-content/uploads/new_games/prepositions_pics?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_prep.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "470",
+    "name": "משחק זכרון",
+    "description": "משחק זכרון מושגי מרחב",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_prep/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_memory_prep.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "471",
+    "name": "אבסורדים",
+    "description": "מה לא בסדר בתמונה?",
+    "url": "https://gingim.net/wp-content/uploads/new_games/absurd?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_absurd_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "472",
+    "name": "מי אני ?",
+    "description": "זכרון  שמיעתי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/get_kid/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_kids.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "473",
+    "name": "אני חושבת על...",
+    "description": "הגדרות מילים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/thinking_of1?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_thinking.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "474",
+    "name": "אני חושבת על...2",
+    "description": "אני חושבת על...",
+    "url": "https://gingim.net/wp-content/uploads/new_games/thinking_of2/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_thinking2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "475",
+    "name": "זכרון שמיעתי",
+    "description": "זכרון שמיעתי קטגוריאלי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/auditory_memory/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_auditorym.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "476",
+    "name": "משחק זכרון",
+    "description": "משחק זכרון",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_memoryhs.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "478",
+    "name": "הסנדביץ שלי",
+    "description": "הכנת סנדביץ",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sandwich/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_sandwich.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "145781",
+    "name": "הַצִּיּוּר",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_paint?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/02/movie_paint.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "142805",
+    "name": "הַפְסָקַת חַשְׁמַל",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_no_tv?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/01/no_tv.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "139540",
+    "name": "רָצָה אַחֲרֵי הַזְּמַן",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_school/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/12/movie_school.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "136947",
+    "name": "סִפּוּר הַכְּבִיסָה",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_laundry/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/11/movie_laundry.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "134859",
+    "name": "בָּלָגָן בַּסָּלוֹן",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_dirty_LV/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/11/movie_dirtyLR.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "132790",
+    "name": "חֲבֵרוֹת לַסַּל",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_basketball/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/10/movie_basket.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "362",
+    "name": "באמבטיה",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_bath/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_bath.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "363",
+    "name": "יום הולדת",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_birthday/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_birthday_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "479",
+    "name": "הגנב",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_thief/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_thief.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "480",
+    "name": "מעשה בעוגה",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_cake/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_cake.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "481",
+    "name": "תקלה באוטו",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_car/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_car.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "482",
+    "name": "בחוף הים",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_beach/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_beach_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "483",
+    "name": "בגינת המשחקים",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_playground/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_playground.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "484",
+    "name": "סיפור אבסורד",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_bike/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_bike.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "485",
+    "name": "בסופרמרקט",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_supermarket/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_supermarket.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "486",
+    "name": "משחק באש",
+    "description": "סרטון רצף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/movie_fire2?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_fire_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "236",
+    "name": "פופקורן",
+    "description": "מלא את הקופסה בפופקורן",
+    "url": "https://gingim.net/wp-content/uploads/new_games/popcorn/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/popcorn.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "237",
+    "name": "ברז מים",
+    "description": "מזוג מים לכוס",
+    "url": "https://gingim.net/wp-content/uploads/new_games/water/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/tapwater.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "238",
+    "name": "גלידה",
+    "description": "מזוג גלידה לגביע",
+    "url": "https://gingim.net/wp-content/uploads/new_games/icecream/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/icecream.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "239",
+    "name": "עציצים",
+    "description": "השקה את הפרח בזמן המתאים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/flower/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/plant.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "240",
+    "name": "אוטובוס",
+    "description": "כשהאוטובוס מגיע לתחנה לחץ כדי שהאנשים יעלו",
+    "url": "https://gingim.net/wp-content/uploads/new_games/bus/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/bus.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "446",
+    "name": "מעלית",
+    "description": "כשהדלת נפתחת לחץ מהר לפני שתסגר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/elevator/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/elevator.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "447",
+    "name": "מופע רוק",
+    "description": "כשהגיטריסט מגיע לגיטרה לחץ לראות אותו מנגן",
+    "url": "https://gingim.net/wp-content/uploads/new_games/concert/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/concert.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "448",
+    "name": "באולינג",
+    "description": "זרוק כדור והפל את הבקבוקים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/bowling/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/bowling.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "449",
+    "name": "הוקי קרח",
+    "description": "לחץ בזמן המתאים להבקיע גול",
+    "url": "https://gingim.net/wp-content/uploads/new_games/hockey_timing/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/hockey.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "450",
+    "name": "סופרמן",
+    "description": "הזהר לא להתקל במכשולים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/superman/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/superman.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "451",
+    "name": "סופרמרקט",
+    "description": "אסוף מצרכים לעגלת הקניות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/supermarket/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/supermarket.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "452",
+    "name": "סקי",
+    "description": "הזהר לא להתקל במכשולים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/ski/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/ski.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "453",
+    "name": "סקייטבורד",
+    "description": "הזהר לא להתקל במכשולים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/skateboard/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/skateboard.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "454",
+    "name": "טניס",
+    "description": "משחק טניס לשני שחקנים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/tennis/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/tennis_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "455",
+    "name": "בחוף הים",
+    "description": "אסוף פריטים למריצה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/timing_beach?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/beach.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "456",
+    "name": "הכלב הרעב",
+    "description": "עזור לכלב לאסוף עצמות לקערה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/hungry_dog/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/dog.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "214",
+    "name": "צבעים",
+    "description": "התאמת צבע לצבע",
+    "url": "https://gingim.net/wp-content/uploads/new_games/color_game?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/button_colors.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "46",
+    "name": "התאמה",
+    "description": "התאמת תמונה לתמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/match_pic?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/button_match_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "215",
+    "name": "פאזלים",
+    "description": "דמות ורקע",
+    "url": "https://gingim.net/wp-content/uploads/new_games/first_puzzle?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/button_jigsaw2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "234",
+    "name": "התאמה",
+    "description": "התאמה-מצא שני קלפים זהים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cards/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/button_matching_cardshs.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "67793",
+    "name": "התאמה חיות",
+    "description": "משחק התאמת תמונה לתמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_animals/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/10/matching_animals.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "235",
+    "name": "מה שונה?",
+    "description": "יוצא דופן",
+    "url": "https://gingim.net/wp-content/uploads/new_games/invert/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/button_findme.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "329",
+    "name": "הלבשה בצבעים",
+    "description": "זיהוי צבעים, זכרון שמיעתי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/dress_up/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/button_dressup2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "417",
+    "name": "יוצא דופן",
+    "description": "קטגוריות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/odd_one_out/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_odd2-3.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "418",
+    "name": "מה שייך ?",
+    "description": "שייכות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/belong/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_sets.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "419",
+    "name": "קולות וצלילים",
+    "description": "קולות וצלילים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sounds/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_sounds.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "420",
+    "name": "צורות - התאמה",
+    "description": "צורות - התאמה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/shapes/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_matching_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "292",
+    "name": "בחר",
+    "description": "מצא את התמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/find_word_image/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/01/button_find_sp.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "422",
+    "name": "חצי - חצי",
+    "description": "פאזל שני חלקים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/halves/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_halves.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "423",
+    "name": "התאמה",
+    "description": "התאמה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/image_image/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_matching.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "424",
+    "name": "מה ראית ?",
+    "description": "משחק זכרון",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_images/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_remember_1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "426",
+    "name": "מה מתחבא?",
+    "description": "הבחנה חזותית",
+    "url": "https://gingim.net/wp-content/uploads/new_games/whos_hiding?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_hiding.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "427",
+    "name": "מיון",
+    "description": "מיון לקטגוריות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/categories/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_sorting.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "428",
+    "name": "מה שייך ?",
+    "description": "התאמת חפץ לפעולה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/pairs/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_pairs.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "429",
+    "name": "כיוונים",
+    "description": "כיווניות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/directions/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_cars.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "430",
+    "name": "מה היה ראשון?",
+    "description": "מה היה ראשון? שני? אחרון?",
+    "url": "https://gingim.net/wp-content/uploads/new_games/whos_first/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_rememberfirst.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "431",
+    "name": "סדרות",
+    "description": "רצף חזותי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/patterns/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_surf_2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "432",
+    "name": "מצא את ההבדלים",
+    "description": "הבחנה חזותית",
+    "url": "https://gingim.net/wp-content/uploads/new_games/people/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_people_2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "433",
+    "name": "צורה זהה",
+    "description": "כיווניות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/shapes_directions/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_shapes.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "434",
+    "name": "מה שונה ?",
+    "description": "הבחנה חזותית - הבדלים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/odd/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/buton_diff.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "435",
+    "name": "משחק זכרון",
+    "description": "זכרון",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_animals/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_animals_0_1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "436",
+    "name": "העתקת דגם - מכוניות",
+    "description": "העתקת דגם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/cars/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_cars_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "437",
+    "name": "מבוכים",
+    "description": "שימוש בחצים במקלדת, או במתגים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/maze/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_maze_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "439",
+    "name": "העתקת רצף צורות",
+    "description": "העתקת רצף / דגם",
+    "url": "https://gingim.net/wp-content/uploads/new_games/shapes_patterns/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_shapes_pattern_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "64679",
+    "name": "זכרון - חיות",
+    "description": "משחק זכרון",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_animals2/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/10/memory_animals.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "476",
+    "name": "משחק זכרון",
+    "description": "משחק זכרון",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_memoryhs.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "442",
+    "name": "פאזלים",
+    "description": "פאזלים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/puzzle/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_puzzlesh.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "369",
+    "name": "איקס עיגול",
+    "description": "איקס עיגול",
+    "url": "https://gingim.net/wp-content/uploads/new_games/tic_tac_toe?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_tic.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "443",
+    "name": "סולמות ונחשים",
+    "description": "משחק לוח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/snakes_and_ladders/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_snakes.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "444",
+    "name": "סולמות ונחשים קטן",
+    "description": "משחק לוח",
+    "url": "https://gingim.net/wp-content/uploads/new_games/snakes_and_ladders_mini/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_snakes_mini.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "445",
+    "name": "ארבע בשורה",
+    "description": "חבר ברצף ארבע מאותו צבע",
+    "url": "https://gingim.net/wp-content/uploads/new_games/connect_four/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_connect4.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "53125",
+    "name": "זכרון - חגי תשרי",
+    "description": "משחק זכרון",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_tishrey/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/09/memory_tishrey.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "53122",
+    "name": "התאמה - חגי תשרי",
+    "description": "לוטו תמונה לתמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_tishrey/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/09/matching_tishrey.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "53119",
+    "name": "התאמה - חגי תשרי",
+    "description": "התאמת תמונה לתמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/match_pic_tishrei/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/09/match_pic_tishrei.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "53115",
+    "name": "חצי - חצי - חגי תשרי",
+    "description": "התאמת שני חצאים של תמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/halves_tishrey/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/09/halves_tishrey.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "108640",
+    "name": "חצי חצי לפורים",
+    "description": "פאזל שני חלקים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/halves_purim?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/03/halves_purim.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "108634",
+    "name": "משחק זכרון לפורים",
+    "description": "מצאו שני קלפים זהים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_purim?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/03/memory_purim.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "108631",
+    "name": "לוטו לפורים",
+    "description": "מצאו שני קלפים זהים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_purim?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/03/matching_purim.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "51391",
+    "name": "מה שונה - קיץ",
+    "description": "יוצא דופן",
+    "url": "https://gingim.net/wp-content/uploads/new_games/invert_summer/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/07/invert_summer.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "51377",
+    "name": "התאמה - קיץ",
+    "description": "התאמת תמונה לתמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/image_image_summer/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/07/matching_summer.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "51375",
+    "name": "זוגות - קיץ",
+    "description": "לוטו תמונה לתמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_summer/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/07/matching2_summer.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "51373",
+    "name": "חצי חצי - קיץ",
+    "description": "פאזל שני חלקים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/halves_summer/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/07/writing_summer.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "425",
+    "name": "מה ראית בים?",
+    "description": "משחק זכרון קיץ",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_images_summer/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "330",
+    "name": "הולכים לים",
+    "description": "זכרון שמיעתי",
+    "url": "https://gingim.net/wp-content/uploads/new_games/gotothebeach?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/button_gotothebeach.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "477",
+    "name": "קיץ - חורף",
+    "description": "מיון תמונות חורף-קיץ",
+    "url": "https://gingim.net/wp-content/uploads/new_games/summer_winter/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_summer_winter.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "43885",
+    "name": "חצי חצי - שבועות",
+    "description": "פאזל שני חלקים - שבועות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/halves_shavuot/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/05/savuot4.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "43880",
+    "name": "משחק זכרון - שבועות",
+    "description": "משחק זכרון - שבועות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_shavuot/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/05/savuot3.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "43877",
+    "name": "לוטו - שבועות",
+    "description": "לוטו תמונה לתמונה - שבועות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_shavuot/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/05/savuot2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "43872",
+    "name": "התאמה - שבועות",
+    "description": "התאמת תמונה לתמונה - שבועות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/image_image_shavuot/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/05/savuot1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "28",
+    "name": "כלי תחבורה",
+    "description": "הקלק ובנה את התמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/transport?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/11/button_transport.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "208",
+    "name": "בעלי חיים",
+    "description": "הקלק ובנה את התמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/animals?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/button_animals_2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "387",
+    "name": "פאזל אנשים",
+    "description": "תאום עין יד",
+    "url": "https://gingim.net/wp-content/uploads/new_games/puzzle_people/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_people_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "388",
+    "name": "פאזל שני חלקים",
+    "description": "גלה את התמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/puzzle_3/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/puzzlepic.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "389",
+    "name": "מחק וגלה בעלי חיים",
+    "description": "הזז את העכבר או לחץ על המתג וגלה בעלי חיים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/earase_animals/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_eraseanimals.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "108637",
+    "name": "מחקו וגלו תחפושות",
+    "description": "הזיזו את העכבר וגלו תחפושות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/earase_purim?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/03/earase_purim.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "390",
+    "name": "פנס",
+    "description": "הזז את העכבר והאר פריטים עם הפנס",
+    "url": "https://gingim.net/wp-content/uploads/new_games/flash_light/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_flash.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "211",
+    "name": "מחק וגלה",
+    "description": "הזז את העכבר וגלה את התמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/earase_2/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/button_eraser.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "144489",
+    "name": "מחק וגלה 2",
+    "description": "הזז את העכבר וגלה את התמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/earase_3/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2025/01/earaser2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "212",
+    "name": "מה קרה?",
+    "description": "תאום עין יד",
+    "url": "https://gingim.net/wp-content/uploads/new_games/touch_n_look?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/button_touchlook.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "391",
+    "name": "פאזל",
+    "description": "תאום עין יד",
+    "url": "https://gingim.net/wp-content/uploads/new_games/puzzle_2?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_puzzel.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "210",
+    "name": "תפוס אותי",
+    "description": "תאום עין יד",
+    "url": "https://gingim.net/wp-content/uploads/new_games/catch_me/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/button_catchme.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "392",
+    "name": "תפוס אותי",
+    "description": "תאום עין יד",
+    "url": "https://gingim.net/wp-content/uploads/new_games/catch_hanuka/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_catchmehanuka.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "209",
+    "name": "הפתעה בקופסה",
+    "description": "תאום עין יד",
+    "url": "https://gingim.net/wp-content/uploads/new_games/box?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/button_box.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "393",
+    "name": "לחץ וסע",
+    "description": "תאום עין יד",
+    "url": "https://gingim.net/wp-content/uploads/new_games/touch_go/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_touch26go.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "394",
+    "name": "סדר את החדר",
+    "description": "תרגול גרירה עם העכבר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/tidy_up/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_tidyup.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "395",
+    "name": "כלי נגינה",
+    "description": "תאום עין יד",
+    "url": "https://gingim.net/wp-content/uploads/new_games/music/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_music.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "411",
+    "name": "כדורסל",
+    "description": "פעולה תגובה, תאום עין יד",
+    "url": "https://gingim.net/wp-content/uploads/new_games/basketball_ce/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_abasketball_ce.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "142007",
+    "name": "כַּדּוּרֶגֶל",
+    "description": "פעולה תגובה, תאום עין יד",
+    "url": "https://gingim.net/wp-content/uploads/new_games/soccer_c_and_e/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/12/soccer_ce.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "412",
+    "name": "מכוניות מירוץ",
+    "description": "פעולה תגובה, תאום עין יד",
+    "url": "https://gingim.net/wp-content/uploads/new_games/car_race/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_car_race.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "414",
+    "name": "תמונות מנגנות",
+    "description": "הזז את העכבר ונגן מוסיקה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/music_cause_effect2?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_music_cause_effect2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "415",
+    "name": "צְבִיעַת מִסְפָּרִים",
+    "description": "הזז את העכבר וצבע את המספרים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/painting_numbers/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_painting_numbers.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "89804",
+    "name": "צְבִיעַת אוֹתִיּוֹת",
+    "description": "צבעו את האותיות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/painting_letters/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/10/painting_letters.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "416",
+    "name": "נדנדה",
+    "description": "פעולה תגובה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/seesaw_action_reaction/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_seesaw_action_reaction.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "370",
+    "name": "חיות במכוניות",
+    "description": "פעולה תגובה שני מתגים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/animal_drive/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_acars_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "397",
+    "name": "קליעה לסל",
+    "description": "פעולה תגובה שני מתגים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/basket?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_abasketball-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "398",
+    "name": "ארגזים",
+    "description": "פעולה תגובה שני מתגים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/boxes/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_abox.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "399",
+    "name": "הפתעה בדלת",
+    "description": "פעולה תגובה שני מתגים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/doors/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_doors.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "400",
+    "name": "דג באקווריום",
+    "description": "פעולה תגובה שני מתגים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/aquarium/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_afish.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "401",
+    "name": "ציפורים",
+    "description": "פעולה תגובה שני מתגים\nסריקה עם רווח, בחירה עם אנטר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/birds/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_abirds.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "402",
+    "name": "תרנגול",
+    "description": "פעולה תגובה שני מתגים\nסריקה עם רווח, בחירה עם אנטר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/chickens/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_achicken.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "403",
+    "name": "פייה קסומה",
+    "description": "פעולה תגובה שני מתגים\nסריקה עם רווח, בחירה עם אנטר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/fairy_dance/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_afairy.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "404",
+    "name": "רובוטים",
+    "description": "פעולה תגובה שני מתגים\nסריקה עם רווח, בחירה עם אנטר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/robots/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_arobots.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "405",
+    "name": "חבורת הצבים",
+    "description": "פעולה תגובה שני מתגים\nסריקה עם רווח, בחירה עם אנטר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/turtles/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_aturtles.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "406",
+    "name": "מופע רוק",
+    "description": "פעולה תגובה שני מתגים\nהתקדמות עם רווח, לסיום אנטר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/concert_ca/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_concert_ca_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "407",
+    "name": "פינגווין",
+    "description": "פעולה תגובה שני מתגים\nהתקדמות עם רווח, לסיום אנטר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/penguin/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_apenguin.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "408",
+    "name": "ארנב וגזר",
+    "description": "פעולה תגובה שני מתגים\nהתקדמות עם רווח, לסיום אנטר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/bunny/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_abunny.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "409",
+    "name": "בקרקס",
+    "description": "פעולה תגובה שני מתגים\nהתקדמות עם רווח, לסיום אנטר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/clown/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_circus.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "410",
+    "name": "סקייטבורד",
+    "description": "פעולה תגובה שני מתגים\nהתקדמות עם רווח, לסיום אנטר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/skateboard_ca/?lang=heb",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_askateboard.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "296",
+    "name": "At the restaurant",
+    "description": "הפעלת משחק עם מקרופון, תרגול דיבור באנגלית",
+    "url": "https://gingim.net/wp-content/uploads/new_games/restaurant3?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/04/button_restaurant1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "297",
+    "name": "Colors",
+    "description": "Matching colors",
+    "url": "https://gingim.net/wp-content/uploads/new_games/color_game?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2021/12/button_colors.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "299",
+    "name": "Dress Up",
+    "description": "Identify colors, follow instruction & Fun",
+    "url": "https://gingim.net/wp-content/uploads/new_games/dress_up/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/button_e_thinking.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "300",
+    "name": "Count to 10",
+    "description": "Count to 10",
+    "url": "https://gingim.net/wp-content/uploads/new_games/count_10?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/button_count_to_10.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "331",
+    "name": "Number Match",
+    "description": "Find the numbers",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_numbers3/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/02/button_number_match_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "707",
+    "name": "Family match",
+    "description": "My Family Matching game",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_family/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_family_match.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "717",
+    "name": "Body Parts",
+    "description": "Body parts Matching game",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_bodyparts/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_bodyparts_match.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "716",
+    "name": "Actions",
+    "description": "Action verbs Matching game",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_verbs/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_actions_match_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "715",
+    "name": "Colors Matching",
+    "description": "Colors Matching game",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_colors/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_color_match.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "714",
+    "name": "Professions",
+    "description": "Match the professions to the picture",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_professions2?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_professionsy.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "713",
+    "name": "Weather Match",
+    "description": "Weather Matching game",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_weather/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_weather1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "712",
+    "name": "CVC Words A,E,I",
+    "description": "CVC Words",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cvc_aei/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/06/cvc_aei.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "52531",
+    "name": "CVC Words O,U",
+    "description": "CVC Words O,U",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cvc_ou/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/cvc_ou.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "711",
+    "name": "Memory Game",
+    "description": "Remember the number",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_numbers?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_memorygame.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "710",
+    "name": "Matching Shapes",
+    "description": "Matching shapes",
+    "url": "https://gingim.net/wp-content/uploads/new_games/shapes/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_matching_shapes.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "709",
+    "name": "Remember me",
+    "description": "Memory Game",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_images/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_remember_me.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "718",
+    "name": "Summer Memory Game",
+    "description": "Memory Game",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_images_summer/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_summer_memory.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "720",
+    "name": "Find The Picture 1",
+    "description": "Find the picture: Animals, clothes, food",
+    "url": "https://gingim.net/wp-content/uploads/new_games/find_word_image_new/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_find1_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "721",
+    "name": "Find The Picture 2",
+    "description": "Find the picture, Family, Body Parts, school",
+    "url": "https://gingim.net/wp-content/uploads/new_games/find_word_image_new2/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_find2_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "719",
+    "name": "Find The Picture 3",
+    "description": "Find the picture, Opposites, Verbs, Colors",
+    "url": "https://gingim.net/wp-content/uploads/new_games/find_word_image_new3/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_find3.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "730",
+    "name": "My Family",
+    "description": "Where is Mom...etc",
+    "url": "https://gingim.net/wp-content/uploads/new_games/find_family/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_yellow.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "729",
+    "name": "Bubble Actions",
+    "description": "Who is playing? Which kid is eating?",
+    "url": "https://gingim.net/wp-content/uploads/new_games/find_actions/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_bubble_actions.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "728",
+    "name": "Opposites",
+    "description": "What's the opposites of...",
+    "url": "https://gingim.net/wp-content/uploads/new_games/opp_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_opp.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "727",
+    "name": "Matching Nouns",
+    "description": "Matching pictures",
+    "url": "https://gingim.net/wp-content/uploads/new_games/match_pic?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/matching_nouns.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "726",
+    "name": "Prepositions",
+    "description": "Prepositions",
+    "url": "https://gingim.net/wp-content/uploads/new_games/prepositions_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_prep_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "106344",
+    "name": "Prepositions 2",
+    "description": "Prepositions",
+    "url": "https://gingim.net/wp-content/uploads/new_games/prepositions_pics?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/02/button_prep.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "725",
+    "name": "My Classroom",
+    "description": "My Classroom & prepositions",
+    "url": "https://gingim.net/wp-content/uploads/new_games/classroom/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_classroom.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "723",
+    "name": "Memory Game",
+    "description": "Memory Game",
+    "url": "https://gingim.net/wp-content/uploads/new_games/auditory_memory_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_e_memory_0-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "724",
+    "name": "Following Directions 1",
+    "description": "following directions level 1",
+    "url": "https://gingim.net/wp-content/uploads/new_games/auditory1/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_directions1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "732",
+    "name": "Following Directions 2",
+    "description": "following directions level 2",
+    "url": "https://gingim.net/wp-content/uploads/new_games/auditory2/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_directions2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "38870",
+    "name": "My sandwich",
+    "description": "make a sandwich",
+    "url": "https://gingim.net/wp-content/uploads/new_games/sandwich/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_sandwich.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "88989",
+    "name": "At the restaurant",
+    "description": "הזמנת אוכל ושתיה במסעדה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/restaurant4?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/10/button_restaurant_m.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "364",
+    "name": "Click & Learn A B C",
+    "description": "A B C",
+    "url": "https://gingim.net/wp-content/uploads/new_games/click_learn_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_abc.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "365",
+    "name": "A B C",
+    "description": "Match the letters",
+    "url": "https://gingim.net/wp-content/uploads/new_games/match_letters?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_letters.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "733",
+    "name": "Letter Match",
+    "description": "Match the same letter",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_letters/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_match_2_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "734",
+    "name": "Letter Names",
+    "description": "Letter names",
+    "url": "https://gingim.net/wp-content/uploads/new_games/letter_names_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_letters_namese2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "739",
+    "name": "Upper - lowercase",
+    "description": "Upper & lowercase letters",
+    "url": "https://gingim.net/wp-content/uploads/new_games/lower_uppercase?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/06/button_upper-lower-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "738",
+    "name": "Find The Letters",
+    "description": "Find The Letters",
+    "url": "https://gingim.net/wp-content/uploads/new_games/find_letters_lang?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_e_findletters_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "737",
+    "name": "Writing Letters",
+    "description": "writing letters - Lowercase",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_letters_eng?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_writing_letters1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "736",
+    "name": "Writing Letters",
+    "description": "writing letters - Uppercase",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_letters_eng2?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_writing_letters2-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "735",
+    "name": "Remember Me",
+    "description": "Memory game",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_images/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_rememberle2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "116991",
+    "name": "ABC Memory game",
+    "description": "משחק זכרון אותיות באנגלית",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_letters_eng?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/07/memory_eng.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "142038",
+    "name": "abc Memory game",
+    "description": "משחק זכרון אותיות באנגלית",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_letters_eng_l?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/12/memory_letters_eng_l.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "740",
+    "name": "Letter Reversal",
+    "description": "Letter reversal",
+    "url": "https://gingim.net/wp-content/uploads/new_games/letter_directions/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_e_letters_dir.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "746",
+    "name": "Ice Typing",
+    "description": "Typing practice",
+    "url": "https://gingim.net/wp-content/uploads/new_games/penguin_letters?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_ice-typing.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "745",
+    "name": "Hot Air Balloon",
+    "description": "Typing practice",
+    "url": "https://gingim.net/wp-content/uploads/new_games/balloon_letters?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_balloon_letters.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "98126",
+    "name": "ABC Order",
+    "description": "Put the letters in ABC order",
+    "url": "https://gingim.net/wp-content/uploads/new_games/letters_line_eng?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/12/abc_order.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "744",
+    "name": "First Letter",
+    "description": "Hebrew-English Cognates",
+    "url": "https://gingim.net/wp-content/uploads/new_games/first_letter_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_first_letter_1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "741",
+    "name": "First Letter",
+    "description": "Fill in the missing letter",
+    "url": "https://gingim.net/wp-content/uploads/new_games/missing_animals/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_first_letter.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "743",
+    "name": "Rhyming words",
+    "description": "Rhyming words",
+    "url": "https://gingim.net/wp-content/uploads/new_games/rhymes_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_rhyming_words_e.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "366",
+    "name": "Sight Words",
+    "description": "Pre-K Dolch Sight Words",
+    "url": "https://gingim.net/wp-content/uploads/new_games/find_word_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_sight_words1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "742",
+    "name": "Sight Memory Words",
+    "description": "Sight words - Memory game",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_words?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_memory_words2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "747",
+    "name": "Word To Picture",
+    "description": "התאמת מילה לתמונה - בבית הספר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/pic-word_E_school/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_e_word-pics_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "753",
+    "name": "Word To Picture",
+    "description": "התאמת מילה לתמונה - בעלי חיים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/pic-word_E_animal/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_e_word-pic_2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "752",
+    "name": "Word To Picture",
+    "description": "התאמת מילה לתמונה - אוכל",
+    "url": "https://gingim.net/wp-content/uploads/new_games/pic-word_E_food/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_e_word-picf.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "751",
+    "name": "Missing Letter",
+    "description": "אות חסרה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/missing_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_missingletter_1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "750",
+    "name": "Missing Vowels",
+    "description": "Write the missing Vowel",
+    "url": "https://gingim.net/wp-content/uploads/new_games/missing_cvc/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_missing_letter2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "749",
+    "name": "Winter Words",
+    "description": "כתיבת מילים - חורף",
+    "url": "https://gingim.net/wp-content/uploads/new_games/winter_words_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_winter_wordseh.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "748",
+    "name": "Clothes",
+    "description": "מילים - בגדים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_clothes?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_writing_clothes_e_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "147522",
+    "name": "Food",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_food_L?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/writing_words_food1-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "774",
+    "name": "Food",
+    "description": "כתיבת מילים - מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_food?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/writing_words_food2-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "147555",
+    "name": "Numbers",
+    "description": "כתיבת מילים עם אותיות המילה בלבד במקלדת",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_numbers_L?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/writing_words_numbers1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "773",
+    "name": "Numbers",
+    "description": "כתיבת מילים - מקלדת מלאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_numbers?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/writing_words_numbers2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "772",
+    "name": "Colors",
+    "description": "צבעים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_colors/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_writing-color_e_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "769",
+    "name": "At School",
+    "description": "בבית ספר",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_school?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_writing_school_e_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "770",
+    "name": "Week Days",
+    "description": "ימות השבוע",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_days/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_writing_weekdays_e_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "771",
+    "name": "Writing Words",
+    "description": "כתיבת מילים",
+    "url": "https://gingim.net/wp-content/uploads/new_games/writing_words_letters?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_writing_words.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "768",
+    "name": "Word Scramble",
+    "description": "בניית מילה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/letters_to_word_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_word_scramble2.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "767",
+    "name": "Picture To Word",
+    "description": "התאמה של תמונה למילה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_pic_sight_words/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_pic-word_eh.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "766",
+    "name": "CVC Memory",
+    "description": "משחק זיכרון",
+    "url": "https://gingim.net/wp-content/uploads/new_games/memory_cvc/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_memory_cvc.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "83797",
+    "name": "?Which word",
+    "description": "Choose the correct word",
+    "url": "https://gingim.net/wp-content/uploads/new_games/similar_words_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/10/similar-words.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "765",
+    "name": "Matching Cards",
+    "description": "התאמת מילים לתמונות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cards_eng1/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_matching_cards_eng1y.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "755",
+    "name": "Matching Cards",
+    "description": "Sight Words",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cards_SW/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_matchingsight.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "760",
+    "name": "Matching Cards CVC",
+    "description": "התאמה של מילה לתמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cards_eng3/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_matching_cvc.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "764",
+    "name": "Matching Cards 2",
+    "description": "התאמה של מילה לתמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cards_eng2/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_matching_cards2g.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "761",
+    "name": "Weather",
+    "description": "התאמה של מילה לתמונה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/matching_cards_weather/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_weather_yellow-1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "41287",
+    "name": "Words Puzzle",
+    "description": "Match the pairs",
+    "url": "https://gingim.net/wp-content/uploads/new_games/words_puzzle/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/04/split_words_eng.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "759",
+    "name": "My Story",
+    "description": "בניית סיפור",
+    "url": "https://gingim.net/wp-content/uploads/new_games/myStory_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_mystory_0.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "758",
+    "name": "Build A Sentence",
+    "description": "סידור המילים בסדר הנכון",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_to_sentence_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_wts_ey.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "762",
+    "name": "Opposites",
+    "description": "מילים נרדפות",
+    "url": "https://gingim.net/wp-content/uploads/new_games/opposites_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_opposits_1.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "763",
+    "name": "Adam and the Ants",
+    "description": "סיפור לראשית הקריאה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/adam_ants/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_e_ant.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "757",
+    "name": "Thinking of something...",
+    "description": "Definition",
+    "url": "https://gingim.net/wp-content/uploads/new_games/thinking_of_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_ethinking.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "754",
+    "name": "Get the kid",
+    "description": "Listening skills",
+    "url": "https://gingim.net/wp-content/uploads/new_games/get_kid/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_get_the_kid.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "52486",
+    "name": "Let's go to the beach",
+    "description": "Listening skills",
+    "url": "https://gingim.net/wp-content/uploads/new_games/gotothebeach_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/04/button_gotothebeach.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "756",
+    "name": "Hang On",
+    "description": "נחש את המילה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/hangman_eng/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2022/03/button_hangon.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "102216",
+    "name": "Winter Word Search",
+    "description": "מצאו את המילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_hunt_winter/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2024/01/WH_winter.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  },
+  {
+    "id": "104160",
+    "name": "Emotions and Feelings",
+    "description": "מצאו את המילים שברשימה",
+    "url": "https://gingim.net/wp-content/uploads/new_games/word_hunt/?lang=eng",
+    "imageUrl": "https://gingim.net/wp-content/uploads/2023/12/emotions.png",
+    "categories": [
+      "1",
+      "7",
+      "71"
+    ]
+  }
+]

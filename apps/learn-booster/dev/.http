@@ -1,0 +1,33 @@
+
+
+@gdrive_key={{$dotenv VITE_GOOGLE_DRIVE_API_TOKEN}}
+@file_id = 1rtJO0kKOoYFvhoqV3nl1fOgo7aUn2tbt
+@folder_id = 1pSYI1l21VCQ8EKBMrCwP-6MyZNM1e4yu?ths=true
+@file_id_2 = https://drive.google.com/file/d/1njinl69RU5Bt_V4_yT6Fx3VaVu45yN7R/view?usp=drive_link
+
+###
+GET https://www.googleapis.com/drive/v3/files/{{file_id}}
+?key={{gdrive_key}}
+&alt=media
+Range: bytes=0-100
+###
+HEAD https://www.googleapis.com/drive/v3/files/{{file_id}}
+?key={{gdrive_key}}
+&alt=media
+###
+GET https://www.googleapis.com/drive/v3/files/{{folder_id}}
+?key={{gdrive_key}}
+###
+GET https://www.googleapis.com/drive/v3/files/{{file_id}}
+?key={{gdrive_key}}
+&fields=id,size,webViewLink,webContentLink
+###
+
+
+GET https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
+Range: bytes=0-100
+###
+GET https://workspacevideo-pa.clients6.google.com/v1/drive/media/18hGRfG2AIWFdcfXF6CAdpHJUYwg6CeV6/playback
+?key=AIzaSyDVQw45DwoYh632gvsP5vPDqEKvb-Ywnb8
+&%24unique=gc078
+referer: https://drive.google.com/

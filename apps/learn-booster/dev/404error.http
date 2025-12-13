@@ -1,0 +1,122 @@
+# 404
+curl 'https://gingim.net/wp-content/uploads/components/js/bundle.1716366996620.js' \
+  -H 'Accept: */*' \
+  -H 'Accept-Language: he-IL,he;q=0.9,en-US;q=0.8,en;q=0.7' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -b 'PHPSESSID=2680a047c4fcf1c1f26dd72d383e8cdb; pll_language=he; _ga=GA1.1.1313440203.1744395329; wordpress_test_cookie=WP%20Cookie%20check; wordpress_logged_in_c3b0cf34e0b3da89809747a63801d184=%D7%A6%D7%95%D7%94%D7%A8%20%D7%9C%D7%98%D7%95%D7%94%D7%A8%7C1745604991%7Ck6xXZ7gdKuqkAwgnarfe5By5HrCd5P8NwhFdEILiQve%7C0ef799f29749d32a7ebeb9f2f8ebe3d6b31a7aa61ff1655c9eaedbe8f7a6c01d; _ga_BXECP3HY38=GS1.1.1744395328.1.1.1744395395.0.0.0' \
+  -H 'Pragma: no-cache' \
+  -H 'Referer: https://gingim.net/wp-content/uploads/new_games/writing_words?lang=heb&student_id=&user_id=25662&game_id=673a' \
+  -H 'Sec-Fetch-Dest: script' \
+  -H 'Sec-Fetch-Mode: no-cors' \
+  -H 'Sec-Fetch-Site: same-origin' \
+  -H 'User-Agent: Mozilla/5.0 (Linux; Android 13; TAB KINGKONG Build/TAB_KINGKONG_EEA; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/135.0.7049.38 Safari/537.36' \
+  -H 'sec-ch-ua: "Android WebView";v="135", "Not-A.Brand";v="8", "Chromium";v="135"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Android"'
+
+###
+# 200
+curl 'https://gingim.net/wp-content/uploads/new_games/components/js/bundle.1716366996620.js' \
+  -H 'Accept: */*' \
+  -H 'Accept-Language: he,en;q=0.9,en-GB;q=0.8,en-US;q=0.7' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -b 'pll_language=he; _ga=GA1.1.1708742078.1737376176; PHPSESSID=301e7cb7e8f17738623bb68d4d8bdc15; wordpress_test_cookie=WP%20Cookie%20check; wordpress_logged_in_c3b0cf34e0b3da89809747a63801d184=%D7%A6%D7%95%D7%94%D7%A8%20%D7%9C%D7%98%D7%95%D7%94%D7%A8%7C1745609288%7CYbAO8BvKlUUrlkkK5Fa5b3toMmU3Wfa4JpJsRy8AQin%7Cc7d385809492729483f04e2e8ad8d795a9b8f463ae02fd7921f9793642578dd4; _ga_BXECP3HY38=GS1.1.1744399615.7.1.1744399690.0.0.0' \
+  -H 'DNT: 1' \
+  -H 'Pragma: no-cache' \
+  -H 'Referer: https://gingim.net/wp-content/uploads/new_games/writing_words/?lang=heb&student_id=&user_id=25662&game_id=673a' \
+  -H 'Sec-Fetch-Dest: script' \
+  -H 'Sec-Fetch-Mode: no-cors' \
+  -H 'Sec-Fetch-Site: same-origin' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="135", "Not-A.Brand";v="8", "Chromium";v="135"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"'
+
+
+###
+# appConfig.1716366996620.js
+@name=appConfig.1716366996620.js
+curl 'https://gingim.net/wp-content/uploads/new_games/js/appConfig.1716366996620.js' \
+  -H 'Accept: */*' \
+  -H 'Accept-Language: he-IL,he;q=0.9,en-US;q=0.8,en;q=0.7' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -b 'PHPSESSID=2680a047c4fcf1c1f26dd72d383e8cdb; pll_language=he; _ga=GA1.1.1313440203.1744395329; wordpress_test_cookie=WP%20Cookie%20check; wordpress_logged_in_c3b0cf34e0b3da89809747a63801d184=%D7%A6%D7%95%D7%94%D7%A8%20%D7%9C%D7%98%D7%95%D7%94%D7%A8%7C1745604991%7Ck6xXZ7gdKuqkAwgnarfe5By5HrCd5P8NwhFdEILiQve%7C0ef799f29749d32a7ebeb9f2f8ebe3d6b31a7aa61ff1655c9eaedbe8f7a6c01d; _ga_BXECP3HY38=GS1.1.1744395328.1.1.1744395395.0.0.0' \
+  -H 'Pragma: no-cache' \
+  -H 'Referer: https://gingim.net/wp-content/uploads/new_games/writing_words?lang=heb&student_id=&user_id=25662&game_id=673a' \
+  -H 'Sec-Fetch-Dest: script' \
+  -H 'Sec-Fetch-Mode: no-cors' \
+  -H 'Sec-Fetch-Site: same-origin' \
+  -H 'User-Agent: Mozilla/5.0 (Linux; Android 13; TAB KINGKONG Build/TAB_KINGKONG_EEA; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/135.0.7049.38 Safari/537.36' \
+  -H 'sec-ch-ua: "Android WebView";v="135", "Not-A.Brand";v="8", "Chromium";v="135"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Android"'
+
+curl 'https://gingim.net/wp-content/uploads/new_games/writing_words/js/appConfig.1716366996620.js' \
+  -H 'Accept: */*' \
+  -H 'Accept-Language: he,en;q=0.9,en-GB;q=0.8,en-US;q=0.7' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -b 'pll_language=he; _ga=GA1.1.1708742078.1737376176; PHPSESSID=301e7cb7e8f17738623bb68d4d8bdc15; wordpress_test_cookie=WP%20Cookie%20check; wordpress_logged_in_c3b0cf34e0b3da89809747a63801d184=%D7%A6%D7%95%D7%94%D7%A8%20%D7%9C%D7%98%D7%95%D7%94%D7%A8%7C1745609288%7CYbAO8BvKlUUrlkkK5Fa5b3toMmU3Wfa4JpJsRy8AQin%7Cc7d385809492729483f04e2e8ad8d795a9b8f463ae02fd7921f9793642578dd4; _ga_BXECP3HY38=GS1.1.1744399615.7.1.1744399690.0.0.0' \
+  -H 'DNT: 1' \
+  -H 'Pragma: no-cache' \
+  -H 'Referer: https://gingim.net/wp-content/uploads/new_games/writing_words/?lang=heb&student_id=&user_id=25662&game_id=673a' \
+  -H 'Sec-Fetch-Dest: script' \
+  -H 'Sec-Fetch-Mode: no-cors' \
+  -H 'Sec-Fetch-Site: same-origin' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="135", "Not-A.Brand";v="8", "Chromium";v="135"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"'
+
+https://gingim.net/wp-content/uploads/new_games/writing_words?lang=heb&student_id=&user_id=25662&game_id=673a
+https://gingim.net/wp-content/uploads/new_games/writing_words?lang=heb&student_id=&user_id=25662&game_id=673a
+https://gingim.net/wp-content/uploads/new_games/writing_words/?lang=heb&student_id=&user_id=25662&game_id=673a
+###
+
+curl 'https://gingim.net/wp-content/uploads/new_games/writing_words?lang=heb&student_id=&user_id=25662&game_id=673a' \
+  -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' \
+  -H 'Accept-Language: he,en;q=0.9,en-GB;q=0.8,en-US;q=0.7' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -b 'pll_language=he; _ga=GA1.1.1708742078.1737376176; PHPSESSID=301e7cb7e8f17738623bb68d4d8bdc15; wordpress_test_cookie=WP%20Cookie%20check; wordpress_logged_in_c3b0cf34e0b3da89809747a63801d184=%D7%A6%D7%95%D7%94%D7%A8%20%D7%9C%D7%98%D7%95%D7%94%D7%A8%7C1745609288%7CYbAO8BvKlUUrlkkK5Fa5b3toMmU3Wfa4JpJsRy8AQin%7Cc7d385809492729483f04e2e8ad8d795a9b8f463ae02fd7921f9793642578dd4; _ga_BXECP3HY38=GS1.1.1744399615.7.1.1744399690.0.0.0' \
+  -H 'DNT: 1' \
+  -H 'Pragma: no-cache' \
+  -H 'Referer: https://gingim.net/games/' \
+  -H 'Sec-Fetch-Dest: iframe' \
+  -H 'Sec-Fetch-Mode: navigate' \
+  -H 'Sec-Fetch-Site: same-origin' \
+  -H 'Upgrade-Insecure-Requests: 1' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0' \
+  -H 'sec-ch-ua: "Microsoft Edge";v="135", "Not-A.Brand";v="8", "Chromium";v="135"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Windows"'
+###
+curl 'https://gingim.net/wp-content/uploads/new_games/writing_words?lang=heb&student_id=&user_id=25662&game_id=673a' `
+  -H 'Referer: https://gingim.net/games/' `
+  --user-agent ' Mozilla/5.0 (Linux; Android 13; TAB KINGKONG Build/TAB_KINGKONG_EEA; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/135.0.7049.38 Safari/537.36' `
+  -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' `
+  -H 'Accept-Language: he,en;q=0.9,en-GB;q=0.8,en-US;q=0.7' `
+  -H 'Cache-Control: no-cache' `
+  -H 'Connection: keep-alive' `
+  -b 'pll_language=he; _ga=GA1.1.1708742078.1737376176; PHPSESSID=301e7cb7e8f17738623bb68d4d8bdc15; wordpress_test_cookie=WP%20Cookie%20check; wordpress_logged_in_c3b0cf34e0b3da89809747a63801d184=%D7%A6%D7%95%D7%94%D7%A8%20%D7%9C%D7%98%D7%95%D7%94%D7%A8%7C1745609288%7CYbAO8BvKlUUrlkkK5Fa5b3toMmU3Wfa4JpJsRy8AQin%7Cc7d385809492729483f04e2e8ad8d795a9b8f463ae02fd7921f9793642578dd4; _ga_BXECP3HY38=GS1.1.1744399615.7.1.1744399690.0.0.0' `
+  -H 'DNT: 1' `
+  -H 'Pragma: no-cache' `
+  -H 'Sec-Fetch-Dest: iframe' `
+  -H 'Sec-Fetch-Mode: navigate' `
+  -H 'Sec-Fetch-Site: same-origin' `
+  -H 'Upgrade-Insecure-Requests: 1' `
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0' `
+  -H 'sec-ch-ua: "Microsoft Edge";v="135", "Not-A.Brand";v="8", "Chromium";v="135"' `
+  -H 'sec-ch-ua-mobile: ?0' `
+  -H 'sec-ch-ua-platform: "Windows"'
+###
+
+GET https://gingim.net/wp-content/uploads/new_games/writing_words?lang=heb&student_id=&user_id=25662&game_id=673a HTTP/1.1
+Referer: https://gingim.net/games/
+User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0'
+###
+curl 'https://gingim.net/wp-content/uploads/new_games/writing_words/?lang=heb&student_id=&user_id=25662&game_id=673a' `
+  -H 'Referer: https://gingim.net/games/'
