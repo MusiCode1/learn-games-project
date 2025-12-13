@@ -44,57 +44,83 @@
 	{compact ? 'gap-x-2 gap-y-2' : 'gap-x-2 gap-y-2 md:gap-x-6 md:gap-y-6'}"
 	dir="rtl"
 >
-	{#each segments as segment}
-		<!-- Wrap words in a non-breaking flex container, allow spaces to flow -->
-		<div class="flex {segment.isSpace ? 'contents' : 'flex-nowrap gap-2 md:gap-4'}">
-			{#each segment.text.split('') as char, i}
-				{@const globalIndex = segment.startIndex + i}
-				<div
-					id="charDisplay"
-					class="
-				flex items-center justify-center
-                {/* aspect-square/roughly portrait: אנו רוצים יחס של קלף (בערך 2:3 או 5:7) */ ''}
-                aspect-[5/7]
-                
-				{/* Sizing Logic (Container Queries):
-                   השתדרגנו ל-Container Queries (@container).
-                   כעת הגודל נקבע לפי רוחב המיכל (cqw) ולא רוחב המסך (vw).
-                   הסרנו את "תקרת הזכוכית" הנמוכה (80px), ועכשיו הכרטיס יכול לגדול עד 200px/150px
-                   בהתאם למקום הפנוי, אך שומר על מינימום קריא (45px).
-				*/ ''}
-				{isLongWord || compact
-						? 'w-[clamp(45px,11cqh,150px)] text-[clamp(1.5rem,12cqw,10rem)]'
-						: 'w-[clamp(60px,15cqw,220px)] text-[clamp(2rem,12cqw,10rem)]'}
-				
-				{settings.highlightCurrentChar && globalIndex === currentIndex
-						? 'bg-yellow-200 border-amber-600 ring-4 ring-amber-400 ring-opacity-50 scale-110 shadow-2xl animate-pulse-fast z-10'
-						: 'bg-yellow-200 border-amber-500'}
-				border-4 border-b-8
-				rounded-xl md:rounded-2xl
-				shadow-md
-				font-bold text-slate-900
-				select-none
-				transition-all duration-200
-				hover:-translate-y-1 hover:shadow-xl hover:border-amber-600
+	{#if settings.wordDisplayMode === 'word'}
+		<!-- Whole Word Mode -->
+		<div
+			class="
+			flex items-center justify-center
+			px-8 py-4
+			bg-yellow-200 border-4 border-amber-500 border-b-8
+			rounded-2xl shadow-md
+			font-bold text-slate-900 select-none
+			transition-all duration-200
+			hover:-translate-y-1 hover:shadow-xl hover:border-amber-600
+			{isLongWord || compact ? 'text-[clamp(1.5rem,12cqw,10rem)]' : 'text-[clamp(2rem,12cqw,12rem)]'}
 			"
-					style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;"
-				>
-					{#if settings.showWord || globalIndex < currentIndex}
-						{#if char === ' '}
-							<!-- SVG Space Key Icon -->
-							<div class="flex items-center justify-center opacity-80 scale-125 w-full h-full">
-								<img src={spaceKeyIcon} alt="Space Key" class="w-full h-full object-contain p-3" />
-							</div>
-						{:else}
-							{char}
-						{/if}
-					{:else}
-						&nbsp;
-					{/if}
-				</div>
-			{/each}
+			style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;"
+		>
+			{word}
 		</div>
-	{/each}
+	{:else}
+		<!-- Letters / Hidden Mode -->
+		{#each segments as segment}
+			<!-- Wrap words in a non-breaking flex container, allow spaces to flow -->
+			<div class="flex {segment.isSpace ? 'contents' : 'flex-nowrap gap-2 md:gap-4'}">
+				{#each segment.text.split('') as char, i}
+					{@const globalIndex = segment.startIndex + i}
+					<div
+						id="charDisplay"
+						class="
+					flex items-center justify-center
+					{/* aspect-square/roughly portrait: אנו רוצים יחס של קלף (בערך 2:3 או 5:7) */ ''}
+					aspect-[5/7]
+					
+					{/* Sizing Logic (Container Queries):
+					   השתדרגנו ל-Container Queries (@container).
+					   כעת הגודל נקבע לפי רוחב המיכל (cqw) ולא רוחב המסך (vw).
+					   הסרנו את "תקרת הזכוכית" הנמוכה (80px), ועכשיו הכרטיס יכול לגדול עד 200px/150px
+					   בהתאם למקום הפנוי, אך שומר על מינימום קריא (45px).
+					*/ ''}
+					{isLongWord || compact
+							? 'w-[clamp(45px,11cqh,150px)] text-[clamp(1.5rem,12cqw,10rem)]'
+							: 'w-[clamp(60px,15cqw,220px)] text-[clamp(2rem,12cqw,10rem)]'}
+					
+					{settings.highlightCurrentChar &&
+						globalIndex === currentIndex &&
+						settings.wordDisplayMode !== 'hidden'
+							? 'bg-yellow-200 border-amber-600 ring-4 ring-amber-400 ring-opacity-50 scale-110 shadow-2xl animate-pulse-fast z-10'
+							: 'bg-yellow-200 border-amber-500'}
+					border-4 border-b-8
+					rounded-xl md:rounded-2xl
+					shadow-md
+					font-bold text-slate-900
+					select-none
+					transition-all duration-200
+					hover:-translate-y-1 hover:shadow-xl hover:border-amber-600
+				"
+						style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;"
+					>
+						{#if settings.wordDisplayMode !== 'hidden' || globalIndex < currentIndex}
+							{#if char === ' '}
+								<!-- SVG Space Key Icon -->
+								<div class="flex items-center justify-center opacity-80 scale-125 w-full h-full">
+									<img
+										src={spaceKeyIcon}
+										alt="Space Key"
+										class="w-full h-full object-contain p-3"
+									/>
+								</div>
+							{:else}
+								{char}
+							{/if}
+						{:else}
+							&nbsp;
+						{/if}
+					</div>
+				{/each}
+			</div>
+		{/each}
+	{/if}
 </div>
 
 <style>
