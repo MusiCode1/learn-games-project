@@ -4,9 +4,16 @@
 	import AdminGate from '$lib/components/AdminGate.svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	import { preloadAllAssets } from '$lib/services/assets';
 
 	let { children } = $props();
 	import { BoosterContainer } from 'learn-booster-kit';
+
+	onMount(() => {
+		// טעינה מוקדמת של כל הנכסים (תמונות וסאונד) ברקע
+		preloadAllAssets();
+	});
 </script>
 
 <svelte:head>
