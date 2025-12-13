@@ -1,0 +1,11 @@
+
+node_modules
+dist
+.env
+.DS_Store
+.turbo
+coverage
+.svelte-kit
+build
+unused_sounds
+**/.git.temp_hide/**
