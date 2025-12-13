@@ -1,0 +1,143 @@
+$ svelte-check --tsconfig ./tsconfig.json && tsc -p tsconfig.node.json
+Loading svelte-check in workspace: d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit
+Getting Svelte diagnostics...
+
+(node:29212) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\LoadingSpinner.svelte[39m:19:3
+[33mWarn[39m: Unknown at rule @reference (css)
+[36m<style>
+  [35m@reference[36m "tailwindcss";
+</style>[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\VideoDialog.svelte[39m:35:22
+[33mWarn[39m: This reference only captures the initial value of `config`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+[36m
+  let hideProgress = [35mconfig[36m.video.hideProgressBar;[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\VideoDialog.svelte[39m:203:3
+[33mWarn[39m: Unknown at rule @reference (css)
+[36m<style>
+  [35m@reference[36m "tailwindcss";[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\Modal.svelte[39m:23:5
+[33mWarn[39m: Unknown at rule @reference (css)
+[36m<style>
+    [35m@reference[36m "tailwindcss";[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\LeftButton.svelte[39m:19:3
+[33mWarn[39m: Unknown at rule @reference (css)
+[36m<style>
+  [35m@reference[36m "tailwindcss";
+</style>[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\VideoMain.svelte[39m:28:21
+[33mWarn[39m: This reference only captures the initial value of `config`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+[36m
+  let localConfig = [35mconfig[36m || getAllConfig();[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\VideoMain.svelte[39m:50:33
+[33mWarn[39m: This reference only captures the initial value of `timer`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+[36m
+  const timeFormatted = derived([35mtimer[36m.time, ($time) => {
+    const remainingInSeconds = Math.round($time / 1000) * 1000;[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\VideoMain.svelte[39m:134:3
+[33mWarn[39m: Unknown at rule @reference (css)
+[36m<style>
+  [35m@reference[36m "tailwindcss";[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\SiteBoosterMain.svelte[39m:23:31
+[33mWarn[39m: This reference only captures the initial value of `config`. Did you mean to reference it inside a derived instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+[36m
+  let resolvedConfig = $state([35mconfig[36m ?? getAllConfig());[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\SiteBoosterMain.svelte[39m:47:3
+[33mWarn[39m: This reference only captures the initial value of `timer`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+[36m  let timeLeft = $state("00:00");
+  [35mtimer[36m.subscribe((time) => (timeLeft = time));[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\SiteBoosterMain.svelte[39m:221:3
+[33mWarn[39m: Unknown at rule @reference (css)
+[36m<style>
+  [35m@reference[36m "tailwindcss";[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\lib\get-game-config.ts[39m:2:35
+[31mError[39m: Cannot find module './inject-code-into-function' or its corresponding type declarations. 
+[36mimport { gameConfigs, defaultGameConfig, type GameConfig } from "./game-config";
+import { getFunctionByPath } from [35m"./inject-code-into-function"[36m;
+import { findFunctionInWindow } from "./object-finder";[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\lib\game-handler.ts[39m:6:59
+[31mError[39m: Cannot find module './inject-code-into-function' or its corresponding type declarations. 
+[36mimport type { PlayerControls, Config, TimerController, FullyKiosk, SiteBoosterControls } from "../types";
+import { injectCodeIntoFunction, getFunctionByPath } from [35m"./inject-code-into-function"[36m;
+import { getGameConfig } from "./get-game-config";[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\Settings.svelte[39m:40:35
+[33mWarn[39m: This reference only captures the initial value of `config`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+[36m
+  config = normalizeBoosterConfig([35mconfig[36m);[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\Settings.svelte[39m:42:65
+[33mWarn[39m: This reference only captures the initial value of `config`. Did you mean to reference it inside a derived instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+[36m
+  let newConfig = $state(normalizeBoosterConfig(structuredClone([35mconfig[36m)));[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\Settings.svelte[39m:47:41
+[33mWarn[39m: This reference only captures the initial value of `config`. Did you mean to reference it inside a derived instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+[36m
+  let videoDisplayTime = $state(msToSec([35mconfig[36m.rewardDisplayDurationMs));[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\Settings.svelte[39m:53:34
+[33mWarn[39m: This reference only captures the initial value of `profilesState`. Did you mean to reference it inside a derived instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+[36m
+  let selectedProfileId = $state([35mprofilesState[36m.activeProfileId ?? "");[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\Settings.svelte[39m:58:5
+[33mWarn[39m: This reference only captures the initial value of `config`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+[36m  const disabledAppMode =
+    [35mconfig[36m.environmentMode !== "development" && isNotFullyKiosk;[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\Settings.svelte[39m:812:3
+[33mWarn[39m: Unknown at rule @reference (css)
+[36m<style>
+  [35m@reference[36m "tailwindcss";[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\Settings.svelte[39m:815:5
+[33mWarn[39m: Unknown at rule @apply (css)
+[36m  :global(.settings-card) {
+    [35m@apply[36m rounded-2xl border border-gray-200 bg-white p-4 shadow-sm md:p-5;
+  }[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\Settings.svelte[39m:819:5
+[33mWarn[39m: Unknown at rule @apply (css)
+[36m  :global(.settings-help-text) {
+    [35m@apply[36m text-xs leading-relaxed text-gray-500;
+  }[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\components\Settings.svelte[39m:823:5
+[33mWarn[39m: Unknown at rule @apply (css)
+[36m  .input {
+    [35m@apply[36m p-3 border border-gray-300 rounded-lg text-right bg-white text-base w-full touch-manipulation;[39m
+
+d:\UserProjects\ThzoharHalev\learn-games-project\packages\learn-booster-kit\[32msrc\ui\SettingsMain.svelte[39m:52:3
+[33mWarn[39m: Unknown at rule @reference (css)
+[36m<style>
+  [35m@reference[36m "tailwindcss";
+</style>[39m
+
+====================================
+[31msvelte-check found 2 errors and 21 warnings in 10 files
+error: script "check" exited with code 1
+[39m

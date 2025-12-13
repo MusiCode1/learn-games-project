@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/* @reference "tailwindcss"; */
+
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+/* :root {
+  font-family: 'Heebo', sans-serif;
+} */
+
+body {
+
+  @apply bg-gray-100;
+  direction: rtl;
+}
+
+/* .gingim-booster {
+  @import "tailwindcss";
+
+} */
+
+.gingim-booster, .gingim-booster * {
+  all: revert-layer;
+}
