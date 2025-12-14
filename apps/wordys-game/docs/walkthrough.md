@@ -1,5 +1,55 @@
 # יומן פיתוח - Wordy's
 
+## 14/12/2025 Walkthrough - Hint Mechanism (מנגנון רמז)
+
+הוספתי מנגנון רמז המסייע לתלמידים כאשר המילה מוסתרת.
+
+### מה בוצע?
+
+**1. כפתור רמז (Hint Button)**
+
+- נוסף כפתור נורה (💡) המופיע רק כאשר מצב תצוגת המילה הוא `hidden`.
+- לחיצה על הכפתור חושפת את המילה למשך זמן קצוב ומשמיעה אותה.
+
+**2. הגדרות וניהול (Settings)**
+
+- **משך רמז**: ניתן להגדיר כמה זמן המילה תהיה חשופה (ברירת מחדל: 1.5 שניות).
+- **זמן צינון (Cooldown)**: ניתן להגביל את תדירות השימוש ברמז ע"י קביעת זמן המתנה בין לחיצות.
+- **מיקום**: כפתור הרמז ממוקם משמאל לשדה הקלט, בעיצוב עגול ובולט.
+- **הפעלה/כיבוי**: הוספת מתג ראשי להפעלת או ביטול מנגנון הרמז. ההגדרות מופיעות רק במצב "מוסתר" ונפתחות באנימציית החלקה (`slide`).
+- **חיווי ויזואלי**: כאשר הכפתור בצינון, מוצג שעון ספירה לאחור ומעגל התקדמות גרפי.
+
+**3. רכיבים**
+
+- `HintButton.svelte`: קומפוננטה חדשה לניהול הויזואליה של הכפתור.
+- `GameContainer.svelte`: שילוב הלוגיקה והטיימרים.
+- `SettingsStore`: הוספת השדות `hintDuration` ו-`hintCooldown`.
+
+**4. אימות**
+
+- `bun run check` עבר בהצלחה (0 שגיאות) לאחר תיקון שגיאת סינטקס.
+
+## 14/12/2025 Walkthrough - Hint Refinement & Design Patterns
+
+חידדנו את התנהגות הרמז ושיפרנו את ארכיטקטורת הקוד והעיצוב.
+
+### מה בוצע?
+
+**1. שיפור מנגנון הרמז (Hint Logic)**
+
+- **חשיפה על הכרטיסים**: במקום להציג כרטיס נפרד ("Whole Word"), הרמז כעת חושף את האותיות בתוך הכרטיסים הריקים הקיימים. זה שומר על ההקשר הוויזואלי ומרגיש טבעי יותר.
+
+**2. ארכיטקטורה ועיצוב (Design Patterns)**
+
+- **Container/Presenter**: הוגדרה ויושמה תבנית עיצוב המפרידה בין האחריות לפריסה (Layout) לבין האחריות לנראות (Visuals).
+  - **יישום**: ב-`HintButton`, האלמנט החיצוני (`<button>`) אחראי על הגודל והמיקום (`w-14 h-14`), והאלמנט הפנימי (`<div>`) אחראי על העיצוב (`bg-white`, `shadow`, `border`).
+  - **יתרונות**: מאפשר אנימציות נקיות (ללא דחיפת אלמנטים שכנים) ושימוש חוזר קל.
+- **תיעוד**: הכלל נוסף למסמך `GEMINI.md` תחת פרק העיצוב.
+
+**3. ממשק משתמש (UI)**
+
+- **כפתור רמז**: עיצוב תלת-מימדי משופר (צל, גבול תחתון עבה) למראה "משחקי" ולחיץ.
+
 ## 13/12/2025 Walkthrough - Word Display Mode & Settings Refactor
 
 הוספתי פיצ'ר חדש המאפשר להציג את המילה ככרטיס שלם "גלובלי" (Whole Word Reading) במקום כאותיות נפרדות, לטובת תרגול קריאה גלובלית. בנוסף, בוצע שדרוג וניקוי יסודי של מנגנון ההגדרות.

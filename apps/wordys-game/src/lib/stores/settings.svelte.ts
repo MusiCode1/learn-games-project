@@ -1,32 +1,69 @@
-const CURRENT_VERSION = 1;
+/**
+ * ⚠️ חשוב: יש לעדכן את CURRENT_VERSION לאחר כל שינוי במבנה ההגדרות (SettingsStore),
+ * ולוודא שפונקציית ה-migrate מטפלת בגרסה הישנה ובערכי ברירת מחדל.
+ */
+const CURRENT_VERSION = 3;
 const STORAGE_KEY = 'wordys-settings';
 
+const DEFAULT_SETTINGS = {
+	wordDisplayMode: 'letters' as 'hidden' | 'letters' | 'word',
+	errorFeedback: true,
+	highlightCurrentChar: true,
+	cardRepetitions: 2,
+	virtualKeyboardMode: 'full' as 'none' | 'full' | 'focused',
+	boosterEnabled: true,
+	wordsPerBooster: 3,
+	autoBoosterLoop: false,
+	hintEnabled: true,
+	hintDuration: 1500,
+	hintCooldown: 0
+} as const;
+
+export type Settings = typeof DEFAULT_SETTINGS;
+
+type SettingsKey = keyof Settings;
+
+type Ty = Settings;
 export class SettingsStore {
+	// גרסה של המבנה של ההגדרות
+	private schemaVersion = CURRENT_VERSION;
+
 	// מצב תצוגת המילה: 'hidden' (מוסתר), 'letters' (אותיות נפרדות), 'word' (מילה שלמה)
-	wordDisplayMode = $state<'hidden' | 'letters' | 'word'>('letters');
+	wordDisplayMode = $state<Ty['wordDisplayMode']>(DEFAULT_SETTINGS.wordDisplayMode);
 
 	// האם להציג חיווי (רעידה/צבע) בעת טעות
-	errorFeedback = $state(true);
+	errorFeedback = $state<boolean>(DEFAULT_SETTINGS.errorFeedback);
 
 	// האם להדגיש את האות הנוכחית שצריך להקליד
-	highlightCurrentChar = $state(true);
+	highlightCurrentChar = $state<boolean>(DEFAULT_SETTINGS.highlightCurrentChar);
 
 	// מספר החזרות לכל כרטיס (0 = ללא הגבלה)
-	cardRepetitions = $state(2);
+	cardRepetitions = $state<number>(DEFAULT_SETTINGS.cardRepetitions);
 
 	// מצב המקלדת הוירטואלית: 'none' (ללא), 'full' (מלאה), 'focused' (רק אותיות רלוונטיות)
-	virtualKeyboardMode = $state<'none' | 'full' | 'focused'>('full');
+	virtualKeyboardMode = $state<Ty['virtualKeyboardMode']>(DEFAULT_SETTINGS.virtualKeyboardMode);
 
 	// === הגדרות חיזוקים (Booster) ===
 
 	// האם מנגנון החיזוקים פעיל
-	boosterEnabled = $state(true);
+	boosterEnabled = $state<boolean>(DEFAULT_SETTINGS.boosterEnabled);
 
 	// מספר מילים שיש להשלים כדי לקבל חיזוק
-	wordsPerBooster = $state(3);
+	wordsPerBooster = $state<number>(DEFAULT_SETTINGS.wordsPerBooster);
 
 	// האם לחזור אוטומטית למשחק לאחר סיום החיזוק (לולאה)
-	autoBoosterLoop = $state(false);
+	autoBoosterLoop = $state<boolean>(DEFAULT_SETTINGS.autoBoosterLoop);
+
+	// === הגדרות רמז (Hint) ===
+
+	// האם מנגנון הרמז פעיל (רלוונטי רק כשהמילה מוסתרת)
+	hintEnabled = $state<boolean>(DEFAULT_SETTINGS.hintEnabled);
+
+	// משך זמן הצגת הרמז במילי-שניות
+	hintDuration = $state<number>(DEFAULT_SETTINGS.hintDuration);
+
+	// זמן צינון (Cooldown) בין רמזים בשניות (0 = ללא הגבלה)
+	hintCooldown = $state<number>(DEFAULT_SETTINGS.hintCooldown);
 
 	constructor() {
 		// טעינה ראשונית
@@ -37,6 +74,7 @@ export class SettingsStore {
 		// האזנה לשינויים ושמירה
 		$effect.root(() => {
 			$effect(() => {
+				this.toJSON(); // Track all dependencies
 				this.save();
 			});
 		});
@@ -55,39 +93,33 @@ export class SettingsStore {
 		}
 	}
 
+	// החזרת אובייקט פשוט עם כל ההגדרות (מתוך הדיפולט)
+	public toJSON() {
+		const data: Record<string, any> = { schemaVersion: CURRENT_VERSION };
+		for (const key of Object.keys(DEFAULT_SETTINGS) as Array<SettingsKey>) {
+			data[key] = this[key];
+		}
+		return data;
+	}
+
 	// פונקציה פרטית לשמירת ההגדרות
 	private save() {
 		if (typeof window?.localStorage === 'undefined') return;
-
-		localStorage.setItem(
-			STORAGE_KEY,
-			JSON.stringify({
-				...this,
-				version: CURRENT_VERSION
-			})
-		);
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(this.toJSON()));
 	}
 
 	// פונקציה לטיפול במיגרציה של הגדרות ישנות
 	private migrate(parsed: any) {
 		// מיגרציה מגרסה 0/ללא גרסה (showWord -> wordDisplayMode)
-		if (parsed.wordDisplayMode) {
-			this.wordDisplayMode = parsed.wordDisplayMode;
-		} else if (parsed.showWord !== undefined) {
-			// תאימות לאחור: המרה מבוליאני למצב תצוגה
-			this.wordDisplayMode = parsed.showWord ? 'letters' : 'hidden';
-		} else {
-			this.wordDisplayMode = 'letters';
+		if (!parsed.wordDisplayMode && parsed.showWord !== undefined) {
+			parsed.wordDisplayMode = parsed.showWord ? 'letters' : 'hidden';
 		}
 
-		// טעינת שאר ההגדרות (עם ערכי ברירת מחדל אם חסר)
-		this.errorFeedback = parsed.errorFeedback ?? true;
-		this.highlightCurrentChar = parsed.highlightCurrentChar ?? true;
-		this.cardRepetitions = parsed.cardRepetitions ?? 2;
-		this.virtualKeyboardMode = parsed.virtualKeyboardMode ?? 'full';
-		this.boosterEnabled = parsed.boosterEnabled ?? true;
-		this.wordsPerBooster = parsed.wordsPerBooster ?? 3;
-		this.autoBoosterLoop = parsed.autoBoosterLoop ?? false;
+		// עדכון דינמי של כל השדות מתוך ברירת המחדל
+		for (const key of Object.keys(DEFAULT_SETTINGS) as Array<keyof typeof DEFAULT_SETTINGS>) {
+			// @ts-ignore - access by key
+			this[key] = parsed[key] ?? DEFAULT_SETTINGS[key];
+		}
 	}
 }
 

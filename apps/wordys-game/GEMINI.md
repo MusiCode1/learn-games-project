@@ -1,35 +1,29 @@
-You are able to use the Svelte MCP server, where you have access to comprehensive Svelte 5 and SvelteKit documentation. Here's how to use the available tools effectively:
-
-## Available MCP Tools:
-
-### 1. list-sections
-
-Use this FIRST to discover all available documentation sections. Returns a structured list with titles, use_cases, and paths.
-When asked about Svelte or SvelteKit topics, ALWAYS use this tool at the start of the chat to find relevant sections.
-
-### 2. get-documentation
-
-Retrieves full documentation content for specific sections. Accepts single or multiple sections.
-After calling the list-sections tool, you MUST analyze the returned documentation sections (especially the use_cases field) and then use the get-documentation tool to fetch ALL documentation sections that are relevant for the user's task.
-
-### 3. svelte-autofixer
-
-Analyzes Svelte code and returns issues and suggestions.
-You MUST use this tool whenever writing Svelte code before sending it to the user. Keep calling it until no issues or suggestions are returned.
-
-### 4. playground-link
-
-Generates a Svelte Playground link with the provided code.
-After completing the code, ask the user if they want a playground link. Only call this tool after user confirmation and NEVER if code was written to files in their project.
-
----
-
 # Project Rules for Wordy's Game
 
 ## 🗣️ שפה ותקשורת
 
-- **עברית בלבד**: כל התקשורת, מסמכי התכנון, והודעות הקומיט חייבים להיות בשפה העברית. אין לכתוב מסמך, הודעת קומיט, או כל תוכן שפונה למשתמש באנגלית.
+- **עברית בלבד**: כל התקשורת מול המשתמש חייבת להיות בשפה העברית. כלל זה חל על:
+  - הודעות צ'אט (Messages).
+  - מסמכי תכנון ותוצרים (Artifacts):
+    - `task.md` (ניהול משימות)
+    - `implementation_plan.md` (תוכנית יישום)
+    - `walkthrough.md` (יומן פיתוח)
+  - הודעות קומיט (Commit Messages).
+  - שדות ממשק המשימה: **TaskName**, **TaskSummary**, **TaskStatus**.
+  - אין לכתוב תוכן שפונה למשתמש באנגלית. המקום היחיד בו מותרת אנגלית הוא בקוד עצמו (משתנים, שמות פונקציות, שמות קבצים) או במונחים טכניים שאין להם תרגום מקובל.
+- **חשיבה (Thought/Reasoning)**: תהליך החשיבה הפנימי יכול להתבצע בעברית או באנגלית, בהתאם לנוחות וההקשר.
 - **RTL**: הממשק חייב לתמוך בכיווניות מימין לשמאל (RTL) באופן מלא.
+
+## 🎨 עיצוב (Design)
+
+- **Distraction-free**: העיצוב צריך להיות נקי, מינימליסטי ומונגש, מותאם לתלמידי חינוך מיוחד.
+- **משוב ברור**: חיווי ויזואלי וקולי מיידי לכל פעולה (הצלחה/כישלון).
+- **הפרדת פריסה ועיצוב (Container/Presenter)**: ברכיבים מורכבים (כמו כפתורים או כרטיסים), יש להקפיד על הפרדה בין האלמנט החיצוני שקובע את הפריסה והגודל (`Layout/Position`), לבין האלמנט הפנימי שקובע את הנראות (`Visuals/Style`). האלמנט הפנימי יתפוס `w-full h-full` בתוך הקונטיינר. זה מאפשר אנימציות נקיות ושימוש חוזר גמיש.
+
+## 👨‍💻 קוד (Code)
+
+- **הערות (Comments)**: כל ההערות בקוד (Documentation comments, Inline comments) ייכתבו בשפה העברית בלבד.
+- **שמות (Naming)**: שמות משתנים, פונקציות, מחלקות וקבצים ייכתבו באנגלית בלבד (PascalCase/camelCase/kebab-case/snake_case בהתאם למוסכמות השפה).
 
 ## 💻 טרמינל ופקודות (Terminal)
 
@@ -48,16 +42,8 @@ After completing the code, ask the user if they want a playground link. Only cal
 - **תיעוד**: לפני ביצוע הקומיט, חובה לעדכן את [docs/walkthrough.md](./docs/walkthrough.md) בפרטי העבודה שבוצעה (השתמש ב-`/update_walkthrough`).
 - יש לפעול עם הוורקפלואו /commit .
 
-## 🔊 סאונד
-
-- **קבצים אמיתיים**: אין להשתמש ב-Oscillators או צלילים מסונתזים. יש להשתמש בקבצי אודיו (MP3/WAV) מתוך תיקיית `static/sounds`.
-- **קבצים לא בשימוש**: קבצי סאונד שאינם בשימוש יועברו לתיקיית `unused_sounds` בשורש הפרויקט (המוחרגת מ-Git).
-
-## 🎨 עיצוב (Design)
-
-- **Distraction-free**: העיצוב צריך להיות נקי, מינימליסטי ומונגש, מותאם לתלמידי חינוך מיוחד.
-- **משוב ברור**: חיווי ויזואלי וקולי מיידי לכל פעולה (הצלחה/כישלון).
-
 ## 📚 תיעוד ומידע (Documentation)
 
 - **מטרת הפרויקט**: להבנת המטרה המרכזית והקשר הכללי, יש לקרוא את קובץ `README.md`.
+
+- תמיד לאחר סיום ביצוע שינוי או עריכה, יש להריץ את הפקודה `bun run check` ולבדוק את התוצאות.

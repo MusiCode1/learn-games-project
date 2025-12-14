@@ -10,9 +10,10 @@
 	import type { Card } from '$lib/types';
 
 	import { playSuccess, speak, playAudio } from '$lib/utils/sound';
-    import { getCardImageUrl, getCardAudioUrl } from '$lib/services/assets';
+	import { getCardImageUrl, getCardAudioUrl } from '$lib/services/assets';
 	import VirtualKeyboard from './VirtualKeyboard.svelte';
-	import { BoosterContainer, boosterService } from 'learn-booster-kit';
+	import { boosterService } from 'learn-booster-kit';
+	import HintButton from './HintButton.svelte';
 
 	let { cards, onExit } = $props<{ cards: Card[]; onExit?: () => void }>();
 
@@ -20,6 +21,11 @@
 	let showFeedback = $state(false);
 	let typedValue = $state('');
 	let isGameOver = $state(false);
+
+	// Hint State
+	let isHintActive = $state(false);
+	let hintCooldownRemaining = $state(0);
+	let hintTimer: ReturnType<typeof setInterval> | null = null;
 
 	// Play Queue Logic
 	let playQueue = $state<Card[]>([]);
@@ -52,16 +58,65 @@
 
 	function restartGame() {
 		isGameOver = false;
+		isHintActive = false;
+		hintCooldownRemaining = 0;
+		if (hintTimer) clearInterval(hintTimer);
 		initGame();
 	}
 
 	function handleVirtualKeyPress(char: string) {
+		if (isHintActive) return; // Prevent typing while hint is active? Optional.
 		typedValue += char;
 	}
 
 	function handleVirtualDelete() {
+		if (isHintActive) return;
 		typedValue = typedValue.slice(0, -1);
 	}
+
+	function handleHint() {
+		if (isHintActive || hintCooldownRemaining > 0 || !currentWord) return;
+
+		// 1. Activate Hint
+		isHintActive = true;
+
+		// 2. Play Sound
+		const audioUrl = getCardAudioUrl(currentWord.id);
+		if (audioUrl) {
+			playAudio(audioUrl);
+		} else {
+			speak(currentWord.word);
+		}
+
+		// 3. Set timer to hide hint
+		setTimeout(() => {
+			isHintActive = false;
+			startHintCooldown();
+		}, settings.hintDuration);
+	}
+
+	function startHintCooldown() {
+		if (settings.hintCooldown <= 0) return;
+
+		hintCooldownRemaining = settings.hintCooldown;
+
+		if (hintTimer) clearInterval(hintTimer);
+
+		hintTimer = setInterval(() => {
+			hintCooldownRemaining -= 1;
+			if (hintCooldownRemaining <= 0) {
+				hintCooldownRemaining = 0;
+				if (hintTimer) clearInterval(hintTimer);
+			}
+		}, 1000);
+	}
+
+	// Cleanup on destroy
+	$effect(() => {
+		return () => {
+			if (hintTimer) clearInterval(hintTimer);
+		};
+	});
 
 	// Derived state for current word
 	let currentWord = $derived(playQueue[currentIndex]);
@@ -75,12 +130,12 @@
 
 		// 2. Speak word (or play recording)
 		if (currentWord) {
-            const audioUrl = getCardAudioUrl(currentWord.id);
-            if (audioUrl) {
-                await playAudio(audioUrl);
-            } else {
-			    await speak(currentWord.word);
-            }
+			const audioUrl = getCardAudioUrl(currentWord.id);
+			if (audioUrl) {
+				await playAudio(audioUrl);
+			} else {
+				await speak(currentWord.word);
+			}
 		}
 
 		// 3. Speak feedback
@@ -90,7 +145,9 @@
 		await new Promise((r) => setTimeout(r, 1000));
 
 		showFeedback = false;
+		showFeedback = false;
 		typedValue = ''; // Reset typed value on success
+		isHintActive = false; // Reset hint just in case
 
 		nextWord();
 	}
@@ -118,14 +175,14 @@
 				currentIndex++;
 			} else {
 				// End of Queue
-                if (settings.boosterEnabled && settings.autoBoosterLoop) {
-                    // Loop Mode: Trigger reward then restart immediately
-                    await boosterService.triggerReward();
-                    restartGame();
-                } else {
-				    // Standard Mode: Show Completion Screen
-				    isGameOver = true;
-                }
+				if (settings.boosterEnabled && settings.autoBoosterLoop) {
+					// Loop Mode: Trigger reward then restart immediately
+					await boosterService.triggerReward();
+					restartGame();
+				} else {
+					// Standard Mode: Show Completion Screen
+					isGameOver = true;
+				}
 			}
 		}
 	}
@@ -136,7 +193,6 @@
 	// Calculate Aspect Ratio: Width / Height
 	// Threshold: 0.85 (Triggers horizontal layout as soon as height is roughly equal to width + header space)
 	let aspectRatio = $derived(containerHeight > 0 ? containerWidth / containerHeight : 0);
-	$inspect(aspectRatio);
 	let isLandscape = $derived(aspectRatio > 1.3);
 </script>
 
@@ -225,6 +281,7 @@
 						<WordDisplay
 							word={currentWord.word}
 							compact={isLandscape}
+							forceShow={isHintActive}
 							currentIndex={// Calculate index of first mismatch or length if correct so far
 							(() => {
 								for (let i = 0; i < typedValue.length; i++) {
@@ -236,12 +293,29 @@
 
 						<!-- Key prop forces re-render of input on word change to reset state -->
 						{#key currentWord.id}
-							<div id="typingInputSection" class="w-full">
-								<TypingInput
-									targetWord={currentWord.word}
-									onSuccess={handleSuccess}
-									bind:value={typedValue}
-								/>
+							<div
+								id="typingInputSection"
+								class="w-full relative flex items-center justify-center gap-4"
+							>
+								<div class="grow">
+									<TypingInput
+										targetWord={currentWord.word}
+										onSuccess={handleSuccess}
+										bind:value={typedValue}
+									/>
+								</div>
+
+								<!-- Hint Button Section (Only if mode is hidden AND hint is enabled) -->
+								{#if settings.wordDisplayMode === 'hidden' && settings.hintEnabled}
+									<div class="shrink-0">
+										<HintButton
+											onClick={handleHint}
+											disabled={isHintActive || hintCooldownRemaining > 0}
+											cooldownRemaining={hintCooldownRemaining}
+											totalCooldown={settings.hintCooldown}
+										/>
+									</div>
+								{/if}
 							</div>
 						{/key}
 					</div>

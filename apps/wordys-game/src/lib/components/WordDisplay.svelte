@@ -6,9 +6,10 @@
 		word: string;
 		currentIndex?: number;
 		compact?: boolean;
+		forceShow?: boolean;
 	}
 
-	let { word, currentIndex = 0, compact = false }: Props = $props();
+	let { word, currentIndex = 0, compact = false, forceShow = false }: Props = $props();
 
 	let isLongWord = $derived(word.length > 5);
 
@@ -45,7 +46,7 @@
 	dir="rtl"
 >
 	{#if settings.wordDisplayMode === 'word'}
-		<!-- Whole Word Mode -->
+		<!-- Whole Word Mode (or Forced Show) -->
 		<div
 			class="
 			flex items-center justify-center
@@ -87,7 +88,7 @@
 					
 					{settings.highlightCurrentChar &&
 						globalIndex === currentIndex &&
-						settings.wordDisplayMode !== 'hidden'
+						(settings.wordDisplayMode !== 'hidden' || forceShow)
 							? 'bg-yellow-200 border-amber-600 ring-4 ring-amber-400 ring-opacity-50 scale-110 shadow-2xl animate-pulse-fast z-10'
 							: 'bg-yellow-200 border-amber-500'}
 					border-4 border-b-8
@@ -100,7 +101,7 @@
 				"
 						style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;"
 					>
-						{#if settings.wordDisplayMode !== 'hidden' || globalIndex < currentIndex}
+						{#if settings.wordDisplayMode !== 'hidden' || forceShow || globalIndex < currentIndex}
 							{#if char === ' '}
 								<!-- SVG Space Key Icon -->
 								<div class="flex items-center justify-center opacity-80 scale-125 w-full h-full">
