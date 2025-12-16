@@ -5,11 +5,7 @@ import { playwright } from '@vitest/browser-playwright';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
-	plugins: [
-		tailwindcss(),
-		sveltekit(),
-		devtoolsJson()
-	],
+	plugins: [tailwindcss(), sveltekit(), devtoolsJson()],
 	test: {
 		expect: { requireAssertions: true },
 		projects: [
@@ -41,12 +37,14 @@ export default defineConfig({
 		// assetsInlineLimit: Infinity
 	},
 	server: {
+		host: true,
+		open: true,
 		cors: {
-			origin: "*",
-			preflightContinue: true,
+			origin: '*',
+			preflightContinue: true
 		},
 		headers: {
-			"Access-Control-Allow-Origin": "*"
+			'Access-Control-Allow-Origin': '*'
 		}
 	}
 });
