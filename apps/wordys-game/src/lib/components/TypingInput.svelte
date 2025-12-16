@@ -58,6 +58,7 @@
 		<input
 			bind:this={inputRef}
 			type="text"
+			inputmode={settings.virtualKeyboardMode !== 'none' ? 'none' : 'text'}
 			class="w-full text-center text-4xl p-4 rounded-xl border-4 outline-none transition-all duration-200
             {isError
 				? 'border-red-500 bg-red-50 animate-shake'
