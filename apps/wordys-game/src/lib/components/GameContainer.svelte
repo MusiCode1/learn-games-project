@@ -14,6 +14,7 @@
 	import VirtualKeyboard from './VirtualKeyboard.svelte';
 	import { boosterService } from 'learn-booster-kit';
 	import HintButton from './HintButton.svelte';
+	import ProgressWidget from './ProgressWidget.svelte';
 
 	let { cards, onExit } = $props<{ cards: Card[]; onExit?: () => void }>();
 
@@ -194,6 +195,19 @@
 	// Threshold: 0.85 (Triggers horizontal layout as soon as height is roughly equal to width + header space)
 	let aspectRatio = $derived(containerHeight > 0 ? containerWidth / containerHeight : 0);
 	let isLandscape = $derived(aspectRatio > 1.3);
+
+	// Progress Widget Logic
+	let batchSize = $derived.by(() => {
+		return Math.max(settings.wordsPerBooster, playQueue.length);
+	});
+
+	/* Math.min(
+		settings.wordsPerBooster,
+		playQueue.length -
+			Math.floor(currentIndex / settings.wordsPerBooster) * settings.wordsPerBooster
+	); */
+
+	let progressInBatch = $derived(currentIndex % settings.wordsPerBooster);
 </script>
 
 <div
@@ -218,16 +232,29 @@
         -->
 		<div
 			id="gameContent"
-			class="flex-1 w-full flex flex-col items-center justify-center
-			p-2 md:p-4 relative min-h-0"
+			class="flex-1 w-full flex flex-row items-center justify-center
+			relative min-h-0 overflow-hidden"
 		>
+			<!-- Progress Widget (Always Vertical, Side Panel) -->
+			{#if settings.boosterEnabled}
+				<div class="shrink-0 flex items-center justify-center h-full mr-4 pl-2 md:pl-4 z-20">
+					<ProgressWidget
+						value={progressInBatch}
+						max={batchSize}
+						orientation="vertical"
+						label="עד המחזק"
+					/>
+				</div>
+			{/if}
+
 			{#if currentWord}
 				<div
 					class="
 					{/* הקונטיינר הראשי של האלמנטים */ ''}
-					w-full max-w-[95vw] lg:max-w-[90vw] flex flex-col items-center
+					flex-1 w-full flex flex-col items-center
 					gap-4 transition-all duration-300 h-full
-                    {isLandscape ? 'flex-row gap-8 px-4' : ''}"
+                    justify-center
+                    {isLandscape ? 'flex-row gap-8 px-4' : 'px-2'}"
 				>
 					<!-- Image Section -->
 					<!-- לוגיקת גודל תמונה:

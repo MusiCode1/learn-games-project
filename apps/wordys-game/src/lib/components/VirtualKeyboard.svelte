@@ -37,7 +37,9 @@
 		// Middle Row: Enter -> A (Standard: , is on ' key right of ;)
 		[',', 'ף', 'ך', 'ל', 'ח', 'י', 'ע', 'כ', 'ג', 'ד', 'ש'],
 		// Bottom Row: Shift -> Z (Standard: . is on / key right of .)
-		['.', 'ץ', 'ת', 'צ', 'מ', 'נ', 'ה', 'ב', 'ס', 'ז']
+		/* ... existing rows ... */
+		['.', 'ץ', 'ת', 'צ', 'מ', 'נ', 'ה', 'ב', 'ס', 'ז'],
+		[' ']
 	];
 
 	function isKeyVisible(key: string): boolean {
@@ -74,14 +76,16 @@
 
 				{#each row as key}
 					{@const visible = isKeyVisible(key)}
+					{@const isSpace = key === ' '}
 					<!-- Key Container: Uniform Size -->
-					<div class="key-wrapper max-w-20">
+					<div class="key-wrapper {isSpace ? 'is-space' : 'max-w-20'}">
 						<button
 							onclick={() => visible && onKeyPress(key)}
 							disabled={!visible}
 							class="key-base key-char {visible ? 'is-visible' : 'is-hidden'}"
+							aria-label={isSpace ? 'רווח' : key}
 						>
-							{key}
+							{isSpace ? '' : key}
 						</button>
 					</div>
 				{/each}
@@ -93,29 +97,31 @@
 <style>
 	@reference 'tailwindcss';
 
-		.key-wrapper {
-			@apply relative w-[8%] h-12 sm:h-14 md:h-16 shrink-0 @container;
-		}
+	.key-wrapper {
+		@apply @container relative h-12 w-[8%] shrink-0 sm:h-14 md:h-16;
+	}
 
-		.key-base {
-			@apply absolute inset-0 w-full h-full rounded-lg shadow-sm border border-b-4 transition-all flex items-center justify-center;
-		}
+	.key-wrapper.is-space {
+		@apply w-[40%];
+	}
 
-		.key-delete {
-			@apply bg-slate-200 border-slate-400 border-b-slate-500
-				   active:border-b active:translate-y-1 hover:bg-slate-300 active:bg-slate-400;
-		}
+	.key-base {
+		@apply absolute inset-0 flex h-full w-full items-center justify-center rounded-lg border border-b-4 shadow-sm transition-all;
+	}
 
-		.key-char {
-			@apply text-[4.5cqh] font-medium p-0 leading-none;
-		}
+	.key-delete {
+		@apply border-slate-400 border-b-slate-500 bg-slate-200 hover:bg-slate-300 active:translate-y-1 active:border-b active:bg-slate-400;
+	}
 
-		.key-char.is-visible {
-			@apply bg-white border-slate-300 border-b-slate-400 text-slate-800
-				   active:border-b active:translate-y-1 hover:bg-slate-50 active:bg-slate-100;
-		}
+	.key-char {
+		@apply p-0 text-[4.5cqh] leading-none font-medium;
+	}
 
-		.key-char.is-hidden {
-			@apply bg-slate-50 border-slate-300 border-b-slate-400 text-transparent cursor-default;
-		}
+	.key-char.is-visible {
+		@apply border-slate-300 border-b-slate-400 bg-white text-slate-800 hover:bg-slate-50 active:translate-y-1 active:border-b active:bg-slate-100;
+	}
+
+	.key-char.is-hidden {
+		@apply cursor-default border-slate-300 border-b-slate-400 bg-slate-50 text-transparent;
+	}
 </style>
