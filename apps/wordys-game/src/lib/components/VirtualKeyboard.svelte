@@ -39,10 +39,11 @@
 		// Bottom Row: Shift -> Z (Standard: . is on / key right of .)
 		/* ... existing rows ... */
 		['.', 'ץ', 'ת', 'צ', 'מ', 'נ', 'ה', 'ב', 'ס', 'ז'],
-		[' ']
+		['', ' ', '']
 	];
 
 	function isKeyVisible(key: string): boolean {
+		if (key === '') return true; // Always show empty spacer keys
 		if (mode === 'full') return true;
 		if (mode === 'focused') {
 			return targetWord.includes(key);
@@ -77,13 +78,17 @@
 				{#each row as key}
 					{@const visible = isKeyVisible(key)}
 					{@const isSpace = key === ' '}
+					{@const isEmpty = key === ''}
 					<!-- Key Container: Uniform Size -->
 					<div class="key-wrapper {isSpace ? 'is-space' : 'max-w-20'}">
 						<button
-							onclick={() => visible && onKeyPress(key)}
-							disabled={!visible}
-							class="key-base key-char {visible ? 'is-visible' : 'is-hidden'}"
+							onclick={() => !isEmpty && visible && onKeyPress(key)}
+							disabled={!visible || isEmpty}
+							class="key-base key-char {visible ? 'is-visible' : 'is-hidden'} {isEmpty
+								? 'cursor-default! active:translate-y-0! active:border-b-4!'
+								: ''}"
 							aria-label={isSpace ? 'רווח' : key}
+							aria-hidden={isEmpty}
 						>
 							{isSpace ? '' : key}
 						</button>
@@ -102,7 +107,7 @@
 	}
 
 	.key-wrapper.is-space {
-		@apply w-[40%];
+		@apply w-[40%] max-w-xs;
 	}
 
 	.key-base {
