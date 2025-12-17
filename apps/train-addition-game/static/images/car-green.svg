@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 70">
+    <defs>
+        <linearGradient id="body-gradient-green" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#86efac" />
+            <stop offset="50%" style="stop-color:#4ade80" />
+            <stop offset="100%" style="stop-color:#22c55e" />
+        </linearGradient>
+        <linearGradient id="window-shine" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:white;stop-opacity:0.9" />
+            <stop offset="100%" style="stop-color:#e0f2fe;stop-opacity:0.5" />
+        </linearGradient>
+    </defs>
+
+    <!-- גוף הקרון עם גרדיאנט -->
+    <rect x="5" y="10" width="90" height="40" rx="8" fill="url(#body-gradient-green)"
+        stroke="#22c55e" stroke-width="2" />
+
+    <!-- חלונות עם ברק -->
+    <rect x="15" y="18" width="25" height="20" rx="4" fill="url(#window-shine)" />
+    <rect x="50" y="18" width="25" height="20" rx="4" fill="url(#window-shine)" />
+
+    <!-- פס עליון מבריק -->
+    <rect x="5" y="10" width="90" height="6" rx="3" fill="#22c55e" opacity="0.8" />
+
+    <!-- גלגלים -->
+    <circle cx="25" cy="55" r="10" fill="#374151" />
+    <circle cx="25" cy="55" r="5" fill="#9ca3af" />
+    <circle cx="25" cy="55" r="8" fill="none" stroke="#6b7280" stroke-width="1" />
+    <circle cx="75" cy="55" r="10" fill="#374151" />
+    <circle cx="75" cy="55" r="5" fill="#9ca3af" />
+    <circle cx="75" cy="55" r="8" fill="none" stroke="#6b7280" stroke-width="1" />
+
+    <!-- מחבר -->
+    <rect x="92" y="25" width="8" height="10" rx="2" fill="#22c55e" />
+</svg>
