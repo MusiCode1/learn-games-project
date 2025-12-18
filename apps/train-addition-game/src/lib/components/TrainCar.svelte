@@ -12,7 +12,7 @@
 	let { group, isNew = false }: Props = $props();
 
 	// נתיב לתמונה לפי קבוצה
-	const imageSrc = $derived(group === 'a' ? '/images/car-green.svg' : '/images/car-blue.svg');
+	const imageSrc = $derived(group === 'a' ? '/images/car-green-v2.svg' : '/images/car-blue-v2.svg');
 </script>
 
 <div class="train-car" class:animate-bounce-in={isNew} class:hover-wiggle={!isNew}>

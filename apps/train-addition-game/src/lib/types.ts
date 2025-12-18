@@ -11,7 +11,8 @@ export type GameState =
   | "FEEDBACK_CORRECT"
   | "FEEDBACK_WRONG"
   | "ASSIST_OVERLAY"
-  | "NEXT_ROUND";
+  | "NEXT_ROUND"
+  | "REWARD_TIME";
 
 // נתוני סיבוב נוכחי
 export interface RoundData {
@@ -33,6 +34,10 @@ export interface TeacherSettings {
   maxWrongAttempts: number; // מקסימום טעויות לסיבוב
   inputMode: "tap" | "drag" | "both";
   voiceEnabled: boolean;
+  // הגדרות חיזוקים (Booster)
+  boosterEnabled: boolean;
+  turnsPerReward: number;
+  autoBoosterLoop: boolean;
 }
 
 // קבועים
@@ -40,8 +45,11 @@ export const DEFAULT_SETTINGS: TeacherSettings = {
   maxA: 5,
   maxB: 4,
   choicesCount: 3,
-  cooldownMs: 1500,
+  cooldownMs: 10000,
   maxWrongAttempts: 2,
   inputMode: "tap",
   voiceEnabled: true,
+  boosterEnabled: true,
+  turnsPerReward: 3,
+  autoBoosterLoop: false,
 };

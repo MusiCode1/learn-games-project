@@ -3,99 +3,112 @@
 	עם טיימר המתנה של 10 שניות לאחר טעות
 -->
 <script lang="ts">
-	import { gameState } from '$lib/stores/game-state.svelte';
+  import { gameState } from "$lib/stores/game-state.svelte";
+  import { settings } from "$lib/stores/settings.svelte"; // ייבוא settings
 
-	// האם פאנל התשובות פעיל
-	const isActive = $derived(gameState.state === 'CHOOSE_ANSWER');
+  // האם פאנל התשובות פעיל
+  const isActive = $derived(gameState.state === "CHOOSE_ANSWER");
 
-	// בדיקת cooldown
-	let now = $state(Date.now());
+  // בדיקת cooldown
+  let now = $state(Date.now());
 
-	// עדכון הזמן הנוכחי כל 100ms
-	$effect(() => {
-		const interval = setInterval(() => {
-			now = Date.now();
-		}, 100);
-		return () => clearInterval(interval);
-	});
+  // עדכון הזמן הנוכחי כל 100ms
+  $effect(() => {
+    const interval = setInterval(() => {
+      now = Date.now();
+    }, 100);
+    return () => clearInterval(interval);
+  });
 
-	const isOnCooldown = $derived(now < gameState.cooldownUntilTs);
+  const isOnCooldown = $derived(now < gameState.cooldownUntilTs);
 
-	// זמן נותר ב-cooldown (בשניות)
-	const cooldownRemaining = $derived(
-		isOnCooldown ? Math.ceil((gameState.cooldownUntilTs - now) / 1000) : 0
-	);
+  // זמן נותר ב-cooldown (בשניות)
+  const cooldownRemaining = $derived(
+    isOnCooldown ? Math.ceil((gameState.cooldownUntilTs - now) / 1000) : 0
+  );
 
-	// אחוז התקדמות הטיימר
-	const cooldownProgress = $derived(
-		isOnCooldown
-			? ((gameState.cooldownUntilTs - now) / gameState.settings.cooldownMs) * 100
-			: 0
-	);
+  // אחוז התקדמות הטיימר
+  const cooldownProgress = $derived(
+    isOnCooldown
+      ? ((gameState.cooldownUntilTs - now) / settings.cooldownMs) * 100
+      : 0
+  );
 
-	function handleSelect(answer: number) {
-		if (isActive && !isOnCooldown) {
-			gameState.selectAnswer(answer);
-		}
-	}
+  function handleSelect(answer: number) {
+    if (isActive && !isOnCooldown) {
+      gameState.selectAnswer(answer);
+    }
+  }
 
-	// כל הספרות האפשריות 1-10
-	const allDigits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  // כל הספרות האפשריות 1-10
+  const allDigits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+  // האם להציג את הפאנל (גם אם לא פעיל, כדי לתפוס מקום)
+  const showPanel = $derived(
+    gameState.state === "CHOOSE_ANSWER" ||
+      gameState.state === "FEEDBACK_CORRECT" ||
+      gameState.state === "FEEDBACK_WRONG"
+  );
 </script>
 
-{#if gameState.state === 'CHOOSE_ANSWER' || gameState.state === 'FEEDBACK_CORRECT' || gameState.state === 'FEEDBACK_WRONG'}
-	<div class="flex flex-col items-center gap-4">
-		<!-- שאלה -->
-		<h2 class="text-xl font-bold text-slate-700">כמה קרונות יש עכשיו?</h2>
-
-		<!-- טיימר cooldown -->
-		{#if isOnCooldown}
-			<div class="flex flex-col items-center gap-2">
-				<!-- אייקון טיימר עגול -->
-				<div class="relative flex h-20 w-20 items-center justify-center">
-					<!-- רקע -->
-					<svg class="absolute h-20 w-20 -rotate-90">
-						<circle
-							cx="40"
-							cy="40"
-							r="35"
-							fill="none"
-							stroke="#e5e7eb"
-							stroke-width="6"
-						/>
-						<!-- התקדמות -->
-						<circle
-							cx="40"
-							cy="40"
-							r="35"
-							fill="none"
-							stroke="#ef4444"
-							stroke-width="6"
-							stroke-linecap="round"
-							stroke-dasharray="{(cooldownProgress / 100) * 220} 220"
-						/>
-					</svg>
-					<!-- מספר במרכז -->
-					<span class="text-3xl font-bold text-red-500">{cooldownRemaining}</span>
-				</div>
-				<span class="text-lg font-medium text-slate-600">המתן...</span>
-			</div>
-		{/if}
-
-		<!-- כפתורי תשובה - כל הספרות 1-10 -->
-		<div class="flex flex-wrap justify-center gap-3">
-			{#each allDigits as digit}
-				<button
-					onclick={() => handleSelect(digit)}
-					disabled={!isActive || isOnCooldown}
-					class="flex h-16 w-16 items-center justify-center rounded-xl text-2xl font-bold shadow-lg transition-all md:h-20 md:w-20 md:text-3xl
+<div
+  class="flex flex-col items-center gap-4 transition-opacity duration-300 {showPanel
+    ? 'opacity-100'
+    : 'invisible opacity-0'}"
+  aria-hidden={!showPanel}
+>
+  <!-- כפתורי תשובה - כל הספרות 1-10 -->
+  <div id="answer-buttons-container" class="grid grid-cols-5 gap-3" dir="ltr">
+    {#each allDigits as digit}
+      <button
+        onclick={() => handleSelect(digit)}
+        disabled={!isActive || isOnCooldown}
+        class="flex h-14 w-14 items-center justify-center rounded-xl text-2xl font-bold
+						shadow-lg transition-all md:h-20 md:w-20 md:text-3xl
 						{isActive && !isOnCooldown
-						? 'bg-purple-500 text-white hover:bg-purple-600 active:scale-95'
-						: 'cursor-not-allowed bg-gray-300 text-gray-500'}"
-				>
-					{digit}
-				</button>
-			{/each}
-		</div>
-	</div>
-{/if}
+          ? 'bg-purple-500 text-white hover:bg-purple-600 active:scale-95'
+          : 'cursor-not-allowed bg-gray-300 text-gray-500'}"
+      >
+        {digit}
+      </button>
+    {/each}
+  </div>
+
+  <!-- טיימר cooldown (תופס מקום תמיד) -->
+  <div
+    id="cooldown-timer-container"
+    class="flex flex-col items-center gap-2 transition-opacity duration-300 {isOnCooldown
+      ? 'opacity-100'
+      : 'invisible opacity-0'}"
+    aria-hidden={!isOnCooldown}
+  >
+    <!-- אייקון טיימר עגול -->
+    <div class="relative flex h-20 w-20 items-center justify-center">
+      <!-- רקע -->
+      <svg class="absolute h-20 w-20 -rotate-90">
+        <circle
+          cx="40"
+          cy="40"
+          r="35"
+          fill="none"
+          stroke="#e5e7eb"
+          stroke-width="6"
+        />
+        <!-- התקדמות -->
+        <circle
+          cx="40"
+          cy="40"
+          r="35"
+          fill="none"
+          stroke="#ef4444"
+          stroke-width="6"
+          stroke-linecap="round"
+          stroke-dasharray="{(cooldownProgress / 100) * 220} 220"
+        />
+      </svg>
+      <!-- מספר במרכז -->
+      <span class="text-3xl font-bold text-red-500">{cooldownRemaining}</span>
+    </div>
+    <span class="text-lg font-medium text-slate-600">המתן...</span>
+  </div>
+</div>

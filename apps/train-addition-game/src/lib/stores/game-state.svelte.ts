@@ -6,18 +6,15 @@
 import type { GameState, RoundData, TeacherSettings } from "$lib/types";
 import { DEFAULT_SETTINGS } from "$lib/types";
 import { generateChoices, generateRoundValues } from "$lib/utils/distractors";
+import { settings } from "$lib/stores/settings.svelte"; // ייבוא אובייקט ה-settings הכללי
 import {
   speakBuildA,
   speakAddB,
   speakChooseAnswer,
   speakCorrect,
   speakWrong,
-  speakAssist,
 } from "$lib/utils/tts";
 import { playSuccess, playError } from "$lib/utils/sound";
-
-// cooldown לאחר טעות - 10 שניות
-const WRONG_ANSWER_COOLDOWN_MS = 10000;
 
 /**
  * מחלקת ניהול מצב המשחק
@@ -37,12 +34,12 @@ class GameStateStore {
     wrongAttempts: 0,
   });
 
-  // הגדרות
-  settings = $state<TeacherSettings>({ ...DEFAULT_SETTINGS });
+  // הגדרות - משתמשים באובייקט ה-settings הכללי של האפליקציה
 
   // סטטיסטיקות
   roundNumber = $state(0);
   correctCount = $state(0);
+  winsSinceLastReward = $state(0);
 
   // cooldown - חותמת זמן עד מתי חסום
   cooldownUntilTs = $state(0);
@@ -56,12 +53,9 @@ class GameStateStore {
    * התחלת סיבוב חדש
    */
   startRound(): void {
-    const { a, b } = generateRoundValues(
-      this.settings.maxA,
-      this.settings.maxB
-    );
+    const { a, b } = generateRoundValues(settings.maxA, settings.maxB);
     const correct = a + b;
-    const choices = generateChoices(a, b, this.settings.choicesCount);
+    const choices = generateChoices(a, b, settings.choicesCount);
 
     this.round = {
       a,
@@ -77,7 +71,7 @@ class GameStateStore {
     this.state = "BUILD_A";
 
     // השמעת הוראה
-    if (this.settings.voiceEnabled) {
+    if (settings.voiceEnabled) {
       speakBuildA(a);
     }
   }
@@ -92,7 +86,7 @@ class GameStateStore {
       // בדיקה אם סיימנו את קבוצה A
       if (this.round.builtA >= this.round.a) {
         this.state = "ADD_B";
-        if (this.settings.voiceEnabled) {
+        if (settings.voiceEnabled) {
           speakAddB(this.round.b);
         }
       }
@@ -102,7 +96,7 @@ class GameStateStore {
       // בדיקה אם סיימנו את קבוצה B
       if (this.round.addedB >= this.round.b) {
         this.state = "CHOOSE_ANSWER";
-        if (this.settings.voiceEnabled) {
+        if (settings.voiceEnabled) {
           speakChooseAnswer();
         }
       }
@@ -112,7 +106,7 @@ class GameStateStore {
   /**
    * בחירת תשובה
    */
-  selectAnswer(answer: number): void {
+  async selectAnswer(answer: number): Promise<void> {
     if (this.state !== "CHOOSE_ANSWER") return;
     if (this.isOnCooldown) return;
 
@@ -120,52 +114,40 @@ class GameStateStore {
       // תשובה נכונה
       this.state = "FEEDBACK_CORRECT";
       this.correctCount++;
+      this.winsSinceLastReward++;
 
       // השמעת סאונד ו-TTS
       playSuccess();
-      if (this.settings.voiceEnabled) {
-        speakCorrect();
+      if (settings.voiceEnabled) {
+        // ממתינים לסיום ההודעה
+        await speakCorrect();
       }
 
-      // מעבר לסיבוב הבא אחרי השהייה
-      setTimeout(() => {
+      // מעבר לסיבוב הבא או לפרס
+      if (
+        settings.boosterEnabled &&
+        this.winsSinceLastReward >= settings.turnsPerReward
+      ) {
+        this.state = "REWARD_TIME";
+      } else {
         this.state = "NEXT_ROUND";
-      }, 1000);
+      }
     } else {
-      // תשובה שגויה - cooldown של 10 שניות
+      // תשובה שגויה - cooldown
       this.round.wrongAttempts++;
       this.state = "FEEDBACK_WRONG";
-      this.cooldownUntilTs = Date.now() + WRONG_ANSWER_COOLDOWN_MS;
+      this.cooldownUntilTs = Date.now() + settings.cooldownMs;
 
       // השמעת סאונד ו-TTS
       playError();
-      if (this.settings.voiceEnabled) {
+      if (settings.voiceEnabled) {
         speakWrong(this.round.a, this.round.b);
       }
 
-      // בדיקה אם צריך להציג הדרכה
-      if (this.round.wrongAttempts >= this.settings.maxWrongAttempts) {
-        setTimeout(() => {
-          this.state = "ASSIST_OVERLAY";
-          if (this.settings.voiceEnabled) {
-            speakAssist();
-          }
-        }, 2000);
-      } else {
-        // חזרה לבחירה אחרי 2 שניות (תוך כדי ה-cooldown)
-        setTimeout(() => {
-          this.state = "CHOOSE_ANSWER";
-        }, 2000);
-      }
-    }
-  }
-
-  /**
-   * סגירת overlay ההדרכה וחזרה לבחירה
-   */
-  closeAssist(): void {
-    if (this.state === "ASSIST_OVERLAY") {
-      this.state = "CHOOSE_ANSWER";
+      // חזרה לבחירה אחרי 2 שניות (תוך כדי ה-cooldown)
+      setTimeout(() => {
+        this.state = "CHOOSE_ANSWER";
+      }, 2_000);
     }
   }
 
@@ -179,12 +161,21 @@ class GameStateStore {
   }
 
   /**
+   * סיום פרס וחזרה למשחק
+   */
+  completeReward(): void {
+    this.winsSinceLastReward = 0;
+    this.state = "NEXT_ROUND";
+  }
+
+  /**
    * איפוס המשחק
    */
   reset(): void {
     this.state = "INIT";
     this.roundNumber = 0;
     this.correctCount = 0;
+    this.winsSinceLastReward = 0;
     this.cooldownUntilTs = 0;
     this.round = {
       a: 0,

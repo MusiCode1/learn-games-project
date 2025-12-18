@@ -6,7 +6,7 @@ import type { TeacherSettings } from "$lib/types";
 import { DEFAULT_SETTINGS } from "$lib/types";
 
 const STORAGE_KEY = "train-addition-settings";
-const CURRENT_VERSION = 1;
+const CURRENT_VERSION = 3;
 
 /**
  * מחלקת ניהול הגדרות
@@ -20,6 +20,11 @@ class SettingsStore {
   maxWrongAttempts = $state(DEFAULT_SETTINGS.maxWrongAttempts);
   inputMode = $state<"tap" | "drag" | "both">(DEFAULT_SETTINGS.inputMode);
   voiceEnabled = $state(DEFAULT_SETTINGS.voiceEnabled);
+
+  // חיזוקים
+  boosterEnabled = $state(DEFAULT_SETTINGS.boosterEnabled);
+  turnsPerReward = $state(DEFAULT_SETTINGS.turnsPerReward);
+  autoBoosterLoop = $state(DEFAULT_SETTINGS.autoBoosterLoop);
 
   constructor() {
     // טעינה ראשונית מ-localStorage
@@ -44,16 +49,31 @@ class SettingsStore {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+        const version = parsed.schemaVersion ?? 0;
+
         this.maxA = parsed.maxA ?? DEFAULT_SETTINGS.maxA;
         this.maxB = parsed.maxB ?? DEFAULT_SETTINGS.maxB;
         this.choicesCount =
           parsed.choicesCount ?? DEFAULT_SETTINGS.choicesCount;
-        this.cooldownMs = parsed.cooldownMs ?? DEFAULT_SETTINGS.cooldownMs;
+        
+        // מיגרציה לגרסה 3: איפוס cooldownMs
+        if (version < 3) {
+            this.cooldownMs = DEFAULT_SETTINGS.cooldownMs;
+        } else {
+            this.cooldownMs = parsed.cooldownMs ?? DEFAULT_SETTINGS.cooldownMs;
+        }
+
         this.maxWrongAttempts =
           parsed.maxWrongAttempts ?? DEFAULT_SETTINGS.maxWrongAttempts;
         this.inputMode = parsed.inputMode ?? DEFAULT_SETTINGS.inputMode;
         this.voiceEnabled =
           parsed.voiceEnabled ?? DEFAULT_SETTINGS.voiceEnabled;
+        this.boosterEnabled =
+          parsed.boosterEnabled ?? DEFAULT_SETTINGS.boosterEnabled;
+        this.turnsPerReward =
+          parsed.turnsPerReward ?? DEFAULT_SETTINGS.turnsPerReward;
+        this.autoBoosterLoop =
+          parsed.autoBoosterLoop ?? DEFAULT_SETTINGS.autoBoosterLoop;
       } catch (e) {
         console.error("Failed to parse settings", e);
       }
@@ -73,6 +93,9 @@ class SettingsStore {
       maxWrongAttempts: this.maxWrongAttempts,
       inputMode: this.inputMode,
       voiceEnabled: this.voiceEnabled,
+      boosterEnabled: this.boosterEnabled,
+      turnsPerReward: this.turnsPerReward,
+      autoBoosterLoop: this.autoBoosterLoop,
     };
   }
 
@@ -95,6 +118,9 @@ class SettingsStore {
     this.maxWrongAttempts = DEFAULT_SETTINGS.maxWrongAttempts;
     this.inputMode = DEFAULT_SETTINGS.inputMode;
     this.voiceEnabled = DEFAULT_SETTINGS.voiceEnabled;
+    this.boosterEnabled = DEFAULT_SETTINGS.boosterEnabled;
+    this.turnsPerReward = DEFAULT_SETTINGS.turnsPerReward;
+    this.autoBoosterLoop = DEFAULT_SETTINGS.autoBoosterLoop;
   }
 }
 

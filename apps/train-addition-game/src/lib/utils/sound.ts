@@ -7,7 +7,7 @@
  */
 export function playSuccess(): void {
   try {
-    const audio = new Audio("/sounds/success.mp3");
+    const audio = new Audio("/sounds/ui_sounds/success.mp3");
     audio.volume = 0.5;
     audio.play().catch((e) => console.warn("Audio play failed:", e));
   } catch (e) {
@@ -20,7 +20,7 @@ export function playSuccess(): void {
  */
 export function playError(): void {
   try {
-    const audio = new Audio("/sounds/error.mp3");
+    const audio = new Audio("/sounds/ui_sounds/error.mp3");
     audio.volume = 0.4;
     audio.play().catch((e) => console.warn("Audio play failed:", e));
   } catch (e) {

@@ -32,7 +32,6 @@ const SOUND_FILES = {
   how_many: "how_many.wav",
   correct: "correct.wav",
   wrong: "wrong.wav",
-  lets_see: "lets_see_together.wav",
 } as const;
 
 // טקסטים עבור TTS (fallback)
@@ -42,7 +41,6 @@ const TTS_TEXTS = {
   how_many: "כמה קרונות יש עכשיו?",
   correct: "נכון! כל הכבוד!",
   wrong: "לא נכון. נסה שוב.",
-  lets_see: "בוא נראה יחד",
 };
 
 // ========================================
@@ -86,20 +84,28 @@ function playAudioFile(filename: string): Promise<boolean> {
 
 /**
  * השמעת טקסט ב-TTS
+ * @returns Promise שמסתיים כשהדיבור נגמר
  */
-function speakTTS(text: string): void {
-  if (!("speechSynthesis" in window)) {
-    console.warn("TTS לא נתמך בדפדפן זה");
-    return;
-  }
+function speakTTS(text: string): Promise<void> {
+  return new Promise((resolve) => {
+    if (!("speechSynthesis" in window)) {
+      console.warn("TTS לא נתמך בדפדפן זה");
+      resolve();
+      return;
+    }
 
-  window.speechSynthesis.cancel();
+    window.speechSynthesis.cancel();
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "he-IL";
-  utterance.rate = 0.9;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "he-IL";
+    utterance.rate = 0.9;
 
-  window.speechSynthesis.speak(utterance);
+    // סיום הדיבור
+    utterance.onend = () => resolve();
+    utterance.onerror = () => resolve();
+
+    window.speechSynthesis.speak(utterance);
+  });
 }
 
 /**
@@ -112,7 +118,7 @@ async function playWithFallback(
 ): Promise<void> {
   // אם מצב TTS בלבד
   if (FORCE_TTS_ONLY || !soundKey) {
-    speakTTS(ttsText);
+    await speakTTS(ttsText);
     return;
   }
 
@@ -123,7 +129,7 @@ async function playWithFallback(
   // אם נכשל - fallback ל-TTS
   if (!success) {
     console.log(`Fallback to TTS for: ${soundKey}`);
-    speakTTS(ttsText);
+    await speakTTS(ttsText);
   }
 }
 
@@ -157,10 +163,10 @@ export function speakChooseAnswer(): void {
 }
 
 /**
- * השמעת משוב חיובי
+ * השמעת משוב חיובי עם המתנה לסיום
  */
-export function speakCorrect(): void {
-  playWithFallback("correct", TTS_TEXTS.correct);
+export async function speakCorrect(): Promise<void> {
+  await playWithFallback("correct", TTS_TEXTS.correct);
 }
 
 /**
@@ -168,13 +174,6 @@ export function speakCorrect(): void {
  */
 export function speakWrong(_a: number, _b: number): void {
   playWithFallback("wrong", TTS_TEXTS.wrong);
-}
-
-/**
- * השמעת הודעת עזרה
- */
-export function speakAssist(): void {
-  playWithFallback("lets_see", TTS_TEXTS.lets_see);
 }
 
 /**
