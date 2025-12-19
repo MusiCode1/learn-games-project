@@ -1,5 +1,31 @@
 # יומן פיתוח (Walkthrough)
 
+## 18/12/2025 - העברת רכיבים משותפים לספרייה (Refactor)
+
+### 📦 העברת רכיבים ל-Share Library
+
+הועברו הרכיבים `ProgressWidget` ו-`AdminGate` מתוך `apps/wordys-game` לספרייה המשותפת `packages/learn-booster-kit`.
+המטרה היא לאפשר שימוש חוזר ברכיבים אלו בכל אפליקציות הפרויקט.
+
+### 🛠️ שינויים שבוצעו
+
+1. **learn-booster-kit**:
+   - הוספו הרכיבים `src/ui/ProgressWidget.svelte` ו-`src/ui/AdminGate.svelte`.
+   - עודכן `src/index.ts` לייצוא הרכיבים החדשים.
+2. **wordys-game**:
+   - הוחלפו הייבואים המקומיים בייבוא מהספרייה המשותפת: `import { ProgressWidget, AdminGate } from 'learn-booster-kit'`.
+   - הוסר הקוד הכפול.
+3. **train-addition-game**:
+   - עודכן `src/routes/game/+page.svelte` לשימוש ב-`ProgressWidget` המשותף.
+   - עודכן `src/lib/components/HeaderBar.svelte` לשימוש ב-`AdminGate` המשותף.
+   - נמחק `src/lib/components/ProgressWidget.svelte` המקומי.
+4. **בדיקות**:
+   - הורץ `npm run check` ב-`wordys-game` לוודא תקינות אינטגרציה.
+   - הורץ `npm run check` ב-`learn-booster-kit` לוודא תקינות הרכיבים.
+   - הורץ `npm run check` ב-`train-addition-game` לוודא תקינות אינטגרציה.
+
+---
+
 ## 13/12/2025 - תיקון לולאת בנייה (Build Loop Fix)
 
 תוקנה בעיה שגרמה ללולאה אינסופית בעת הרצת `bun run build`.

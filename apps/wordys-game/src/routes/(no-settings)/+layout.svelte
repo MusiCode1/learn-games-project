@@ -1,5 +1,5 @@
 <script lang="ts">
-	import AdminGate from '$lib/components/AdminGate.svelte';
+	import { AdminGate } from 'learn-booster-kit';
 	import { goto } from '$app/navigation';
 
 	let { children } = $props();

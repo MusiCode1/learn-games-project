@@ -25,6 +25,7 @@
   function handleHome() {
     goto("/");
   }
+  import { AdminGate } from "learn-booster-kit";
 </script>
 
 <header
@@ -53,11 +54,12 @@
   </div>
 
   <!-- כפתור הגדרות (שמאל) -->
-  <button
-    onclick={onSettings}
-    class="rounded-full bg-slate-700 p-2 transition-colors hover:bg-slate-600"
-    aria-label="הגדרות"
-  >
-    <img src={settingsIcon} alt="הגדרות" class="h-6 w-6" />
-  </button>
+  <AdminGate onUnlock={() => onSettings?.()}>
+    <button
+      class="rounded-full bg-slate-700 p-2 transition-colors hover:bg-slate-600"
+      aria-label="הגדרות"
+    >
+      <img src={settingsIcon} alt="הגדרות" class="h-6 w-6" />
+    </button>
+  </AdminGate>
 </header>

@@ -4,10 +4,13 @@
   import DepotArea from "$lib/components/DepotArea.svelte";
   import AnswerPanel from "$lib/components/AnswerPanel.svelte";
   import FeedbackOverlay from "$lib/components/FeedbackOverlay.svelte";
-  import ProgressWidget from "$lib/components/ProgressWidget.svelte";
   import { gameState } from "$lib/stores/game-state.svelte";
   import { settings } from "$lib/stores/settings.svelte";
-  import { boosterService, BoosterContainer } from "learn-booster-kit";
+  import {
+    boosterService,
+    BoosterContainer,
+    ProgressWidget,
+  } from "learn-booster-kit";
   import { onMount } from "svelte";
 
   // Extend Global Debug with game-specific actions

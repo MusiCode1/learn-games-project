@@ -10,4 +10,6 @@ export { boosterService } from "./lib/booster-service";
 export * from "./types";
 export * from "./lib/config-manager";
 export { getAppsList } from "./lib/get-app-list";
+export { default as ProgressWidget } from "./ui/ProgressWidget.svelte";
+export { default as AdminGate } from "./ui/AdminGate.svelte";
 export { isFullyKiosk } from "./lib/fully-kiosk";

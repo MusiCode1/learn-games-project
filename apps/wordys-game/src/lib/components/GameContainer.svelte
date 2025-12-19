@@ -12,9 +12,8 @@
 	import { playSuccess, speak, playAudio } from '$lib/utils/sound';
 	import { getCardImageUrl, getCardAudioUrl } from '$lib/services/assets';
 	import VirtualKeyboard from './VirtualKeyboard.svelte';
-	import { boosterService } from 'learn-booster-kit';
+	import { boosterService, ProgressWidget } from 'learn-booster-kit';
 	import HintButton from './HintButton.svelte';
-	import ProgressWidget from './ProgressWidget.svelte';
 
 	let { cards, onExit } = $props<{ cards: Card[]; onExit?: () => void }>();
 
@@ -197,9 +196,7 @@
 	let isLandscape = $derived(aspectRatio > 1.3);
 
 	// Progress Widget Logic
-	let batchSize = $derived.by(() => {
-		return Math.max(settings.wordsPerBooster, playQueue.length);
-	});
+	let batchSize = $derived(playQueue.length);
 
 	/* Math.min(
 		settings.wordsPerBooster,
