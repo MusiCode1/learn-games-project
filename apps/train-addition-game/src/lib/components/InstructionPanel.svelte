@@ -1,5 +1,6 @@
 <!--
 	פאנל הוראות - מציג את ההוראה הנוכחית עם מספר גדול
+	עיצוב "ענן" / טקסט צף לשילוב ברקע
 -->
 <script lang="ts">
   import { gameState } from "$lib/stores/game-state.svelte";
@@ -59,23 +60,28 @@
   }
 </script>
 
-<div
-  class="flex flex-col items-center gap-4 rounded-xl bg-white/90 px-6 py-4 shadow-lg"
->
+<!-- הקונטיינר הראשי מרחף, ללא רקע מגביל -->
+<div class="flex flex-col items-center gap-4 py-4 drop-shadow-xl">
   <!-- הוראה עם מספר גדול -->
-  <div class="flex items-center gap-4">
+  <div class="flex items-center gap-6">
     <!-- מספר גדול -->
     {#if targetNumber !== null}
       <div
-        class="flex h-20 w-20 items-center justify-center rounded-full {numberColor} text-5xl font-bold text-white shadow-xl ring-4 md:h-24 md:w-24 md:text-6xl"
+        class="flex h-12 w-12 items-center justify-center rounded-full {numberColor} text-3xl font-black text-white shadow-2xl ring-4 transform scale-110 sm:h-16 sm:w-16 sm:text-4xl md:h-28 md:w-28 md:text-7xl bg-white/10 backdrop-blur-sm border-2 border-white/50"
       >
         {targetNumber}
       </div>
     {/if}
 
-    <!-- הוראה טקסטית -->
-    <div class="flex flex-row items-center gap-2">
-      <p class="text-2xl font-bold text-slate-800 md:text-3xl">{instruction}</p>
+    <!-- הוראה טקסטית - בתוך "ענן" עדין -->
+    <div
+      class="flex flex-row items-center gap-2 sm:gap-4 bg-white/80 backdrop-blur-md px-4 py-1 sm:px-6 sm:py-2 md:px-8 md:py-3 rounded-full border border-white/60 shadow-lg"
+    >
+      <p
+        class="text-lg font-bold text-slate-800 sm:text-xl md:text-4xl text-stroke"
+      >
+        {instruction}
+      </p>
 
       <!-- כפתור השמעה -->
       <button
@@ -85,10 +91,10 @@
           gameState.state === "ADD_B" ||
           gameState.state === "CHOOSE_ANSWER"
         )}
-        class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400 text-white shadow-md transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+        class="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-400 text-white shadow-md transition-all hover:scale-110 hover:bg-amber-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         aria-label="השמע שוב"
       >
-        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+        <svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
           <path
             d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
           />
@@ -97,3 +103,14 @@
     </div>
   </div>
 </div>
+
+<style>
+  /* הוספת קונטור עדין לטקסט לקריאות משופרת על רקע השמיים */
+  .text-stroke {
+    text-shadow:
+      1px 1px 0 #fff,
+      -1px -1px 0 #fff,
+      1px -1px 0 #fff,
+      -1px 1px 0 #fff;
+  }
+</style>

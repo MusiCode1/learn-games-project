@@ -4,6 +4,7 @@
   import DepotArea from "$lib/components/DepotArea.svelte";
   import AnswerPanel from "$lib/components/AnswerPanel.svelte";
   import FeedbackOverlay from "$lib/components/FeedbackOverlay.svelte";
+  import GameWorld from "$lib/components/GameWorld.svelte"; // [NEW]
   import { gameState } from "$lib/stores/game-state.svelte";
   import { settings } from "$lib/stores/settings.svelte";
   import {
@@ -60,64 +61,84 @@
   <title>רכבת החיבור - משחק</title>
 </svelte:head>
 
-<main
-  class="relative z-10 flex flex-1 flex-col items-center justify-start gap-2 p-2 w-full max-w-5xl mx-auto"
->
-  <!-- Progress Widget (Centered horizontally below header) -->
-  {#if settings.boosterEnabled}
-    <div class="flex w-full justify-center pt-2 z-20 relative">
-      <ProgressWidget
-        value={gameState.winsSinceLastReward}
-        max={settings.turnsPerReward}
-        orientation="horizontal"
-        label="לפרס"
-      />
-    </div>
-  {/if}
-  {#if gameState.state === "REWARD_TIME" && !settings.autoBoosterLoop}
-    <!-- מסך קבלת פרס (ידני) -->
-    <div class="mt-20 animate-fade-in text-center z-20">
-      <h2 class="mb-8 text-6xl font-black text-white drop-shadow-lg">
-        🎉 כל הכבוד! 🎉
-      </h2>
-      <button
-        onclick={handleGetReward}
-        class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-500 to-purple-700 px-12 py-8 text-4xl font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-purple-400/50 active:scale-95"
-      >
-        <span class="flex items-center gap-4"> 🎁 קבל פרס </span>
-      </button>
-    </div>
-  {:else}
-    <!-- משחק פעיל (Layout יציב) -->
-    <div class="animate-slide-up w-full flex justify-center">
-      <InstructionPanel />
+<!-- Wrap game in the GameWorld -->
+<GameWorld>
+  <!-- Main Content Wrapper (Top + Controls) - Allows vertical spacing -->
+  <div
+    class="flex-1 w-full flex flex-col justify-start gap-2 sm:gap-6 md:gap-12 z-20 pointer-events-none px-4 pt-2"
+  >
+    <!-- Top Section: Progress & Instructions -->
+    <div class="flex flex-col items-center w-full pointer-events-auto">
+      <!-- Progress Widget -->
+      {#if settings.boosterEnabled}
+        <div class="mb-2 relative">
+          <ProgressWidget
+            value={gameState.winsSinceLastReward}
+            max={settings.turnsPerReward}
+            orientation="horizontal"
+            label="לפרס"
+          />
+        </div>
+      {/if}
+
+      {#if gameState.state === "REWARD_TIME" && !settings.autoBoosterLoop}
+        <!-- Reward Screen -->
+        <div class="mt-20 animate-fade-in text-center">
+          <h2 class="mb-8 text-6xl font-black text-white drop-shadow-lg">
+            🎉 כל הכבוד! 🎉
+          </h2>
+          <button
+            onclick={handleGetReward}
+            class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-500 to-purple-700 px-12 py-8 text-4xl font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-purple-400/50 active:scale-95"
+          >
+            <span class="flex items-center gap-4"> 🎁 קבל פרס </span>
+          </button>
+        </div>
+      {:else}
+        <!-- Active Game Instructions -->
+        <div class="animate-slide-up w-full flex justify-center">
+          <InstructionPanel />
+        </div>
+      {/if}
     </div>
 
-    <div class="animate-slide-up animation-delay-100 w-full">
-      <TrainTrackArea />
-    </div>
-
-    <!-- Depot Area (Conditional) -->
-    {#if gameState.state === "BUILD_A" || gameState.state === "ADD_B"}
+    <!-- Controls Section: Interactions -->
+    {#if gameState.state !== "REWARD_TIME" || settings.autoBoosterLoop}
       <div
-        class="animate-slide-up animation-delay-200 w-full flex justify-center"
+        class="w-full flex flex-col justify-center gap-4 pointer-events-auto"
       >
-        <DepotArea />
+        {#if gameState.state === "BUILD_A" || gameState.state === "ADD_B"}
+          <div
+            class="animate-slide-up animation-delay-200 w-full flex justify-center"
+          >
+            <DepotArea />
+          </div>
+        {/if}
+
+        <div
+          class="animate-slide-up animation-delay-300 w-full flex justify-center"
+        >
+          <AnswerPanel />
+        </div>
       </div>
     {/if}
+  </div>
 
-    <!-- Answer Panel Placeholder -->
+  <!-- Bottom Section: Train Track (Anchored to Grass) -->
+  {#if gameState.state !== "REWARD_TIME" || settings.autoBoosterLoop}
     <div
-      class="animate-slide-up animation-delay-300 w-full flex justify-center"
+      class="absolute bottom-0 left-0 w-full flex items-end justify-center pb-[48px] md:pb-[120px] z-10 pointer-events-none animate-slide-up animation-delay-100"
     >
-      <AnswerPanel />
+      <div class="pointer-events-auto">
+        <TrainTrackArea />
+      </div>
     </div>
   {/if}
+</GameWorld>
 
-  <!-- Overlays -->
-  <FeedbackOverlay />
-  <BoosterContainer />
-</main>
+<!-- Overlays - Placed outside GameWorld to ensure they are on top of everything without stacking context issues -->
+<FeedbackOverlay />
+<BoosterContainer />
 
 <style>
   /* אנימציות */

@@ -48,7 +48,7 @@
     onclick={handleAdd}
     disabled={!isActive}
     class="group relative flex items-center justify-center gap-3 rounded-2xl
-		px-10 py-5 text-xl font-bold text-white shadow-xl transition-all duration-300
+		px-4 py-2 text-base sm:px-6 sm:py-3 sm:text-lg md:px-10 md:py-5 md:text-xl font-bold text-white shadow-xl transition-all duration-300
 			{isActive
       ? `bg-linear-to-br ${buttonColors} active:scale-95`
       : 'cursor-not-allowed bg-gray-400'}"
@@ -57,7 +57,7 @@
   >
     <!-- אייקון פלוס עם אנימציה -->
     <svg
-      class="h-10 w-10 transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110"
+      class="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -70,7 +70,7 @@
       />
     </svg>
 
-    <span class="text-2xl">הוסף קרון</span>
+    <span class="text-lg sm:text-xl md:text-2xl">הוסף קרון</span>
 
     <!-- אפקט גל בלחיצה -->
     <span class="ripple"></span>

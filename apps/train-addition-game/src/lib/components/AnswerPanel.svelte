@@ -58,13 +58,17 @@
   aria-hidden={!showPanel}
 >
   <!-- כפתורי תשובה - כל הספרות 1-10 -->
-  <div id="answer-buttons-container" class="grid grid-cols-5 gap-3" dir="ltr">
+  <div
+    id="answer-buttons-container"
+    class="grid grid-cols-5 gap-2 sm:gap-3 md:flex md:flex-wrap md:justify-center"
+    dir="ltr"
+  >
     {#each allDigits as digit}
       <button
         onclick={() => handleSelect(digit)}
         disabled={!isActive || isOnCooldown}
-        class="flex h-14 w-14 items-center justify-center rounded-xl text-2xl font-bold
-						shadow-lg transition-all md:h-20 md:w-20 md:text-3xl
+        class="flex h-10 w-10 items-center justify-center rounded-xl text-xl font-bold
+						shadow-lg transition-all sm:h-14 sm:w-14 sm:text-2xl md:h-20 md:w-20 md:text-3xl
 						{isActive && !isOnCooldown
           ? 'bg-purple-500 text-white hover:bg-purple-600 active:scale-95'
           : 'cursor-not-allowed bg-gray-300 text-gray-500'}"
@@ -83,9 +87,14 @@
     aria-hidden={!isOnCooldown}
   >
     <!-- אייקון טיימר עגול -->
-    <div class="relative flex h-20 w-20 items-center justify-center">
+    <div
+      class="relative flex h-14 w-14 sm:h-20 sm:w-20 items-center justify-center"
+    >
       <!-- רקע -->
-      <svg class="absolute h-20 w-20 -rotate-90">
+      <svg
+        class="absolute h-14 w-14 sm:h-20 sm:w-20 -rotate-90"
+        viewBox="0 0 80 80"
+      >
         <circle
           cx="40"
           cy="40"
@@ -107,7 +116,9 @@
         />
       </svg>
       <!-- מספר במרכז -->
-      <span class="text-3xl font-bold text-red-500">{cooldownRemaining}</span>
+      <span class="text-xl sm:text-3xl font-bold text-red-500"
+        >{cooldownRemaining}</span
+      >
     </div>
     <span class="text-lg font-medium text-slate-600">המתן...</span>
   </div>

@@ -36,16 +36,17 @@
   const showPlusSign = $derived(
     gameState.round.builtA > 0 && gameState.round.addedB > 0
   );
+
+  const hideBubblesOnMobile = $derived(
+    gameState.state === "CHOOSE_ANSWER" ||
+      gameState.state === "FEEDBACK_CORRECT" ||
+      gameState.state === "FEEDBACK_WRONG"
+  );
 </script>
 
-<div
-  class="relative flex min-h-52 w-full flex-col items-center justify-center rounded-xl bg-gradient-to-b from-amber-100 to-amber-200 p-4 shadow-inner"
->
-  <!-- מסילה -->
-  <div
-    class="absolute bottom-6 left-4 right-4 h-3 rounded-full bg-amber-800 shadow-md"
-  ></div>
-  <div class="absolute bottom-7 left-8 right-8 h-1 bg-amber-600"></div>
+<div class="relative flex w-full flex-col items-center justify-center px-4">
+  <!-- מסילה - הוסרה לטובת הרקע הכללי, או אם רוצים אפשר להוסיף תמונה של מסילה שטוחה כאן -->
+  <!-- כרגע נסיר את הציור CSS כדי שהרכבת "תשב" על הדשא -->
 
   <!-- קרונות -->
   <div class="relative z-10 flex items-end gap-0" dir="ltr">
@@ -55,7 +56,7 @@
         <img
           src="/images/locomotive-v2.svg"
           alt="קטר"
-          class="h-16 w-16 md:h-20 md:w-20"
+          class="h-20 w-20 md:h-32 md:w-32 filter drop-shadow-lg"
         />
       </div>
     {/if}
@@ -65,7 +66,9 @@
       <div class="relative flex flex-col items-center">
         <!-- מספר מעל קבוצה A - מוצג תמיד (גם בזמן בנייה) -->
         <div
-          class="mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-3xl font-bold text-white shadow-lg ring-4 ring-green-300 md:h-16 md:w-16 md:text-4xl"
+          class="{hideBubblesOnMobile
+            ? 'hidden md:flex'
+            : 'flex'} mb-1 h-10 w-10 items-center justify-center rounded-full bg-green-500 text-2xl font-bold text-white shadow-lg ring-2 ring-green-300 sm:ring-4 sm:mb-2 sm:h-16 sm:w-16 sm:text-4xl md:h-24 md:w-24 md:text-6xl"
         >
           {gameState.round.builtA}
         </div>
@@ -82,7 +85,9 @@
     <!-- סימן חיבור (+) -->
     {#if showPlusSign}
       <div
-        class="mx-3 flex h-12 w-12 self-start mt-1 items-center justify-center rounded-full bg-amber-500 text-3xl font-bold text-white shadow-lg md:h-14 md:w-14 md:text-4xl md:mt-1"
+        class="{hideBubblesOnMobile
+          ? 'hidden md:flex'
+          : 'flex'} mx-1 h-8 w-8 self-start mt-1 items-center justify-center rounded-full bg-amber-500 text-2xl font-bold text-white shadow-lg sm:h-14 sm:w-14 sm:text-4xl sm:mx-3 sm:mt-2 md:h-20 md:w-20 md:text-5xl md:mt-4 border-2 sm:border-4 border-white"
       >
         +
       </div>
@@ -93,7 +98,9 @@
       <div class="relative flex flex-col items-center">
         <!-- מספר מעל קבוצה B - מוצג תמיד (גם בזמן בנייה) -->
         <div
-          class="mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-blue-500 text-3xl font-bold text-white shadow-lg ring-4 ring-blue-300 md:h-16 md:w-16 md:text-4xl"
+          class="{hideBubblesOnMobile
+            ? 'hidden md:flex'
+            : 'flex'} mb-1 h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-2xl font-bold text-white shadow-lg ring-2 ring-blue-300 sm:ring-4 sm:mb-2 sm:h-16 sm:w-16 sm:text-4xl md:h-24 md:w-24 md:text-6xl"
         >
           {gameState.round.addedB}
         </div>

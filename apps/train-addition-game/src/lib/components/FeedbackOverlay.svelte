@@ -12,13 +12,13 @@
 {#if isVisible}
   <div
     id="feedback-overlay"
-    class="fixed inset-0 z-50 flex items-center justify-center"
+    class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-auto"
     style="position: fixed; inset: 0; width: 100%; height: 100%;"
   >
     {#if isCorrect}
       <!-- משוב חיובי עם אנימציית חגיגה -->
       <div
-        class="animate-success rounded-3xl bg-gradient-to-br from-green-400 to-green-600 px-16 py-10 text-center text-white shadow-2xl"
+        class="animate-success rounded-3xl bg-gradient-to-br from-green-400 to-green-600 px-8 py-6 sm:px-16 sm:py-10 text-center text-white shadow-2xl"
       >
         <!-- כוכבים מסביב -->
         <div class="stars">
@@ -35,7 +35,7 @@
     {:else if isWrong}
       <!-- משוב שגיאה עם אנימציית רעידה -->
       <div
-        class="animate-shake rounded-3xl bg-gradient-to-br from-orange-400 to-orange-600 px-12 py-8 text-center text-white shadow-2xl"
+        class="animate-shake rounded-3xl bg-gradient-to-br from-orange-400 to-orange-600 px-6 py-6 w-[90%] max-w-sm sm:w-auto sm:px-12 sm:py-8 text-center text-white shadow-2xl"
       >
         <div class="text-7xl">✗</div>
         <div class="mt-3 text-2xl font-bold">לא נכון</div>
