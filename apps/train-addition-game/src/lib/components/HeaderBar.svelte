@@ -12,10 +12,8 @@
   interface Props {
     /** פונקציה לאיפוס המשחק */
     onReset?: () => void;
-    /** פתיחת הגדרות */
-    onSettings?: () => void;
   }
-  let { onReset, onSettings }: Props = $props();
+  let { onReset }: Props = $props();
 
   function handleReset() {
     gameState.reset();
@@ -25,6 +23,11 @@
   function handleHome() {
     goto("/");
   }
+
+  function handleSettings() {
+    goto("/settings");
+  }
+
   import { AdminGate } from "learn-booster-kit";
 </script>
 
@@ -35,7 +38,6 @@
   <!-- כפתור בית -->
   <button
     onclick={handleHome}
-    onkeydown={(e) => e.key === "Enter" && handleHome()}
     class="rounded-full bg-slate-700 p-2 transition-colors hover:bg-slate-600"
     aria-label="חזרה לתפריט"
   >
@@ -54,7 +56,7 @@
   </div>
 
   <!-- כפתור הגדרות (שמאל) -->
-  <AdminGate onUnlock={() => onSettings?.()}>
+  <AdminGate onUnlock={handleSettings}>
     <button
       class="rounded-full bg-slate-700 p-2 transition-colors hover:bg-slate-600"
       aria-label="הגדרות"

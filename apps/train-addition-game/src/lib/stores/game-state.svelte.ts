@@ -15,6 +15,8 @@ import {
   speakWrong,
 } from "$lib/utils/tts";
 import { playSuccess, playError } from "$lib/utils/sound";
+import { get } from "svelte/store";
+import { boosterService } from "learn-booster-kit";
 
 /**
  * מחלקת ניהול מצב המשחק
@@ -103,9 +105,6 @@ class GameStateStore {
     }
   }
 
-  /**
-   * בחירת תשובה
-   */
   async selectAnswer(answer: number): Promise<void> {
     if (this.state !== "CHOOSE_ANSWER") return;
     if (this.isOnCooldown) return;
@@ -123,14 +122,20 @@ class GameStateStore {
         await speakCorrect();
       }
 
-      // מעבר לסיבוב הבא או לפרס
+      // בדיקת פרס
+      // משתמשים בהגדרות מה-boosterService שנטען
+      const config = get(boosterService.config);
+      const turnsForReward = config ? config.turnsPerReward : 3;
+
       if (
         settings.boosterEnabled &&
-        this.winsSinceLastReward >= settings.turnsPerReward
+        this.winsSinceLastReward >= turnsForReward
       ) {
+        // הגיע זמן פרס
         this.state = "REWARD_TIME";
       } else {
-        this.state = "NEXT_ROUND";
+        // לא הגיע זמן פרס
+        this.handleLevelCompletion();
       }
     } else {
       // תשובה שגויה - cooldown
@@ -152,10 +157,21 @@ class GameStateStore {
   }
 
   /**
+   * טיפול בסיום שלב (או אחרי פרס או ישירות אחרי תשובה נכונה)
+   */
+  handleLevelCompletion(): void {
+    if (settings.gameMode === "continuous") {
+      this.state = "NEXT_ROUND";
+    } else {
+      this.state = "LEVEL_END";
+    }
+  }
+
+  /**
    * מעבר לסיבוב הבא
    */
   nextRound(): void {
-    if (this.state === "NEXT_ROUND") {
+    if (this.state === "NEXT_ROUND" || this.state === "LEVEL_END") {
       this.startRound();
     }
   }
@@ -165,7 +181,7 @@ class GameStateStore {
    */
   completeReward(): void {
     this.winsSinceLastReward = 0;
-    this.state = "NEXT_ROUND";
+    this.handleLevelCompletion();
   }
 
   /**

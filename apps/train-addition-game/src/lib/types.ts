@@ -12,6 +12,7 @@ export type GameState =
   | "FEEDBACK_WRONG"
   | "ASSIST_OVERLAY"
   | "NEXT_ROUND"
+  | "LEVEL_END"
   | "REWARD_TIME";
 
 // נתוני סיבוב נוכחי
@@ -34,10 +35,9 @@ export interface TeacherSettings {
   maxWrongAttempts: number; // מקסימום טעויות לסיבוב
   inputMode: "tap" | "drag" | "both";
   voiceEnabled: boolean;
-  // הגדרות חיזוקים (Booster)
+  gameMode: "continuous" | "manual_end";
+  // הגדרות חיזוקים (Booster) - בוליאני בלבד, השאר ב-BoosterService
   boosterEnabled: boolean;
-  turnsPerReward: number;
-  autoBoosterLoop: boolean;
 }
 
 // קבועים
@@ -49,7 +49,6 @@ export const DEFAULT_SETTINGS: TeacherSettings = {
   maxWrongAttempts: 2,
   inputMode: "tap",
   voiceEnabled: true,
+  gameMode: "manual_end", // ברירת מחדל חדשה: סיום ידני עם מסך "שחק שוב"
   boosterEnabled: true,
-  turnsPerReward: 3,
-  autoBoosterLoop: false,
 };

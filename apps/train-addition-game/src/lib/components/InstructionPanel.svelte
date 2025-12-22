@@ -78,6 +78,7 @@
       class="flex flex-row items-center gap-2 sm:gap-4 bg-white/80 backdrop-blur-md px-4 py-1 sm:px-6 sm:py-2 md:px-8 md:py-3 rounded-full border border-white/60 shadow-lg"
     >
       <p
+        data-testid="instruction-text"
         class="text-lg font-bold text-slate-800 sm:text-xl md:text-4xl text-stroke"
       >
         {instruction}

@@ -20,7 +20,7 @@ export function playSuccess(): void {
  */
 export function playError(): void {
   try {
-    const audio = new Audio("/sounds/ui_sounds/error.mp3");
+    const audio = new Audio("/sounds/ui_sounds/error.wav");
     audio.volume = 0.4;
     audio.play().catch((e) => console.warn("Audio play failed:", e));
   } catch (e) {

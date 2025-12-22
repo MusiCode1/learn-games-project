@@ -1,4 +1,60 @@
-# יומן פיתוח - משחק רכבת החיבור
+# יומן פיתוח - רכבת החיבור
+
+## 2025-12-22 14:50
+
+### הושלמה גרסה v0.5 - ניהול הגדרות ומצבי משחק
+
+הושלם מהלך נרחב של שדרוג תשתית ההגדרות והוספת מצבי משחק חדשים.
+
+#### מה בוצע?
+
+**1. ניהול הגדרות וממשק משתמש**
+
+- נוצר דף הגדרות ייעודי (`/settings`) המחליף את ה-Overlay הישן.
+- פותח רכיב `SettingsControls` המאחד את כל הגדרות המשחק והבוסטר במקום אחד.
+- הוספה יכולת גלילה לדף ההגדרות לתמיכה במסכים קטנים.
+- עודכן ה-`HeaderBar` לניווט ישיר לדף ההגדרות.
+
+**2. לוגיקת משחק (Game Logic)**
+
+- נוספו שני מצבי משחק חדשים:
+  - **רציף (Continuous):** מעבר אוטומטי לחיזוק ולשלב הבא ללא התערבות.
+  - **ידני (Manual End):** עצירה בסיום שלב והצגת כפתור "שחק שוב".
+- תוקן באג בו הבוסטר לא הופעל אוטומטית במצב רציף.
+- עודכנה מכונת המצבים (`GameState`) לתמיכה ב-`LEVEL_END`.
+
+**3. תשתית ובדיקות**
+
+- שודרג ה-`SettingsStore` לשמירת מצבי משחק ומיגרציה מגרסאות קודמות.
+- נכתבו בדיקות E2E חדשות (`settings.spec.ts`, `game.spec.ts`) המכסות:
+  - ניווט ושינוי הגדרות.
+  - זרימת משחק מלאה בשני המצבים.
+  - תיקוני באגים וגלילה.
+
+---
+
+## 20/12/2025 03:25
+
+### 🧪 הקמת מערך בדיקות מקיף (Vitest + Playwright)
+
+נוספה תשתית בדיקות מלאה לפרויקט, המכסה הן את הלוגיקה העסקית והן את חווית המשתמש והרספונסיביות.
+
+#### מה בוצע?
+
+**1. בדיקות יחידה (Unit Tests) - Vitest**
+
+- **כיסוי:** `src/tests/unit/gameState.test.ts`
+- **תוכן:** אימות הלוגיקה של `game-state.svelte.ts`:
+  - אתחול משחק תקין.
+  - מעברים בין שלבים (`BUILD_A` -> `ADD_B` -> `CHOOSE_ANSWER`).
+  - טיפול נכון בתשובות (ניקוד חיובי vs ענישה/Cooldown).
+
+**2. בדיקות קצה-לקצה (E2E) - Playwright**
+
+- **כיסוי:** `src/tests/e2e/game.spec.ts`
+- **Happy Path:** הרצת סיבוב משחק מלא (הוספת קרונות, מענה נכון).
+- **תרחישי שגיאה:** וידוא הופעת משוב שגיאה (Overlay כתום) בעת טעות.
+- **רספונסיביות:** בדיקה שהאלמנטים הקריטיים (כמו רכבת ופאנל תשובות) מוצגים כראוי ב-Mobile (320px) וב-Desktop.
 
 ## 20/12/2025 01:40
 

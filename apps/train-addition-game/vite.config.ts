@@ -1,5 +1,6 @@
+/// <reference types="vitest/config" />
+import { defineConfig } from "vitest/config";
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "vite";
 import { sveltekit } from "@sveltejs/kit/vite";
 
 export default defineConfig({
@@ -7,5 +8,12 @@ export default defineConfig({
   server: {
     host: true,
     open: true,
+  },
+  envDir: "../../",
+  test: {
+    include: ["src/**/*.{test,spec}.{js,ts}"],
+    exclude: ["src/tests/e2e/**", "node_modules/**"],
+    globals: true,
+    environment: "jsdom",
   },
 });

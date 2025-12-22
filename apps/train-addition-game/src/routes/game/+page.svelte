@@ -14,6 +14,8 @@
   } from "learn-booster-kit";
   import { onMount } from "svelte";
 
+  const config = boosterService.config;
+
   // Extend Global Debug with game-specific actions
   onMount(() => {
     const existingDebug = (window as any).GameDebug || {};
@@ -55,6 +57,16 @@
       gameState.startRound();
     }
   });
+
+  // Auto-trigger reward in Continuous Mode
+  $effect(() => {
+    if (
+      gameState.state === "REWARD_TIME" &&
+      settings.gameMode === "continuous"
+    ) {
+      handleGetReward();
+    }
+  });
 </script>
 
 <svelte:head>
@@ -74,14 +86,14 @@
         <div class="mb-2 relative">
           <ProgressWidget
             value={gameState.winsSinceLastReward}
-            max={settings.turnsPerReward}
+            max={$config?.turnsPerReward ?? 3}
             orientation="horizontal"
             label="לפרס"
           />
         </div>
       {/if}
 
-      {#if gameState.state === "REWARD_TIME" && !settings.autoBoosterLoop}
+      {#if gameState.state === "REWARD_TIME" && settings.gameMode !== "continuous"}
         <!-- Reward Screen -->
         <div class="mt-20 animate-fade-in text-center">
           <h2 class="mb-8 text-6xl font-black text-white drop-shadow-lg">
@@ -94,6 +106,19 @@
             <span class="flex items-center gap-4"> 🎁 קבל פרס </span>
           </button>
         </div>
+      {:else if gameState.state === "LEVEL_END"}
+        <!-- Level End Screen (Play Again) -->
+        <div class="mt-20 animate-fade-in text-center">
+          <h2 class="mb-8 text-6xl font-black text-white drop-shadow-lg">
+            כל הכבוד! סיימת את השלב.
+          </h2>
+          <button
+            onclick={() => gameState.nextRound()}
+            class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-500 to-green-700 px-12 py-8 text-4xl font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-green-400/50 active:scale-95"
+          >
+            <span class="flex items-center gap-4"> 🔄 שחק שוב </span>
+          </button>
+        </div>
       {:else}
         <!-- Active Game Instructions -->
         <div class="animate-slide-up w-full flex justify-center">
@@ -103,7 +128,7 @@
     </div>
 
     <!-- Controls Section: Interactions -->
-    {#if gameState.state !== "REWARD_TIME" || settings.autoBoosterLoop}
+    {#if gameState.state !== "REWARD_TIME" && gameState.state !== "LEVEL_END"}
       <div
         class="w-full flex flex-col justify-center gap-4 pointer-events-auto"
       >
@@ -125,8 +150,9 @@
   </div>
 
   <!-- Bottom Section: Train Track (Anchored to Grass) -->
-  {#if gameState.state !== "REWARD_TIME" || settings.autoBoosterLoop}
+  {#if gameState.state !== "REWARD_TIME" && gameState.state !== "LEVEL_END"}
     <div
+      data-testid="train-track-container"
       class="absolute bottom-0 left-0 w-full flex items-end justify-center pb-[48px] md:pb-[120px] z-10 pointer-events-none animate-slide-up animation-delay-100"
     >
       <div class="pointer-events-auto">

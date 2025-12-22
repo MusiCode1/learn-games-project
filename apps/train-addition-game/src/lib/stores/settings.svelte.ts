@@ -6,7 +6,9 @@ import type { TeacherSettings } from "$lib/types";
 import { DEFAULT_SETTINGS } from "$lib/types";
 
 const STORAGE_KEY = "train-addition-settings";
-const CURRENT_VERSION = 3;
+
+// אל תשכח לשנות גרסה בעת ביצוע שינוי במערכת ההגדרות!
+const CURRENT_VERSION = 4;
 
 /**
  * מחלקת ניהול הגדרות
@@ -21,10 +23,11 @@ class SettingsStore {
   inputMode = $state<"tap" | "drag" | "both">(DEFAULT_SETTINGS.inputMode);
   voiceEnabled = $state(DEFAULT_SETTINGS.voiceEnabled);
 
-  // חיזוקים
+  // מצב משחק החדש
+  gameMode = $state<"continuous" | "manual_end">(DEFAULT_SETTINGS.gameMode);
+
+  // חיזוקים (רק בוליאני, השאר בשירות)
   boosterEnabled = $state(DEFAULT_SETTINGS.boosterEnabled);
-  turnsPerReward = $state(DEFAULT_SETTINGS.turnsPerReward);
-  autoBoosterLoop = $state(DEFAULT_SETTINGS.autoBoosterLoop);
 
   constructor() {
     // טעינה ראשונית מ-localStorage
@@ -55,12 +58,12 @@ class SettingsStore {
         this.maxB = parsed.maxB ?? DEFAULT_SETTINGS.maxB;
         this.choicesCount =
           parsed.choicesCount ?? DEFAULT_SETTINGS.choicesCount;
-        
+
         // מיגרציה לגרסה 3: איפוס cooldownMs
         if (version < 3) {
-            this.cooldownMs = DEFAULT_SETTINGS.cooldownMs;
+          this.cooldownMs = DEFAULT_SETTINGS.cooldownMs;
         } else {
-            this.cooldownMs = parsed.cooldownMs ?? DEFAULT_SETTINGS.cooldownMs;
+          this.cooldownMs = parsed.cooldownMs ?? DEFAULT_SETTINGS.cooldownMs;
         }
 
         this.maxWrongAttempts =
@@ -70,10 +73,18 @@ class SettingsStore {
           parsed.voiceEnabled ?? DEFAULT_SETTINGS.voiceEnabled;
         this.boosterEnabled =
           parsed.boosterEnabled ?? DEFAULT_SETTINGS.boosterEnabled;
-        this.turnsPerReward =
-          parsed.turnsPerReward ?? DEFAULT_SETTINGS.turnsPerReward;
-        this.autoBoosterLoop =
-          parsed.autoBoosterLoop ?? DEFAULT_SETTINGS.autoBoosterLoop;
+
+        // מיגרציה לגרסה 4: gameMode
+        if (version < 4) {
+          // אם היה מוגדר לולאה אוטומטית, נעבור למצב רציף
+          if (parsed.autoBoosterLoop) {
+            this.gameMode = "continuous";
+          } else {
+            this.gameMode = "manual_end";
+          }
+        } else {
+          this.gameMode = parsed.gameMode ?? DEFAULT_SETTINGS.gameMode;
+        }
       } catch (e) {
         console.error("Failed to parse settings", e);
       }
@@ -94,8 +105,7 @@ class SettingsStore {
       inputMode: this.inputMode,
       voiceEnabled: this.voiceEnabled,
       boosterEnabled: this.boosterEnabled,
-      turnsPerReward: this.turnsPerReward,
-      autoBoosterLoop: this.autoBoosterLoop,
+      gameMode: this.gameMode,
     };
   }
 
@@ -119,8 +129,7 @@ class SettingsStore {
     this.inputMode = DEFAULT_SETTINGS.inputMode;
     this.voiceEnabled = DEFAULT_SETTINGS.voiceEnabled;
     this.boosterEnabled = DEFAULT_SETTINGS.boosterEnabled;
-    this.turnsPerReward = DEFAULT_SETTINGS.turnsPerReward;
-    this.autoBoosterLoop = DEFAULT_SETTINGS.autoBoosterLoop;
+    this.gameMode = DEFAULT_SETTINGS.gameMode;
   }
 }
 

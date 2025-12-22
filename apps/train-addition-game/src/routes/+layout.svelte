@@ -1,38 +1,17 @@
 <script lang="ts">
   import "./app.css";
   import HeaderBar from "$lib/components/HeaderBar.svelte";
-  import SettingsOverlay from "$lib/components/SettingsOverlay.svelte";
   import { settings } from "$lib/stores/settings.svelte";
   import { boosterService } from "learn-booster-kit";
   import { onMount } from "svelte";
 
   let { children } = $props();
-  let showSettings = $state(false);
 
   onMount(() => {
     if (settings.boosterEnabled) {
       boosterService.init();
     }
-
-    // כלי דיבאג גלובלי
-    (window as any).GameDebug = {
-      hideModals: () => {
-        showSettings = false;
-      },
-      toggleSettings: () => {
-        showSettings = !showSettings;
-      },
-      // Other debug tools might need reference to gameState, which is not imported here yet.
-      // We can attach layout specific debugs here, or keep the global object expandable.
-      // For now, simple toggle actions.
-      // Note: Logic for toggling Modals might need to be distributed or managed by a store if we split heavily.
-      // But for now, basic layout handles Settings.
-    };
   });
-
-  function handleSettings() {
-    showSettings = true;
-  }
 </script>
 
 <div
@@ -45,14 +24,10 @@
     <div class="cloud cloud-3"></div>
   </div>
 
-  <HeaderBar onSettings={handleSettings} />
+  <HeaderBar />
 
   <!-- Main Content Slot -->
   {@render children()}
-
-  {#if showSettings}
-    <SettingsOverlay onClose={() => (showSettings = false)} />
-  {/if}
 </div>
 
 <style>
