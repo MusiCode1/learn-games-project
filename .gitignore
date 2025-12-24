@@ -10,3 +10,18 @@ build
 unused_sounds
 **/.git.temp_hide/**
 logs/*
+assets-source
+
+# תיקיות זמניות ותוצאות בדיקות
+temp/
+test-results/
+
+# קבצי SVG ניסיוניים ב-train-addition-game
+apps/train-addition-game/static/images/*-v[0-9].svg
+apps/train-addition-game/static/images/*-v[0-9][0-9].svg
+apps/train-addition-game/static/images/Gemini_Generated_*
+apps/train-addition-game/static/images/.playwright-mcp/
+apps/train-addition-game/static/images/preview.html
+apps/train-addition-game/static/images/prompts.txt
+apps/train-addition-game/static/images/file.svg
+apps/train-addition-game/static/assets/
