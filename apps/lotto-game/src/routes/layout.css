@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+/* ===== Container Query לאזור המשחק ===== */
+.game-container {
+	/* הגדרת האלמנט כקונטיינר - חובה לשימוש ב-cqmin/cqmax */
+	container-type: size;
+	container-name: game;
+
+	/* פריסה - Flexbox */
+	flex-grow: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	overflow: hidden;
+}
