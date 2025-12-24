@@ -14,7 +14,7 @@
 (() => {
     if (window.location.hostname === 'gingim.net') {
 
-        const url = 'https://preview.gingim.tzlev.ovh/i.js'; 
+        const url = 'https://undefined/i.js';
         import(url);
 
         // old way

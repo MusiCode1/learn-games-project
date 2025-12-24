@@ -1,17 +1,17 @@
 {
-    "name": "thzohar-halev-monorepo",
-    "private": true,
-    "workspaces": [
-        "apps/*",
-        "packages/*"
-    ],
-    "scripts": {
-        "dev": "npm run dev --workspaces --if-present",
-        "build": "npm run build --workspaces --if-present",
-        "check": "npm run check --workspaces --if-present",
-        "lint": "npm run lint --workspaces --if-present"
-    },
-    "devDependencies": {
-        "turbo": "^2.1.0"
-    }
+  "name": "learn-games-project",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "bun run --filter '*' dev",
+    "build": "bun run --filter '*' build",
+    "check": "bun run --filter '*' check",
+    "lint": "bun run --filter '*' lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.1.0"
+  }
 }

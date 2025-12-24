@@ -43,7 +43,6 @@
     "vite-plugin-vercel": "^9.0.5"
   },
   "dependencies": {
-    "learn-booster-kit": "*",
     "@fontsource/heebo": "^5.1.0",
     "@playwright/test": "^1.51.1",
     "@tailwindcss/postcss": "^4.1.17",
