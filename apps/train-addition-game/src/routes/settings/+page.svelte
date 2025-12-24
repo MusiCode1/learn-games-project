@@ -1,5 +1,5 @@
 <script lang="ts">
-  import SettingsControls from "$lib/components/admin/SettingsControls.svelte";
+  import SettingsControls from "./_components/SettingsControls.svelte";
   import { goto } from "$app/navigation";
 </script>
 

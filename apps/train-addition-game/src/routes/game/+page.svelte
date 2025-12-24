@@ -1,10 +1,10 @@
 <script lang="ts">
-  import InstructionPanel from "$lib/components/InstructionPanel.svelte";
-  import TrainTrackArea from "$lib/components/TrainTrackArea.svelte";
-  import DepotArea from "$lib/components/DepotArea.svelte";
-  import AnswerPanel from "$lib/components/AnswerPanel.svelte";
-  import FeedbackOverlay from "$lib/components/FeedbackOverlay.svelte";
-  import GameWorld from "$lib/components/GameWorld.svelte"; // [NEW]
+  import InstructionPanel from "./_components/InstructionPanel.svelte";
+  import TrainTrackArea from "./_components/TrainTrackArea.svelte";
+  import DepotArea from "./_components/DepotArea.svelte";
+  import AnswerPanel from "./_components/AnswerPanel.svelte";
+  import FeedbackOverlay from "./_components/FeedbackOverlay.svelte";
+  import GameWorld from "./_components/GameWorld.svelte"; // [NEW]
   import { gameState } from "$lib/stores/game-state.svelte";
   import { settings } from "$lib/stores/settings.svelte";
   import {

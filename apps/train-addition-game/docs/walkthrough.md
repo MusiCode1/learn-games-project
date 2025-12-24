@@ -1,5 +1,30 @@
 # יומן פיתוח - רכבת החיבור
 
+## 2025-12-24 19:30
+
+### סידור מבנה קומפוננטות (Co-location)
+
+בוצע ארגון מחדש של מבנה הקומפוננטות בהתאם לעיקרון Co-location - מיקום קומפוננטות ייחודיות לדף בתוך תיקיית `_components`.
+
+#### מה בוצע?
+
+**1. העברת קומפוננטות**
+
+- 8 קומפוננטות הועברו מ-`src/lib/components` ל-`src/routes/game/_components`:
+  `GameWorld`, `TrainTrackArea`, `TrainCar`, `AnswerPanel`, `DepotArea`, `FeedbackOverlay`, `InstructionPanel`, `CounterBadge`
+- `SettingsControls` הועבר ל-`src/routes/settings/_components`
+- נשאר רק `HeaderBar` ב-`src/lib/components` (משותף)
+
+**2. עדכון imports**
+
+- עודכנו כל ה-imports בדפי +page.svelte לנתיבים יחסיים
+
+#### החלטות ארכיטקטורה
+
+- **בחירה בתיקיית `_components`**: נבחר להשתמש בתיקייה מקוננת (`_components`) ולא שטוחה כי יש 8 קומפוננטות, וזה שומר על הראוט נקי וברור.
+
+---
+
 ## 2025-12-22 14:50
 
 ### הושלמה גרסה v0.5 - ניהול הגדרות ומצבי משחק

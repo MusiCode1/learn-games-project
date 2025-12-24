@@ -134,4 +134,14 @@ class SettingsStore {
 }
 
 // ייצוא singleton
-export const settings = new SettingsStore();
+// ייצוא singleton
+console.log("Initializing SettingsStore module...");
+let _settings: SettingsStore;
+try {
+  _settings = new SettingsStore();
+  console.log("SettingsStore instance created successfully");
+} catch (e) {
+  console.error("Error creating SettingsStore:", e);
+  throw e;
+}
+export const settings = _settings;

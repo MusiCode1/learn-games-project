@@ -206,4 +206,14 @@ class GameStateStore {
 }
 
 // ייצוא singleton
-export const gameState = new GameStateStore();
+// ייצוא singleton
+console.log("Initializing GameStateStore module...");
+let _gameState: GameStateStore;
+try {
+  _gameState = new GameStateStore();
+  console.log("GameStateStore instance created successfully");
+} catch (e) {
+  console.error("Error creating GameStateStore:", e);
+  throw e;
+}
+export const gameState = _gameState;

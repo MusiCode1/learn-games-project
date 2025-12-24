@@ -1,0 +1,35 @@
+import { defineConfig, devices } from "@playwright/test";
+
+export default defineConfig({
+  testDir: "./src/tests/e2e",
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: "list",
+  use: {
+    baseURL: "http://localhost:5173",
+    trace: "on-first-retry",
+  },
+
+  /* Configure projects for major browsers and mobile */
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"], headless: true },
+    },
+    {
+      name: "Mobile Chrome",
+      use: { ...devices["Pixel 5"], headless: true },
+    },
+  ],
+
+  /* Run your local dev server before starting the tests */
+  webServer: {
+    command: "npm run dev",
+    url: "http://localhost:5173",
+    reuseExistingServer: true,
+    stdout: "ignore",
+    stderr: "pipe",
+  },
+});
