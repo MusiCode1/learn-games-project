@@ -91,6 +91,11 @@
 		const newConfig = { ...config, [field]: value };
 		updateConfig(newConfig);
 	}
+
+	function showExample() {
+		if (!config) return;
+		boosterService.triggerReward(undefined, config);
+	}
 </script>
 
 <div class="space-y-6" dir="rtl">
@@ -455,6 +460,20 @@
 							{/if}
 						</div>
 					{/if}
+				</div>
+
+				<!-- Show Example Button -->
+				<div class="flex items-center justify-between py-2 pr-4 mt-2 border-t border-slate-100/50">
+					<div class="space-y-1">
+						<div class="font-medium text-slate-700">הצגת דוגמה</div>
+						<div class="text-xs text-slate-500">בדיקת המחזק הנוכחי</div>
+					</div>
+					<button
+						onclick={showExample}
+						class="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+					>
+						הפעל דוגמה
+					</button>
 				</div>
 			</div>
 		{:else if settings.boosterEnabled}

@@ -1,5 +1,51 @@
 # יומן פיתוח (Walkthrough)
 
+## 24/12/2025 - הוספת תצוגה מקדימה למחזק בהגדרות
+
+נוספה אפשרות לראות את המחזק בפעולה ישירות מתוך מסך ההגדרות ב-`wordys-game`.
+
+### 🚀 מה בוצע
+
+1.  **ממשק ניהול (Admin UI)**:
+
+    - נוסף כפתור "הצגת דוגמה" בתוך רכיב `SettingsControls.svelte` (בחלק של הגדרות המחזק).
+    - השינוי מאפשר למתפעל לבדוק את הגדרות הבוסטר (וידאו/אפליקציה/אתר) ולוודא תקינות לפני שמתחילים לשחק עם הילד.
+
+2.  **לוגיקה**:
+    - שימוש בפונקציה `boosterService.triggerReward` להפעלת המחזק עם הקונפיגורציה הנוכחית של הטופס.
+
+---
+
+## 22/12/2025 - הגירה של משחק הלוטו ל-SvelteKit (Migration)
+
+הושלמה ההגירה של `loto-game` (מ-React) ל-`loto-game-svelte` (ב-SvelteKit).
+
+### 🚀 מה בוצע
+
+1.  **יצירה והגדרת הפרויקט**:
+
+    - הוגדר פרויקט SvelteKit חדש.
+    - הותקנו תלויות: `learn-booster-kit`, `canvas-confetti`.
+    - הוגדרו קבצי קונפיגורציה (`vite.config.ts`, `tsconfig.json`) לתמיכה ב-Workspaces.
+
+2.  **העברת נכסים (Assets)**:
+
+    - הועתקו קבצי סאונד מ-`train-addition-game` ונוצרו placeholder-ים לחסרים.
+    - הועתקו תמונות נדרשות.
+
+3.  **פיתוח רכיבים ולוגיקה**:
+
+    - **Components**: פותחו מחדש ב-Svelte 5 (`Card`, `Board`, `SettingsModal`, `Confetti`).
+    - **Logic**: נכתבה מחדש לוגיקת המשחק (`gameLogic.ts`) וניהול המצב (`+page.svelte`) באמצעות Runes (`$state`, `$effect`).
+    - **Sound**: הוטמע מנגנון סאונד מבוסס HTML5 Audio ב-`sound.ts`.
+    - **Booster**: אינטגרציה עם `learn-booster-kit` דרך `gingimBooster.ts`.
+
+4.  **תיקונים והתאמות**:
+    - תוקנו בעיות נגישות (A11y) ברכיבי ההגדרות.
+    - סודרו נתיבי ייבוא (`paths`) ב-`tsconfig.json` כדי לזהות את החבילה הפנימית.
+
+---
+
 ## 18/12/2025 - העברת רכיבים משותפים לספרייה (Refactor)
 
 ### 📦 העברת רכיבים ל-Share Library
