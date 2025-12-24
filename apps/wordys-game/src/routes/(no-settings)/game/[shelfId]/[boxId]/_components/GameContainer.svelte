@@ -121,6 +121,15 @@
 	// Derived state for current word
 	let currentWord = $derived(playQueue[currentIndex]);
 
+	function playCardAudio() {
+		const audioUrl = getCardAudioUrl(currentWord.id);
+		if (audioUrl) {
+			playAudio(audioUrl);
+		} else {
+			speak(currentWord.word);
+		}
+	}
+
 	async function handleSuccess() {
 		showFeedback = true;
 		playSuccess();
@@ -130,12 +139,7 @@
 
 		// 2. Speak word (or play recording)
 		if (currentWord) {
-			const audioUrl = getCardAudioUrl(currentWord.id);
-			if (audioUrl) {
-				await playAudio(audioUrl);
-			} else {
-				await speak(currentWord.word);
-			}
+			playCardAudio();
 		}
 
 		// 3. Speak feedback
@@ -204,7 +208,7 @@
 			Math.floor(currentIndex / settings.wordsPerBooster) * settings.wordsPerBooster
 	); */
 
-	let progressInBatch = $derived(currentIndex % settings.wordsPerBooster);
+	let progressInBatch = $derived(currentIndex % playQueue.length);
 </script>
 
 <div
@@ -283,7 +287,11 @@
                             "
 							style="max-height: 100%; max-width: 100%;"
 						>
-							<ImageDisplay src={getCardImageUrl(currentWord.id)} alt={currentWord.word} />
+							<ImageDisplay
+								src={getCardImageUrl(currentWord.id)}
+								alt={currentWord.word}
+								onclick={playCardAudio}
+							/>
 						</div>
 					</div>
 

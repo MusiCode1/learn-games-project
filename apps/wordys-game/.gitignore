@@ -32,3 +32,5 @@ temp/*
 # Local Asset Source
 wordys-assets-source/
 static/videos/*
+
+logs

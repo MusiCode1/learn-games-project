@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SettingsControls from '$lib/components/admin/SettingsControls.svelte';
+	import SettingsControls from './_components/SettingsControls.svelte';
 </script>
 
 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import GameContainer from '$lib/components/GameContainer.svelte';
+	import GameContainer from './_components/GameContainer.svelte';
 	import { shelvesStore } from '$lib/stores/shelves.svelte';
 	import type { Card } from '$lib/types';
 

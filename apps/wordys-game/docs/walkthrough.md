@@ -1,5 +1,39 @@
 # יומן פיתוח - Wordy's
 
+## 2025-12-24 19:30
+
+### סידור מבנה קומפוננטות (Co-location)
+
+בוצע ארגון מחדש של מבנה הקומפוננטות בהתאם לעיקרון Co-location - מיקום קומפוננטות ייחודיות לדף בתוך תיקיית `_components`.
+
+#### מה בוצע?
+
+**1. העברת קומפוננטות**
+
+- 8 קומפוננטות הועברו מ-`src/lib/components` ל-`src/routes/(no-settings)/game/[shelfId]/[boxId]/_components`:
+  `GameContainer`, `ImageDisplay`, `WordDisplay`, `TypingInput`, `Feedback`, `CompletionScreen`, `VirtualKeyboard`, `HintButton`
+- `SettingsControls` הועבר ל-`src/routes/admin/settings/_components`
+- `src/lib/components` נמחק (היה ריק)
+
+**2. עדכון imports**
+
+- עודכנו כל ה-imports בדפי +page.svelte לנתיבים יחסיים
+
+---
+
+## 24/12/2025 - הוספת תצוגה מקדימה למחזק בהגדרות
+
+נוספה אפשרות לראות את המחזק בפעולה ישירות מתוך מסך ההגדרות ב-`wordys-game`.
+
+### 🚀 מה בוצע
+
+1.  **ממשק ניהול (Admin UI)**:
+    - נוסף כפתור "הצגת דוגמה" בתוך רכיב `SettingsControls.svelte` (בחלק של הגדרות המחזק).
+    - השינוי מאפשר למתפעל לבדוק את הגדרות הבוסטר (וידאו/אפליקציה/אתר) ולוודא תקינות לפני שמתחילים לשחק עם הילד.
+
+2.  **לוגיקה**:
+    - שימוש בפונקציה `boosterService.triggerReward` להפעלת המחזק עם הקונפיגורציה הנוכחית של הטופס.
+
 ## 17/12/2025 Walkthrough - Mobile Keyboard Fix
 
 תיקנתי את הבעיה שבה המקלדת המובנית של הטלפון הייתה קופצת ומסתירה את המסך בעת שימוש במקלדת הווירטואלית של המשחק.
