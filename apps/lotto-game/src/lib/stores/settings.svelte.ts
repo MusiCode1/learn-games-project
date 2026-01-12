@@ -18,7 +18,11 @@ export const DEFAULT_SETTINGS = {
 	totalRounds: 1,
 
 	// הגדרות מחזק
-	boosterEnabled: true
+	boosterEnabled: true,
+	autoBooster: true,
+
+	// הגדרות משחקיות
+	enableDeselect: true
 };
 
 export type LottoSettings = typeof DEFAULT_SETTINGS;
@@ -32,6 +36,8 @@ class SettingsStore {
 	loopMode = $state<'finite' | 'infinite'>(DEFAULT_SETTINGS.loopMode);
 	totalRounds = $state(DEFAULT_SETTINGS.totalRounds);
 	boosterEnabled = $state(DEFAULT_SETTINGS.boosterEnabled);
+	autoBooster = $state(DEFAULT_SETTINGS.autoBooster);
+	enableDeselect = $state(DEFAULT_SETTINGS.enableDeselect);
 
 	constructor() {
 		if (browser) {
@@ -73,7 +79,9 @@ class SettingsStore {
 			colorMode: this.colorMode,
 			loopMode: this.loopMode,
 			totalRounds: this.totalRounds,
-			boosterEnabled: this.boosterEnabled
+			boosterEnabled: this.boosterEnabled,
+			autoBooster: this.autoBooster,
+			enableDeselect: this.enableDeselect
 		};
 	}
 
@@ -89,6 +97,8 @@ class SettingsStore {
 		this.loopMode = parsed.loopMode ?? DEFAULT_SETTINGS.loopMode;
 		this.totalRounds = parsed.totalRounds ?? DEFAULT_SETTINGS.totalRounds;
 		this.boosterEnabled = parsed.boosterEnabled ?? DEFAULT_SETTINGS.boosterEnabled;
+		this.autoBooster = parsed.autoBooster ?? DEFAULT_SETTINGS.autoBooster;
+		this.enableDeselect = parsed.enableDeselect ?? DEFAULT_SETTINGS.enableDeselect;
 	}
 
 	reset() {

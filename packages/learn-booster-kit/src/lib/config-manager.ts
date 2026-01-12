@@ -125,7 +125,7 @@ export function loadConfigFromStorage(): boolean {
     if (typeof parsedConfig !== "object" || parsedConfig === null) return false;
 
     // מיזוג עם ברירת המחדל
-    appConfig = { ...defaultConfig, ...parsedConfig };
+    appConfig = deepMerge({ ...defaultConfig }, parsedConfig);
 
     notifyConfigListeners();
     return true;

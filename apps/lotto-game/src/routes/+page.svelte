@@ -23,6 +23,8 @@
 	let currentRound = $state(1);
 	let nextRoundTimer = $state<number | null>(null);
 
+	let showRewardButton = $state(false);
+
 	// כותרת דינמית לפי סוג התוכן
 	const gameTitle = $derived(settings.contentType === 'letters' ? 'משחק לוטו אותיות' : 'משחק לוטו צורות');
 
@@ -64,6 +66,7 @@
 		matches = 0;
 		isLocked = false;
 		won = false;
+		showRewardButton = false;
 		currentRound = round;
 		nextRoundTimer = null;
 	}
@@ -78,8 +81,8 @@
 
 		// התעלם אם כבר מותאם או נבחר
 		if (clickedCard.isMatched || clickedCard.isSelected) {
-			if (clickedCard.isSelected) {
-				// ביטול בחירה
+			if (clickedCard.isSelected && settings.enableDeselect) {
+				// ביטול בחירה (רק אם מותר)
 				cards[clickedCardIndex].isSelected = false;
 				selectedCards = selectedCards.filter(index => index !== clickedCardIndex);
 			}
@@ -136,19 +139,52 @@
 		}
 	}
 
+	// חיבור ל-store של הקונפיגורציה
+	const configStore = boosterService.config;
+	let winsCount = $state(0);
+
 	function handleWin() {
 		won = true;
 		playWin();
 		
-		if (settings.boosterEnabled) {
-			boosterService.triggerReward();
+		winsCount++;
+		// מקור האמת החדש לתדירות - Settings
+		const turnsTarget = settings.totalRounds || 1;
+
+		let rewardTriggered = false;
+
+		if (settings.boosterEnabled && winsCount >= turnsTarget) {
+			if (settings.autoBooster) {
+				// הפעלה אוטומטית
+				boosterService.triggerReward();
+				winsCount = 0;
+				rewardTriggered = true;
+			} else {
+				// הפעלה ידנית - הצגת כפתור
+				showRewardButton = true;
+				rewardTriggered = true; // טכנית עצרנו להפסקת פרס
+			}
 		}
 
 		// לוגיקת לולאה
-		const hasNextRound = settings.loopMode === 'infinite' || currentRound < settings.totalRounds;
-		if (hasNextRound) {
-			nextRoundTimer = 5;
+		// אם יש כפתור פרס, לא מפעילים טיימר אוטומטי
+		if (!showRewardButton) {
+			const hasNextRound = settings.loopMode === 'infinite' || currentRound < settings.totalRounds;
+			if (hasNextRound) {
+				nextRoundTimer = 5;
+			}
 		}
+	}
+
+	function handleManualRewardClick() {
+		boosterService.triggerReward();
+		winsCount = 0;
+		showRewardButton = false;
+		
+		// לאחר קבלת הפרס, האם להמשיך סבב?
+		// כרגע נשאיר את המשתמש במסך הניצחון ללא טיימר, הוא יצטרך ללחוץ "משחק חדש" או "סבב הבא"
+		// או שנתחיל טיימר? בדרך כלל חוזרים מהבוסטר וצריך ללחוץ ידנית.
+		// נוסיף כפתור "המשך" שמופיע אחרי הפרס
 	}
 </script>
 
@@ -216,7 +252,24 @@
 				<h2 class="text-5xl font-bold text-green-500 mb-4">כל הכבוד!</h2>
 				<p class="text-2xl text-gray-600 mb-8">מצאת את כל הזוגות!</p>
 
-				{#if nextRoundTimer !== null}
+				{#if showRewardButton}
+					<!-- כפתור פרס גדול -->
+					<button
+						onclick={handleManualRewardClick}
+						class="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white px-8 py-6 rounded-2xl text-2xl font-black shadow-xl transition-transform hover:scale-105 active:scale-95 w-full flex items-center justify-center gap-3 animate-bounce"
+					>
+						<span>🎁</span>
+						<span>קבל הפתעה!</span>
+					</button> 
+					<div class="mt-4">
+						<button
+							onclick={() => startNewGame(currentRound + 1)}
+							class="text-gray-400 hover:text-gray-600 underline text-sm"
+						>
+							דלג והמשך לסבב הבא
+						</button>
+					</div>
+				{:else if nextRoundTimer !== null}
 					<div class="mb-6">
 						<p class="text-lg text-indigo-600 font-bold mb-2">הסבב הבא מתחיל בעוד:</p>
 						<div class="text-4xl font-mono font-bold text-indigo-800">{nextRoundTimer}</div>
