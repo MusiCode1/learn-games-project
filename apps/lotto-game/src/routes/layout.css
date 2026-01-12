@@ -2,6 +2,8 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
+@source '../../../../packages/learn-booster-kit';
+
 /* ===== Container Query לאזור המשחק ===== */
 .game-container {
 	/* הגדרת האלמנט כקונטיינר - חובה לשימוש ב-cqmin/cqmax */

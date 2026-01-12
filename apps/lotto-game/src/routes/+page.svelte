@@ -1,20 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade, scale } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 	import { 
 		generateCards, 
 		contentMatches,
-		LETTERS, 
-		SHAPES,
-		type Card as CardType,
-		type ContentType,
-		type ColorMode
+		type Card as CardType
 	} from '$lib/utils/gameLogic';
 	import { playSuccess, playError, playWin } from '$lib/utils/sound';
-	import { initBooster, triggerReward, cleanupBooster } from '$lib/utils/gingimBooster';
+	import { boosterService } from 'learn-booster-kit';
+	import { settings } from '$lib/stores/settings.svelte';
 	import Confetti from '$lib/components/Confetti.svelte';
 	import Board from '$lib/components/Board.svelte';
-	import SettingsModal from '$lib/components/SettingsModal.svelte';
 	import winnerLogo from '$lib/assets/winner_logo.png';
 
 	// מצב המשחק
@@ -25,26 +22,13 @@
 	let won = $state(false);
 	let currentRound = $state(1);
 	let nextRoundTimer = $state<number | null>(null);
-	let isSettingsOpen = $state(false);
-
-	// הגדרות
-	let settings = $state({
-		pairCount: 10,
-		contentType: 'letters' as ContentType,
-		selectedLetters: LETTERS,
-		selectedShapes: SHAPES.map(s => s.id),
-		colorMode: 'random' as ColorMode,
-		loopMode: 'finite' as 'finite' | 'infinite',
-		totalRounds: 1
-	});
 
 	// כותרת דינמית לפי סוג התוכן
 	const gameTitle = $derived(settings.contentType === 'letters' ? 'משחק לוטו אותיות' : 'משחק לוטו צורות');
 
 	onMount(() => {
-		initBooster();
+		// בוסטר מותחל ב-layout
 		startNewGame();
-		return () => cleanupBooster();
 	});
 
 	// Timer Effect
@@ -56,7 +40,7 @@
 				if (nextRoundTimer <= 0) {
 					clearInterval(interval);
 					// התחלת סבב הבא
-					startNewGame(settings, currentRound + 1);
+					startNewGame(currentRound + 1);
 					nextRoundTimer = null;
 				}
 			}, 1000);
@@ -66,15 +50,13 @@
 		};
 	});
 
-	function startNewGame(newSettings = settings, round = 1) {
-		settings = newSettings;
-		
+	function startNewGame(round = 1) {
 		const newCards = generateCards({
-			pairCount: newSettings.pairCount,
-			contentType: newSettings.contentType,
-			selectedLetters: newSettings.selectedLetters,
-			selectedShapes: newSettings.selectedShapes,
-			colorMode: newSettings.colorMode
+			pairCount: settings.pairCount,
+			contentType: settings.contentType,
+			selectedLetters: settings.selectedLetters,
+			selectedShapes: settings.selectedShapes,
+			colorMode: settings.colorMode
 		});
 		
 		cards = newCards;
@@ -157,7 +139,10 @@
 	function handleWin() {
 		won = true;
 		playWin();
-		triggerReward();
+		
+		if (settings.boosterEnabled) {
+			boosterService.triggerReward();
+		}
 
 		// לוגיקת לולאה
 		const hasNextRound = settings.loopMode === 'infinite' || currentRound < settings.totalRounds;
@@ -197,7 +182,7 @@
 			{/if}
 
 			<button
-				onclick={() => isSettingsOpen = true}
+				onclick={() => goto('/settings')}
 				class="bg-gray-100 hover:bg-gray-200 text-indigo-600 p-2 rounded-lg shadow-sm transition-all hover:scale-105 active:scale-95"
 				title="הגדרות"
 			>
@@ -207,7 +192,7 @@
 				</svg>
 			</button>
 			<button
-				onclick={() => startNewGame()}
+				onclick={() => startNewGame(1)}
 				class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow-md transition-all hover:scale-105 active:scale-95 font-bold"
 			>
 				משחק חדש
@@ -244,7 +229,7 @@
 					</div>
 				{:else}
 					<button
-						onclick={() => startNewGame(settings, 1)}
+						onclick={() => startNewGame(1)}
 						class="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-xl text-xl font-bold shadow-lg transition-transform hover:scale-105 w-full"
 					>
 						שחק שוב
@@ -253,28 +238,4 @@
 			</div>
 		</div>
 	{/if}
-
-	<SettingsModal
-		isOpen={isSettingsOpen}
-		onClose={() => isSettingsOpen = false}
-		onSave={(newSettings) => {
-			isSettingsOpen = false;
-			startNewGame({
-				pairCount: newSettings.pairCount,
-				contentType: newSettings.contentType,
-				selectedLetters: newSettings.selectedLetters,
-				selectedShapes: newSettings.selectedShapes,
-				colorMode: newSettings.colorMode,
-				loopMode: newSettings.loopMode,
-				totalRounds: newSettings.totalRounds
-			}, 1);
-		}}
-		initialPairCount={settings.pairCount}
-		initialContentType={settings.contentType}
-		initialSelectedLetters={settings.selectedLetters}
-		initialSelectedShapes={settings.selectedShapes}
-		initialColorMode={settings.colorMode}
-		initialLoopMode={settings.loopMode}
-		initialTotalRounds={settings.totalRounds}
-	/>
 </div>
