@@ -22,7 +22,8 @@ export const DEFAULT_SETTINGS = {
 	autoBooster: true,
 
 	// הגדרות משחקיות
-	enableDeselect: true
+	enableDeselect: true,
+	hideMatchedCards: false
 };
 
 export type LottoSettings = typeof DEFAULT_SETTINGS;
@@ -38,6 +39,7 @@ class SettingsStore {
 	boosterEnabled = $state(DEFAULT_SETTINGS.boosterEnabled);
 	autoBooster = $state(DEFAULT_SETTINGS.autoBooster);
 	enableDeselect = $state(DEFAULT_SETTINGS.enableDeselect);
+	hideMatchedCards = $state(DEFAULT_SETTINGS.hideMatchedCards);
 
 	constructor() {
 		if (browser) {
@@ -81,7 +83,8 @@ class SettingsStore {
 			totalRounds: this.totalRounds,
 			boosterEnabled: this.boosterEnabled,
 			autoBooster: this.autoBooster,
-			enableDeselect: this.enableDeselect
+			enableDeselect: this.enableDeselect,
+			hideMatchedCards: this.hideMatchedCards
 		};
 	}
 
@@ -99,6 +102,7 @@ class SettingsStore {
 		this.boosterEnabled = parsed.boosterEnabled ?? DEFAULT_SETTINGS.boosterEnabled;
 		this.autoBooster = parsed.autoBooster ?? DEFAULT_SETTINGS.autoBooster;
 		this.enableDeselect = parsed.enableDeselect ?? DEFAULT_SETTINGS.enableDeselect;
+		this.hideMatchedCards = parsed.hideMatchedCards ?? DEFAULT_SETTINGS.hideMatchedCards;
 	}
 
 	reset() {

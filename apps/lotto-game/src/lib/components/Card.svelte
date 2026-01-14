@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { isShapeContent, type Card } from '$lib/utils/gameLogic';
+	import { settings } from '$lib/stores/settings.svelte';
 	import { playCardFlip } from '$lib/utils/sound';
 	import ShapeSvg from './ShapeSvg.svelte';
 
@@ -20,7 +21,9 @@
 
 	// חישוב מצב הכרטיס
 	const cardState = $derived.by(() => {
-		if (card.isMatched) return 'matched';
+		if (card.isMatched) {
+			return settings.hideMatchedCards ? 'hidden' : 'matched';
+		}
 		if (card.isError) return 'error';
 		if (card.isSelected) return 'selected';
 		return 'idle';
@@ -34,6 +37,7 @@
 		class="card"
 		class:idle={cardState === 'idle'}
 		class:matched={cardState === 'matched'}
+		class:hidden={cardState === 'hidden'}
 		class:error={cardState === 'error'}
 		class:selected={cardState === 'selected'}
 		onclick={handleClick}
@@ -73,6 +77,11 @@
 	/* מצב התאמה (matched) */
 	.card.matched {
 		@apply bg-green-100 text-green-600 border-2 border-green-400 opacity-50 scale-95 cursor-default;
+	}
+
+	/* מצב מוסתר (hidden) */
+	.card.hidden {
+		@apply invisible opacity-0 pointer-events-none;
 	}
 
 	/* מצב שגיאה (error) */

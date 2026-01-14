@@ -188,6 +188,17 @@
 						אפשר ביטול בחירה (בלחיצה שנייה)
 					</label>
 				</div>
+				<div class="flex items-center gap-3">
+					<input
+						type="checkbox"
+						id="hideMatchedCards"
+						bind:checked={settings.hideMatchedCards}
+						class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500"
+					/>
+					<label for="hideMatchedCards" class="text-slate-700 font-medium cursor-pointer select-none">
+						הסתר כרטיסים שהותאמו
+					</label>
+				</div>
 			</div>
 		</div>
 	</section>
