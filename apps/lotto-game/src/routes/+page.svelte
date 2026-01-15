@@ -24,6 +24,7 @@
 	let nextRoundTimer = $state<number | null>(null);
 
 	let showRewardButton = $state(false);
+	let isRewardPending = $state(false);
 
 	// כותרת דינמית לפי סוג התוכן
 	const gameTitle = $derived(settings.contentType === 'letters' ? 'משחק לוטו אותיות' : 'משחק לוטו צורות');
@@ -67,6 +68,7 @@
 		isLocked = false;
 		won = false;
 		showRewardButton = false;
+		isRewardPending = false;
 		currentRound = round;
 		nextRoundTimer = null;
 	}
@@ -177,6 +179,8 @@
 	}
 
 	function handleManualRewardClick() {
+		if (isRewardPending) return; // מניעת לחיצות כפולות
+		isRewardPending = true;
 		boosterService.triggerReward();
 		winsCount = 0;
 		showRewardButton = false;
@@ -257,7 +261,8 @@
 					<!-- כפתור פרס גדול -->
 					<button
 						onclick={handleManualRewardClick}
-						class="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white px-8 py-6 rounded-2xl text-2xl font-black shadow-xl transition-transform hover:scale-105 active:scale-95 w-full flex items-center justify-center gap-3 animate-bounce"
+						disabled={isRewardPending}
+						class="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white px-8 py-6 rounded-2xl text-2xl font-black shadow-xl transition-transform hover:scale-105 active:scale-95 w-full flex items-center justify-center gap-3 animate-bounce disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 disabled:animate-none"
 					>
 						<span>🎁</span>
 						<span>קבל הפתעה!</span>

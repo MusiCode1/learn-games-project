@@ -15,7 +15,8 @@
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test",
-		"types": "wrangler types"
+		"types": "wrangler types",
+		"deploy": "vite build && wrangler pages deploy"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.0",
