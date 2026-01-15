@@ -4,6 +4,8 @@
 	import { BoosterContainer, boosterService } from 'learn-booster-kit';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { onMount } from 'svelte';
+	// ייבוא providers - מבצע רישום אוטומטי
+	import '$lib/content';
 
 	let { children } = $props();
 

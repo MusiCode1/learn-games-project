@@ -1,5 +1,69 @@
 # יומן פיתוח - משחק לוטו (Lotto Game)
 
+## 2026-01-15 22:18
+
+### ריפקטורינג UI - SegmentedControl, ארגון קומפוננטות ו-@apply
+
+בוצע ריפקטורינג מקיף לממשק המשתמש: יצירת קומפוננטה גנרית לבוררים, העברת קומפוננטות למיקומים לוגיים, שינוי מבנה ההגדרות, ומעבר לשימוש ב-Tailwind עם `@apply` מאורגן.
+
+#### מה בוצע?
+
+**1. קומפוננטה גנרית - SegmentedControl**
+
+- **[NEW] `SegmentedControl.svelte`**: קומפוננטה חדשה ב-`lib/components/` לבוררים סגמנטיים (2-3 מצבים).
+- **שימושים**: החליפה כפתורים בודדים בשלושה מקומות:
+  - סוג תוכן (אותיות | צורות)
+  - מצב צבעים (רנדומלי | אחיד)
+  - מבנה המשחק (מוגבל | אינסופי)
+- **עיצוב**: בורר מחובר עם רקע משותף, אנימציות scale וצבעים, כולל תמיכה באייקונים.
+
+**2. ארגון מחדש של קומפוננטות**
+
+- **קומפוננטות ייעודיות לראוטינג**: הועברו `Confetti.svelte` ו-`Board.svelte` מ-`lib/components/` ל-`routes/_components/` (משמשות רק בדף המשחק הראשי).
+- **קומפוננטות ייעודיות לפרוביידר**: הועבר `ShapeSvg.svelte` מ-`lib/components/` ל-`content/providers/shapes/` (משמש רק בצורות).
+- **עדכון ייבואים**: כל הייבואים עודכנו בהתאם למיקומים החדשים.
+
+**3. מבנה הגדרות חדש**
+
+- **סדר מחודש**: סקשנים בדף ההגדרות עודכנו לסדר לוגי יותר:
+  1. 🎨 **בחירת תוכן** (סוג תוכן + הגדרות ספציפיות לפרוביידר)
+  2. ⚙️ **הגדרות משחק** (מספר זוגות, אפשרויות)
+  3. 🎁 **מהלך משחק וחיזוקים**
+- **איחוד**: סוג התוכן שהיה בסקשן נפרד עבר להיות חלק מסקשן "בחירת תוכן" יחד עם ההגדרות הספציפיות.
+- **SegmentedControl**: כל הבוררים הוחלפו ב-`SegmentedControl` במקום כפתורים נפרדים.
+
+**4. מעבר ל-@apply עם ארגון לפי קטגוריות**
+
+- **13 קומפוננטות עודכנו**: כל סגנונות ה-Tailwind inline הועברו ל-`<style>` block עם `@apply`.
+- **ארגון לפי קטגוריות**: כל class מאורגן לקטגוריות:
+  - **Layout** - `flex`, `grid`, `items-center`, `justify-between`
+  - **Spacing** - `p-*`, `m-*`, `gap-*`
+  - **Visual** - `bg-*`, `text-*`, `rounded-*`, `shadow-*`, `border-*`, `font-*`
+  - **Interactive** - `hover:*`, `focus:*`, `transition-*`, `cursor-*`
+- **קומפוננטות שעודכנו**:
+  - `routes/+page.svelte`
+  - `routes/settings/+page.svelte`
+  - `routes/settings/_components/SettingsControls.svelte`
+  - `lib/components/SegmentedControl.svelte` (חדש)
+  - `routes/_components/Board.svelte`
+  - `content/providers/letters/LettersSettings.svelte`
+  - `content/providers/shapes/ShapesSettings.svelte`
+
+**5. תיקון Registry לתמיכה ב-HMR**
+
+- **בעיה**: בסביבת פיתוח, HMR (Hot Module Reload) גרם לרישום כפול של providers וזרק שגיאה.
+- **פתרון**: שונה `ContentProviderRegistry.register()` מזריקת שגיאה במקרה של provider קיים לדריסה שקטה, מה שמאפשר HMR לעבוד בצורה תקינה.
+
+#### החלטות ארכיטקטורה
+
+- **SegmentedControl גנרי**: נבחר לבנות קומפוננטה גנרית במקום לשכפל קוד דומה בכל בורר. הקומפוננטה מקבלת `options[]` ו-`value` ומטפלת בכל הלוגיקה הויזואלית באופן אחיד.
+
+- **ארגון קומפוננטות לפי שימוש**: קומפוננטות הועברו למיקומים לוגיים לפי עקרון "co-location" - קומפוננטות שמשמשות רק במקום אחד נמצאות קרוב לאותו מקום (routes/_components או בתוך ה-provider).
+
+- **@apply עם קטגוריות**: מעבר מ-inline classes ל-`@apply` בארגון קטגוריאלי משפר קריאות, תחזוקה ויכולת לשתף סגנונות. הארגון לקטגוריות עוזר למצוא מהר שינויים ספציפיים (למשל, כל מה שקשור ל-hover נמצא תחת Interactive).
+
+- **דריסה במקום שגיאה ב-Registry**: במקום לזרוק שגיאה על provider כפול (שמתאים ל-production), נבחר לאפשר דריסה (overwrite) בפיתוח כדי שלא לשבור את ה-HMR. זה pattern נפוץ בכלי פיתוח מודרניים.
+
 ## 2026-01-15 17:50
 
 ### תיקון בהפעלת פרס ועדכוני תשתית

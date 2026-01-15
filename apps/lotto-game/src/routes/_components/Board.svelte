@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Card as CardType } from '$lib/utils/gameLogic';
-	import Card from './Card.svelte';
+	import Card from '$lib/components/Card.svelte';
 
 	interface Props {
 		cards: CardType[];
@@ -89,10 +89,7 @@
 	}
 </script>
 
-<div
-	class="board"
-	style="--grid-size: {gridSize};"
->
+<div class="board" style="--grid-size: {gridSize};">
 	{#each cells as cell, i (i)}
 		{#if cell.type === 'card'}
 			<Card card={cell.card} onclick={onCardClick} disabled={isLocked} />
@@ -106,19 +103,19 @@
 	@reference "tailwindcss";
 
 	.board {
-		/* ===== פריסה - Container Query (CSS טהור) ===== */
+		/* Layout - Container Query (CSS טהור) */
 		/* הלוח תמיד מרובע - 95% מהממד הקטן יותר של הקונטיינר */
 		width: 95cqmin;
 		height: 95cqmin;
-		
+
 		/* גריד דינמי לפי מספר העמודות/שורות */
 		display: grid;
 		grid-template-columns: repeat(var(--grid-size), 1fr);
 		grid-template-rows: repeat(var(--grid-size), 1fr);
 		gap: 0.5cqmin;
 		padding: 1cqmin;
-		
-		/* ===== עיצוב - Tailwind ===== */
+
+		/* Visual */
 		@apply bg-white/30 backdrop-blur-sm rounded-2xl shadow-xl;
 	}
 

@@ -10,8 +10,9 @@
 	import { playSuccess, playError, playWin } from '$lib/utils/sound';
 	import { boosterService, AdminGate } from 'learn-booster-kit';
 	import { settings } from '$lib/stores/settings.svelte';
-	import Confetti from '$lib/components/Confetti.svelte';
-	import Board from '$lib/components/Board.svelte';
+	import { contentRegistry } from '$lib/content/registry';
+	import Confetti from './_components/Confetti.svelte';
+	import Board from './_components/Board.svelte';
 	import winnerLogo from '$lib/assets/winner_logo.png';
 
 	// מצב המשחק
@@ -27,7 +28,8 @@
 	let isRewardPending = $state(false);
 
 	// כותרת דינמית לפי סוג התוכן
-	const gameTitle = $derived(settings.contentType === 'letters' ? 'משחק לוטו אותיות' : 'משחק לוטו צורות');
+	const provider = $derived(contentRegistry.get(settings.contentProviderId));
+	const gameTitle = $derived(`משחק לוטו ${provider.displayName}`);
 
 	onMount(() => {
 		// בוסטר מותחל ב-layout
@@ -54,12 +56,23 @@
 	});
 
 	function startNewGame(round = 1) {
+		// שליפת ה-provider והגדרות
+		const currentProvider = contentRegistry.get(settings.contentProviderId);
+		const providerSettings = settings.getCurrentProviderSettings();
+		
+		// שליפת רשימת ה-IDs של הפריטים שנבחרו
+		let selectedItemIds: string[] = [];
+		if (settings.contentProviderId === 'letters') {
+			selectedItemIds = (providerSettings as any).selectedLetters || [];
+		} else if (settings.contentProviderId === 'shapes') {
+			selectedItemIds = (providerSettings as any).selectedShapes || [];
+		}
+		
 		const newCards = generateCards({
 			pairCount: settings.pairCount,
-			contentType: settings.contentType,
-			selectedLetters: settings.selectedLetters,
-			selectedShapes: settings.selectedShapes,
-			colorMode: settings.colorMode
+			provider: currentProvider,
+			selectedItemIds,
+			settings: providerSettings
 		});
 		
 		cards = newCards;
@@ -104,8 +117,9 @@
 			const firstCard = cards[firstIndex];
 			const secondCard = cards[secondIndex];
 
-			// השתמש בפונקציית ההשוואה המתאימה לשני סוגי התוכן
-			if (contentMatches(firstCard.content, secondCard.content)) {
+			// השתמש בפונקציית ההשוואה מה-provider
+			const currentProvider = contentRegistry.get(settings.contentProviderId);
+			if (contentMatches(firstCard, secondCard, currentProvider)) {
 				// התאמה!
 				playSuccess();
 				setTimeout(() => {
@@ -192,105 +206,102 @@
 	}
 </script>
 
-<div class="flex flex-col h-screen bg-linear-to-br from-indigo-100 to-purple-100 overflow-hidden">
+<div class="game-page">
 	{#if won}
 		<Confetti />
 	{/if}
 
 	<!-- Header Bar -->
-	<header class="bg-white shadow-md p-4 flex justify-between items-center z-10 shrink-0">
-		<button
-		onclick={() => startNewGame(1)}
-		class="bg-indigo-50 px-4 py-2 rounded-lg border border-indigo-100 cursor-pointer"
-		>
-			<h1 class="text-2xl font-bold text-indigo-800 font-sans">{gameTitle}</h1>
+	<header class="header">
+		<button onclick={() => startNewGame(1)} class="title-button">
+			<h1 class="title">{gameTitle}</h1>
 		</button>
 
-		<div class="flex items-center gap-4">
-			<div class="bg-indigo-50 px-4 py-2 rounded-lg border border-indigo-100">
-				<span class="text-gray-600 ml-2">זוגות:</span>
-				<span class="font-bold text-indigo-600 text-xl">{matches}/{settings.pairCount}</span>
+		<div class="header-stats">
+			<div class="stat-badge pairs">
+				<span class="stat-label">זוגות:</span>
+				<span class="stat-value">{matches}/{settings.pairCount}</span>
 			</div>
-			
+
 			{#if settings.loopMode === 'finite' && settings.totalRounds > 1}
-				<div class="bg-purple-50 px-4 py-2 rounded-lg border border-purple-100">
-					<span class="text-gray-600 ml-2">סבב:</span>
-					<span class="font-bold text-purple-600 text-xl">{currentRound}/{settings.totalRounds}</span>
+				<div class="stat-badge rounds">
+					<span class="stat-label">סבב:</span>
+					<span class="stat-value">{currentRound}/{settings.totalRounds}</span>
 				</div>
 			{/if}
 
 			{#if settings.loopMode === 'infinite'}
-				 <div class="bg-purple-50 px-4 py-2 rounded-lg border border-purple-100">
-					<span class="text-gray-600 ml-2">סבב:</span>
-					<span class="font-bold text-purple-600 text-xl">{currentRound}</span>
+				<div class="stat-badge rounds">
+					<span class="stat-label">סבב:</span>
+					<span class="stat-value">{currentRound}</span>
 				</div>
 			{/if}
 
 			<AdminGate onUnlock={() => goto('/settings')}>
-				<button
-					class="bg-gray-100 hover:bg-gray-200 text-indigo-600 p-2 rounded-full shadow-sm transition-all hover:scale-105 active:scale-95"
-					title="הגדרות"
-				>
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+				<button class="settings-button" title="הגדרות">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="icon"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+						/>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+						/>
 					</svg>
 				</button>
 			</AdminGate>
-
 		</div>
 	</header>
 
 	<!-- Main Game Area -->
 	<main class="game-container">
-		<Board
-			{cards}
-			onCardClick={handleCardClick}
-			{isLocked}
-		/>
+		<Board {cards} onCardClick={handleCardClick} {isLocked} />
 	</main>
 
 	{#if won}
-		<div class="fixed inset-0 flex items-center justify-center bg-black/50 z-50" transition:fade>
-			<div class="bg-white p-8 rounded-2xl shadow-2xl text-center relative z-50 max-w-md w-full mx-4" transition:scale>
-				<img src={winnerLogo} alt="Winner" class="w-32 h-32 mx-auto mb-4 object-contain drop-shadow-lg" />
-				<h2 class="text-5xl font-bold text-green-500 mb-4">כל הכבוד!</h2>
-				<p class="text-2xl text-gray-600 mb-8">מצאת את כל הזוגות!</p>
+		<div class="modal-overlay" transition:fade>
+			<div class="modal-content" transition:scale>
+				<img src={winnerLogo} alt="Winner" class="winner-logo" />
+				<h2 class="winner-title">כל הכבוד!</h2>
+				<p class="winner-text">מצאת את כל הזוגות!</p>
 
 				{#if showRewardButton}
 					<!-- כפתור פרס גדול -->
 					<button
 						onclick={handleManualRewardClick}
 						disabled={isRewardPending}
-						class="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white px-8 py-6 rounded-2xl text-2xl font-black shadow-xl transition-transform hover:scale-105 active:scale-95 w-full flex items-center justify-center gap-3 animate-bounce disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 disabled:animate-none"
+						class="reward-button"
+						class:disabled={isRewardPending}
 					>
 						<span>🎁</span>
 						<span>קבל הפתעה!</span>
-					</button> 
-					<div class="mt-4">
-						<button
-							onclick={() => startNewGame(currentRound + 1)}
-							class="text-gray-400 hover:text-gray-600 underline text-sm"
-						>
+					</button>
+					<div class="skip-wrapper">
+						<button onclick={() => startNewGame(currentRound + 1)} class="skip-button">
 							דלג והמשך לסבב הבא
 						</button>
 					</div>
 				{:else if nextRoundTimer !== null}
-					<div class="mb-6">
-						<p class="text-lg text-indigo-600 font-bold mb-2">הסבב הבא מתחיל בעוד:</p>
-						<div class="text-4xl font-mono font-bold text-indigo-800">{nextRoundTimer}</div>
-						<button
-							onclick={() => nextRoundTimer = 1}
-							class="mt-4 text-sm text-gray-500 hover:text-indigo-600 underline"
-						>
+					<div class="timer-section">
+						<p class="timer-label">הסבב הבא מתחיל בעוד:</p>
+						<div class="timer-value">{nextRoundTimer}</div>
+						<button onclick={() => (nextRoundTimer = 1)} class="timer-skip">
 							דלג והתחל מיד
 						</button>
 					</div>
 				{:else}
-					<button
-						onclick={() => startNewGame(1)}
-						class="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-xl text-xl font-bold shadow-lg transition-transform hover:scale-105 w-full"
-					>
+					<button onclick={() => startNewGame(1)} class="play-again-button">
 						שחק שוב
 					</button>
 				{/if}
@@ -298,3 +309,265 @@
 		</div>
 	{/if}
 </div>
+
+<style>
+	@reference "tailwindcss";
+
+	/* Page Container */
+	.game-page {
+		/* Layout */
+		@apply flex flex-col h-screen;
+		@apply overflow-hidden;
+
+		/* Visual */
+		@apply bg-gradient-to-br from-indigo-100 to-purple-100;
+	}
+
+	/* Header */
+	.header {
+		/* Layout */
+		@apply flex justify-between items-center;
+		@apply shrink-0 z-10;
+
+		/* Spacing */
+		@apply p-4;
+
+		/* Visual */
+		@apply bg-white shadow-md;
+	}
+
+	.title-button {
+		/* Spacing */
+		@apply px-4 py-2;
+
+		/* Visual */
+		@apply bg-indigo-50 rounded-lg;
+		@apply border border-indigo-100;
+
+		/* Interactive */
+		@apply cursor-pointer;
+	}
+
+	.title {
+		/* Visual */
+		@apply text-2xl font-bold text-indigo-800 font-sans;
+	}
+
+	.header-stats {
+		/* Layout */
+		@apply flex items-center;
+
+		/* Spacing */
+		@apply gap-4;
+	}
+
+	.stat-badge {
+		/* Spacing */
+		@apply px-4 py-2;
+
+		/* Visual */
+		@apply rounded-lg border;
+	}
+
+	.stat-badge.pairs {
+		/* Visual */
+		@apply bg-indigo-50 border-indigo-100;
+	}
+
+	.stat-badge.rounds {
+		/* Visual */
+		@apply bg-purple-50 border-purple-100;
+	}
+
+	.stat-label {
+		/* Spacing */
+		@apply ml-2;
+
+		/* Visual */
+		@apply text-gray-600;
+	}
+
+	.stat-value {
+		/* Visual */
+		@apply font-bold text-xl;
+	}
+
+	.stat-badge.pairs .stat-value {
+		/* Visual */
+		@apply text-indigo-600;
+	}
+
+	.stat-badge.rounds .stat-value {
+		/* Visual */
+		@apply text-purple-600;
+	}
+
+	.settings-button {
+		/* Spacing */
+		@apply p-2;
+
+		/* Visual */
+		@apply bg-gray-100 text-indigo-600;
+		@apply rounded-full shadow-sm;
+
+		/* Interactive */
+		@apply hover:bg-gray-200 hover:scale-105;
+		@apply active:scale-95 transition-all;
+	}
+
+	.icon {
+		/* Layout */
+		@apply h-6 w-6;
+	}
+
+	/* Main Game Area */
+	.game-container {
+		/* CSS property for container queries */
+		container-type: size;
+		
+		/* Layout */
+		@apply flex items-center justify-center;
+		@apply flex-1 overflow-hidden;
+	}
+
+	/* Modal */
+	.modal-overlay {
+		/* Layout */
+		@apply fixed inset-0 flex items-center justify-center;
+		@apply z-50;
+
+		/* Visual */
+		@apply bg-black/50;
+	}
+
+	.modal-content {
+		/* Layout */
+		@apply relative z-50;
+		@apply max-w-md w-full;
+		@apply flex flex-col items-center;
+
+		/* Spacing */
+		@apply p-8 mx-4;
+
+		/* Visual */
+		@apply bg-white rounded-2xl shadow-2xl;
+		@apply text-center;
+	}
+
+	.winner-logo {
+		/* Layout */
+		@apply w-32 h-32 mx-auto;
+
+		/* Spacing */
+		@apply mb-4;
+
+		/* Visual */
+		@apply object-contain drop-shadow-lg;
+	}
+
+	.winner-title {
+		/* Spacing */
+		@apply mb-4;
+
+		/* Visual */
+		@apply text-5xl font-bold text-green-500;
+	}
+
+	.winner-text {
+		/* Spacing */
+		@apply mb-8;
+
+		/* Visual */
+		@apply text-2xl text-gray-600;
+	}
+
+	/* Reward Button */
+	.reward-button {
+		/* Layout */
+		@apply w-full flex items-center justify-center;
+
+		/* Spacing */
+		@apply gap-3 px-8 py-6;
+
+		/* Visual */
+		@apply bg-gradient-to-r from-yellow-400 to-orange-500;
+		@apply text-white text-2xl font-black;
+		@apply rounded-2xl shadow-xl;
+
+		/* Interactive */
+		@apply hover:from-yellow-500 hover:to-orange-600;
+		@apply hover:scale-105 active:scale-95;
+		@apply transition-transform;
+		@apply animate-bounce;
+	}
+
+	.reward-button.disabled {
+		/* Visual */
+		@apply opacity-50;
+
+		/* Interactive */
+		@apply cursor-not-allowed scale-100;
+		@apply animate-none;
+	}
+
+	.skip-wrapper {
+		/* Spacing */
+		@apply mt-4;
+	}
+
+	.skip-button {
+		/* Visual */
+		@apply text-gray-400 text-sm underline;
+
+		/* Interactive */
+		@apply hover:text-gray-600;
+	}
+
+	/* Timer Section */
+	.timer-section {
+		/* Spacing */
+		@apply mb-6;
+	}
+
+	.timer-label {
+		/* Spacing */
+		@apply mb-2;
+
+		/* Visual */
+		@apply text-lg text-indigo-600 font-bold;
+	}
+
+	.timer-value {
+		/* Visual */
+		@apply text-4xl font-mono font-bold text-indigo-800;
+	}
+
+	.timer-skip {
+		/* Spacing */
+		@apply mt-4;
+
+		/* Visual */
+		@apply text-sm text-gray-500 underline;
+
+		/* Interactive */
+		@apply hover:text-indigo-600;
+	}
+
+	/* Play Again Button */
+	.play-again-button {
+		/* Layout */
+		@apply w-full;
+
+		/* Spacing */
+		@apply px-8 py-4;
+
+		/* Visual */
+		@apply bg-green-500 text-white;
+		@apply rounded-xl text-xl font-bold;
+		@apply shadow-lg;
+
+		/* Interactive */
+		@apply hover:bg-green-600 hover:scale-105;
+		@apply transition-transform;
+	}
+</style>

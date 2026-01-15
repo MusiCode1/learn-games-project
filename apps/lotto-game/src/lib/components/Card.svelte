@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { isShapeContent, type Card } from '$lib/utils/gameLogic';
+	import type { Card } from '$lib/utils/gameLogic';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { playCardFlip } from '$lib/utils/sound';
-	import ShapeSvg from './ShapeSvg.svelte';
+	import ContentRenderer from './ContentRenderer.svelte';
+	import { contentRegistry } from '$lib/content/registry';
 
 	interface Props {
 		card: Card;
@@ -28,29 +29,31 @@
 		if (card.isSelected) return 'selected';
 		return 'idle';
 	});
+
+	// שליפת ה-provider לקבלת הגדרות עיצוב
+	const provider = $derived(contentRegistry.get(card.content.providerId));
+	const cardStyles = $derived(provider.cardStyles);
 </script>
 
 <div class="card-wrapper">
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="card"
+		class="card {cardStyles?.className ?? ''}"
 		class:idle={cardState === 'idle'}
 		class:matched={cardState === 'matched'}
 		class:hidden={cardState === 'hidden'}
 		class:error={cardState === 'error'}
 		class:selected={cardState === 'selected'}
+		class:layout-vertical={cardStyles?.contentLayout === 'vertical'}
+		class:layout-horizontal={cardStyles?.contentLayout === 'horizontal'}
+		style:font-size={cardStyles?.fontSize}
+		style:padding={cardStyles?.padding}
 		onclick={handleClick}
 		role="button"
 		tabindex="0"
 	>
-		{#if isShapeContent(card.content)}
-			<!-- תצוגת צורה גיאומטרית -->
-			<ShapeSvg shapeId={card.content.shapeId} color={card.content.color} />
-		{:else}
-			<!-- תצוגת אות -->
-			{card.content}
-		{/if}
+		<ContentRenderer content={card.content} />
 	</div>
 </div>
 
@@ -64,6 +67,15 @@
 	.card {
 		@apply relative w-full h-full rounded-xl flex items-center justify-center;
 		@apply text-[6vmin] font-bold transition-all duration-300 select-none;
+	}
+
+	/* פריסות מיוחדות */
+	.card.layout-vertical {
+		@apply flex-col gap-2;
+	}
+
+	.card.layout-horizontal {
+		@apply flex-row gap-2;
 	}
 
 	/* מצב רגיל (idle) */
