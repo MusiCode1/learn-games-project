@@ -10,6 +10,14 @@
 		rewardEnabled?: boolean;
 	}>();
 
+	let isRewardPending = $state(false);
+
+	function handleRewardClick() {
+		if (isRewardPending || !onReward) return; // מניעת לחיצות כפולות
+		isRewardPending = true;
+		onReward();
+	}
+
 	onMount(() => {
 		playSuccess();
 	});
@@ -48,8 +56,9 @@
 		{#if rewardEnabled && onReward}
 			<div class="w-full mt-2">
 				<button
-					onclick={onReward}
-					class="w-full py-4 px-6 bg-purple-500 hover:bg-purple-600 text-white text-xl font-bold rounded-2xl shadow-lg hover:shadow-purple-200 transition-all transform hover:-translate-y-1 animate-pulse"
+					onclick={handleRewardClick}
+					disabled={isRewardPending}
+					class="w-full py-4 px-6 bg-purple-500 hover:bg-purple-600 text-white text-xl font-bold rounded-2xl shadow-lg hover:shadow-purple-200 transition-all transform hover:-translate-y-1 animate-pulse disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0 disabled:animate-none"
 				>
 					🎁 המשך להפתעה
 				</button>
