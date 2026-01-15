@@ -60,7 +60,7 @@
   <!-- כפתורי תשובה - כל הספרות 1-10 -->
   <div
     id="answer-buttons-container"
-    class="grid grid-cols-5 gap-2 sm:gap-3 md:flex md:flex-wrap md:justify-center"
+    class="grid grid-cols-5 gap-2 sm:gap-3 md:gap-4 md:flex md:flex-wrap md:justify-center max-w-4xl"
     dir="ltr"
   >
     {#each allDigits as digit}
@@ -68,7 +68,7 @@
         onclick={() => handleSelect(digit)}
         disabled={!isActive || isOnCooldown}
         class="flex h-10 w-10 items-center justify-center rounded-xl text-xl font-bold
-						shadow-lg transition-all sm:h-14 sm:w-14 sm:text-2xl md:h-20 md:w-20 md:text-3xl
+						shadow-lg transition-all sm:h-14 sm:w-14 sm:text-2xl md:h-16 md:w-16 md:text-2xl xl:h-20 xl:w-20 xl:text-3xl
 						{isActive && !isOnCooldown
           ? 'bg-purple-500 text-white hover:bg-purple-600 active:scale-95'
           : 'cursor-not-allowed bg-gray-300 text-gray-500'}"

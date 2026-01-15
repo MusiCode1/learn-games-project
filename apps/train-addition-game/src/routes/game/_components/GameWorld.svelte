@@ -15,20 +15,6 @@
 
   <!-- Parallax or multiple decorative layers could go here -->
 
-  <!-- Ground Layer -->
-  <!-- Positioned at the bottom. We use repeat-x to tile the grass block across. -->
-  <div
-    class="absolute bottom-0 left-0 right-0 h-[50px] md:h-[128px] w-full"
-    style="
-      background-image: url('/assets/grassMid.png');
-      background-repeat: repeat-x;
-      background-size: 128px 128px;
-      background-position: top center; 
-    "
-  >
-    <!-- We can add 'dirt' below the top grass layer if needed, but for now just the surface is enough -->
-  </div>
-
   <!-- Decorative elements (can be randomized later) -->
   <img
     src="/assets/bush.png"
@@ -46,6 +32,6 @@
 </div>
 
 <!-- Slot for the actual game content to sit 'inside' or 'on top' of this world -->
-<div class="relative z-10 w-full h-full flex flex-col justify-between">
+<div class="relative z-10 w-full h-full">
   <slot />
 </div>

@@ -36,12 +36,6 @@
   const showPlusSign = $derived(
     gameState.round.builtA > 0 && gameState.round.addedB > 0
   );
-
-  const hideBubblesOnMobile = $derived(
-    gameState.state === "CHOOSE_ANSWER" ||
-      gameState.state === "FEEDBACK_CORRECT" ||
-      gameState.state === "FEEDBACK_WRONG"
-  );
 </script>
 
 <div class="relative flex w-full flex-col items-center justify-center px-4">
@@ -62,13 +56,12 @@
     {/if}
 
     <!-- קבוצה A עם מספר דינמי מעל -->
+    <!-- קבוצה A עם מספר דינמי מעל -->
     {#if carsA.length > 0}
       <div class="relative flex flex-col items-center">
         <!-- מספר מעל קבוצה A - מוצג תמיד (גם בזמן בנייה) -->
         <div
-          class="{hideBubblesOnMobile
-            ? 'hidden md:flex'
-            : 'flex'} mb-1 h-10 w-10 items-center justify-center rounded-full bg-green-500 text-2xl font-bold text-white shadow-lg ring-2 ring-green-300 sm:ring-4 sm:mb-2 sm:h-16 sm:w-16 sm:text-4xl md:h-24 md:w-24 md:text-6xl"
+          class="flex mb-1 h-8 w-8 items-center justify-center rounded-full bg-green-500 text-xl font-bold text-white shadow-lg ring-2 ring-green-300 sm:ring-4 sm:mb-2 sm:h-14 sm:w-14 sm:text-3xl md:h-20 md:w-20 md:text-5xl"
         >
           {gameState.round.builtA}
         </div>
@@ -85,9 +78,7 @@
     <!-- סימן חיבור (+) -->
     {#if showPlusSign}
       <div
-        class="{hideBubblesOnMobile
-          ? 'hidden md:flex'
-          : 'flex'} mx-1 h-8 w-8 self-start mt-1 items-center justify-center rounded-full bg-amber-500 text-2xl font-bold text-white shadow-lg sm:h-14 sm:w-14 sm:text-4xl sm:mx-3 sm:mt-2 md:h-20 md:w-20 md:text-5xl md:mt-4 border-2 sm:border-4 border-white"
+        class="flex mx-1 h-6 w-6 self-start mt-1 items-center justify-center rounded-full bg-amber-500 text-xl font-bold text-white shadow-lg sm:h-10 sm:w-10 sm:text-3xl sm:mx-3 sm:mt-2 md:h-16 md:w-16 md:text-4xl md:mt-4 border-2 sm:border-4 border-white"
       >
         +
       </div>
@@ -98,9 +89,7 @@
       <div class="relative flex flex-col items-center">
         <!-- מספר מעל קבוצה B - מוצג תמיד (גם בזמן בנייה) -->
         <div
-          class="{hideBubblesOnMobile
-            ? 'hidden md:flex'
-            : 'flex'} mb-1 h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-2xl font-bold text-white shadow-lg ring-2 ring-blue-300 sm:ring-4 sm:mb-2 sm:h-16 sm:w-16 sm:text-4xl md:h-24 md:w-24 md:text-6xl"
+          class="flex mb-1 h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-xl font-bold text-white shadow-lg ring-2 ring-blue-300 sm:ring-4 sm:mb-2 sm:h-14 sm:w-14 sm:text-3xl md:h-20 md:w-20 md:text-5xl"
         >
           {gameState.round.addedB}
         </div>

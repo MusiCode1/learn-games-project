@@ -67,7 +67,7 @@
     <!-- מספר גדול -->
     {#if targetNumber !== null}
       <div
-        class="flex h-12 w-12 items-center justify-center rounded-full {numberColor} text-3xl font-black text-white shadow-2xl ring-4 transform scale-110 sm:h-16 sm:w-16 sm:text-4xl md:h-28 md:w-28 md:text-7xl bg-white/10 backdrop-blur-sm border-2 border-white/50"
+        class="flex h-12 w-12 items-center justify-center rounded-full {numberColor} text-3xl font-black text-white shadow-2xl ring-4 transform scale-110 sm:h-14 sm:w-14 sm:text-4xl md:h-16 md:w-16 md:text-5xl xl:h-24 xl:w-24 xl:text-6xl bg-white/10 backdrop-blur-sm border-2 border-white/50"
       >
         {targetNumber}
       </div>
@@ -75,11 +75,11 @@
 
     <!-- הוראה טקסטית - בתוך "ענן" עדין -->
     <div
-      class="flex flex-row items-center gap-2 sm:gap-4 bg-white/80 backdrop-blur-md px-4 py-1 sm:px-6 sm:py-2 md:px-8 md:py-3 rounded-full border border-white/60 shadow-lg"
+      class="flex flex-row items-center gap-2 sm:gap-4 bg-white/80 backdrop-blur-md px-3 py-1 sm:px-4 sm:py-2 md:px-6 md:py-2 rounded-full border border-white/60 shadow-lg"
     >
       <p
         data-testid="instruction-text"
-        class="text-lg font-bold text-slate-800 sm:text-xl md:text-4xl text-stroke"
+        class="text-lg font-bold text-slate-800 sm:text-xl md:text-2xl xl:text-4xl text-stroke"
       >
         {instruction}
       </p>
