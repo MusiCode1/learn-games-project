@@ -34,7 +34,7 @@
     "vite-plugin-vercel": "^9.0.5"
   },
   "dependencies": {
-    "@fontsource/heebo": "^5.1.0",
+    "@fontsource/heebo": "^5.2.8",
     "@playwright/test": "^1.51.1",
     "caniuse-lite": "^1.0.30001745",
     "dotenv": "^16.4.7",
