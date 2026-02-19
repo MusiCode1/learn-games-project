@@ -7,6 +7,7 @@ export { default as Settings } from "./ui/components/Settings.svelte";
 export { default as SettingsForm } from "./ui/components/SettingsForm.svelte";
 export { default as BoosterContainer } from "./ui/BoosterContainer.svelte";
 export { boosterService } from "./lib/booster-service";
+export type { BoosterServiceInitialized } from "./lib/booster-service";
 export * from "./types";
 export * from "./lib/config-manager";
 export { getAppsList } from "./lib/get-app-list";
