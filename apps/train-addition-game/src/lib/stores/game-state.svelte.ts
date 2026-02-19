@@ -99,7 +99,7 @@ class GameStateStore {
       if (this.round.addedB >= this.round.b) {
         this.state = "CHOOSE_ANSWER";
         if (settings.voiceEnabled) {
-          speakChooseAnswer();
+          speakChooseAnswer(this.round.a, this.round.b);
         }
       }
     }
@@ -119,7 +119,7 @@ class GameStateStore {
       playSuccess();
       if (settings.voiceEnabled) {
         // ממתינים לסיום ההודעה
-        await speakCorrect();
+        await speakCorrect(this.round.a, this.round.b);
       }
 
       // בדיקת פרס

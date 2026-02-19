@@ -5,6 +5,57 @@
 
 ---
 
+## 2026-02-19 18:26
+
+### הקשחת lifecycle ב-learn-booster-kit ושיפור ברירת מחדל לווידאו
+
+בוצעו שינויים בספרייה המשותפת `learn-booster-kit` כדי למנוע שימוש בשירות לפני אתחול, לשפר אבחון תקלות בזרימות תגמול, ולעדכן ברירת מחדל למקור וידאו מבוסס Google Drive.
+
+#### מה בוצע?
+
+**1. BoosterService - הקשחת אתחול וניהול מצב**
+
+- נוספה אכיפת אתחול (`ensureInitialized`) לפני גישה ל-`config`, `timer`, `isRewardActive` ולפני רישום controls.
+- `init()` מחזיר מופע מאותחל מסוג `BoosterServiceInitialized`.
+- התווסף ייצוא type ציבורי `BoosterServiceInitialized` דרך `src/index.ts`.
+- נוסף `activeRewardSessionId` כדי לשייך פעולות async לסשן reward ספציפי ולהקטין זליגת מצב בין סשנים.
+
+**2. אבחון Timeout בזרימות Reward**
+
+- נוספה תשתית `startRewardWatchdog` עם payload אבחוני (טיימר, סטטוס מודאל, סימני stall וסיבת חשד).
+- חיבור watchdog לזרימות `video`, `site`, `app` עם ניקוי subscriptions/timeout בסיום.
+- הורחב watcher של Fully עם `getStatus()` לטובת דיווח מדויק יותר ב-timeout.
+
+**3. ברירות מחדל קונפיגורציה**
+
+- עודכנה ברירת המחדל `video.source` מ-`local` ל-`google-drive` בקובץ `default-config`.
+
+#### החלטות ארכיטקטורה
+
+- **Guard ברמת Service במקום להסתמך על סדר קריאות חיצוני**: נבחרה אכיפה פנימית בשירות כדי למנוע שימוש שגוי גם אם צרכן ספרייה לא ממתין נכון ל-`init`.
+- **Watchdog תצפיתי ולא מנגנון ביטול כפוי**: נבחר logging אבחוני במקום force-close, כדי להימנע מהחמרת תקלות UX ולתת שקיפות לצווארי בקבוק אמיתיים בזמן ריצה.
+
+## 2026-02-11 13:00 - עדכוני TTS ו-Kiosk (Train Game)
+
+נוספה תמיכה ב-Fully Kiosk Browser עבור Text-to-Speech ואפשרות לשינוי נוסח השאלה.
+
+### 🚀 מה בוצע
+
+1.  **Fully Kiosk Polyfill**:
+    - נוסף ממשק `FullyKiosk` ומימוש ב-`tts.ts`.
+    - המערכת מזהה אוטומטית אם היא רצה ב-Fully Kiosk ומשתמשת במנוע ה-TTS המובנה שלו (אמין יותר בקיוסק).
+
+2.  **שאלה ומשוב מפורטים**:
+    - נוספה הגדרה חדשה: `detailedQuestion`.
+    - **משוב הצלחה מפורט**: "נכון! 3 ועוד 3 שווה 6! כל הכבוד!".
+    - **חזרה על השאלה בעת טעות**: אם "שאלה מפורטת" פעילה, לאחר טעות המערכת תשאל שוב "כמה זה X ועוד Y?" כדי לחזק את הלמידה.
+    - **מקור אמת יחיד (`VOICE_ASSETS`)**: כל קבצי הקול והטקסטים אוחדו לאובייקט אחד ב-`tts.ts`, המאפשר ניהול קל ושימוש ב-TTS כגיבוי לכל חלק חסר.
+
+3.  **ממשק משתמש**:
+    - נוסף מתג (Toggle) בהגדרות לשליטה על "שאלה מפורטת".
+
+---
+
 ## 2025-12-24 19:33 - עדכון Workflow לתיעוד פיתוח
 
 עודכנו קבצי ה-workflows של תהליך התיעוד עם הנחיות מפורטות יותר.
@@ -36,11 +87,9 @@
 ### 🚀 מה בוצע
 
 1.  **הגדרת סטנדרט**:
-
     - נוצר מסמך [docs/component_structure.md](file:///d:/UserProjects/ThzoharHalev/learn-games-project/docs/component_structure.md) המתעד את האפשרויות והסטנדרט שנבחר.
 
 2.  **train-addition-game**:
-
     - 8 קומפוננטות הועברו ל-`src/routes/game/_components`
     - `SettingsControls` הועבר ל-`src/routes/settings/_components`
     - נשאר רק `HeaderBar` ב-`src/lib/components` (משותף)

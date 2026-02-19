@@ -38,6 +38,8 @@ export interface TeacherSettings {
   gameMode: "continuous" | "manual_end";
   // הגדרות חיזוקים (Booster) - בוליאני בלבד, השאר ב-BoosterService
   boosterEnabled: boolean;
+  // האם להשמיע שאלה מפורטת ("כמה זה X ועוד Y") או רגילה ("כמה רכבות יש")
+  detailedQuestion: boolean;
 }
 
 // קבועים
@@ -51,4 +53,5 @@ export const DEFAULT_SETTINGS: TeacherSettings = {
   voiceEnabled: true,
   gameMode: "manual_end", // ברירת מחדל חדשה: סיום ידני עם מסך "שחק שוב"
   boosterEnabled: true,
+  detailedQuestion: false,
 };

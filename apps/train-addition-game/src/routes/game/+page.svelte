@@ -11,16 +11,23 @@
     boosterService,
     BoosterContainer,
     ProgressWidget,
+    type Config,
   } from "learn-booster-kit";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
 
-  const config = boosterService.config;
+  let config = $state<Config>();
+  let unsubscribeConfig: (() => void) | undefined;
 
   // Extend Global Debug with game-specific actions
   let isShortScreen = $state(false);
   let isRewardPending = $state(false);
 
-  onMount(() => {
+  onMount(async () => {
+    await boosterService.init();
+    unsubscribeConfig = boosterService.config.subscribe((value) => {
+      config = value;
+    });
+
     const checkHeight = () => {
       isShortScreen = window.innerHeight < 720;
     };
@@ -48,6 +55,10 @@
     };
 
     return () => window.removeEventListener("resize", checkHeight);
+  });
+
+  onDestroy(() => {
+    unsubscribeConfig?.();
   });
 
   async function handleGetReward() {
@@ -108,7 +119,7 @@
         <div class="absolute top-4 right-2 z-50 pointer-events-auto">
           <ProgressWidget
             value={gameState.winsSinceLastReward}
-            max={$config?.turnsPerReward ?? 3}
+            max={config?.turnsPerReward ?? 3}
             orientation="vertical"
             label="לפרס"
           />

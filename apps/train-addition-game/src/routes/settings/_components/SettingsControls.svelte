@@ -91,7 +91,7 @@
 
   function updateNumberField(
     field: "turnsPerReward" | "rewardDisplayDurationMs",
-    value: number
+    value: number,
   ) {
     if (!config) return;
     const newConfig = { ...config, [field]: value };
@@ -210,6 +210,35 @@
         ></span>
       </button>
     </div>
+
+    {#if settings.voiceEnabled}
+      <div
+        class="flex items-center justify-between mr-4 border-r-2 border-slate-100 pr-4"
+        transition:slide
+      >
+        <div class="space-y-1">
+          <div class="font-bold text-slate-700">שאלה מפורטת</div>
+          <div class="text-xs text-slate-500">
+            "כמה זה X ועוד Y?" במקום "כמה רכבות?"
+          </div>
+        </div>
+        <button
+          dir="ltr"
+          class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          class:bg-blue-600={settings.detailedQuestion}
+          class:bg-slate-200={!settings.detailedQuestion}
+          onclick={() =>
+            (settings.detailedQuestion = !settings.detailedQuestion)}
+          aria-label="שאלה מפורטת"
+        >
+          <span
+            class="absolute top-1 inline-block h-4 w-4 rounded-full bg-white transition-all duration-200 shadow-sm"
+            class:left-1={!settings.detailedQuestion}
+            class:left-6={settings.detailedQuestion}
+          ></span>
+        </button>
+      </div>
+    {/if}
   </section>
 
   <!-- === Booster Settings Section === -->
@@ -280,7 +309,7 @@
                 onchange={(e) =>
                   updateNumberField(
                     "turnsPerReward",
-                    parseInt(e.currentTarget.value)
+                    parseInt(e.currentTarget.value),
                   )}
                 class="w-full px-3 py-2 text-sm bg-white rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 text-center"
               />
@@ -300,7 +329,7 @@
                 onchange={(e) =>
                   updateNumberField(
                     "rewardDisplayDurationMs",
-                    parseInt(e.currentTarget.value) * 1000
+                    parseInt(e.currentTarget.value) * 1000,
                   )}
                 class="w-full px-3 py-2 text-sm bg-white rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 text-center"
               />

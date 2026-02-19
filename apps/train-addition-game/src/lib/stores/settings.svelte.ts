@@ -8,7 +8,7 @@ import { DEFAULT_SETTINGS } from "$lib/types";
 const STORAGE_KEY = "train-addition-settings";
 
 // אל תשכח לשנות גרסה בעת ביצוע שינוי במערכת ההגדרות!
-const CURRENT_VERSION = 4;
+const CURRENT_VERSION = 5;
 
 /**
  * מחלקת ניהול הגדרות
@@ -28,6 +28,9 @@ class SettingsStore {
 
   // חיזוקים (רק בוליאני, השאר בשירות)
   boosterEnabled = $state(DEFAULT_SETTINGS.boosterEnabled);
+
+  // האם להשמיע שאלה מפורטת
+  detailedQuestion = $state(DEFAULT_SETTINGS.detailedQuestion);
 
   constructor() {
     // טעינה ראשונית מ-localStorage
@@ -85,6 +88,10 @@ class SettingsStore {
         } else {
           this.gameMode = parsed.gameMode ?? DEFAULT_SETTINGS.gameMode;
         }
+
+        // מיגרציה לגרסה 5: detailedQuestion
+        this.detailedQuestion =
+          parsed.detailedQuestion ?? DEFAULT_SETTINGS.detailedQuestion;
       } catch (e) {
         console.error("Failed to parse settings", e);
       }
@@ -106,6 +113,7 @@ class SettingsStore {
       voiceEnabled: this.voiceEnabled,
       boosterEnabled: this.boosterEnabled,
       gameMode: this.gameMode,
+      detailedQuestion: this.detailedQuestion,
     };
   }
 
@@ -129,7 +137,9 @@ class SettingsStore {
     this.inputMode = DEFAULT_SETTINGS.inputMode;
     this.voiceEnabled = DEFAULT_SETTINGS.voiceEnabled;
     this.boosterEnabled = DEFAULT_SETTINGS.boosterEnabled;
+    this.boosterEnabled = DEFAULT_SETTINGS.boosterEnabled;
     this.gameMode = DEFAULT_SETTINGS.gameMode;
+    this.detailedQuestion = DEFAULT_SETTINGS.detailedQuestion;
   }
 }
 
