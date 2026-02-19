@@ -1,5 +1,43 @@
 # יומן פיתוח - רכבת החיבור
 
+## 2026-02-19 23:30
+
+### שילוב קבצי אודיו מ-ElevenLabs + Preload
+
+העברת קבצי אודיו חדשים (MP3) שנוצרו ב-ElevenLabs לתיקיית הסאונד, עדכון מנגנון הטעינה ב-`tts.ts` לתמיכה בשתי סיומות, והוספת preload לא-חוסם.
+
+#### מה בוצע?
+
+**1. העברת קבצי ElevenLabs**
+
+- 39 קבצי MP3 הועברו מ-`ElevenLabs_Untitled_project` לתיקיית `static/sounds` עם שמות תואמים לפי הסדר ב-`docs/elevenlabs_raw_text.txt`.
+- המיפוי הנכון: קובץ `01` = **אחד** (אפס לא הוקלט ב-ElevenLabs), כל השמות תוקנו בהתאם.
+- קבצים קיימים גובו לתיקיית `static/sounds/backup` לפני ההחלפה.
+- קבצים חדשים: `1.mp3`–`20.mp3`, `plus.mp3`, `equals.mp3`, `put.mp3`, `add.mp3`, `cars.mp3`, `put_1_cars.mp3`–`put_5_cars.mp3`, `add_1_cars.mp3`–`add_4_cars.mp3`, `how_many.mp3`, `correct.mp3`, `well_done.mp3`, `wrong.mp3`, `try_again.mp3`.
+
+**2. עדכון `tts.ts` - ללא סיומות ב-`VOICE_ASSETS`**
+
+- שדה `file` ב-`VOICE_ASSETS` הוסרה ממנו הסיומת לחלוטין (למשל `"correct"` במקום `"correct.wav"`).
+- שמות קבצי המספרים שונו מ-`num_0` ל-`0`, מ-`num_1` ל-`1` וכו' - כדי לתאום לשמות הקבצים שהועברו.
+- `playAudioFile` עודכן לנסות אוטומטית `.wav` ואחר כך `.mp3` - כך שקבצי WAV קיימים ממשיכים לעבוד, ו-MP3 חדשים מוצאים כ-fallback.
+
+**3. Preload לא-חוסם**
+
+- נוספה פונקציה `preloadAllAssets()` ב-`tts.ts` שעוברת על כל ה-`VOICE_ASSETS` וטוענת כל קובץ MP3 לזיכרון הדפדפן ברקע.
+- משתמשת ב-`requestIdleCallback` (או `setTimeout` כ-fallback) - לא חוסמת את טעינת הדף.
+- הפונקציה נקראת מ-`+layout.svelte` בתוך `onMount`.
+
+#### החלטות ארכיטקטורה
+
+- **ללא סיומת ב-VOICE_ASSETS**: במקום לעדכן את כל שמות הקבצים בכל פעם שמחליפים פורמט, ה-`file` מכיל שם בלבד, ו-`playAudioFile` מוסיף סיומות לפי סדר עדיפות (`.wav` ראשון, `.mp3` שני) - מאפשר מעבר הדרגתי בין פורמטים.
+
+#### קבצים ששונו
+
+- `src/lib/utils/tts.ts`
+- `src/routes/+layout.svelte`
+
+---
+
 ## 2026-02-11 17:45
 
 ### שיפורי TTS ומשוב מפורט

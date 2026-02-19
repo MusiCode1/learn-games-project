@@ -54,55 +54,54 @@ type VoiceAsset = {
 // מקור האמת היחיד לכל הנכסים הקוליים (קבצים וטקסטים)
 const VOICE_ASSETS = {
   // מספרים
-  num_0: { file: "num_0.wav", text: "אפס" },
-  num_1: { file: "num_1.wav", text: "אחד" },
-  num_2: { file: "num_2.wav", text: "שתיים" },
-  num_3: { file: "num_3.wav", text: "שלוש" },
-  num_4: { file: "num_4.wav", text: "ארבע" },
-  num_5: { file: "num_5.wav", text: "חמש" },
-  num_6: { file: "num_6.wav", text: "שש" },
-  num_7: { file: "num_7.wav", text: "שבע" },
-  num_8: { file: "num_8.wav", text: "שמונה" },
-  num_9: { file: "num_9.wav", text: "תשע" },
-  num_10: { file: "num_10.wav", text: "עשר" },
-  num_11: { file: "num_11.wav", text: "אחת עשרה" },
-  num_12: { file: "num_12.wav", text: "שתים עשרה" },
-  num_13: { file: "num_13.wav", text: "שלוש עשרה" },
-  num_14: { file: "num_14.wav", text: "ארבע עשרה" },
-  num_15: { file: "num_15.wav", text: "חמש עשרה" },
-  num_16: { file: "num_16.wav", text: "שש עשרה" },
-  num_17: { file: "num_17.wav", text: "שבע עשרה" },
-  num_18: { file: "num_18.wav", text: "שמונה עשרה" },
-  num_19: { file: "num_19.wav", text: "תשע עשרה" },
-  num_20: { file: "num_20.wav", text: "עשרים" },
+  num_0: { file: "0", text: "אפס" },
+  num_1: { file: "1", text: "אחד" },
+  num_2: { file: "2", text: "שתיים" },
+  num_3: { file: "3", text: "שלוש" },
+  num_4: { file: "4", text: "ארבע" },
+  num_5: { file: "5", text: "חמש" },
+  num_6: { file: "6", text: "שש" },
+  num_7: { file: "7", text: "שבע" },
+  num_8: { file: "8", text: "שמונה" },
+  num_9: { file: "9", text: "תשע" },
+  num_10: { file: "10", text: "עשר" },
+  num_11: { file: "11", text: "אחת עשרה" },
+  num_12: { file: "12", text: "שתים עשרה" },
+  num_13: { file: "13", text: "שלוש עשרה" },
+  num_14: { file: "14", text: "ארבע עשרה" },
+  num_15: { file: "15", text: "חמש עשרה" },
+  num_16: { file: "16", text: "שש עשרה" },
+  num_17: { file: "17", text: "שבע עשרה" },
+  num_18: { file: "18", text: "שמונה עשרה" },
+  num_19: { file: "19", text: "תשע עשרה" },
+  num_20: { file: "20", text: "עשרים" },
 
   // מילות קישור ופעולות
-  plus: { file: "plus.wav", text: "ועוד" },
-  equals: { file: "equals.wav", text: "שווה" },
+  plus: { file: "plus", text: "ועוד" },
+  equals: { file: "equals", text: "שווה" },
 
-  // תחיליות וסיומות למשפטים (כרגע בשימוש להרכבת משפטים אם אין קובץ מלא)
-  put_prefix: { file: "put.wav", text: "שים" },
-  add_prefix: { file: "add.wav", text: "הוסף עוד" },
-  cars_suffix: { file: "cars.wav", text: "קרונות" },
+  // תחיליות וסיומות למשפטים
+  put_prefix: { file: "put", text: "שים" },
+  add_prefix: { file: "add", text: "הוסף עוד" },
+  cars_suffix: { file: "cars", text: "קרונות" },
 
-  // משפטים שלמים / הוראות (Legacy + Fallback)
-  // הערה: חלק מהקבצים כאן קיימים במערכת, חלקם לשימוש עתידי או fallback ל-TTS
-  put_1: { file: "put_1_cars.wav", text: "שים קרון אחד" },
-  put_2: { file: "put_2_cars.wav", text: "שים שני קרונות" },
-  put_3: { file: "put_3_cars.wav", text: "שים שלושה קרונות" },
-  put_4: { file: "put_4_cars.wav", text: "שים ארבעה קרונות" },
-  put_5: { file: "put_5_cars.wav", text: "שים חמישה קרונות" },
+  // משפטים שלמים / הוראות
+  put_1: { file: "put_1_cars", text: "שים קרון אחד" },
+  put_2: { file: "put_2_cars", text: "שים שני קרונות" },
+  put_3: { file: "put_3_cars", text: "שים שלושה קרונות" },
+  put_4: { file: "put_4_cars", text: "שים ארבעה קרונות" },
+  put_5: { file: "put_5_cars", text: "שים חמישה קרונות" },
 
-  add_1: { file: "add_1_cars.wav", text: "הוסף עוד קרון אחד" },
-  add_2: { file: "add_2_cars.wav", text: "הוסף עוד שני קרונות" },
-  add_3: { file: "add_3_cars.wav", text: "הוסף עוד שלושה קרונות" },
-  add_4: { file: "add_4_cars.wav", text: "הוסף עוד ארבעה קרונות" },
+  add_1: { file: "add_1_cars", text: "הוסף עוד קרון אחד" },
+  add_2: { file: "add_2_cars", text: "הוסף עוד שני קרונות" },
+  add_3: { file: "add_3_cars", text: "הוסף עוד שלושה קרונות" },
+  add_4: { file: "add_4_cars", text: "הוסף עוד ארבעה קרונות" },
 
-  how_many: { file: "how_many.wav", text: "כמה קרונות יש עכשיו?" },
-  correct: { file: "correct.wav", text: "נכון!" },
-  well_done: { file: "well_done.wav", text: "כל הכבוד!" },
-  wrong: { file: "wrong.wav", text: "לא נכון." },
-  try_again: { file: "try_again.wav", text: "נסה שוב." },
+  how_many: { file: "how_many", text: "כמה קרונות יש עכשיו?" },
+  correct: { file: "correct", text: "נכון!" },
+  well_done: { file: "well_done", text: "כל הכבוד!" },
+  wrong: { file: "wrong", text: "לא נכון." },
+  try_again: { file: "try_again", text: "נסה שוב." },
 } as const;
 
 type VoiceKey = keyof typeof VOICE_ASSETS;
@@ -131,18 +130,26 @@ function numberToText(n: number): string {
 }
 
 /**
- * השמעת קובץ אודיו
- * @returns Promise שמסתיים כשהאודיו נגמר או נכשל
+ * ניסיון השמעת קובץ אודיו בודד
  */
-function playAudioFile(filename: string): Promise<boolean> {
+function tryPlayFile(url: string): Promise<boolean> {
   return new Promise((resolve) => {
-    const audio = new Audio(SOUNDS_BASE + filename);
-
+    const audio = new Audio(url);
     audio.onended = () => resolve(true);
     audio.onerror = () => resolve(false);
-
     audio.play().catch(() => resolve(false));
   });
+}
+
+/**
+ * השמעת קובץ אודיו - מנסה .wav ואחר כך .mp3
+ * @returns Promise שמסתיים כשהאודיו נגמר או נכשל
+ */
+async function playAudioFile(filename: string): Promise<boolean> {
+  const base = SOUNDS_BASE + filename;
+  return (
+    (await tryPlayFile(base + ".mp3")) || (await tryPlayFile(base + ".wav"))
+  );
 }
 
 /**
@@ -343,4 +350,26 @@ export async function speakWrong(a: number, b: number): Promise<void> {
  */
 export function speak(text: string): void {
   speakTTS(text);
+}
+
+/**
+ * טעינה מראש של כל קבצי האודיו ברקע - לא חוסם את הטעינה
+ * מופעל דרך requestIdleCallback לאחר שהדף נטען לגמרי
+ */
+export function preloadAllAssets(): void {
+  if (typeof window === "undefined") return;
+
+  const load = () => {
+    for (const asset of Object.values(VOICE_ASSETS)) {
+      const audio = new Audio(SOUNDS_BASE + asset.file + ".mp3");
+      audio.preload = "auto";
+      audio.load();
+    }
+  };
+
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(load);
+  } else {
+    setTimeout(load, 2000);
+  }
 }

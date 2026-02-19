@@ -4,6 +4,7 @@
   import { settings } from "$lib/stores/settings.svelte";
   import { boosterService } from "learn-booster-kit";
   import { onMount } from "svelte";
+  import { preloadAllAssets } from "$lib/utils/tts";
 
   let { children } = $props();
 
@@ -11,6 +12,7 @@
     if (settings.boosterEnabled) {
       boosterService.init();
     }
+    preloadAllAssets();
   });
 </script>
 
