@@ -10,6 +10,10 @@ import type {
 } from "./types";
 
 interface GingimBoosterWatchdogTools {
+  watchStateUntilReturn: (options?: {
+    intervalMs?: number;
+    level?: "compact" | "medium" | "full";
+  }) => boolean;
   logRemainingSeconds: () => number | null;
   getRemainingSeconds: () => number | null;
 }

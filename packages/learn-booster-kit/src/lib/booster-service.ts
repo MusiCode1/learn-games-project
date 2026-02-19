@@ -91,7 +91,8 @@ class BoosterService {
         window.GingimBoosterTools = window.GingimBoosterTools ?? {};
         window.GingimBoosterTools.watchdog = {
             logRemainingSeconds: () => this.rewardWatchdog.logRemainingSeconds(),
-            getRemainingSeconds: () => this.rewardWatchdog.getRemainingSeconds()
+            getRemainingSeconds: () => this.rewardWatchdog.getRemainingSeconds(),
+            watchStateUntilReturn: (options) => this.rewardWatchdog.watchStateUntilReturn(options)
         };
     }
 
