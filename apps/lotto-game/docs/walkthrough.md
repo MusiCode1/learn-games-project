@@ -1,5 +1,207 @@
 # יומן פיתוח - משחק לוטו (Lotto Game)
 
+## 2026-01-16 01:45
+
+### בדיקות מקיפות למערכת ContentProvider
+
+נכתבו בדיקות יחידה (unit tests) מקיפות לכל חלקי מערכת ספקי התוכן, כולל תיקון באג immutability.
+
+#### מה בוצע?
+
+**1. בדיקות לממשק ולתשתית**
+
+- **`types.spec.ts`** (9 בדיקות): בדיקות ל-`isContentProvider` type guard
+  - בדיקת תקינות provider
+  - בדיקות שליליות (null, undefined, missing fields)
+  - בדיקת validation של כל השדות הנדרשים
+  
+- **`registry.spec.ts`** (12 בדיקות): בדיקות ל-ContentProviderRegistry
+  - רישום providers
+  - שליפה, בדיקת קיום, מחיקה
+  - תמיכה ב-HMR (overwrite)
+  - ניקוי registry
+
+**2. בדיקות ל-3 Providers**
+
+- **`letters/index.spec.ts`** (24 בדיקות):
+  - Metadata (id, displayName, icon)
+  - `getAvailableItems` - בדיקת 22 אותיות עבריות
+  - `getDefaultSettings` - כל האותיות נבחרות
+  - `generateCardContent` - יצירת תוכן תקין
+  - `contentMatches` - לוגיקת התאמה
+  - `getSelectedItemIds` - שליפה + immutability
+  - `updateSelectedItems` - עדכון + immutability
+  - Integration workflow
+
+- **`shapes/index.spec.ts`** (30 בדיקות):
+  - Metadata
+  - `getAvailableItems` - בדיקת 10 צורות
+  - `getDefaultSettings` - כל הצורות + colorMode
+  - `generateCardContent` - uniform/random colors
+  - `contentMatches` - התאמה לפי צורה וצבע
+  - `getSelectedItemIds` + `updateSelectedItems`
+  - SHAPES constant validation
+  - Integration workflow
+
+- **`reading/index.spec.ts`** (35 בדיקות):
+  - Metadata + cardStyles
+  - `getAvailableItems` - בדיקת 8 אותיות (א-ח)
+  - Label format (letter - helper)
+  - `generateCardContent` - שמירת כל המאפיינים
+  - `contentMatches` - התאמה לפי itemId
+  - `getSelectedItemIds` + `updateSelectedItems`
+  - READING_ITEMS constant validation (nikud, images, helpers)
+  - Integration workflow
+
+**3. תיקון באג Immutability**
+
+- **בעיה**: `getSelectedItemIds` החזיר את המערך המקורי במקום עותק
+- **השלכה**: שינוי במערך שהוחזר השפיע על ההגדרות המקוריות
+- **תיקון**: שינוי מ-`return settings.selectedItems` ל-`return [...settings.selectedItems]` בכל 3 ה-providers
+- **עדכון מדריך**: הוספת הערה חשובה על immutability
+
+#### סטטיסטיקה
+
+- **סה"כ בדיקות**: 112 tests
+- **קבצי בדיקה**: 6 files (4 חדשים + 2 קיימים)
+- **שורות קוד בדיקות**: ~1,350 שורות
+- **כיסוי**: 
+  - Types & Registry: 100%
+  - Letters Provider: 100%
+  - Shapes Provider: 100%
+  - Reading Provider: 100%
+
+#### תוצאות
+
+```
+ ✓ types.spec.ts (9 tests)
+ ✓ registry.spec.ts (12 tests)
+ ✓ letters/index.spec.ts (24 tests)
+ ✓ shapes/index.spec.ts (30 tests)
+ ✓ reading/index.spec.ts (35 tests)
+ ✓ demo.spec.ts (1 test)
+ ✓ page.svelte.spec.ts (1 test - browser)
+
+Test Files  7 passed (7)
+Tests  112 passed (112)
+```
+
+#### החלטות ארכיטקטורה
+
+- **Test Structure**: כל provider מקבל קובץ בדיקה משלו בצד הקוד
+- **Coverage**: בדיקות מכסות metadata, כל מתודה, וגם integration flow מלא
+- **Immutability**: הבדיקות אוכפות immutability - שינוי בערך מוחזר לא ישפיע על המקור
+- **Validation**: בדיקות מאמתות גם קבועים (SHAPES, READING_ITEMS) וגם התנהגות
+
+#### יתרונות
+
+- ✅ אמון בקוד - 112 בדיקות מוודאות תקינות
+- ✅ מניעת regression - כל שינוי עתידי ייבדק
+- ✅ תיעוד חי - הבדיקות מראות איך להשתמש ב-API
+- ✅ Immutability מובטחת - הבדיקות אוכפות זאת
+- ✅ קל להוסיף provider חדש - יש תבנית ברורה לבדיקות
+
+---
+
+## 2026-01-16 00:30
+
+### הפיכת ממשק ContentProvider לגנרי לחלוטין
+
+בוצע ריפקטורינג נוסף להסרת קוד ספציפי ל-provider מקבצי הליבה, והפיכת הממשק לגנרי לגמרי.
+
+#### מה בוצע?
+
+**1. הרחבת הממשק ContentProvider**
+
+- **הוספת מתודות חדשות**: נוספו שתי מתודות לממשק `ContentProvider`:
+  - `getSelectedItemIds(settings)` - שליפת IDs של פריטים נבחרים
+  - `updateSelectedItems(settings, selectedIds)` - עדכון פריטים נבחרים
+
+**2. יישום במערכת Providers**
+
+- **letters/index.ts**: יושמו שתי המתודות לטיפול ב-`selectedLetters`
+- **shapes/index.ts**: יושמו שתי המתודות לטיפול ב-`selectedShapes`
+- **reading/index.ts**: יושמו שתי המתודות לטיפול ב-`selectedItems`
+
+**3. פישוט קבצי הליבה**
+
+- **`+page.svelte`** (שורות 58-73): 
+  - **לפני**: בלוק if/else ארוך עם 12 שורות של קוד ספציפי
+  - **אחרי**: שורה אחת: `const selectedItemIds = currentProvider.getSelectedItemIds(providerSettings);`
+  
+- **`SettingsControls.svelte`** (שורות 129-159):
+  - **לפני**: 30+ שורות של if/else עם קוד ספציפי לכל provider
+  - **אחרי**: ~10 שורות של קוד גנרי אחיד לכל providers
+
+**4. אחדת ממשק Settings Components**
+
+- **LettersSettings.svelte**: שונה `availableLetters` → `availableItems`
+- **ShapesSettings.svelte**: 
+  - שונה `availableShapes` → `availableItems`
+  - עודכן לקבל `settings` כ-prop גנרי
+  - `colorMode` נשלף מתוך `settings`
+- **ReadingSettings.svelte**: לא נדרש שינוי (כבר השתמש ב-`availableItems`)
+
+**5. עדכון Type Guard**
+
+- עודכן `isContentProvider()` לבדוק את שתי המתודות החדשות
+
+**6. עדכון התיעוד**
+
+- עודכן `creating-content-provider.md` עם:
+  - הסבר על המתודות החדשות
+  - דוגמאות שימוש
+  - עדכון הדוגמה המלאה (ספק מספרים)
+  - הוספת Best Practice חדש
+
+#### החלטות ארכיטקטורה
+
+- **הפרדת אחריות**: כל provider מנהל את ההיגיון הספציפי שלו לניהול פריטים נבחרים
+- **Generic Interface**: קבצי הליבה כעת לא צריכים לדעת דבר על המבנה הפנימי של ההגדרות
+- **Type Safety**: נשמרה בטיחות טיפוסים עם שימוש ב-cast במקומות הנדרשים
+- **Immutability**: `updateSelectedItems` מחזירה אובייקט חדש במקום לשנות את הקיים
+
+#### יתרונות
+
+- ✅ הוספת provider חדש לא דורשת שינוי בקבצי הליבה
+- ✅ קוד נקי יותר וקל יותר לתחזוקה
+- ✅ פחות קוד כולל (הפחתה של ~25 שורות)
+- ✅ Type safety משופר
+- ✅ עקביות מלאה בין כל ה-providers
+
+---
+
+## 2026-01-15 23:45
+
+### תיעוד: מדריך ליצירת ספק תוכן חדש
+
+נוצר מסמך תיעוד מקיף שמסביר איך ליצור ספק תוכן (Content Provider) חדש במשחק.
+
+#### מה נוצר?
+
+**[NEW] `docs/creating-content-provider.md`**: מדריך מפורט הכולל:
+
+1. **סקירה כללית** - הסבר על מערכת ספקי התוכן
+2. **מבנה הקבצים** - איך לארגן תיקיות וקבצים
+3. **ממשק ContentProvider** - פירוט מלא של כל השדות והמתודות
+4. **צעדים ליצירה** - הוראות שלב-אחר-שלב
+5. **דוגמה מלאה** - ספק מספרים (1-10) עם קוד מלא
+6. **רישום ה-Provider** - איך להפעיל את הספק החדש
+7. **Best Practices** - עצות לקוד נקי ובטוח
+8. **עיצוב כרטיסים מותאם** - שימוש ב-`cardStyles`
+9. **שאלות נפוצות** - מענה לשאלות נפוצות
+
+#### למה זה חשוב?
+
+- **הרחבה קלה**: המסמך מאפשר למפתחים להוסיף בקלות סוגי תוכן חדשים (מספרים, צבעים, חיות, תמונות וכו')
+- **עקביות**: מבטיח שכל ספק חדש יעקוב אחר אותם דפוסים וסטנדרטים
+- **דוגמאות מעשיות**: קוד מלא ופועל שאפשר להעתיק ולהתאים
+- **תמיכה עתידית**: מקל על תחזוקה והוספת תכונות חדשות
+
+המדריך נכתב בעברית ומותאם לארכיטקטורה המודולרית החדשה שנוצרה בריפקטורינג האחרון.
+
+---
+
 ## 2026-01-15 22:18
 
 ### ריפקטורינג UI - SegmentedControl, ארגון קומפוננטות ו-@apply
