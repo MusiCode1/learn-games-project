@@ -5,10 +5,10 @@
   import VideoDialog from "./components/VideoDialog.svelte";
   import Modal from "./components/Modal.svelte";
   import LeftButton from "./components/LeftButton.svelte";
-  import { sleep } from "../lib/sleep";
+  import { sleep } from "../lib/utils/sleep";
   import { msToTime } from "../lib/utils/ms-to-time";
-  import { getVideoBlob, isFullyKiosk } from "../lib/fully-kiosk";
-  import { getAllConfig, addConfigListener } from "../lib/config-manager";
+  import { getVideoBlob, isFullyKiosk } from "../lib/fully-kiosk/fully-kiosk";
+  import { getAllConfig, addConfigListener } from "../lib/config/config-manager";
 
   import type {
     Config,

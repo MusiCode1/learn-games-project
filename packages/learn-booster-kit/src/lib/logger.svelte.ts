@@ -5,7 +5,7 @@
 
 export function log(...args: any[]) {
 
-    console.groupCollapsed('[gingim-booster]', ...args);
+    console.groupCollapsed('[learn-booster]', ...args);
     console.trace("Stack trace:");
     console.log('page URL:', window.location.href);
     console.groupEnd();

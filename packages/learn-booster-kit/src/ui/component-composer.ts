@@ -38,14 +38,14 @@ export function mountComponent(options: MountComponenttOptions): Exports {
 
   } else {
     const existingComponent =
-      rootElement.querySelector('.gingim-booster');
+      rootElement.querySelector('.learn-booster');
     if (existingComponent) {
       existingComponent.remove();
     }
   }
 
   const targetElement = document.createElement('div');
-  targetElement.classList.add('gingim-booster');
+  targetElement.classList.add('learn-booster');
   rootElement.append(targetElement);
   rootElement = targetElement;
 

@@ -1,15 +1,11 @@
-import type { Config } from "../types";
+import type { Config } from "../../types";
 
 const GOOGLE_DRIVE_DEFAULT_FOLDER = import.meta.env
   .VITE_GOOGLE_DRIVE_DEFAULT_FOLDER;
 const SITE_DEFAULT_URL = import.meta.env.VITE_SITE_DEFAULT_UTL;
 
-/**
- * ערכי ברירת מחדל של התצורה
- */
 const defaultConfig: Config = {
   appVersion: "0.0.1",
-  // הגדרות כלליות
   rewardType: "video",
   rewardDisplayDurationMs: 20 * 1000,
   turnsPerReward: 1,
@@ -31,7 +27,6 @@ const defaultConfig: Config = {
     isGingimHomepage: false,
   },
 
-  // הגדרות הודעות ותזכורות
   notifications: {
     endingNotification: {
       text: "המחזק יסתיים בעוד 10 שניות",
@@ -40,7 +35,6 @@ const defaultConfig: Config = {
     },
   },
 
-  // הגדרות וידאו
   video: {
     videos: [],
     source: "google-drive",
@@ -48,19 +42,14 @@ const defaultConfig: Config = {
     hideProgressBar: false,
   },
 
-  // הגדרות אפליקציה
   app: {
     packageName: "com.google.android.youtube",
   },
 
-  // הגדרות מחזק אתר
   booster: {
-    siteUrl:
-      SITE_DEFAULT_URL ??
-      "https://gingim.net/wp-content/uploads/new_games/tidy_up/",
+    siteUrl: SITE_DEFAULT_URL ?? "",
   },
 
-  // הגדרות מערכת
   system: {
     enableHideModalButton: true,
     disableGameCodeInjection: false,

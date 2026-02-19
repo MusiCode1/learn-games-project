@@ -6,9 +6,9 @@ import type {
     SiteBoosterControls,
     TimerController
 } from '../types';
-import { initializeConfig, configStore } from './config-manager';
+import { initializeConfig, configStore } from './config/config-manager';
 import { createTimer } from './utils/timer';
-import { sleep } from './sleep';
+import { sleep } from './utils/sleep';
 import { log } from './logger.svelte';
 import { createRewardWatchdog } from './watchdog/reward-watchdog';
 
@@ -40,7 +40,7 @@ class BoosterService {
     private rewardWatchdog = createRewardWatchdog({
         isSessionActive: (sessionId) => this.activeRewardSessionId === sessionId,
         onTimeout: (payload) => {
-            console.error('[gingim-booster][watchdog] Reward timeout detected', payload);
+            console.error('[learn-booster][watchdog] Reward timeout detected', payload);
             log('Reward watchdog timeout', payload);
         },
         onLog: (message, payload) => {

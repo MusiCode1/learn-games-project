@@ -1,10 +1,10 @@
-import type { SiteBoosterControls, Config, TimerController } from "../types";
+import type { SiteBoosterControls, Config, TimerController } from "../../types";
 import type { Component } from "svelte";
 
-import { mountComponent } from "../ui/component-composer";
+import { mountComponent } from "../../ui/component-composer";
 import { createConfigStore } from "./config-store.svelte";
 
-import BoosterComponent from "../ui/SiteBoosterMain.svelte";
+import BoosterComponent from "../../ui/SiteBoosterMain.svelte";
 
 type SiteBoosterAppInstance = ReturnType<typeof mountComponent> & {
     boosterController: SiteBoosterControls;
@@ -54,5 +54,3 @@ export function initializeSiteBoosterControls(config: Config, timer: TimerContro
 
     return siteBoosterApp;
 }
-
-

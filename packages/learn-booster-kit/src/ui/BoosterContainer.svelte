@@ -80,7 +80,7 @@
 -->
 
 <div id="learn-booster-root">
-  <div class="gingim-booster">
+  <div class="learn-booster">
     {#if config && boosterService.timer}
       {#if config.rewardType === "video"}
         <div id="video-main-wrapper">
