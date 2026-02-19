@@ -14,22 +14,20 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json && tsc -p tsconfig.node.json",
-    "lint": "eslint . --ext .js,.svelte"
+    "lint": "eslint . --ext .js,.svelte",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "overrides": {
     "vite": "npm:rolldown-vite@7.2.5"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^6.2.1",
-    "@tsconfig/svelte": "^5.0.6",
-    "@types/node": "^24.10.1",
-    "svelte": "^5.43.8",
-    "svelte-check": "^4.3.4",
-    "typescript": "~5.9.3",
-    "vite": "npm:rolldown-vite@7.2.5",
     "@eslint/compat": "^1.2.7",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.20.0",
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "@tsconfig/svelte": "^5.0.6",
+    "@types/node": "^24.10.1",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.21.0",
     "eslint-config-prettier": "^10.0.2",
@@ -37,10 +35,15 @@
     "globals": "^15.14.0",
     "postcss": "^8.4.47",
     "postcss-prefixer": "^3.0.0",
+    "svelte": "^5.43.8",
+    "svelte-check": "^4.3.4",
     "tailwindcss": "^4.1.17",
     "tslib": "^2.8.0",
+    "typescript": "~5.9.3",
     "typescript-eslint": "^8.26.0",
-    "vite-plugin-vercel": "^9.0.5"
+    "vite": "npm:rolldown-vite@7.2.5",
+    "vite-plugin-vercel": "^9.0.5",
+    "vitest": "^4.0.15"
   },
   "dependencies": {
     "@fontsource/heebo": "^5.1.0",

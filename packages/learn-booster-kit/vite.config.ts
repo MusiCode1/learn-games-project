@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import tailwindcss from "@tailwindcss/vite";
 
@@ -58,4 +58,9 @@ export default defineConfig({
 
   // הוספת תמיכה בקבצים מתיקיית temp
   //publicDir: 'temp'
+
+  test: {
+    environment: 'node',
+    include: ['test/**/*.spec.ts'],
+  },
 })
