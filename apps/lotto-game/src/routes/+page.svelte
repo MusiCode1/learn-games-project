@@ -150,8 +150,6 @@
 		}
 	}
 
-	// חיבור ל-store של הקונפיגורציה
-	const configStore = boosterService.config;
 	let winsCount = $state(0);
 
 	function handleWin() {
@@ -161,8 +159,6 @@
 		winsCount++;
 		// מקור האמת החדש לתדירות - Settings
 		const turnsTarget = settings.totalRounds || 1;
-
-		let rewardTriggered = false;
 
 		if (settings.boosterEnabled && winsCount >= turnsTarget) {
 			if (settings.autoBooster) {
