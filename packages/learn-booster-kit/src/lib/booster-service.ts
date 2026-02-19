@@ -13,12 +13,21 @@ import { log } from './logger.svelte';
 
 const AFTER_REWARD_DELAY_MS = 2500;
 const FULLY_POLL_INTERVAL_MS = 1000;
+const WATCHDOG_GRACE_MS = 1000;
+const WATCHDOG_TIMER_STALL_MS = 2000;
+
+export type BoosterServiceInitialized = BoosterService & {
+    config: Writable<Config>;
+    timer: TimerController;
+    isRewardActive: Writable<boolean>;
+};
 
 class BoosterService {
+    // Internal singleton instance
     private static instance: BoosterService;
 
-    public config: Writable<Config>;
-    public timer: TimerController;
+    private configStore: Writable<Config>;
+    private timerController: TimerController;
 
     // UI Controls (Registered by BoosterContainer)
     private videoControls?: PlayerControls;
@@ -26,11 +35,12 @@ class BoosterService {
     private settingsControls?: { show: () => void, hide: () => void };
 
     // State
-    public isRewardActive = writable(false);
+    private rewardActiveStore = writable(false);
+    private activeRewardSessionId = 0;
 
     private constructor() {
-        this.config = configStore;
-        this.timer = createTimer();
+        this.configStore = configStore;
+        this.timerController = createTimer();
     }
 
     public static getInstance(): BoosterService {
@@ -42,68 +52,197 @@ class BoosterService {
 
     private initialized = false;
 
-    public async init() {
+    private ensureInitialized(): asserts this is BoosterServiceInitialized {
         if (this.initialized) return;
+        throw new Error('BoosterService not initialized. Call boosterService.init() first.');
+    }
+
+    public async init(): Promise<BoosterServiceInitialized> {
+        if (this.initialized) return this as BoosterServiceInitialized;
         this.initialized = true;
         await initializeConfig();
         log('BoosterService initialized');
+        return this as BoosterServiceInitialized;
+    }
+
+    public get config(): Writable<Config> {
+        this.ensureInitialized();
+        return this.configStore;
+    }
+
+    public get timer(): TimerController {
+        this.ensureInitialized();
+        return this.timerController;
+    }
+
+    public get isRewardActive(): Writable<boolean> {
+        this.ensureInitialized();
+        return this.rewardActiveStore;
     }
 
     public registerVideoControls(controls: PlayerControls) {
+        this.ensureInitialized();
         this.videoControls = controls;
     }
 
     public registerSiteControls(controls: SiteBoosterControls) {
+        this.ensureInitialized();
         this.siteControls = controls;
     }
 
     public registerSettingsControls(controls: { show: () => void, hide: () => void }) {
+        this.ensureInitialized();
         this.settingsControls = controls;
     }
 
     public showSettings() {
+        this.ensureInitialized();
         this.settingsControls?.show();
     }
 
     public hideSettings() {
+        this.ensureInitialized();
         this.settingsControls?.hide();
     }
 
     public async triggerReward(gameConfig?: GameConfig, configOverride?: Config): Promise<void> {
+        this.ensureInitialized();
         const config = configOverride || get(this.config);
         const delay = gameConfig?.delay;
+        const rewardSessionId = this.activeRewardSessionId + 1;
+        this.activeRewardSessionId = rewardSessionId;
 
         this.isRewardActive.set(true);
         try {
             if (config.rewardType === 'video') {
                 if (!this.videoControls) throw new Error("Video controls not registered");
-                await this.handleVideoReward(this.videoControls, config, delay);
+                await this.handleVideoReward(this.videoControls, config, delay, rewardSessionId);
             } else if (config.rewardType === 'site') {
                 if (!this.siteControls) throw new Error("Site controls not registered");
-                await this.handleSiteReward(this.siteControls, config, delay);
+                await this.handleSiteReward(this.siteControls, config, delay, rewardSessionId);
             } else if (config.rewardType === 'app') {
-                await this.handleAppReward(config, delay);
+                await this.handleAppReward(config, delay, rewardSessionId);
             }
         } catch (e) {
             log('Error triggering reward:', e);
         } finally {
             this.isRewardActive.set(false);
+            if (this.activeRewardSessionId === rewardSessionId) {
+                this.activeRewardSessionId = 0;
+            }
         }
+    }
+
+    private startRewardWatchdog(args: {
+        rewardType: Config['rewardType'];
+        durationMs: number;
+        graceMs: number;
+        timer: TimerController;
+        sessionId: number;
+        modalHasHidden?: Writable<boolean>;
+        getExtraStatus?: () => Record<string, unknown>;
+    }) {
+        const startedAt = Date.now();
+        const deadlineAt = startedAt + args.durationMs + args.graceMs;
+        let lastTimerMs = get(args.timer.time);
+        let lastTimerTickAt: number | null = null;
+        const initialTimerMs = lastTimerMs;
+
+        let lastModalHidden = args.modalHasHidden ? get(args.modalHasHidden) : undefined;
+        let lastModalChangeAt = args.modalHasHidden ? startedAt : undefined;
+
+        const timerUnsub = args.timer.time.subscribe((ms) => {
+            if (ms !== lastTimerMs) {
+                lastTimerMs = ms;
+                lastTimerTickAt = Date.now();
+            }
+        });
+
+        const modalUnsub = args.modalHasHidden
+            ? args.modalHasHidden.subscribe((hidden) => {
+                if (hidden !== lastModalHidden) {
+                    lastModalHidden = hidden;
+                    lastModalChangeAt = Date.now();
+                }
+            })
+            : undefined;
+
+        const timeoutId = setTimeout(() => {
+            if (this.activeRewardSessionId !== args.sessionId) return;
+
+            const now = Date.now();
+            const elapsedMs = now - startedAt;
+            const timerRemainingMs = get(args.timer.time);
+            const lastTimerTickAgeMs = lastTimerTickAt ? now - lastTimerTickAt : null;
+            const lastModalChangeAgeMs = lastModalChangeAt ? now - lastModalChangeAt : null;
+
+            const suspectedCause: string[] = [];
+
+            if (timerRemainingMs === initialTimerMs && !lastTimerTickAt) {
+                suspectedCause.push('timer did not start');
+            } else if (timerRemainingMs > 0 && lastTimerTickAgeMs !== null && lastTimerTickAgeMs > WATCHDOG_TIMER_STALL_MS) {
+                suspectedCause.push('timer stalled/paused');
+            }
+
+            if (args.modalHasHidden && lastModalHidden === false && timerRemainingMs <= 0) {
+                suspectedCause.push('modal not closed after timer done');
+            }
+
+            const extraStatus = args.getExtraStatus?.() ?? {};
+            if (args.rewardType === 'app') {
+                const isInForeground = (extraStatus as any).isInForeground;
+                if (isInForeground === false || typeof isInForeground === 'undefined') {
+                    suspectedCause.push('app not returned to Fully');
+                }
+            }
+
+            const payload = {
+                rewardType: args.rewardType,
+                durationMs: args.durationMs,
+                graceMs: args.graceMs,
+                elapsedMs,
+                timerRemainingMs,
+                lastTimerTickAgeMs,
+                modalHasHidden: lastModalHidden,
+                lastModalChangeAgeMs,
+                suspectedCause,
+                extraStatus
+            };
+
+            console.error('[gingim-booster][watchdog] Reward timeout detected', payload);
+            log('Reward watchdog timeout', payload);
+        }, deadlineAt - startedAt);
+
+        return () => {
+            clearTimeout(timeoutId);
+            timerUnsub?.();
+            modalUnsub?.();
+        };
     }
 
     private async handleVideoReward(
         playerControls: PlayerControls,
         config: Config,
-        delay?: number
+        delay?: number,
+        rewardSessionId?: number
     ): Promise<void> {
         playerControls.modalHasHidden.set(false);
         if (delay) await sleep(delay);
 
         let unsubscribe: (() => void) | undefined;
+        let stopWatchdog: (() => void) | undefined;
         this.timer.configure(config.rewardDisplayDurationMs);
 
         // Show Video (implicitly starts timer in VideoMain, but we can supervise)
         playerControls.show();
+        stopWatchdog = this.startRewardWatchdog({
+            rewardType: 'video',
+            durationMs: config.rewardDisplayDurationMs,
+            graceMs: WATCHDOG_GRACE_MS,
+            timer: this.timer,
+            sessionId: rewardSessionId ?? this.activeRewardSessionId,
+            modalHasHidden: playerControls.modalHasHidden
+        });
 
         await Promise.race([
             this.timer.onDone(),
@@ -111,12 +250,16 @@ class BoosterService {
                 unsubscribe = playerControls.modalHasHidden.subscribe(hidden => {
                     if (hidden) {
                         unsubscribe?.();
+                        stopWatchdog?.();
                         resolve();
                         log('Modal closed by user');
                     }
                 });
             })
-        ]).finally(() => unsubscribe?.());
+        ]).finally(() => {
+            unsubscribe?.();
+            stopWatchdog?.();
+        });
 
         playerControls.hide();
         await sleep(AFTER_REWARD_DELAY_MS);
@@ -125,7 +268,8 @@ class BoosterService {
     private async handleSiteReward(
         boosterControls: SiteBoosterControls,
         config: Config,
-        delay?: number
+        delay?: number,
+        rewardSessionId?: number
     ): Promise<void> {
         const siteUrl = config.booster?.siteUrl?.trim();
         if (!siteUrl) return;
@@ -137,6 +281,15 @@ class BoosterService {
         this.timer.configure(config.rewardDisplayDurationMs);
 
         boosterControls.show();
+        let stopWatchdog: (() => void) | undefined;
+        stopWatchdog = this.startRewardWatchdog({
+            rewardType: 'site',
+            durationMs: config.rewardDisplayDurationMs,
+            graceMs: WATCHDOG_GRACE_MS,
+            timer: this.timer,
+            sessionId: rewardSessionId ?? this.activeRewardSessionId,
+            modalHasHidden: boosterControls.modalHasHidden
+        });
 
         let unsubscribe: (() => void) | undefined;
         await Promise.race([
@@ -145,11 +298,15 @@ class BoosterService {
                 unsubscribe = boosterControls.modalHasHidden.subscribe(hidden => {
                     if (hidden) {
                         unsubscribe?.();
+                        stopWatchdog?.();
                         resolve();
                     }
                 });
             })
-        ]).finally(() => unsubscribe?.());
+        ]).finally(() => {
+            unsubscribe?.();
+            stopWatchdog?.();
+        });
 
         boosterControls.hide();
         await sleep(AFTER_REWARD_DELAY_MS);
@@ -157,7 +314,8 @@ class BoosterService {
 
     private async handleAppReward(
         config: Config,
-        delay?: number
+        delay?: number,
+        rewardSessionId?: number
     ): Promise<void> {
         // App reward logic using Fully Kiosk
         if (delay) await sleep(delay);
@@ -178,6 +336,21 @@ class BoosterService {
 
             // Poll for foreground return
             const fullyWatcher = this.createFullyForegroundWatcher(fully);
+            const stopWatchdog = this.startRewardWatchdog({
+                rewardType: 'app',
+                durationMs: config.rewardDisplayDurationMs,
+                graceMs: WATCHDOG_GRACE_MS,
+                timer: this.timer,
+                sessionId: rewardSessionId ?? this.activeRewardSessionId,
+                getExtraStatus: () => {
+                    const status = fullyWatcher?.getStatus?.();
+                    return {
+                        fullyDetected: true,
+                        isInForeground: status?.lastIsInForeground,
+                        hasSeenBackground: status?.hasSeenBackground
+                    };
+                }
+            });
 
             const racePromises: Array<Promise<'timer' | 'fully'>> = [
                 this.timer.onDone().then(() => 'timer' as const)
@@ -191,6 +364,7 @@ class BoosterService {
                 }
             } finally {
                 this.timer.stop();
+                stopWatchdog?.();
                 fullyWatcher?.cancel();
             }
 
@@ -207,6 +381,7 @@ class BoosterService {
 
         let intervalId: any = null;
         let hasSeenBackground = false;
+        let lastIsInForeground: boolean | null = null;
 
         const cancel = () => {
             if (intervalId) clearInterval(intervalId);
@@ -218,6 +393,7 @@ class BoosterService {
                 try {
                     const inForeground = fullyApi.isInForeground();
                     if (typeof inForeground !== 'boolean') return;
+                    lastIsInForeground = inForeground;
 
                     if (!hasSeenBackground) {
                         if (!inForeground) hasSeenBackground = true;
@@ -231,7 +407,12 @@ class BoosterService {
             }, FULLY_POLL_INTERVAL_MS);
         });
 
-        return { promise, cancel };
+        const getStatus = () => ({
+            hasSeenBackground,
+            lastIsInForeground
+        });
+
+        return { promise, cancel, getStatus };
     }
 }
 
