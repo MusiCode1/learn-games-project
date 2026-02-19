@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { msToTime } from '../../src/lib/utils/ms-to-time';
+import { utils } from '../src';
+
+const { msToTime } = utils;
 
 describe('msToTime', () => {
   it('0 -> "00:00"', () => {

@@ -1,9 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import {
-  encryptText,
-  decryptText,
-  FORMAT_VERSION,
-} from '../../src/lib/utils/encript-decrypt-text';
+import { utils } from '../src';
+
+const { encryptText, decryptText, FORMAT_VERSION } = utils;
 
 const PASSWORD = 'test-password-123';
 

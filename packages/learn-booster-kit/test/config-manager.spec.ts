@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { deepMerge } from '../src/lib/config-manager';
+import { configManager } from './src';
+
+const { deepMerge } = configManager;
 
 describe('deepMerge', () => {
   it('מיזוג אובייקטים שטוחים', () => {
@@ -43,22 +45,22 @@ describe('saveConfigToStorage / loadConfigFromStorage', () => {
     vi.resetModules();
   });
 
-  it('saveConfigToStorage שומר ב-localStorage', async () => {
-    const { saveConfigToStorage } = await import('../src/lib/config-manager');
+  it('saveConfigToStorage שומר ב-localStorage', () => {
+    const { saveConfigToStorage } = configManager;
     const result = saveConfigToStorage();
     expect(result).toBe(true);
     expect(localStorage.getItem('gingim-booster-config')).not.toBeNull();
   });
 
-  it('loadConfigFromStorage טוען ממה שנשמר', async () => {
-    const { saveConfigToStorage, loadConfigFromStorage } = await import('../src/lib/config-manager');
+  it('loadConfigFromStorage טוען ממה שנשמר', () => {
+    const { saveConfigToStorage, loadConfigFromStorage } = configManager;
     saveConfigToStorage();
     const loaded = loadConfigFromStorage();
     expect(loaded).toBe(true);
   });
 
-  it('loadConfigFromStorage מחזיר false אם אין כלום ב-localStorage', async () => {
-    const { loadConfigFromStorage } = await import('../src/lib/config-manager');
+  it('loadConfigFromStorage מחזיר false אם אין כלום ב-localStorage', () => {
+    const { loadConfigFromStorage } = configManager;
     localStorage.clear();
     const result = loadConfigFromStorage();
     expect(result).toBe(false);

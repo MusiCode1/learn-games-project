@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { shuffleArray } from '../../src/lib/utils/shuffle-array';
+import { utils } from '../src';
+
+const { shuffleArray } = utils;
 
 describe('shuffleArray', () => {
   it('מחזיר מערך עם אותם אלמנטים', () => {
