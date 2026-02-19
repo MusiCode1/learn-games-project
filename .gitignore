@@ -25,3 +25,9 @@ apps/train-addition-game/static/images/preview.html
 apps/train-addition-game/static/images/prompts.txt
 apps/train-addition-game/static/images/file.svg
 apps/train-addition-game/static/assets/
+
+.localappdata
+.localappdata/**
+
+# Git worktrees
+.worktrees/

@@ -1,0 +1,46 @@
+[cheerful] אפס
+[cheerful] אחד
+[cheerful] שתיים
+[cheerful] שלוש
+[cheerful] ארבע
+[cheerful] חמש
+[cheerful] שש
+[cheerful] שבע
+[cheerful] שמונה
+[cheerful] תשע
+[cheerful] עשר
+[cheerful] אחת עשרה
+[cheerful] שתים עשרה
+[cheerful] שלוש עשרה
+[cheerful] ארבע עשרה
+[cheerful] חמש עשרה
+[cheerful] שש עשרה
+[cheerful] שבע עשרה
+[cheerful] שמונה עשרה
+[cheerful] תשע עשרה
+[cheerful] עשרים
+
+[cheerful] ועוד
+[cheerful] שווה
+
+[encouraging] שים
+[encouraging] הוסף עוד
+[cheerful] קרונות
+
+[encouraging] שים קרון אחד
+[encouraging] שים שני קרונות
+[encouraging] שים שלושה קרונות
+[encouraging] שים ארבעה קרונות
+[encouraging] שים חמישה קרונות
+
+[encouraging] הוסף עוד קרון אחד
+[encouraging] הוסף עוד שני קרונות
+[encouraging] הוסף עוד שלושה קרונות
+[encouraging] הוסף עוד ארבעה קרונות
+
+[curious] כמה קרונות יש עכשיו?
+
+[excited] נכון!
+[happy] כל הכבוד!
+[sympathetic] לא נכון.
+[encouraging] נסה שוב.
