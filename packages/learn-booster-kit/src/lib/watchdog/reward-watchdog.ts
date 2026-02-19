@@ -31,6 +31,14 @@ export type RewardWatchdog = {
     stop: () => void;
     getRemainingSeconds: () => number | null;
     logRemainingSeconds: () => number | null;
+    watchStateUntilReturn: (options?: WatchStateWatchOptions) => boolean;
+};
+
+export type WatchStateLevel = 'compact' | 'medium' | 'full';
+
+export type WatchStateWatchOptions = {
+    intervalMs?: number;
+    level?: WatchStateLevel;
 };
 
 type CreateRewardWatchdogArgs = {
@@ -46,9 +54,14 @@ type ActiveWatchdogState = {
     rewardType: Config['rewardType'];
     timer: TimerController;
     startedAt: number;
+    lastTimerTickAt: number | null;
+    lastModalHidden?: boolean;
+    lastModalChangeAt?: number;
+    getExtraStatus?: () => Record<string, unknown>;
     timerUnsub?: () => void;
     modalUnsub?: () => void;
     timeoutId?: ReturnType<typeof setTimeout>;
+    watchIntervalId?: ReturnType<typeof setInterval>;
 };
 
 export function createRewardWatchdog(args: CreateRewardWatchdogArgs): RewardWatchdog {
@@ -59,6 +72,10 @@ export function createRewardWatchdog(args: CreateRewardWatchdogArgs): RewardWatc
 
     const stop = () => {
         if (!activeState) return;
+        if (activeState.watchIntervalId) {
+            clearInterval(activeState.watchIntervalId);
+            activeState.watchIntervalId = undefined;
+        }
         if (activeState.timeoutId) clearTimeout(activeState.timeoutId);
         activeState.timerUnsub?.();
         activeState.modalUnsub?.();
@@ -81,13 +98,18 @@ export function createRewardWatchdog(args: CreateRewardWatchdogArgs): RewardWatc
             sessionId: startArgs.sessionId,
             rewardType: startArgs.rewardType,
             timer: startArgs.timer,
-            startedAt
+            startedAt,
+            lastTimerTickAt,
+            lastModalHidden,
+            lastModalChangeAt,
+            getExtraStatus: startArgs.getExtraStatus
         };
 
         state.timerUnsub = startArgs.timer.time.subscribe((ms) => {
             if (ms !== lastTimerMs) {
                 lastTimerMs = ms;
                 lastTimerTickAt = now();
+                state.lastTimerTickAt = lastTimerTickAt;
             }
         });
 
@@ -96,6 +118,8 @@ export function createRewardWatchdog(args: CreateRewardWatchdogArgs): RewardWatc
                 if (hidden !== lastModalHidden) {
                     lastModalHidden = hidden;
                     lastModalChangeAt = now();
+                    state.lastModalHidden = lastModalHidden;
+                    state.lastModalChangeAt = lastModalChangeAt;
                 }
             })
             : undefined;
@@ -175,10 +199,81 @@ export function createRewardWatchdog(args: CreateRewardWatchdogArgs): RewardWatc
         return remainingSeconds;
     };
 
+    const getSnapshotByLevel = (state: ActiveWatchdogState, level: WatchStateLevel): Record<string, unknown> => {
+        const currentTime = now();
+        const timerRemainingMs = get(state.timer.time);
+        const remainingSeconds = Math.max(0, Math.ceil(timerRemainingMs / 1000));
+        const elapsedMs = currentTime - state.startedAt;
+        const lastTimerTickAgeMs = state.lastTimerTickAt ? currentTime - state.lastTimerTickAt : null;
+        const lastModalChangeAgeMs = state.lastModalChangeAt ? currentTime - state.lastModalChangeAt : null;
+
+        const compactPayload = {
+            remainingSeconds,
+            sessionId: state.sessionId,
+            rewardType: state.rewardType,
+            elapsedMs
+        };
+
+        if (level === 'compact') {
+            return compactPayload;
+        }
+
+        const mediumPayload = {
+            ...compactPayload,
+            timerRemainingMs,
+            lastTimerTickAgeMs,
+            modalHasHidden: state.lastModalHidden
+        };
+
+        if (level === 'medium') {
+            return mediumPayload;
+        }
+
+        return {
+            ...mediumPayload,
+            lastModalChangeAgeMs,
+            extraStatus: state.getExtraStatus?.() ?? {}
+        };
+    };
+
+    const watchStateUntilReturn = (options?: WatchStateWatchOptions): boolean => {
+        if (!activeState) {
+            args.onLog('Watchdog state watch requested but no active session');
+            return false;
+        }
+
+        const level = options?.level ?? 'compact';
+        const intervalMs = Math.max(1, options?.intervalMs ?? 1000);
+        const state = activeState;
+
+        if (state.watchIntervalId) {
+            clearInterval(state.watchIntervalId);
+            state.watchIntervalId = undefined;
+        }
+
+        const logSnapshot = () => {
+            const currentActive = activeState;
+            if (!currentActive || currentActive.sessionId !== state.sessionId || !args.isSessionActive(state.sessionId)) {
+                if (state.watchIntervalId) {
+                    clearInterval(state.watchIntervalId);
+                    state.watchIntervalId = undefined;
+                }
+                return;
+            }
+
+            args.onLog('Watchdog state snapshot', getSnapshotByLevel(state, level));
+        };
+
+        logSnapshot();
+        state.watchIntervalId = setInterval(logSnapshot, intervalMs);
+        return true;
+    };
+
     return {
         start,
         stop,
         getRemainingSeconds,
-        logRemainingSeconds
+        logRemainingSeconds,
+        watchStateUntilReturn
     };
 }
