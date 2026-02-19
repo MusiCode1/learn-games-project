@@ -43,7 +43,7 @@ const defaultConfig: Config = {
   // הגדרות וידאו
   video: {
     videos: [],
-    source: "local",
+    source: "google-drive",
     googleDriveFolderUrl: GOOGLE_DRIVE_DEFAULT_FOLDER,
     hideProgressBar: false,
   },
