@@ -8,7 +8,8 @@ export default defineConfig({
 	plugins: [tailwindcss(), sveltekit(), devtoolsJson()],
 	server: {
 		host: true,
-		open: true
+		open: true,
+		allowedHosts: true
 	},
 	test: {
 		expect: { requireAssertions: true },

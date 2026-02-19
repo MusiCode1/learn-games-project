@@ -31,3 +31,19 @@ apps/train-addition-game/static/assets/
 
 # Git worktrees
 .worktrees/
+
+# Binaries
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.mp3
+*.wav
+*.ogg
+*.mp4
+*.webm
+*.pdf
+*.zip
+*.rar
+*.7z
