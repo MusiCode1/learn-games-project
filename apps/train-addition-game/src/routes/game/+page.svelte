@@ -218,7 +218,7 @@
   <BoosterContainer />
 </div>
 
-<style>
+<style type="text/postcss">
   .grass-bg {
     height: 50px;
   }

@@ -226,7 +226,7 @@
   </main>
 </div>
 
-<style>
+<style type="text/postcss">
   @reference "tailwindcss";
 
   #booster-container {

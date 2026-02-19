@@ -124,7 +124,7 @@
 	{/if}
 </div>
 
-<style>
+<style type="text/postcss">
 	@keyframes pulse-fast {
 		0%,
 		100% {

@@ -216,7 +216,7 @@
   </main>
 </div>
 
-<style>
+<style type="text/postcss">
   #booster-container {
     display: none;
   }

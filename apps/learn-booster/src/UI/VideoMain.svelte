@@ -130,7 +130,7 @@
 <!-- שקול שינוי שם הקובץ למשהו שמתאר נגן וידאו, במידה וזה יותר ברור.
  -->
 
-<style>
+<style type="text/postcss">
   #show-container {
     display: none;
   }

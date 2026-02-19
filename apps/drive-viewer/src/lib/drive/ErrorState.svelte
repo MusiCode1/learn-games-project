@@ -16,7 +16,7 @@
 	<button type="button" onclick={() => dispatch('retry')}>נסה שוב</button>
 </div>
 
-<style>
+<style type="text/postcss">
 	.state {
 		display: grid;
 		place-items: center;

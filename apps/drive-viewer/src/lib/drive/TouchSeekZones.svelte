@@ -20,7 +20,7 @@
 	<div class:active={flash === 'right'} class="flash right">10+</div>
 </div>
 
-<style>
+<style type="text/postcss">
 	.zones {
 		position: absolute;
 		inset: 0;

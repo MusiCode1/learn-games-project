@@ -39,7 +39,7 @@
   </div>
 </main>
 
-<style>
+<style type="text/postcss">
   @keyframes fade-in {
     from {
       opacity: 0;

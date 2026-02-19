@@ -29,7 +29,7 @@
   />
 </div>
 
-<style>
+<style type="text/postcss">
   .train-car {
     display: inline-block;
     transform-origin: center bottom;

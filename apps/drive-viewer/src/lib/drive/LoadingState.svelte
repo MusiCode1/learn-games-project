@@ -3,7 +3,7 @@
 	<p>טוען את הספרייה...</p>
 </div>
 
-<style>
+<style type="text/postcss">
 	.state {
 		display: grid;
 		place-items: center;

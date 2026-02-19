@@ -99,7 +99,7 @@
   {/if}
 </div>
 
-<style>
+<style type="text/postcss">
   /* אנימציית זוהר פעימה */
   @keyframes pulse-glow {
     0%,

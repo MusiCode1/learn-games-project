@@ -72,7 +72,7 @@
 	{/key}
 </div>
 
-<style>
+<style type="text/postcss">
 	@keyframes shake {
 		0%,
 		100% {

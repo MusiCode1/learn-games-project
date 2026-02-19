@@ -49,7 +49,7 @@
   </div>
 {/if}
 
-<style>
+<style type="text/postcss">
   /* אנימציית הצלחה */
   @keyframes success-pop {
     0% {

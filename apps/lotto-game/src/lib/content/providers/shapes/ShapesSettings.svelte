@@ -80,7 +80,7 @@
 	</div>
 </div>
 
-<style>
+<style type="text/postcss">
 	@reference "tailwindcss";
 
 	.shapes-settings {

@@ -60,7 +60,7 @@
 	<span class="name">{item.name}</span>
 </button>
 
-<style>
+<style type="text/postcss">
 	.card {
 		appearance: none;
 		border: none;

@@ -42,7 +42,7 @@
 		max="100"
 	></progress>
 
-	<style>
+	<style type="text/postcss">
 		progress::-webkit-progress-value {
 			transition: all 0.5s;
 			background: linear-gradient(to right, oklch(0.55 0.18 250), oklch(0.75 0.12 190));

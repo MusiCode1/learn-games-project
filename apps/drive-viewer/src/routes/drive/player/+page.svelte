@@ -118,7 +118,7 @@
 	{/if}
 </div>
 
-<style>
+<style type="text/postcss">
 	.player {
 		min-height: 100vh;
 		background: linear-gradient(180deg, #19110c 0%, #1e1611 60%, #241a15 100%);

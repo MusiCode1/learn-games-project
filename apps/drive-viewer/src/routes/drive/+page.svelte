@@ -144,7 +144,7 @@
 	{/if}
 </div>
 
-<style>
+<style type="text/postcss">
 	.screen {
 		min-height: 100vh;
 		display: flex;

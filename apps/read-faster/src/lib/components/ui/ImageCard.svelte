@@ -55,7 +55,7 @@
 	</div>
 </BaseCard>
 
-<style>
+<style type="text/postcss">
 	.image-container::before {
 		content: '';
 		position: absolute;

@@ -133,7 +133,7 @@
   </div>
 </div>
 
-<style>
+<style type="text/postcss">
   #video-main-wrapper,
   #site-main-wrapper {
     display: contents;

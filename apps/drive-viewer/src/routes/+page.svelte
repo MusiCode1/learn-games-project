@@ -13,7 +13,7 @@
 	</div>
 </section>
 
-<style>
+<style type="text/postcss">
 	.home {
 		min-height: 100vh;
 		display: grid;

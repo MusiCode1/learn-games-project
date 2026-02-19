@@ -19,7 +19,7 @@
     {@render children?.()}
 </div>
 
-<style>
+<style type="text/postcss">
     #modal {
         opacity: 0;
         transition: opacity 0.5s;

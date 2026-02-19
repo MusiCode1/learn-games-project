@@ -67,7 +67,7 @@
 	</div>
 </div>
 
-<style>
+<style type="text/postcss">
 	.animate-bounce-slow {
 		animation: bounce 3s infinite;
 	}

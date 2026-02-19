@@ -808,7 +808,7 @@
   </div>
 </div>
 
-<style>
+<style type="text/postcss">
   :global(.settings-card) {
     @apply rounded-2xl border border-gray-200 bg-white p-4 shadow-sm md:p-5;
   }

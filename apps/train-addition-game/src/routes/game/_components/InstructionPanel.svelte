@@ -105,7 +105,7 @@
   </div>
 </div>
 
-<style>
+<style type="text/postcss">
   /* הוספת קונטור עדין לטקסט לקריאות משופרת על רקע השמיים */
   .text-stroke {
     text-shadow:

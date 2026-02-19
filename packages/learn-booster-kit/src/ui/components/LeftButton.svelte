@@ -15,6 +15,6 @@
   הגדרות ג'ינג'ים בוסטר
 </button>
 
-<style>
+<style type="text/postcss">
   @reference "tailwindcss";
 </style>

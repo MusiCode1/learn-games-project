@@ -138,7 +138,7 @@
 <!-- שקול שינוי שם הקובץ למשהו שמתאר נגן וידאו, במידה וזה יותר ברור.
  -->
 
-<style>
+<style type="text/postcss">
   /* @reference "tailwindcss"; */
 
   #show-container {

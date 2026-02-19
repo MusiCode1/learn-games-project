@@ -19,7 +19,7 @@
 	<ShapeSvg shapeId={shapeData.shapeId} color={shapeData.color} />
 </div>
 
-<style>
+<style type="text/postcss">
 	.shape-content {
 		display: flex;
 		align-items: center;

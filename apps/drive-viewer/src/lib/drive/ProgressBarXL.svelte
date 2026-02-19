@@ -26,7 +26,7 @@
 	</div>
 </div>
 
-<style>
+<style type="text/postcss">
 	.bar {
 		width: min(900px, 90vw);
 		margin: 0 auto;

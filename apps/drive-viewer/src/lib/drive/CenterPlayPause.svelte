@@ -27,7 +27,7 @@ function toggle() {
 	<span aria-hidden="true">{paused ? '▶' : '❚❚'}</span>
 </button>
 
-<style>
+<style type="text/postcss">
 	.center {
 		position: absolute;
 		inset: 0;

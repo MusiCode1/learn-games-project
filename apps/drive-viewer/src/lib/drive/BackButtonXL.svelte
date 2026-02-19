@@ -31,7 +31,7 @@
 	</span>
 </button>
 
-<style>
+<style type="text/postcss">
 	.back {
 		position: fixed;
 		top: 24px;

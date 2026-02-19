@@ -24,7 +24,7 @@
 	{@render children()}
 </button>
 
-<style>
+<style type="text/postcss">
 	.card {
 		display: flex;
 		align-items: center;

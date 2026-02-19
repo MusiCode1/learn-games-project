@@ -199,7 +199,7 @@
   </div>
 </div>
 
-<style>
+<style type="text/postcss">
   #card {
     transition: transform 1.5s;
     transform: scale(0);

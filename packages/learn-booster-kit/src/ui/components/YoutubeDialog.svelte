@@ -101,6 +101,6 @@
   </div>
 </div>
 
-<style>
+<style type="text/postcss">
 
 </style>

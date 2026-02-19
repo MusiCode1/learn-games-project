@@ -16,7 +16,7 @@
 	</div>
 {/if}
 
-<style>
+<style type="text/postcss">
 	@keyframes bounce-in {
 		0% {
 			transform: scale(0);
