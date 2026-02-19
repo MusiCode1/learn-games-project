@@ -12,10 +12,10 @@
   let siteMainInstance = $state<any>();
 
   let videoControls: PlayerControls | undefined = $derived(
-    videoMainInstance?.modalController
+    videoMainInstance?.modalController,
   );
   let siteControls: SiteBoosterControls | undefined = $derived(
-    siteMainInstance?.boosterController
+    siteMainInstance?.boosterController,
   );
 
   // Settings visibility managed here, triggered by service
@@ -23,22 +23,25 @@
 
   // Configuration subscription
   let config = $state<Config>();
+  let boosterReady = $state(false);
 
   onMount(() => {
+    let unsubscribeConfig: () => void = () => {}  ;
+
     // Initialize the service (async, side effect)
-    boosterService.init();
+    boosterService.init().then(() => {
+      boosterReady = true;
 
-    // Subscribe to config
-    const unsubscribeConfig = boosterService.config.subscribe(
-      (v) => (config = v)
-    );
+      // Subscribe to config
+      unsubscribeConfig = boosterService.config.subscribe((v) => (config = v));
 
-    boosterService.registerSettingsControls({
-      show: () => (settingsVisible = true),
-      hide: () => (settingsVisible = false),
+      boosterService.registerSettingsControls({
+        show: () => (settingsVisible = true),
+        hide: () => (settingsVisible = false),
+      });
+
+      log("BoosterContainer mounted");
     });
-
-    log("BoosterContainer mounted");
 
     return () => {
       unsubscribeConfig();
@@ -47,13 +50,13 @@
 
   // Register controls when available
   $effect(() => {
-    if (videoControls) {
+    if (boosterReady && videoControls) {
       boosterService.registerVideoControls(videoControls);
       log("Video controls registered");
     }
   });
   $effect(() => {
-    if (siteControls) {
+    if (boosterReady && siteControls) {
       boosterService.registerSiteControls(siteControls);
       log("Site controls registered");
     }
