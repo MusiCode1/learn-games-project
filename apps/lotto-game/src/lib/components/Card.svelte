@@ -65,8 +65,9 @@
 	}
 
 	.card {
-		@apply relative w-full h-full rounded-xl flex items-center justify-center;
+		@apply relative w-full h-full rounded-xl flex items-center justify-center overflow-hidden;
 		@apply text-[6vmin] font-bold transition-all duration-300 select-none;
+		container-type: size;
 	}
 
 	/* פריסות מיוחדות */

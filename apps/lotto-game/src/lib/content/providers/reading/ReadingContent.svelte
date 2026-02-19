@@ -32,33 +32,34 @@
 
 	.reading-content {
 		/* Layout */
-		@apply w-full h-full flex flex-col items-center justify-center;
+		@apply w-full h-full flex flex-col items-center justify-center overflow-hidden;
 
 		/* Spacing */
-		@apply gap-1 p-2;
+		@apply gap-1 p-1;
 	}
 
 	.letter {
 		/* Layout */
 		@apply flex items-center justify-center;
-		@apply flex-shrink-0;
+		@apply flex-1 min-h-0;
 
 		/* Visual */
 		@apply font-bold;
 		@apply text-slate-800;
 
-		/* Size - responsive */
-		font-size: clamp(1.5rem, 8cqw, 3rem);
-		line-height: 1.2;
+		/* Size - responsive to card size via container-type: size on .card */
+		font-size: clamp(2rem, 35cqmin, 5rem);
+		line-height: 1;
 	}
 
 	.image-container {
-		/* Layout */
-		@apply flex-1 flex items-center justify-center;
-		@apply w-full min-h-0;
+		/* Layout - small helper image at the bottom */
+		@apply flex-none flex items-center justify-center;
+		@apply w-full;
+		height: 35%;
 
 		/* Spacing */
-		@apply p-1;
+		@apply p-0.5;
 	}
 
 	.helper-image {
