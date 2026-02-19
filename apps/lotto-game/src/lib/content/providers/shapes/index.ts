@@ -4,6 +4,7 @@
 import type { ContentProvider, ContentItem, CardContent } from '$lib/content/types';
 import ShapeContent from './ShapeContent.svelte';
 import ShapesSettings from './ShapesSettings.svelte';
+import { contentRegistry } from '../../registry';
 
 /** הגדרת צורה גיאומטרית */
 export interface ShapeDefinition {
@@ -104,6 +105,17 @@ export const shapesProvider: ContentProvider<ShapeDefinition, ShapesProviderSett
 		return dataA.shapeId === dataB.shapeId && dataA.color === dataB.color;
 	},
 
+	getSelectedItemIds(settings: ShapesProviderSettings): string[] {
+		return [...settings.selectedShapes];
+	},
+
+	updateSelectedItems(settings: ShapesProviderSettings, selectedIds: string[]): ShapesProviderSettings {
+		return { ...settings, selectedShapes: selectedIds };
+	},
+
 	renderComponent: ShapeContent as any,
 	settingsComponent: ShapesSettings as any
 };
+
+// רישום אוטומטי
+contentRegistry.register(shapesProvider);

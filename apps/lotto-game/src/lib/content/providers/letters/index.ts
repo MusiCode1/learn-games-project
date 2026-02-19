@@ -46,6 +46,14 @@ export const lettersProvider: ContentProvider<string, LettersProviderSettings> =
 		return a.itemId === b.itemId;
 	},
 
+	getSelectedItemIds(settings: LettersProviderSettings): string[] {
+		return [...settings.selectedLetters];
+	},
+
+	updateSelectedItems(settings: LettersProviderSettings, selectedIds: string[]): LettersProviderSettings {
+		return { ...settings, selectedLetters: selectedIds };
+	},
+
 	renderComponent: LetterContent as any,
 	settingsComponent: LettersSettings as any
 };

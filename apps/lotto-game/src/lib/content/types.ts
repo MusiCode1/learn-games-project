@@ -65,6 +65,13 @@ export interface ContentProvider<TItem = unknown, TSettings = unknown> {
 	/** השוואת תוכן (לבדיקת התאמה) */
 	contentMatches(a: CardContent, b: CardContent): boolean;
 
+	// === ניהול פריטים נבחרים ===
+	/** שליפת IDs של פריטים נבחרים מההגדרות */
+	getSelectedItemIds(settings: TSettings): string[];
+
+	/** עדכון פריטים נבחרים בהגדרות */
+	updateSelectedItems(settings: TSettings, selectedIds: string[]): TSettings;
+
 	// === רכיבי תצוגה ===
 	/** רכיב Svelte לתוכן הכרטיס */
 	renderComponent: ComponentType;
@@ -92,6 +99,8 @@ export function isContentProvider(value: unknown): value is ContentProvider {
 		typeof provider.getDefaultSettings === 'function' &&
 		typeof provider.generateCardContent === 'function' &&
 		typeof provider.contentMatches === 'function' &&
+		typeof provider.getSelectedItemIds === 'function' &&
+		typeof provider.updateSelectedItems === 'function' &&
 		typeof provider.renderComponent === 'function'
 	);
 }

@@ -3,8 +3,6 @@
 	import { settings } from '$lib/stores/settings.svelte';
 	import { contentRegistry } from '$lib/content/registry';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
-	import type { LettersProviderSettings } from '$lib/content/providers/letters';
-	import type { ShapesProviderSettings } from '$lib/content/providers/shapes';
 	import {
 		boosterService,
 		type Config,
@@ -104,18 +102,9 @@
 	// רכיב הגדרות דינמי
 	const SettingsComponent = $derived(currentProvider.settingsComponent);
 
-	// === Handlers for Letters Provider ===
-	function handleLettersUpdate(selectedLetters: string[]) {
-		settings.updateProviderSettings({ selectedLetters });
-	}
-
-	// === Handlers for Shapes Provider ===
-	function handleShapesUpdate(selectedShapes: string[]) {
-		settings.updateProviderSettings({ selectedShapes });
-	}
-
-	function handleColorModeUpdate(colorMode: 'uniform' | 'random') {
-		settings.updateProviderSettings({ colorMode });
+	// === Generic Handler for Provider Settings ===
+	function handleProviderSettingsUpdate(updatedSettings: Record<string, unknown>) {
+		settings.updateProviderSettings(updatedSettings);
 	}
 </script>
 
@@ -136,33 +125,21 @@
 			/>
 		</div>
 
-		<!-- הגדרות ספציפיות לפי Provider -->
+		<!-- הגדרות ספציפיות לפי Provider - גנרי לחלוטין -->
 		{#if SettingsComponent}
-			{#if settings.contentProviderId === 'letters'}
-				{@const lettersSettings = currentSettings as LettersProviderSettings}
-				{@const availableLetters = currentProvider
-					.getAvailableItems()
-					.map((item) => item.value as string)}
-				<svelte:component
-					this={SettingsComponent}
-					selectedItems={lettersSettings.selectedLetters}
-					onUpdate={handleLettersUpdate}
-					{availableLetters}
-				/>
-			{:else if settings.contentProviderId === 'shapes'}
-				{@const shapesSettings = currentSettings as ShapesProviderSettings}
-				{@const availableShapes = currentProvider
-					.getAvailableItems()
-					.map((item) => item.value)}
-				<svelte:component
-					this={SettingsComponent}
-					selectedItems={shapesSettings.selectedShapes}
-					onUpdate={handleShapesUpdate}
-					{availableShapes}
-					colorMode={shapesSettings.colorMode}
-					onColorModeUpdate={handleColorModeUpdate}
-				/>
-			{/if}
+			{@const availableItems = currentProvider.getAvailableItems().map((item) => item.value)}
+			{@const selectedItems = currentProvider.getSelectedItemIds(currentSettings)}
+			<svelte:component
+				this={SettingsComponent}
+				{selectedItems}
+				onUpdate={(items: string[]) => {
+					const updated = currentProvider.updateSelectedItems(currentSettings, items) as Record<string, unknown>;
+					settings.updateProviderSettings(updated);
+				}}
+				{availableItems}
+				settings={currentSettings}
+				onSettingsUpdate={handleProviderSettingsUpdate}
+			/>
 		{:else}
 			<p class="no-settings">אין הגדרות זמינות לספק זה</p>
 		{/if}

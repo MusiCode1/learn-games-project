@@ -6,10 +6,10 @@
 	interface Props {
 		selectedItems: string[];
 		onUpdate: (items: string[]) => void;
-		availableLetters: string[];
+		availableItems: string[];
 	}
 
-	let { selectedItems, onUpdate, availableLetters }: Props = $props();
+	let { selectedItems, onUpdate, availableItems }: Props = $props();
 
 	function handleToggle(letter: string) {
 		if (selectedItems.includes(letter)) {
@@ -20,7 +20,7 @@
 	}
 
 	function handleSelectAll() {
-		onUpdate([...availableLetters]);
+		onUpdate([...availableItems]);
 	}
 
 	function handleDeselectAll() {
@@ -39,7 +39,7 @@
 	</div>
 
 	<div class="letters-grid">
-		{#each availableLetters as letter}
+		{#each availableItems as letter}
 			{@const isSelected = selectedItems.includes(letter)}
 			<button
 				onclick={() => handleToggle(letter)}

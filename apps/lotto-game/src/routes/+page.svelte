@@ -31,8 +31,8 @@
 	const provider = $derived(contentRegistry.get(settings.contentProviderId));
 	const gameTitle = $derived(`משחק לוטו ${provider.displayName}`);
 
-	onMount(() => {
-		// בוסטר מותחל ב-layout
+	onMount(async () => {
+
 		startNewGame();
 	});
 
@@ -60,13 +60,8 @@
 		const currentProvider = contentRegistry.get(settings.contentProviderId);
 		const providerSettings = settings.getCurrentProviderSettings();
 		
-		// שליפת רשימת ה-IDs של הפריטים שנבחרו
-		let selectedItemIds: string[] = [];
-		if (settings.contentProviderId === 'letters') {
-			selectedItemIds = (providerSettings as any).selectedLetters || [];
-		} else if (settings.contentProviderId === 'shapes') {
-			selectedItemIds = (providerSettings as any).selectedShapes || [];
-		}
+		// שליפת רשימת ה-IDs של הפריטים שנבחרו באמצעות המתודה הגנרית
+		const selectedItemIds = currentProvider.getSelectedItemIds(providerSettings);
 		
 		const newCards = generateCards({
 			pairCount: settings.pairCount,

@@ -9,12 +9,20 @@
 	interface Props {
 		selectedItems: string[];
 		onUpdate: (items: string[]) => void;
-		availableShapes: ShapeDefinition[];
-		colorMode: 'uniform' | 'random';
-		onColorModeUpdate: (mode: 'uniform' | 'random') => void;
+		availableItems: ShapeDefinition[];
+		settings?: { colorMode?: 'uniform' | 'random' };
+		onSettingsUpdate?: (settings: any) => void;
 	}
 
-	let { selectedItems, onUpdate, availableShapes, colorMode, onColorModeUpdate }: Props = $props();
+	let { selectedItems, onUpdate, availableItems, settings, onSettingsUpdate }: Props = $props();
+	
+	const colorMode = $derived((settings?.colorMode as 'uniform' | 'random') || 'random');
+	
+	function handleColorModeUpdate(mode: 'uniform' | 'random') {
+		if (onSettingsUpdate) {
+			onSettingsUpdate({ colorMode: mode });
+		}
+	}
 
 	function handleToggle(shapeId: string) {
 		if (selectedItems.includes(shapeId)) {
@@ -25,7 +33,7 @@
 	}
 
 	function handleSelectAll() {
-		onUpdate(availableShapes.map((s) => s.id));
+		onUpdate(availableItems.map((s) => s.id));
 	}
 
 	function handleDeselectAll() {
@@ -39,11 +47,11 @@
 		<h3 class="title">מצב צבעים</h3>
 		<SegmentedControl
 			options={[
-				{ id: 'random', label: 'רנדומלי', icon: '🌈' },
-				{ id: 'uniform', label: 'אחיד', icon: '🔵' }
-			]}
-			value={colorMode}
-			onchange={(id) => onColorModeUpdate(id as 'uniform' | 'random')}
+			{ id: 'random', label: 'רנדומלי', icon: '🌈' },
+			{ id: 'uniform', label: 'אחיד', icon: '🔵' }
+		]}
+		value={colorMode}
+		onchange={(id) => handleColorModeUpdate(id as 'uniform' | 'random')}
 		/>
 	</div>
 
@@ -59,7 +67,7 @@
 		</div>
 
 		<div class="shapes-grid">
-			{#each availableShapes as shape}
+			{#each availableItems as shape}
 				{@const isSelected = selectedItems.includes(shape.id)}
 				<button onclick={() => handleToggle(shape.id)} class="shape-btn" class:selected={isSelected}>
 					<div class="shape-icon">
