@@ -10,11 +10,11 @@ import { initializeConfig, configStore } from './config-manager';
 import { createTimer } from './utils/timer';
 import { sleep } from './sleep';
 import { log } from './logger.svelte';
+import { createRewardWatchdog } from './watchdog/reward-watchdog';
 
 const AFTER_REWARD_DELAY_MS = 2500;
 const FULLY_POLL_INTERVAL_MS = 1000;
 const WATCHDOG_GRACE_MS = 1000;
-const WATCHDOG_TIMER_STALL_MS = 2000;
 
 export type BoosterServiceInitialized = BoosterService & {
     config: Writable<Config>;
@@ -37,6 +37,21 @@ class BoosterService {
     // State
     private rewardActiveStore = writable(false);
     private activeRewardSessionId = 0;
+    private rewardWatchdog = createRewardWatchdog({
+        isSessionActive: (sessionId) => this.activeRewardSessionId === sessionId,
+        onTimeout: (payload) => {
+            console.error('[gingim-booster][watchdog] Reward timeout detected', payload);
+            log('Reward watchdog timeout', payload);
+        },
+        onLog: (message, payload) => {
+            if (typeof payload === 'undefined') {
+                log(message);
+                return;
+            }
+
+            log(message, payload);
+        }
+    });
 
     private constructor() {
         this.configStore = configStore;
@@ -58,11 +73,27 @@ class BoosterService {
     }
 
     public async init(): Promise<BoosterServiceInitialized> {
-        if (this.initialized) return this as BoosterServiceInitialized;
+        if (this.initialized) {
+            this.registerGlobalWatchdogTools();
+            return this as BoosterServiceInitialized;
+        }
+
         this.initialized = true;
         await initializeConfig();
+        this.registerGlobalWatchdogTools();
         log('BoosterService initialized');
         return this as BoosterServiceInitialized;
+    }
+
+    private registerGlobalWatchdogTools() {
+        if (typeof window === 'undefined') return;
+
+        window.GingimBoosterTools = window.GingimBoosterTools ?? {};
+        window.GingimBoosterTools.watchdog = {
+            logRemainingSeconds: () => this.rewardWatchdog.logRemainingSeconds(),
+            getRemainingSeconds: () => this.rewardWatchdog.getRemainingSeconds(),
+            watchStateUntilReturn: (options) => this.rewardWatchdog.watchStateUntilReturn(options)
+        };
     }
 
     public get config(): Writable<Config> {
@@ -126,98 +157,12 @@ class BoosterService {
         } catch (e) {
             log('Error triggering reward:', e);
         } finally {
+            this.rewardWatchdog.stop();
             this.isRewardActive.set(false);
             if (this.activeRewardSessionId === rewardSessionId) {
                 this.activeRewardSessionId = 0;
             }
         }
-    }
-
-    private startRewardWatchdog(args: {
-        rewardType: Config['rewardType'];
-        durationMs: number;
-        graceMs: number;
-        timer: TimerController;
-        sessionId: number;
-        modalHasHidden?: Writable<boolean>;
-        getExtraStatus?: () => Record<string, unknown>;
-    }) {
-        const startedAt = Date.now();
-        const deadlineAt = startedAt + args.durationMs + args.graceMs;
-        let lastTimerMs = get(args.timer.time);
-        let lastTimerTickAt: number | null = null;
-        const initialTimerMs = lastTimerMs;
-
-        let lastModalHidden = args.modalHasHidden ? get(args.modalHasHidden) : undefined;
-        let lastModalChangeAt = args.modalHasHidden ? startedAt : undefined;
-
-        const timerUnsub = args.timer.time.subscribe((ms) => {
-            if (ms !== lastTimerMs) {
-                lastTimerMs = ms;
-                lastTimerTickAt = Date.now();
-            }
-        });
-
-        const modalUnsub = args.modalHasHidden
-            ? args.modalHasHidden.subscribe((hidden) => {
-                if (hidden !== lastModalHidden) {
-                    lastModalHidden = hidden;
-                    lastModalChangeAt = Date.now();
-                }
-            })
-            : undefined;
-
-        const timeoutId = setTimeout(() => {
-            if (this.activeRewardSessionId !== args.sessionId) return;
-
-            const now = Date.now();
-            const elapsedMs = now - startedAt;
-            const timerRemainingMs = get(args.timer.time);
-            const lastTimerTickAgeMs = lastTimerTickAt ? now - lastTimerTickAt : null;
-            const lastModalChangeAgeMs = lastModalChangeAt ? now - lastModalChangeAt : null;
-
-            const suspectedCause: string[] = [];
-
-            if (timerRemainingMs === initialTimerMs && !lastTimerTickAt) {
-                suspectedCause.push('timer did not start');
-            } else if (timerRemainingMs > 0 && lastTimerTickAgeMs !== null && lastTimerTickAgeMs > WATCHDOG_TIMER_STALL_MS) {
-                suspectedCause.push('timer stalled/paused');
-            }
-
-            if (args.modalHasHidden && lastModalHidden === false && timerRemainingMs <= 0) {
-                suspectedCause.push('modal not closed after timer done');
-            }
-
-            const extraStatus = args.getExtraStatus?.() ?? {};
-            if (args.rewardType === 'app') {
-                const isInForeground = (extraStatus as any).isInForeground;
-                if (isInForeground === false || typeof isInForeground === 'undefined') {
-                    suspectedCause.push('app not returned to Fully');
-                }
-            }
-
-            const payload = {
-                rewardType: args.rewardType,
-                durationMs: args.durationMs,
-                graceMs: args.graceMs,
-                elapsedMs,
-                timerRemainingMs,
-                lastTimerTickAgeMs,
-                modalHasHidden: lastModalHidden,
-                lastModalChangeAgeMs,
-                suspectedCause,
-                extraStatus
-            };
-
-            console.error('[gingim-booster][watchdog] Reward timeout detected', payload);
-            log('Reward watchdog timeout', payload);
-        }, deadlineAt - startedAt);
-
-        return () => {
-            clearTimeout(timeoutId);
-            timerUnsub?.();
-            modalUnsub?.();
-        };
     }
 
     private async handleVideoReward(
@@ -235,7 +180,7 @@ class BoosterService {
 
         // Show Video (implicitly starts timer in VideoMain, but we can supervise)
         playerControls.show();
-        stopWatchdog = this.startRewardWatchdog({
+        stopWatchdog = this.rewardWatchdog.start({
             rewardType: 'video',
             durationMs: config.rewardDisplayDurationMs,
             graceMs: WATCHDOG_GRACE_MS,
@@ -282,7 +227,7 @@ class BoosterService {
 
         boosterControls.show();
         let stopWatchdog: (() => void) | undefined;
-        stopWatchdog = this.startRewardWatchdog({
+        stopWatchdog = this.rewardWatchdog.start({
             rewardType: 'site',
             durationMs: config.rewardDisplayDurationMs,
             graceMs: WATCHDOG_GRACE_MS,
@@ -336,7 +281,7 @@ class BoosterService {
 
             // Poll for foreground return
             const fullyWatcher = this.createFullyForegroundWatcher(fully);
-            const stopWatchdog = this.startRewardWatchdog({
+            const stopWatchdog = this.rewardWatchdog.start({
                 rewardType: 'app',
                 durationMs: config.rewardDisplayDurationMs,
                 graceMs: WATCHDOG_GRACE_MS,
