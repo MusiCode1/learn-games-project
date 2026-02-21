@@ -1,2 +1,2 @@
 @import 'tailwindcss';
-@source '../../../../packages/learn-booster-kit';
+@import 'learn-booster-kit/styles';
