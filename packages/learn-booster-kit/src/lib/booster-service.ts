@@ -274,12 +274,11 @@ class BoosterService {
             if (!appConfig.app.packageName) throw new Error('No package name defined');
 
             fully.startApplication(appConfig.app.packageName);
+            fully.bringToForeground(config.rewardDisplayDurationMs);
 
-            // Initial timer config
             this.timer.configure(config.rewardDisplayDurationMs);
             this.timer.start();
 
-            // Poll for foreground return
             const fullyWatcher = this.createFullyForegroundWatcher(fully);
             const stopWatchdog = this.rewardWatchdog.start({
                 rewardType: 'app',
@@ -297,8 +296,26 @@ class BoosterService {
                 }
             });
 
-            const racePromises: Array<Promise<'timer' | 'fully'>> = [
-                this.timer.onDone().then(() => 'timer' as const)
+            let cleanupVisibility: (() => void) | undefined;
+            const visibilityReturn = new Promise<'visibility'>((resolve) => {
+                if (typeof document === 'undefined') return;
+                let sawHidden = document.visibilityState === 'hidden';
+                const onChange = () => {
+                    if (document.visibilityState === 'hidden') {
+                        sawHidden = true;
+                    } else if (sawHidden && document.visibilityState === 'visible') {
+                        document.removeEventListener('visibilitychange', onChange);
+                        cleanupVisibility = undefined;
+                        resolve('visibility');
+                    }
+                };
+                document.addEventListener('visibilitychange', onChange);
+                cleanupVisibility = () => document.removeEventListener('visibilitychange', onChange);
+            });
+
+            const racePromises: Array<Promise<'timer' | 'fully' | 'visibility'>> = [
+                this.timer.onDone().then(() => 'timer' as const),
+                visibilityReturn
             ];
             if (fullyWatcher) racePromises.push(fullyWatcher.promise);
 
@@ -306,11 +323,14 @@ class BoosterService {
                 const result = await Promise.race(racePromises);
                 if (result === 'fully') {
                     log('Returned to Fully Kiosk, stopping timer');
+                } else if (result === 'visibility') {
+                    log('Returned to foreground via native bringToForeground');
                 }
             } finally {
                 this.timer.stop();
                 stopWatchdog?.();
                 fullyWatcher?.cancel();
+                cleanupVisibility?.();
             }
 
             fully.bringToForeground();

@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import { regex } from "arkregex";
-
-// const fileNamePattern = regex("at\\s+(?<funcName>\\w+)\\s+\\((?<fullFileName>.+?/(?<fileName>[^/:]+\.ts)(.+)?:\\d+:\\d+)\\)?");
 
 export function log(...args: any[]) {
 
