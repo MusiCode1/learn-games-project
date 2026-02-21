@@ -1,8 +1,10 @@
 import type { Component as ComponentImport, SvelteComponent } from "svelte";
 import type { Writable, Readable } from "svelte/store";
+export type { FullyKiosk, FullyItem as FullyKioskItem } from 'fully-kiosk-js';
 
 /**
  * מייצג פריט (קובץ או תיקייה) במערכת הקבצים של Fully Kiosk
+ * @deprecated השתמש ב-FullyKioskItem מ-fully-kiosk-js
  */
 export interface FullyItem {
   canRead: boolean;
@@ -269,16 +271,6 @@ export interface ProfilesExportPayload {
   uiEnabled: boolean;
 }
 
-export interface FullyKiosk {
-  getFileList: (folder: string) => string;
-  readFile: (path: string) => string;
-  getBooleanSetting: (key: string) => 'true' | 'false';
-  setBooleanSetting: (key: string, value: boolean) => void;
-  isInForeground?: () => boolean;
-  bringToForeground: (millis?: number) => void;
-  startApplication(packageName: string, action?: string, url?: string): void;
-  getStringRawSetting: (key: string) => string;
-}
 
 /**
  * בקר עבור דף ההגדרות

@@ -46,6 +46,7 @@
     "vitest": "^4.0.15"
   },
   "dependencies": {
+    "fully-kiosk-js": "*",
     "@fontsource/heebo": "^5.1.0",
     "@playwright/test": "^1.51.1",
     "@tailwindcss/postcss": "^4.1.17",
