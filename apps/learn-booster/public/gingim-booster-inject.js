@@ -8,7 +8,7 @@
 // ==/UserScript==
 
 /**
- * mode: development 
+ * mode: production 
  */
 
 (() => {

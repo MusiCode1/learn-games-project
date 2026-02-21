@@ -1,17 +1,19 @@
-import { decryptText } from "./utils/encript-decrypt-text";
-import { getAllConfig, addConfigListener } from "./config-manager";
+import { decryptText } from "../utils/encript-decrypt-text";
+import { getAllConfig, addConfigListener } from "../config/config-manager";
 
-import type { AppListItem } from "../types";
+import type { AppListItem } from "../../types";
 import { isFullyKiosk } from "./fully-kiosk";
 
 const filePath = "/data/user/0/com.fullykiosk.emm/files/remote-admin-pass";
 const passwordKey = import.meta.env.VITE_PASS_KEY;
-const aad = "gingim-booster-fully-kiosk-key:v1";
+const aad = "learn-booster-fully-kiosk-key:v1";
+const OLD_AAD = "gingim-booster-fully-kiosk-key:v1";
 let environmentMode = "";
 
 let exampleAppList: AppListItem[] | [] = [];
 
-// Safe URL creation for SSR
+const DEMO_APP_LIST_ORIGIN = import.meta.env.VITE_DEMO_APP_LIST_ORIGIN as string | undefined;
+
 let currrntUrl: URL | null = null;
 try {
   if (typeof import.meta.url === "string" && import.meta.url) {
@@ -22,7 +24,8 @@ try {
 }
 
 const isDemoAppList =
-  currrntUrl?.origin === "https://gingim.net" &&
+  Boolean(DEMO_APP_LIST_ORIGIN) &&
+  currrntUrl?.origin === DEMO_APP_LIST_ORIGIN &&
   environmentMode === "development";
 
 (() => {
@@ -52,12 +55,18 @@ async function getFullyKioskPasswordOld() {
     throw new Error("Could not read Fully Kiosk remote admin password file.");
   }
 
-  const clearPass = await decryptText(encryptedPassFile, passwordKey, {
-    strictVersion: true,
-    aad,
-  });
-  // להחליף בקובץ מקומי
-  return clearPass;
+  // Support both old and new AAD values for backward compatibility
+  try {
+    return await decryptText(encryptedPassFile, passwordKey, {
+      strictVersion: true,
+      aad,
+    });
+  } catch {
+    return await decryptText(encryptedPassFile, passwordKey, {
+      strictVersion: true,
+      aad: OLD_AAD,
+    });
+  }
 }
 
 async function getExampleAppList() {

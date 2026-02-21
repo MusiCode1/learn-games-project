@@ -7,11 +7,11 @@
     } from "../../types";
 
     import { onMount } from "svelte";
-    import * as configManager from "../../lib/config-manager";
+    import * as configManager from "../../lib/config/config-manager";
     import { log } from "../../lib/logger.svelte";
-    import { isFullyKiosk } from "../../lib/fully-kiosk";
+    import { isFullyKiosk } from "../../lib/fully-kiosk/fully-kiosk";
     import { msToTime } from "../../lib/utils/ms-to-time";
-    import { getAppsList as getAppsListFromFully } from "../../lib/get-app-list";
+    import { getAppsList as getAppsListFromFully } from "../../lib/fully-kiosk/get-app-list";
     import {
         addProfilesListener,
         clearDirtyConfig,
@@ -21,7 +21,7 @@
         markDirtyConfig,
         setActiveProfile,
         setProfilesUiEnabled,
-    } from "../../lib/profile-manager";
+    } from "../../lib/config/profile-manager";
 
     interface Props {
         config: Config;

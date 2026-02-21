@@ -1,8 +1,7 @@
 
+import { defaultConfig, deepMerge } from "../config/config-manager";
 
-import { defaultConfig, deepMerge } from "./config-manager";
-
-import type { Config } from "../types";
+import type { Config } from "../../types";
 
 
 export function createConfigStore() {

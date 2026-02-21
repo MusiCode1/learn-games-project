@@ -21,6 +21,6 @@ body {
 
 } */
 
-.gingim-booster, .gingim-booster * {
+.learn-booster, .learn-booster * {
   all: revert-layer;
 }

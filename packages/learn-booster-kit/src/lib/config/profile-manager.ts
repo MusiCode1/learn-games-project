@@ -3,9 +3,10 @@ import { getDefaultConfig } from "./default-config";
 import type {
     Config, Profile,
     ProfilesExportPayload, ProfilesState
-} from '../types';
+} from '../../types';
 
-const STORAGE_KEY = 'gingim-booster-profiles:v1';
+const OLD_STORAGE_KEY = 'gingim-booster-profiles:v1';
+const STORAGE_KEY = 'learn-booster-profiles:v1';
 const SCHEMA_VERSION = 1;
 const DEFAULT_PROFILE_NAME = 'Default Profile';
 
@@ -142,7 +143,6 @@ export function setProfilesOrder(order: string[]): void {
     const filteredOrder = order.filter(id => state.profiles[id]);
 
     if (filteredOrder.length !== state.order.length) {
-        // Keep any missing ids appended at the end to avoid accidental loss
         const missingIds = state.order.filter(id => !filteredOrder.includes(id));
         state.order = [...filteredOrder, ...missingIds];
     } else {
@@ -272,6 +272,21 @@ function notifyListeners(): void {
     listeners.forEach(listener => listener(snapshot));
 }
 
+function migrateProfilesStorage(): void {
+    if (!isStorageAvailable()) return;
+    try {
+        const old = localStorage.getItem(OLD_STORAGE_KEY);
+        if (old) {
+            if (!localStorage.getItem(STORAGE_KEY)) {
+                localStorage.setItem(STORAGE_KEY, old);
+            }
+            localStorage.removeItem(OLD_STORAGE_KEY);
+        }
+    } catch {
+        // ignore storage errors
+    }
+}
+
 function persistState(): void {
     state = normalizeState(state);
     if (!isStorageAvailable()) return;
@@ -283,6 +298,7 @@ function persistState(): void {
 }
 
 function loadFromStorage(): void {
+    migrateProfilesStorage();
     if (!isStorageAvailable()) return;
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -325,7 +341,6 @@ function normalizeState(value: Partial<ProfilesState>): ProfilesState {
         normalized.order = value.order.filter(id => normalized.profiles[id]);
     }
 
-    // Append any missing ids (in case order was not persisted)
     for (const id of Object.keys(normalized.profiles)) {
         if (!normalized.order.includes(id)) {
             normalized.order.push(id);

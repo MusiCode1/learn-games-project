@@ -5,8 +5,8 @@
 
   import Modal from "./components/Modal.svelte";
   import LoadingSpinner from "./components/LoadingSpinner.svelte";
-  import { sleep } from "../lib/sleep";
-  import { addConfigListener, getAllConfig } from "../lib/config-manager";
+  import { sleep } from "../lib/utils/sleep";
+  import { addConfigListener, getAllConfig } from "../lib/config/config-manager";
   import { msToTime } from "../lib/utils/ms-to-time";
 
   import type { Config, TimerController } from "../types";

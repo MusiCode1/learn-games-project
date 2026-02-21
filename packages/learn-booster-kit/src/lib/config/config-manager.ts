@@ -1,4 +1,4 @@
-import pkg from "../../package.json" with { type: "json" };
+import pkg from "../../../package.json" with { type: "json" };
 
 import {
   getActiveProfile,
@@ -6,19 +6,18 @@ import {
   saveActiveProfileConfig,
 } from "./profile-manager";
 import { getDefaultConfig } from "./default-config";
-import { loadVideoUrls } from "./video-loader";
+import { loadVideoUrls } from "../video/video-loader";
 
-import type { Config } from "../types";
+import type { Config } from "../../types";
 
-// מפתח לשמירה ב-localStorage
-const LOCAL_STORAGE_KEY = "gingim-booster-config";
+const OLD_LOCAL_STORAGE_KEY = "gingim-booster-config";
+const LOCAL_STORAGE_KEY = "learn-booster-config";
 
 const GOOGLE_DRIVE_DEFAULT_FOLDER = import.meta.env
   .VITE_GOOGLE_DRIVE_DEFAULT_FOLDER;
 
 const SITE_DEFAULT_URL = import.meta.env.VITE_SITE_DEFAULT_UTL;
 
-// רשימת מאזינים לשינויים בקונפיגורציה
 type ConfigChangeListener = (config: Config) => void;
 const listeners: ConfigChangeListener[] = [];
 
@@ -26,21 +25,10 @@ export const defaultConfig = getDefaultConfig();
 import { writable } from 'svelte/store';
 export const configStore = writable<Config>({ ...defaultConfig });
 
-/**
- * דגל המציין האם מערכת ההגדרות אותחלה
- */
 let isConfigInitialized = false;
 
-/**
- * אובייקט גלובלי המחזיק את ההגדרות הנוכחיות
- */
 let appConfig: Config = { ...defaultConfig };
 
-/**
- * הוספת מאזין לשינויים בקונפיגורציה
- * @param callback פונקציה שתקרא בכל שינוי בקונפיגורציה
- * @returns פונקציה להסרת המאזין
- */
 export function addConfigListener(callback: ConfigChangeListener): () => void {
   listeners.push(callback);
   return () => {
@@ -51,19 +39,12 @@ export function addConfigListener(callback: ConfigChangeListener): () => void {
   };
 }
 
-/**
- * הודעה לכל המאזינים על שינוי בקונפיגורציה
- */
 function notifyConfigListeners(): void {
   const newConfig = { ...appConfig };
   listeners.forEach((listener) => listener(newConfig));
   configStore.set(newConfig);
 }
 
-/**
- * עדכון הגדרות המערכת
- * @param updates עדכונים להגדרות
- */
 export async function updateConfig(updates: Partial<Config>): Promise<Config> {
   if (updates.video) {
     if (updates.video.googleDriveFolderUrl === "") {
@@ -108,15 +89,25 @@ export async function tempConfig(updates: Partial<Config>) {
 
 async function setVideosUrls(systemConfig: Config) {
   const videos = await loadVideoUrls(systemConfig);
-
   appConfig.video.videos = videos;
 }
 
-/**
- * טעינת הקונפיגורציה מ-localStorage
- * @returns האם הטעינה הצליחה
- */
+function migrateConfigStorage(): void {
+  try {
+    const old = localStorage.getItem(OLD_LOCAL_STORAGE_KEY);
+    if (old) {
+      if (!localStorage.getItem(LOCAL_STORAGE_KEY)) {
+        localStorage.setItem(LOCAL_STORAGE_KEY, old);
+      }
+      localStorage.removeItem(OLD_LOCAL_STORAGE_KEY);
+    }
+  } catch {
+    // ignore storage errors
+  }
+}
+
 export function loadConfigFromStorage(): boolean {
+  migrateConfigStorage();
   try {
     const storedConfig = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!storedConfig) return false;
@@ -124,7 +115,6 @@ export function loadConfigFromStorage(): boolean {
     const parsedConfig = JSON.parse(storedConfig);
     if (typeof parsedConfig !== "object" || parsedConfig === null) return false;
 
-    // מיזוג עם ברירת המחדל
     appConfig = deepMerge({ ...defaultConfig }, parsedConfig);
 
     notifyConfigListeners();
@@ -135,10 +125,6 @@ export function loadConfigFromStorage(): boolean {
   }
 }
 
-/**
- * שמירת הקונפיגורציה ל-localStorage
- * @returns האם השמירה הצליחה
- */
 export function saveConfigToStorage(): boolean {
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appConfig));
@@ -149,19 +135,13 @@ export function saveConfigToStorage(): boolean {
   }
 }
 
-/**
- * איפוס הגדרות לברירת המחדל
- */
 export function resetConfig(): void {
   appConfig = { ...defaultConfig };
   notifyConfigListeners();
 }
 
 export async function initializeConfig(): Promise<Config> {
-  // איפוס למצב ברירת המחדל
   resetConfig();
-
-  // טעינה מ-localStorage
   loadConfigFromStorage();
 
   await initializeProfiles(appConfig);
@@ -170,9 +150,7 @@ export async function initializeConfig(): Promise<Config> {
     appConfig = cloneConfig(activeProfile.config);
   }
 
-  // טעינת רשימת סרטונים אם במצב וידאו וסופקו הפרמטרים הנדרשים
   if (appConfig.rewardType === "video") {
-    // עדכון רשימת הסרטונים בקונפיג
     await setVideosUrls(appConfig);
   }
 
@@ -182,7 +160,6 @@ export async function initializeConfig(): Promise<Config> {
     }
   };
 
-  // סימון שמערכת ההגדרות אותחלה
   isConfigInitialized = true;
 
   syncActiveProfileSnapshot();
@@ -191,9 +168,6 @@ export async function initializeConfig(): Promise<Config> {
   return { ...appConfig };
 }
 
-/**
- * קבלת סרטון אקראי מהרשימה
- */
 export function getRandomVideo():
   | { url: string; mimeType: string }
   | undefined {
@@ -204,24 +178,16 @@ export function getRandomVideo():
   return videos[randomIndex];
 }
 
-/**
- * קבלת כל ההגדרות לקריאה בלבד
- * @returns עותק של כל ההגדרות הנוכחיות
- * @throws {Error} אם מערכת ההגדרות לא אותחלה
- */
 export function getAllConfig(): Readonly<Config> {
-  // בדיקה אם מערכת ההגדרות אותחלה
   if (!isConfigInitialized) {
     throw new Error(
       "מערכת ההגדרות לא אותחלה. יש לקרוא ל-initializeConfig לפני השימוש ב-getAllConfig",
     );
   }
 
-  // יצירת עותק עמוק של ההגדרות
   return Object.freeze(structuredClone(appConfig));
 }
 
-// עדכון רקורסיבי שמשמר את המבנה של תתי-אובייקטים
 export function deepMerge<T extends Record<string, unknown>>(
   target: T,
   source: Partial<T>,
@@ -262,33 +228,31 @@ function syncActiveProfileSnapshot(): void {
   }
 }
 
-const DEV_SERVER_HOSTNAME = 'dev-server.dev',
-  GAME_PAGE_URL = '/wp-content/uploads/new_games/';
-
 function getEnvVals() {
-  const thisUrl = new URL(window.location.href),
-    hostname = window.location.hostname,
+  const hostname = window.location.hostname,
     fullPath = window.location.href,
     isIframe = window.self !== window.top,
     selfUrl = import.meta.url,
-    isDevServer = (hostname === DEV_SERVER_HOSTNAME),
+    isDevServer = import.meta.env.DEV as boolean,
     devMode = import.meta.env.DEV,
     deployServer = import.meta.env.VITE_PRJ_DOMAIN as string,
-    isDeployServer = (hostname === deployServer),
-    isGingim = (hostname === 'gingim.net'),
-    isGamesListPage = (thisUrl.pathname.startsWith('/games')),
-    isGamePage = (fullPath.includes(GAME_PAGE_URL)),
-    isGingimHomepage = (isGingim && thisUrl.pathname === '/'),
-    isBoosterIframe = isIframe && (window.name === "booster-iframe" || (window.frameElement as HTMLElement)?.dataset?.owner === "booster-iframe"),
-    isDirectToGamePage = (thisUrl.pathname.startsWith('/direct-to-game'));
+    isDeployServer = (hostname === deployServer);
 
   return {
     hostname, fullPath, isIframe,
     selfUrl, isDevServer, devMode,
     deployServer, isDeployServer,
-    isDirectToGamePage, isGingim,
-    isGamePage, isBoosterIframe,
-    isGamesListPage,
-    isGingimHomepage,
+    /** @deprecated gingim-specific, always false */
+    isDirectToGamePage: false,
+    /** @deprecated gingim-specific, always false */
+    isGingim: false,
+    /** @deprecated gingim-specific, always false */
+    isGamePage: false,
+    /** @deprecated gingim-specific, always false */
+    isBoosterIframe: false,
+    /** @deprecated gingim-specific, always false */
+    isGamesListPage: false,
+    /** @deprecated gingim-specific, always false */
+    isGingimHomepage: false,
   };
 }

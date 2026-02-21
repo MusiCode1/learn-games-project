@@ -1,10 +1,10 @@
-import type { Config, PlayerControls, TimerController } from "../types";
+import type { Config, PlayerControls, TimerController } from "../../types";
 
-import { mountComponent } from "../ui/component-composer";
+import { mountComponent } from "../../ui/component-composer";
 import { createConfigStore } from "./config-store.svelte";
 
-import VideoComponent from '../ui/VideoMain.svelte';
-import { log } from "./logger.svelte";
+import VideoComponent from '../../ui/VideoMain.svelte';
+import { log } from "../logger.svelte";
 
 import type { Component } from 'svelte';
 

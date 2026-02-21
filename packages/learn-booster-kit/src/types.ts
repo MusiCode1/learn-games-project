@@ -197,6 +197,7 @@ export type Config = {
 
     /**
      * האם לבטל הזרקת קוד למשחק
+     * @deprecated gingim-specific, no longer used
      */
     disableGameCodeInjection: boolean;
   };
@@ -211,11 +212,17 @@ export type Config = {
     devMode: boolean;
     deployServer: string;
     isDeployServer: boolean;
+    /** @deprecated gingim-specific, always false */
     isGingim: boolean;
+    /** @deprecated gingim-specific, always false */
     isGamePage: boolean;
+    /** @deprecated gingim-specific, always false */
     isGamesListPage: boolean;
+    /** @deprecated gingim-specific, always false */
     isGingimHomepage: boolean;
+    /** @deprecated gingim-specific, always false */
     isBoosterIframe: boolean;
+    /** @deprecated gingim-specific, always false */
     isDirectToGamePage: boolean;
   };
 };

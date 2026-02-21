@@ -1,27 +1,20 @@
-import type { Config, VideoItem, VideoList } from "../types";
+import type { Config, VideoItem, VideoList } from "../../types";
 import {
   extractGoogleDriveFolderId,
   getFolderVideosUrls,
 } from "./google-drive-video";
-import { shuffleArray } from "./utils/shuffle-array";
-import { getFileList } from "./fully-kiosk";
-import { log } from "./logger.svelte";
+import { shuffleArray } from "../utils/shuffle-array";
+import { getFileList } from "../fully-kiosk/fully-kiosk";
+import { log } from "../logger.svelte";
 
 const devMode = import.meta.env.DEV,
   selfUrl = import.meta.url;
 
-/**
- * המרת רשימת URLs לרשימת פריטי וידאו
- * @param urls רשימת URLs של סרטונים
- * @param mimeType סוג MIME של הסרטונים (ברירת מחדל)
- * @returns רשימת פריטי וידאו
- */
 export function urlsToVideoItems(
   urls: string[],
   defaultMimeType: string = "video/mp4"
 ): VideoList {
   return urls.map((url) => {
-    // ניסיון לזהות את סוג הקובץ לפי הסיומת
     let mimeType = defaultMimeType;
     const extension = url.split(".").pop()?.toLowerCase();
 
@@ -68,12 +61,6 @@ export function urlsToVideoItems(
   });
 }
 
-/**
- * יצירת פריט וידאו מקומי
- * @param selfUrl ה-URL של הסקריפט הנוכחי
- * @param devMode האם האפליקציה במצב פיתוח
- * @returns פריט וידאו
- */
 export function createLocalVideoItem(): VideoItem {
   const baseUrl = new URL(selfUrl).origin.toString();
   const localVideo = new URL("videos/video.webm", baseUrl).toString();
@@ -84,14 +71,11 @@ export function createLocalVideoItem(): VideoItem {
   const extension = url.split(".").pop()?.toLowerCase();
   const mimeType = "video/mp4";
 
+  void localVideo; void extension; void devMode;
+
   return { url, mimeType };
 }
 
-/**
- * טעינת סרטונים מגוגל דרייב
- * @param folderUrl כתובת URL של תיקיית גוגל דרייב
- * @returns רשימת פריטי וידאו
- */
 export async function loadGoogleDriveVideos(
   folderUrl?: string
 ): Promise<VideoList> {
@@ -116,10 +100,6 @@ export async function loadGoogleDriveVideos(
   }
 }
 
-/**
- * טעינת סרטונים מתיקיית גוגל דרייב ברירת מחדל
- * @returns רשימת פריטי וידאו
- */
 export async function loadDefaultGoogleDriveVideos(): Promise<VideoList> {
   try {
     const defaultFolderId = extractGoogleDriveFolderId(
@@ -139,10 +119,6 @@ export async function loadDefaultGoogleDriveVideos(): Promise<VideoList> {
   }
 }
 
-/**
- * טעינת סרטונים מקומיים
- * @returns רשימת פריטי וידאו
- */
 export async function loadLocalVideos(): Promise<VideoList> {
   try {
     if (window.fully) {
@@ -154,24 +130,14 @@ export async function loadLocalVideos(): Promise<VideoList> {
       }
     }
 
-    // אם אין סרטונים מקומיים או שלא במצב Fully Kiosk, מחזירים סרטון ברירת מחדל
     return [createLocalVideoItem()];
   } catch (error) {
     console.error("שגיאה בטעינת סרטונים מקומיים:", error);
-    // במקרה של שגיאה, מחזירים סרטון ברירת מחדל
     return [createLocalVideoItem()];
   }
 }
 
-/**
- * טעינת רשימת סרטונים בהתאם להגדרות
- * @param config הגדרות המערכת
- * @param selfUrl ה-URL של הסקריפט הנוכחי
- * @param devMode האם האפליקציה במצב פיתוח
- * @returns רשימת פריטי וידאו
- */
 export async function loadVideoUrls(config: Config): Promise<VideoList> {
-  // בדיקה אם במצב וידאו
   if (config.rewardType !== "video") {
     log("מצב אפליקציה, לא נטענים סרטונים");
     return [];
@@ -180,14 +146,12 @@ export async function loadVideoUrls(config: Config): Promise<VideoList> {
   try {
     let videoList: VideoList = [];
 
-    // טעינת סרטונים בהתאם למקור
     switch (config.video.source) {
       case "google-drive":
         videoList = await loadGoogleDriveVideos(
           config.video.googleDriveFolderUrl
         );
 
-        // אם לא נמצאו סרטונים, ננסה לטעון מתיקיית ברירת המחדל
         if (videoList.length === 0) {
           log("מנסה לטעון סרטונים מתיקיית ברירת המחדל");
           videoList = await loadDefaultGoogleDriveVideos();
@@ -207,14 +171,12 @@ export async function loadVideoUrls(config: Config): Promise<VideoList> {
         break;
     }
 
-    // בדיקה אם נמצאו סרטונים
     if (videoList.length === 0) {
       console.warn("לא נמצאו סרטונים במקור שנבחר, מחזיר רשימה ריקה");
     } else {
       log(`נטענו ${videoList.length} סרטונים`);
     }
 
-    // ערבוב הסרטונים
     return shuffleArray([...videoList]);
   } catch (error) {
     console.error("שגיאה כללית בטעינת סרטונים:", error);
@@ -222,11 +184,6 @@ export async function loadVideoUrls(config: Config): Promise<VideoList> {
   }
 }
 
-/**
- * קבלת סרטון אקראי מהרשימה
- * @param videos רשימת הסרטונים
- * @returns סרטון אקראי או undefined אם הרשימה ריקה
- */
 export function getRandomVideo(videos: VideoList): VideoItem | undefined {
   if (videos.length === 0) return undefined;
 

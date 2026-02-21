@@ -1,4 +1,4 @@
-// mode: development 
+// mode: production 
 (() => {
 
     const selfUrlStr = getUrlWithESNext();
@@ -6,9 +6,9 @@
 
     if (esNextSupport) {
 
-        const mode = 'development';
+        const mode = 'production';
         const selfUrl = new URL(selfUrlStr).origin;
-        const moduleUrl = selfUrl + '/src/main.ts?withESNext=true';
+        const moduleUrl = selfUrl + '/main.js?withESNext=true';
 
         import(moduleUrl)
             .then(mainModule => mainModule.main(mode))
@@ -17,7 +17,7 @@
 
     } else {
 
-        const url = 'https://undefined/src/main.ts'; loadExternalScript(url);
+        const url = 'https://undefined/main.js'; loadExternalScript(url);
     }
 })();
 
