@@ -8,13 +8,7 @@ import { resolve } from 'node:path';
 
 const projectRoot = fileURLToPath(new URL('.', import.meta.url));
 const repoRoot = resolve(projectRoot, '..', '..');
-const boosterEntry = resolve(
-	repoRoot,
-	'packages',
-	'learn-booster-kit',
-	'src',
-	'index.ts'
-);
+const boosterSrc = resolve(repoRoot, 'packages', 'learn-booster-kit', 'src');
 
 export default defineConfig({
 	server: {
@@ -22,7 +16,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			'learn-booster-kit': boosterEntry
+			'learn-booster-kit': boosterSrc
 		}
 	},
 	plugins: [tailwindcss(), sveltekit(), devtoolsJson()],

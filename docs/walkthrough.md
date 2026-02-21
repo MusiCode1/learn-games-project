@@ -5,6 +5,31 @@
 
 ---
 
+## 2026-02-21 00:00
+
+### ייצוא CSS מ-learn-booster-kit — הסרת @source עם path יחסי
+
+הפיכת `learn-booster-kit` לpackage שמייצא את ה-CSS שלו עצמו, כך שאפליקציות צורכות לא צריכות לדעת על מבנה הקבצים הפנימי.
+
+#### מה בוצע?
+
+**1. learn-booster-kit — הוספת CSS export**
+
+- נוצר `src/styles.css` עם `@source '.'` — מורה ל-Tailwind לסרוק את כל `src/`.
+- נוסף export רשמי בpackage.json: `"./styles": "./src/styles.css"`.
+
+**2. כל האפליקציות הצורכות**
+
+- הוחלף `@source '../../../../packages/learn-booster-kit'` ב-`@import 'learn-booster-kit/styles'` בכל `layout.css`.
+- `kit-test-screen`: עודכן גם ה-alias ב-`vite.config.ts` מ-`src/index.ts` ל-`src/` (ספרייה), כדי ש-`learn-booster-kit/styles` יפנה ל-`src/styles.css` דרך ה-alias.
+
+#### החלטות ארכיטקטורה
+
+- **`@import 'package/styles'` במקום `@source '../node_modules/package'`**: זהו הפטרן המוצהר של Tailwind CSS 4 לספריות — הספרייה מייצאת קובץ CSS עם `@source`, הצרכן עושה `@import`. הفائدה: הצרכן לא צריך לדעת מה מבנה הקבצים הפנימי של הpackage.
+- **`@source '.'` ולא נתיב ספציפי**: סורק את כל `src/`, כולל קבצים עתידיים, ללא צורך לעדכן את הconfigs.
+
+---
+
 ## 2026-02-19 18:26
 
 ### הקשחת lifecycle ב-learn-booster-kit ושיפור ברירת מחדל לווידאו
