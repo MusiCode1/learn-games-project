@@ -1,20 +1,6 @@
 import type { Component as ComponentImport, SvelteComponent } from "svelte";
 import type { Writable, Readable } from "svelte/store";
-export type { FullyKiosk, FullyItem as FullyKioskItem } from 'fully-kiosk-js';
-
-/**
- * מייצג פריט (קובץ או תיקייה) במערכת הקבצים של Fully Kiosk
- * @deprecated השתמש ב-FullyKioskItem מ-fully-kiosk-js
- */
-export interface FullyItem {
-  canRead: boolean;
-  canWrite: boolean;
-  isHidden: boolean;
-  lastModified: number;
-  name: string;
-  size: number;
-  type: "file" | "folder";
-}
+export type { FullyKiosk, FullyItem } from "fully-kiosk-js";
 
 /**
  * Game Configuration passing to triggerReward
@@ -59,7 +45,10 @@ export interface TimerController {
   onDone: () => Promise<void>;
   time: Readable<number>;
   getTime: () => string;
-  subscribe: (run: (value: string) => void, invalidate?: (value?: string) => void) => () => void;
+  subscribe: (
+    run: (value: string) => void,
+    invalidate?: (value?: string) => void,
+  ) => () => void;
 }
 
 export interface PlayerControls {
@@ -83,8 +72,8 @@ export type OldConfig = {
   videoDisplayTimeInMS: number;
   videoUrls: string[];
   type: string;
-  mode: 'video' | 'app';
-  videoSource: 'local' | 'google-drive' | 'youtube';
+  mode: "video" | "app";
+  videoSource: "local" | "google-drive" | "youtube";
   googleDriveFolderUrl?: string;
   hideVideoProgress?: boolean;
   turnsPerVideo: number;
@@ -94,19 +83,18 @@ export type OldConfig = {
     enableHideModalButton: boolean;
     disableGameCodeInjection: boolean;
   };
-}
+};
 
 /**
  * טיפוס המייצג את מבנה ההגדרות של המערכת
  */
 export type Config = {
-
   appVersion: string;
   // הגדרות כלליות
   /**
    * סוג התגמול שיוצג למשתמש (סרטון או אפליקציה)
    */
-  rewardType: 'video' | 'app' | 'site';
+  rewardType: "video" | "app" | "site";
 
   /**
    * משך הזמן (במילישניות) להצגת התגמול
@@ -118,7 +106,7 @@ export type Config = {
    */
   turnsPerReward: number;
 
-  environmentMode: 'production' | 'development' | 'preview';
+  environmentMode: "production" | "development" | "preview";
 
   // הגדרות הודעות ותזכורות
   notifications: {
@@ -137,7 +125,7 @@ export type Config = {
       /**
        * מתי להציג את ההודעה (במצב וידאו, אפליקציה, שניהם, או אף פעם)
        */
-      enabledFor: 'video' | 'app' | 'both' | 'none';
+      enabledFor: "video" | "app" | "both" | "none";
     };
   };
 
@@ -161,7 +149,7 @@ export type Config = {
     /**
      * מקור הסרטונים (מקומי, גוגל דרייב, או יוטיוב)
      */
-    source: 'local' | 'google-drive' | 'youtube';
+    source: "local" | "google-drive" | "youtube";
 
     /**
      * כתובת URL של תיקיית Google Drive שמכילה סרטונים
@@ -229,16 +217,16 @@ export type Config = {
   };
 };
 
-export type VideoConfig = Config & { rewardType: 'video' };
-export type AppConfig = Config & { rewardType: 'app' }
+export type VideoConfig = Config & { rewardType: "video" };
+export type AppConfig = Config & { rewardType: "app" };
 
 type DeepPartial<T> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   [P in keyof T]?: T[P] extends (infer U)[]
-  ? T[P]  // שמירה על טיפוס המערך המקורי
-  : T[P] extends object
-  ? DeepPartial<T[P]>
-  : T[P];
+    ? T[P] // שמירה על טיפוס המערך המקורי
+    : T[P] extends object
+      ? DeepPartial<T[P]>
+      : T[P];
 };
 
 export type ConfigOverrides = DeepPartial<Config>;
@@ -271,7 +259,6 @@ export interface ProfilesExportPayload {
   uiEnabled: boolean;
 }
 
-
 /**
  * בקר עבור דף ההגדרות
  */
@@ -302,12 +289,14 @@ export type VideoList = VideoItem[];
 
 export type Exports = Record<string, any> | Record<string, Record<string, any>>;
 export type Props = Record<string, any>;
-export type Component = SvelteComponent<Props, Exports> | ComponentImport<Props, Exports, string>;
+export type Component =
+  | SvelteComponent<Props, Exports>
+  | ComponentImport<Props, Exports, string>;
 
 export interface AppListItem {
-  icon: string;      // Base64 מקודד של האייקון
-  label: string;     // שם האפליקציה
-  package: string;   // שם החבילה (Package Name)
-  version: string;   // גרסת האפליקציה
+  icon: string; // Base64 מקודד של האייקון
+  label: string; // שם האפליקציה
+  package: string; // שם החבילה (Package Name)
+  version: string; // גרסת האפליקציה
   versionCode: number; // קוד גרסה מספרי
 }
