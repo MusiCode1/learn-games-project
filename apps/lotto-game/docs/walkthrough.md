@@ -1,5 +1,18 @@
 # יומן פיתוח - משחק לוטו (Lotto Game)
 
+## 2026-02-21 00:00
+
+### הסרת @source עם path יחסי ל-learn-booster-kit
+
+#### מה בוצע?
+
+**`src/routes/layout.css`**
+
+- הוחלף `@source '../../../../packages/learn-booster-kit'` ב-`@import 'learn-booster-kit/styles'`.
+- הpackage מייצא כעת `styles.css` עם `@source '.'` — הצרכן לא צריך לדעת את מבנה הקבצים הפנימי.
+
+---
+
 ## 2026-01-16 01:45
 
 ### בדיקות מקיפות למערכת ContentProvider
