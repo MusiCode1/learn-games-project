@@ -1,5 +1,52 @@
 # יומן פיתוח - רכבת החיבור
 
+## 2026-02-22 00:30
+
+### שכתוב מנגנון האודיו - Web Audio API Cache + חיתוך שקט
+
+שכתוב מלא של `tts.ts` למנגנון מבוסס `AudioBuffer` cache בזיכרון, הסרת קוד ישן ותמיכת WAV, וחיתוך שקט מקבצי המספרים והמילים.
+
+#### מה בוצע?
+
+**1. מעבר ל-Web Audio API עם AudioBuffer Cache**
+
+- `preloadAllAssets()` שוכתב לטעון כל קובץ MP3 פעם אחת בלבד דרך `fetch` + `decodeAudioData`, ולשמור `AudioBuffer` מפוענח ב-`Map` בזיכרון.
+- הטעינה מקבילית (`Promise.allSettled`) - כל הקבצים נטענים בו-זמנית.
+- קריאה כפולה בטוחה - Promise נשמר ב-`preloadDone` למניעת טעינה כפולה.
+- `playBuffer()` חדש: משמיע `AudioBuffer` מ-cache מיידית דרך `BufferSource` (ללא latency).
+- `playAsset()` שוכתב לשני שלבים בלבד: cache → fallback TTS.
+
+**2. הסרת קוד ישן וניקוי**
+
+- `tryPlayFile()` ו-`playAudioFile()` נמחקו לגמרי.
+- הוסרה תמיכת WAV מ-`tts.ts` (כל הקבצים הם MP3; `error.wav` ב-`sound.ts` הוא UI sound נפרד).
+- `playSequence()` פושט - מקבל כעת `VoiceKey[]` ישיר במקום `{ key?, text? }[]`.
+
+**3. שאלה מפורטת מ-cache**
+
+- נוספו `how_many_is` ו-`trains_plus` ל-`VOICE_ASSETS` (קבצים `how_many_is.mp3`, `trains_plus.mp3` - עדיין לא הוקלטו, יפלו ל-TTS עד אז).
+- `speakChooseAnswer` ו-`speakWrong` משמיעים כעת "כמה זה → X → רכבות, ועוד → Y" כרצף מ-cache במקום TTS חי.
+
+**4. חיתוך שקט מקבצי אודיו**
+
+- חותך שקט מ-29 קבצים: מספרים `1-20.mp3` + מילות קישור (`plus`, `equals`, `add`, `cars`, `put`, `correct`, `well_done`, `wrong`, `try_again`).
+- כלי: `ffmpeg silenceremove` עם סף -45dB, 100ms padding בסוף.
+- תוצאה: קבצים הוקטנו ב-74–89% (למשל `2.mp3`: 46.5KB → 5.2KB).
+- גיבויים נשמרו ב-`static/sounds/backup/`.
+
+#### החלטות ארכיטקטורה
+
+- **Web Audio API במקום HTMLAudioElement**: `AudioBuffer` מפוענח בזיכרון = השמעה מיידית ללא latency. יצירת `BufferSource` מ-buffer קיים זולה מאוד לעומת `new Audio()` שדורשת decode מחדש בכל פעם.
+- **MP3 בלבד (ללא WAV fallback בזמן ריצה)**: כל הקלטות הן MP3 כיום. ניסיון WAV בזמן ריצה היה overhead מיותר.
+- **fallback ל-TTS בלבד (ללא fallback ביניים של `new Audio()`)**: קוד נקי יותר; אם הקובץ לא נטען ל-cache, TTS הוא הגיבוי הנכון.
+
+#### קבצים ששונו
+
+- `src/lib/utils/tts.ts` - שכתוב מלא
+- `static/sounds/*.mp3` - 29 קבצים עם חיתוך שקט
+
+---
+
 ## 2026-02-19 23:30
 
 ### שילוב קבצי אודיו מ-ElevenLabs + Preload

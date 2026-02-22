@@ -1,18 +1,13 @@
 import { settings } from "$lib/stores/settings.svelte";
 
 /**
- * מודול הקראה - תמיכה בהקלטות עם fallback ל-TTS
+ * מודול הקראה - תמיכה בהקלטות MP3 עם fallback ל-TTS
  * ותמיכה ב-Fully Kiosk Browser
+ *
+ * אודיו נטען ומפוענח פעם אחת בלבד לזיכרון (Web Audio API AudioBuffer),
+ * כך שהשמעה חוזרת היא מיידית ללא השהיה.
  */
 
-// ========================================
-// הגדרות
-// ========================================
-
-/**
- * כפה שימוש ב-TTS בלבד (ללא הקלטות)
- * שנה ל-true לבדיקות או אם אין קבצי סאונד
- */
 // ========================================
 // הגדרות
 // ========================================
@@ -102,54 +97,57 @@ const VOICE_ASSETS = {
   well_done: { file: "well_done", text: "כל הכבוד!" },
   wrong: { file: "wrong", text: "לא נכון." },
   try_again: { file: "try_again", text: "נסה שוב." },
+
+  // שאלה מפורטת - "כמה זה X רכבות ועוד Y?"
+  how_many_is: { file: "how_many_is", text: "כמה זה" },
+  trains_plus: { file: "trains_plus", text: "רכבות, ועוד" },
 } as const;
 
 type VoiceKey = keyof typeof VOICE_ASSETS;
 
 // ========================================
+// Web Audio API - Cache בזיכרון
+// ========================================
+
+let audioContext: AudioContext | null = null;
+const bufferCache = new Map<string, AudioBuffer>();
+let preloadDone: Promise<void> | null = null;
+
+function getAudioContext(): AudioContext {
+  if (!audioContext) {
+    audioContext = new AudioContext();
+  }
+  if (audioContext.state === "suspended") {
+    audioContext.resume();
+  }
+  return audioContext;
+}
+
+function playBuffer(buffer: AudioBuffer): Promise<void> {
+  return new Promise((resolve) => {
+    const ctx = getAudioContext();
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+    source.onended = () => resolve();
+    source.start(0);
+  });
+}
+
+// ========================================
 // פונקציות עזר
 // ========================================
 
-/**
- * המרת מספר לעברית (0-20) וקבלת המפתח המתאים
- */
 function getNumberKey(n: number): VoiceKey {
   return `num_${n}` as VoiceKey;
 }
 
-/**
- * המרת מספר לטקסט בעברית (לשימוש בתוך משפטים מורכבים במידת הצורך)
- */
 function numberToText(n: number): string {
   const key = getNumberKey(n);
-  // בדיקת קיום המפתח (למקרה של מספר מעל 20 שטרם הוגדר)
   if (key in VOICE_ASSETS) {
     return VOICE_ASSETS[key].text;
   }
   return n.toString();
-}
-
-/**
- * ניסיון השמעת קובץ אודיו בודד
- */
-function tryPlayFile(url: string): Promise<boolean> {
-  return new Promise((resolve) => {
-    const audio = new Audio(url);
-    audio.onended = () => resolve(true);
-    audio.onerror = () => resolve(false);
-    audio.play().catch(() => resolve(false));
-  });
-}
-
-/**
- * השמעת קובץ אודיו - מנסה .wav ואחר כך .mp3
- * @returns Promise שמסתיים כשהאודיו נגמר או נכשל
- */
-async function playAudioFile(filename: string): Promise<boolean> {
-  const base = SOUNDS_BASE + filename;
-  return (
-    (await tryPlayFile(base + ".mp3")) || (await tryPlayFile(base + ".wav"))
-  );
 }
 
 /**
@@ -165,7 +163,6 @@ function speakTTS(text: string): Promise<void> {
       console.log("Using Fully Kiosk TTS:", text);
       fully.textToSpeech(text);
       // Fully לא מדווח מתי הסתיים, נחזיר מיד עם השהיה קטנה
-      // במקרה של רצף, ייתכן שנצטרך התאמה
       setTimeout(resolve, 800);
       return;
     }
@@ -183,7 +180,6 @@ function speakTTS(text: string): Promise<void> {
     utterance.lang = "he-IL";
     utterance.rate = 0.9;
 
-    // סיום הדיבור
     utterance.onend = () => resolve();
     utterance.onerror = () => resolve();
 
@@ -192,54 +188,35 @@ function speakTTS(text: string): Promise<void> {
 }
 
 /**
- * השמעה עם fallback מתוך ה-VOICE_ASSETS
+ * השמעה מה-cache, עם fallback ל-TTS
  * @param key המפתח באובייקט VOICE_ASSETS
- * @param overrideText טקסט חלופי (אופציונלי) - אם רוצים לדרוס את הטקסט מהאובייקט (למשל למשפט מורכב)
  */
-async function playAsset(
-  key: VoiceKey | null,
-  overrideText?: string,
-): Promise<void> {
-  // אם אין מפתח, או שמשהו לא תקין, ננסה להשמיע רק את הטקסט אם סופק
-  if (!key || !(key in VOICE_ASSETS)) {
-    if (overrideText) await speakTTS(overrideText);
-    return;
-  }
+async function playAsset(key: VoiceKey | null): Promise<void> {
+  if (!key || !(key in VOICE_ASSETS)) return;
 
   const asset = VOICE_ASSETS[key];
-  const textToSpeak = overrideText || asset.text;
 
-  // אם מצב TTS בלבד
   if (FORCE_TTS_ONLY) {
-    await speakTTS(textToSpeak);
+    await speakTTS(asset.text);
     return;
   }
 
-  // נסה להשמיע קובץ
-  // הערה: כרגע המערכת מניחה שהקובץ קיים אם יש מפתח.
-  // בעתיד אפשר להוסיף שדה `hasRecording` אם רוצים להימנע מניסיון טעינה לקבצים שטרם הוקלטו.
-  // כרגע `playAudioFile` יחזיר false אם הקובץ לא נטען, וזה יפעיל את ה-fallback.
-  const success = await playAudioFile(asset.file);
-
-  // אם נכשל - fallback ל-TTS
-  if (!success) {
-    await speakTTS(textToSpeak);
+  const cached = bufferCache.get(key);
+  if (cached) {
+    await playBuffer(cached);
+    return;
   }
+
+  // fallback ל-TTS אם הקובץ לא נמצא ב-cache (לפני סיום preload או שגיאת טעינה)
+  await speakTTS(asset.text);
 }
 
 /**
- * משמיע רצף של פריטים
- * כל פריט יכול להיות מפתח מתוך VOICE_ASSETS או טקסט חופשי (שאז יושמע ב-TTS)
+ * משמיע רצף של מפתחות מ-VOICE_ASSETS
  */
-async function playSequence(
-  sequence: { key?: VoiceKey; text?: string }[],
-): Promise<void> {
-  for (const item of sequence) {
-    if (item.key) {
-      await playAsset(item.key, item.text); // item.text יכול לשמש כ-override אם רוצים
-    } else if (item.text) {
-      await speakTTS(item.text);
-    }
+async function playSequence(keys: VoiceKey[]): Promise<void> {
+  for (const key of keys) {
+    await playAsset(key);
   }
 }
 
@@ -251,16 +228,12 @@ async function playSequence(
  * השמעת הוראה לשלב בנייה A
  */
 export function speakBuildA(count: number): void {
-  // ננסה להשתמש בקובץ ספציפי אם קיים (למשל put_3)
   const exactKey = `put_${count}` as VoiceKey;
 
   if (exactKey in VOICE_ASSETS) {
-    // השתמש בנכס הקיים (קובץ או טקסט המוגדר בו)
     playAsset(exactKey);
   } else {
-    // הרכבת משפט (בעיקר ל-TTS כי אין קובץ כזה)
     const text = `${VOICE_ASSETS.put_prefix.text} ${numberToText(count)} ${VOICE_ASSETS.cars_suffix.text}`;
-    // משמיעים ב-TTS (או שנרצה רצף? כרגע TTS למשפט שלם זורם יותר)
     speakTTS(text);
   }
 }
@@ -281,48 +254,41 @@ export function speakAddB(count: number): void {
 
 /**
  * השמעת שאלת הבחירה
- * @param a מספר קרונות בקבוצה ראשונה (אופציונלי לשימוש בשאלה מפורטת)
- * @param b מספר קרונות בקבוצה שנייה (אופציונלי לשימוש בשאלה מפורטת)
+ * @param a מספר קרונות בקבוצה ראשונה
+ * @param b מספר קרונות בקבוצה שנייה
  */
 export function speakChooseAnswer(a?: number, b?: number): void {
-  // בדיקה אם יש הגדרה לשאלה מפורטת ואם הועברו פרמטרים
   if (
     settings.detailedQuestion &&
     typeof a === "number" &&
     typeof b === "number"
   ) {
-    // שאלה מפורטת: "כמה זה X רכבות ועוד Y?"
-    // נשתמש ב-TTS למשפט המלא כדי לשמור על אינטונציה
-    const text = `כמה זה ${a} רכבות ועוד ${b}?`;
-    speakTTS(text);
+    // "כמה זה" -> num_a -> "רכבות, ועוד" -> num_b
+    playSequence(["how_many_is", getNumberKey(a), "trains_plus", getNumberKey(b)]);
   } else {
-    // מצב רגיל - "כמה קרונות יש עכשיו?"
     playAsset("how_many");
   }
 }
 
 /**
  * השמעת משוב חיובי מפורט
- * מבנה: "נכון!" -> "A" -> "ועוד" -> "B" -> "שווה" -> "SUM" -> "כל הכבוד!"
+ * מבנה: "נכון!" -> A -> "ועוד" -> B -> "שווה" -> SUM -> "כל הכבוד!"
  */
 export async function speakCorrect(a?: number, b?: number): Promise<void> {
-  // אם אין מספרים (fallback לקוד ישן), רק "נכון! כל הכבוד!"
   if (typeof a !== "number" || typeof b !== "number") {
-    await playSequence([{ key: "correct" }, { key: "well_done" }]);
+    await playSequence(["correct", "well_done"]);
     return;
   }
 
   const sum = a + b;
-
-  // בניית הרצף באמצעות מפתחות (כך שאם יהיו קבצים לכל מספר, הם יושמעו)
   await playSequence([
-    { key: "correct" }, // נכון!
-    { key: getNumberKey(a) }, // 3
-    { key: "plus" }, // ועוד
-    { key: getNumberKey(b) }, // 3
-    { key: "equals" }, // שווה
-    { key: getNumberKey(sum) }, // 6
-    { key: "well_done" }, // כל הכבוד!
+    "correct",
+    getNumberKey(a),
+    "plus",
+    getNumberKey(b),
+    "equals",
+    getNumberKey(sum),
+    "well_done",
   ]);
 }
 
@@ -330,18 +296,15 @@ export async function speakCorrect(a?: number, b?: number): Promise<void> {
  * השמעת משוב שגיאה
  */
 export async function speakWrong(a: number, b: number): Promise<void> {
-  // ניתן לפצל ל-"לא נכון" ו-"נסה שוב"
-  // מנגנים אותם ברצף
-  await playSequence([{ key: "wrong" }, { key: "try_again" }]);
+  await playSequence(["wrong", "try_again"]);
 
-  // אם מוגדרת שאלה מפורטת, חוזרים עליה שוב כדי להזכיר לילד את התרגיל
   if (
     settings.detailedQuestion &&
     typeof a === "number" &&
     typeof b === "number"
   ) {
-    const text = `כמה זה ${a} רכבות ועוד ${b}?`;
-    await speakTTS(text);
+    // "כמה זה" -> num_a -> "רכבות, ועוד" -> num_b
+    await playSequence(["how_many_is", getNumberKey(a), "trains_plus", getNumberKey(b)]);
   }
 }
 
@@ -353,23 +316,41 @@ export function speak(text: string): void {
 }
 
 /**
- * טעינה מראש של כל קבצי האודיו ברקע - לא חוסם את הטעינה
- * מופעל דרך requestIdleCallback לאחר שהדף נטען לגמרי
+ * טעינה מראש של כל קבצי האודיו לזיכרון (Web Audio API).
+ * מטען כל קובץ MP3 פעם אחת ומאחסן AudioBuffer מפוענח ב-cache.
+ * ניתן לקרוא פעמיים בבטחה - הטעינה תתבצע רק פעם אחת.
  */
 export function preloadAllAssets(): void {
   if (typeof window === "undefined") return;
+  if (preloadDone) return;
 
-  const load = () => {
-    for (const asset of Object.values(VOICE_ASSETS)) {
-      const audio = new Audio(SOUNDS_BASE + asset.file + ".mp3");
-      audio.preload = "auto";
-      audio.load();
-    }
+  const doLoad = async () => {
+    const ctx = getAudioContext();
+
+    const entries = Object.entries(VOICE_ASSETS) as [VoiceKey, VoiceAsset][];
+
+    await Promise.allSettled(
+      entries.map(async ([key, asset]) => {
+        try {
+          const response = await fetch(SOUNDS_BASE + asset.file + ".mp3");
+          if (!response.ok) return;
+          const arrayBuffer = await response.arrayBuffer();
+          const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+          bufferCache.set(key, audioBuffer);
+        } catch {
+          // קובץ לא נמצא או שגיאת פענוח - יישתמש ב-TTS fallback בעת השמעה
+        }
+      }),
+    );
   };
 
-  if ("requestIdleCallback" in window) {
-    requestIdleCallback(load);
-  } else {
-    setTimeout(load, 2000);
-  }
+  preloadDone = new Promise<void>((resolve) => {
+    const run = () => doLoad().finally(resolve);
+
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(run);
+    } else {
+      setTimeout(run, 2000);
+    }
+  });
 }
