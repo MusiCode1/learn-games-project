@@ -49,7 +49,7 @@ describe('saveConfigToStorage / loadConfigFromStorage', () => {
     const { saveConfigToStorage } = configManager;
     const result = saveConfigToStorage();
     expect(result).toBe(true);
-    expect(localStorage.getItem('gingim-booster-config')).not.toBeNull();
+    expect(localStorage.getItem('learn-booster-config')).not.toBeNull();
   });
 
   it('loadConfigFromStorage טוען ממה שנשמר', () => {

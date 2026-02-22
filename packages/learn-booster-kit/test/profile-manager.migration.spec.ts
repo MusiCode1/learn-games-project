@@ -6,40 +6,40 @@
  * אחרי שלב 7 ברפקטורינג: המפתח יהיה "learn-booster-profiles:v1"
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { getDefaultConfig } from '../src/lib/default-config';
+import { getDefaultConfig } from '../src/lib/config/default-config';
 
 const OLD_KEY = 'gingim-booster-profiles:v1';
 const NEW_KEY = 'learn-booster-profiles:v1';
 const baseConfig = getDefaultConfig();
 
-type PM = typeof import('../src/lib/profile-manager');
+type PM = typeof import('../src/lib/config/profile-manager');
 let pm: PM;
 
 beforeEach(async () => {
   localStorage.clear();
   vi.resetModules();
-  pm = await import('../src/lib/profile-manager');
+  pm = await import('../src/lib/config/profile-manager');
 });
 
-describe('profile-manager — מפתח localStorage נוכחי (לפני רפקטורינג)', () => {
-  it('שומר תחת המפתח הישן', async () => {
+describe('profile-manager — מפתח localStorage נוכחי (אחרי רפקטורינג)', () => {
+  it('שומר תחת המפתח החדש', async () => {
     await pm.initializeProfiles(baseConfig);
-    expect(localStorage.getItem(OLD_KEY)).not.toBeNull();
+    expect(localStorage.getItem(NEW_KEY)).not.toBeNull();
   });
 
-  it('טוען פרופילים מהמפתח הישן', async () => {
+  it('טוען פרופילים מהמפתח החדש', async () => {
     const s1 = await pm.initializeProfiles(baseConfig);
     pm.createProfile({ name: 'Saved', config: baseConfig });
 
     vi.resetModules();
-    pm = await import('../src/lib/profile-manager');
+    pm = await import('../src/lib/config/profile-manager');
     const s2 = await pm.initializeProfiles(baseConfig);
     expect(s2.order.length).toBeGreaterThanOrEqual(s1.order.length);
   });
 
-  it('אין שמירה תחת המפתח החדש לפני הרפקטורינג', async () => {
+  it('אין שמירה תחת המפתח הישן אחרי הרפקטורינג', async () => {
     await pm.initializeProfiles(baseConfig);
-    expect(localStorage.getItem(NEW_KEY)).toBeNull();
+    expect(localStorage.getItem(OLD_KEY)).toBeNull();
   });
 });
 

@@ -21,12 +21,12 @@ export const utils = {
 }
 
 // ─── sleep (standalone) ────────────────────────────────────────────────────
-export { sleep } from '../src/lib/sleep'
+export { sleep } from '../src/lib/utils/sleep'
 
 // ─── modules ───────────────────────────────────────────────────────────────
-export * as configManager from '../src/lib/config-manager'
-export * as defaultConfig from '../src/lib/default-config'
-export * as profileManager from '../src/lib/profile-manager'
-export * as videoLoader from '../src/lib/video-loader'
+export * as configManager from '../src/lib/config/config-manager'
+export * as defaultConfig from '../src/lib/config/default-config'
+export * as profileManager from '../src/lib/config/profile-manager'
+export * as videoLoader from '../src/lib/video/video-loader'
 export * as watchdog from '../src/lib/watchdog/reward-watchdog'
-export * as appList from '../src/lib/get-app-list'
+export * as appList from '../src/lib/fully-kiosk/get-app-list'

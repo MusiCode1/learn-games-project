@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { getDefaultConfig } from '../src/lib/default-config';
+import { getDefaultConfig } from '../src/lib/config/default-config';
 
 // profile-manager שומר state ברמת המודול (isInitialized).
 // כל test מקבל instance טרי על-ידי resetModules + dynamic import.
-type PM = typeof import('../src/lib/profile-manager');
+type PM = typeof import('../src/lib/config/profile-manager');
 
 let pm: PM;
 const baseConfig = getDefaultConfig();
@@ -12,7 +12,7 @@ const baseConfig = getDefaultConfig();
 beforeEach(async () => {
   localStorage.clear();
   vi.resetModules();
-  pm = await import('../src/lib/profile-manager');
+  pm = await import('../src/lib/config/profile-manager');
 });
 
 describe('initializeProfiles', () => {
@@ -30,7 +30,7 @@ describe('initializeProfiles', () => {
 
   it('שומר ב-localStorage עם המפתח הנכון', async () => {
     await pm.initializeProfiles(baseConfig);
-    expect(localStorage.getItem('gingim-booster-profiles:v1')).not.toBeNull();
+    expect(localStorage.getItem('learn-booster-profiles:v1')).not.toBeNull();
   });
 });
 

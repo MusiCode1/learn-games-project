@@ -9,17 +9,17 @@ beforeEach(() => {
 
 describe('getAppsList — not in Fully Kiosk', () => {
   it('זורק שגיאה כשלא ב-Fully Kiosk ולא demo mode', async () => {
-    vi.doMock('../src/lib/fully-kiosk', () => ({
+    vi.doMock('../src/lib/fully-kiosk/fully-kiosk', () => ({
       isFullyKiosk: vi.fn().mockReturnValue(false),
       getFileList: vi.fn(),
     }));
-    vi.doMock('../src/lib/config-manager', () => ({
+    vi.doMock('../src/lib/config/config-manager', () => ({
       getAllConfig: vi.fn().mockReturnValue({ environmentMode: 'production' }),
       addConfigListener: vi.fn().mockReturnValue(() => {}),
     }));
     vi.doMock('../src/lib/logger.svelte', () => ({ log: vi.fn() }));
 
-    const { getAppsList } = await import('../src/lib/get-app-list');
+    const { getAppsList } = await import('../src/lib/fully-kiosk/get-app-list');
     await expect(getAppsList()).rejects.toThrow('Not in Fully Kiosk environment.');
   });
 });
@@ -31,11 +31,11 @@ describe('getAppsList — Fully Kiosk', () => {
       { packageName: 'com.example.app2', label: 'App2' },
     ];
 
-    vi.doMock('../src/lib/fully-kiosk', () => ({
+    vi.doMock('../src/lib/fully-kiosk/fully-kiosk', () => ({
       isFullyKiosk: vi.fn().mockReturnValue(true),
       getFileList: vi.fn(),
     }));
-    vi.doMock('../src/lib/config-manager', () => ({
+    vi.doMock('../src/lib/config/config-manager', () => ({
       getAllConfig: vi.fn().mockReturnValue({ environmentMode: 'production' }),
       addConfigListener: vi.fn().mockReturnValue(() => {}),
     }));
@@ -54,18 +54,18 @@ describe('getAppsList — Fully Kiosk', () => {
       json: vi.fn().mockResolvedValue(mockApps),
     }));
 
-    const { getAppsList } = await import('../src/lib/get-app-list');
+    const { getAppsList } = await import('../src/lib/fully-kiosk/get-app-list');
     const result = await getAppsList();
     expect(Array.isArray(result)).toBe(true);
     expect(result).toEqual(mockApps);
   });
 
   it('זורק שגיאה אם remote admin מושבת', async () => {
-    vi.doMock('../src/lib/fully-kiosk', () => ({
+    vi.doMock('../src/lib/fully-kiosk/fully-kiosk', () => ({
       isFullyKiosk: vi.fn().mockReturnValue(true),
       getFileList: vi.fn(),
     }));
-    vi.doMock('../src/lib/config-manager', () => ({
+    vi.doMock('../src/lib/config/config-manager', () => ({
       getAllConfig: vi.fn().mockReturnValue({ environmentMode: 'production' }),
       addConfigListener: vi.fn().mockReturnValue(() => {}),
     }));
@@ -79,7 +79,7 @@ describe('getAppsList — Fully Kiosk', () => {
       },
     });
 
-    const { getAppsList } = await import('../src/lib/get-app-list');
+    const { getAppsList } = await import('../src/lib/fully-kiosk/get-app-list');
     await expect(getAppsList()).rejects.toThrow('remote admin is not enabled');
   });
 });

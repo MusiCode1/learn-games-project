@@ -61,27 +61,27 @@ describe('loadVideoUrls', () => {
 
   it('מחזיר רשימה ריקה כשה-rewardType אינו "video"', async () => {
     vi.doMock('../src/lib/logger.svelte', () => ({ log: vi.fn() }));
-    vi.doMock('../src/lib/google-drive-video', () => ({
+    vi.doMock('../src/lib/video/google-drive-video', () => ({
       extractGoogleDriveFolderId: vi.fn(),
       getFolderVideosUrls: vi.fn().mockResolvedValue([]),
     }));
-    vi.doMock('../src/lib/fully-kiosk', () => ({ getFileList: vi.fn(), isFullyKiosk: vi.fn() }));
+    vi.doMock('../src/lib/fully-kiosk/fully-kiosk', () => ({ getFileList: vi.fn(), isFullyKiosk: vi.fn() }));
 
-    const { loadVideoUrls } = await import('../src/lib/video-loader');
+    const { loadVideoUrls } = await import('../src/lib/video/video-loader');
     const config = { rewardType: 'app', video: { source: 'google-drive', googleDriveFolderUrl: '' } } as never;
     const result = await loadVideoUrls(config);
     expect(result).toEqual([]);
   });
 
   it('מחזיר תוצאות מ-Google Drive כש-source הוא google-drive', async () => {
-    vi.doMock('../src/lib/google-drive-video', () => ({
+    vi.doMock('../src/lib/video/google-drive-video', () => ({
       extractGoogleDriveFolderId: vi.fn().mockReturnValue('folder-id'),
       getFolderVideosUrls: vi.fn().mockResolvedValue(['https://drive.google.com/vid1.mp4']),
     }));
-    vi.doMock('../src/lib/fully-kiosk', () => ({ getFileList: vi.fn(), isFullyKiosk: vi.fn() }));
+    vi.doMock('../src/lib/fully-kiosk/fully-kiosk', () => ({ getFileList: vi.fn(), isFullyKiosk: vi.fn() }));
     vi.doMock('../src/lib/logger.svelte', () => ({ log: vi.fn() }));
 
-    const { loadVideoUrls } = await import('../src/lib/video-loader');
+    const { loadVideoUrls } = await import('../src/lib/video/video-loader');
     const config = {
       rewardType: 'video',
       video: { source: 'google-drive', googleDriveFolderUrl: 'https://drive.google.com/folder/abc' },
@@ -93,14 +93,14 @@ describe('loadVideoUrls', () => {
   });
 
   it('מחזיר מערך ריק כש-Google Drive נכשל ואין fallback', async () => {
-    vi.doMock('../src/lib/google-drive-video', () => ({
+    vi.doMock('../src/lib/video/google-drive-video', () => ({
       extractGoogleDriveFolderId: vi.fn().mockReturnValue('bad-id'),
       getFolderVideosUrls: vi.fn().mockRejectedValue(new Error('network error')),
     }));
-    vi.doMock('../src/lib/fully-kiosk', () => ({ getFileList: vi.fn(), isFullyKiosk: vi.fn() }));
+    vi.doMock('../src/lib/fully-kiosk/fully-kiosk', () => ({ getFileList: vi.fn(), isFullyKiosk: vi.fn() }));
     vi.doMock('../src/lib/logger.svelte', () => ({ log: vi.fn() }));
 
-    const { loadVideoUrls } = await import('../src/lib/video-loader');
+    const { loadVideoUrls } = await import('../src/lib/video/video-loader');
     const config = {
       rewardType: 'video',
       video: { source: 'google-drive', googleDriveFolderUrl: 'bad' },

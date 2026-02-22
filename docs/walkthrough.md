@@ -5,6 +5,42 @@
 
 ---
 
+## 2026-02-22 02:45
+
+### עדכון קבצי בדיקות learn-booster-kit לאחר רפקטורינג מבנה src
+
+עדכון `test/src.ts` וכל קבצי ה-spec כדי שיתאימו למבנה הקבצים החדש שנוצר ברפקטורינג קודם (ארגון מחדש לתת-תיקיות `config/`, `video/`, `fully-kiosk/`), ועדכון מפתחות localStorage שהשתנו מ-`gingim-booster-*` ל-`learn-booster-*`.
+
+#### מה בוצע?
+
+**1. test/src.ts — מקור אמת יחיד לנתיבי ייבוא בבדיקות**
+
+- עודכנו כל הנתיבים לאחר הרפקטורינג:
+  - `../src/lib/sleep` ← `../src/lib/utils/sleep`
+  - `../src/lib/config-manager` ← `../src/lib/config/config-manager`
+  - `../src/lib/default-config` ← `../src/lib/config/default-config`
+  - `../src/lib/profile-manager` ← `../src/lib/config/profile-manager`
+  - `../src/lib/video-loader` ← `../src/lib/video/video-loader`
+  - `../src/lib/get-app-list` ← `../src/lib/fully-kiosk/get-app-list`
+
+**2. קבצי spec — תיקון נתיבי vi.doMock ו-dynamic imports**
+
+- `test/get-app-list.spec.ts`: עודכנו מסכות ל-`fully-kiosk/fully-kiosk`, `config/config-manager`, ויבוא דינמי ל-`fully-kiosk/get-app-list`.
+- `test/video-loader.spec.ts`: עודכנו מסכות ל-`video/google-drive-video`, `fully-kiosk/fully-kiosk`, ויבוא דינמי ל-`video/video-loader`.
+- `test/profile-manager.spec.ts` + `test/profile-manager.migration.spec.ts`: תוקנו ייבואים ל-`config/default-config` ו-`config/profile-manager`.
+
+**3. עדכון מפתחות localStorage בבדיקות**
+
+- `config-manager.spec.ts`: המפתח `gingim-booster-config` ← `learn-booster-config`.
+- `config-manager.migration.spec.ts`: עודכנו הבדיקות מ"לפני רפקטורינג" ל"אחרי רפקטורינג" — הבדיקות כעת מוודאות שמירה תחת המפתח החדש ו-null תחת הישן.
+- `profile-manager.spec.ts` + `profile-manager.migration.spec.ts`: המפתח `gingim-booster-profiles:v1` ← `learn-booster-profiles:v1`.
+
+#### תוצאה
+
+14/14 קבצי בדיקות עוברים, 106 בדיקות עוברות, 9 todo.
+
+---
+
 ## 2026-02-21 00:00
 
 ### ייצוא CSS מ-learn-booster-kit — הסרת @source עם path יחסי

@@ -20,20 +20,20 @@ beforeEach(() => {
   localStorage.clear();
 });
 
-describe('config-manager — מפתח localStorage נוכחי (לפני רפקטורינג)', () => {
-  it('שומר תחת המפתח הישן', () => {
+describe('config-manager — מפתח localStorage נוכחי (אחרי רפקטורינג)', () => {
+  it('שומר תחת המפתח החדש', () => {
     saveConfigToStorage();
-    expect(localStorage.getItem(OLD_KEY)).not.toBeNull();
+    expect(localStorage.getItem(NEW_KEY)).not.toBeNull();
   });
 
-  it('טוען מהמפתח הישן', () => {
+  it('טוען מהמפתח החדש', () => {
     saveConfigToStorage();
     expect(loadConfigFromStorage()).toBe(true);
   });
 
-  it('אין שמירה תחת המפתח החדש לפני הרפקטורינג', () => {
+  it('אין שמירה תחת המפתח הישן אחרי הרפקטורינג', () => {
     saveConfigToStorage();
-    expect(localStorage.getItem(NEW_KEY)).toBeNull();
+    expect(localStorage.getItem(OLD_KEY)).toBeNull();
   });
 });
 
