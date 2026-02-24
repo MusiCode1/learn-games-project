@@ -8,7 +8,7 @@ import { DEFAULT_SETTINGS } from "$lib/types";
 const STORAGE_KEY = "train-addition-settings";
 
 // אל תשכח לשנות גרסה בעת ביצוע שינוי במערכת ההגדרות!
-const CURRENT_VERSION = 5;
+const CURRENT_VERSION = 6;
 
 /**
  * מחלקת ניהול הגדרות
@@ -31,6 +31,9 @@ class SettingsStore {
 
   // האם להשמיע שאלה מפורטת
   detailedQuestion = $state(DEFAULT_SETTINGS.detailedQuestion);
+
+  // האם לאפס טיימר בלחיצה במהלך cooldown
+  resetCooldownOnTap = $state(DEFAULT_SETTINGS.resetCooldownOnTap);
 
   constructor() {
     // טעינה ראשונית מ-localStorage
@@ -92,6 +95,10 @@ class SettingsStore {
         // מיגרציה לגרסה 5: detailedQuestion
         this.detailedQuestion =
           parsed.detailedQuestion ?? DEFAULT_SETTINGS.detailedQuestion;
+
+        // מיגרציה לגרסה 6: resetCooldownOnTap
+        this.resetCooldownOnTap =
+          parsed.resetCooldownOnTap ?? DEFAULT_SETTINGS.resetCooldownOnTap;
       } catch (e) {
         console.error("Failed to parse settings", e);
       }
@@ -114,6 +121,7 @@ class SettingsStore {
       boosterEnabled: this.boosterEnabled,
       gameMode: this.gameMode,
       detailedQuestion: this.detailedQuestion,
+      resetCooldownOnTap: this.resetCooldownOnTap,
     };
   }
 
@@ -140,6 +148,7 @@ class SettingsStore {
     this.boosterEnabled = DEFAULT_SETTINGS.boosterEnabled;
     this.gameMode = DEFAULT_SETTINGS.gameMode;
     this.detailedQuestion = DEFAULT_SETTINGS.detailedQuestion;
+    this.resetCooldownOnTap = DEFAULT_SETTINGS.resetCooldownOnTap;
   }
 }
 

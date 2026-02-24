@@ -4,7 +4,8 @@
 -->
 <script lang="ts">
   import { gameState } from "$lib/stores/game-state.svelte";
-  import { settings } from "$lib/stores/settings.svelte"; // ייבוא settings
+  import { settings } from "$lib/stores/settings.svelte";
+  import { playError } from "$lib/utils/sound";
 
   // האם פאנל התשובות פעיל
   const isActive = $derived(gameState.state === "CHOOSE_ANSWER");
@@ -35,9 +36,18 @@
   );
 
   function handleSelect(answer: number) {
-    if (isActive && !isOnCooldown) {
-      gameState.selectAnswer(answer);
+    if (!isActive) return;
+
+    if (isOnCooldown) {
+      // אם מופעל איפוס טיימר בלחיצה — מאפסים את ה-cooldown
+      if (settings.resetCooldownOnTap) {
+        gameState.cooldownUntilTs = Date.now() + settings.cooldownMs;
+        playError();
+      }
+      return;
     }
+
+    gameState.selectAnswer(answer);
   }
 
   // כל הספרות האפשריות 1-10
@@ -66,7 +76,7 @@
     {#each allDigits as digit}
       <button
         onclick={() => handleSelect(digit)}
-        disabled={!isActive || isOnCooldown}
+        disabled={!isActive || (isOnCooldown && !settings.resetCooldownOnTap)}
         class="flex h-10 w-10 items-center justify-center rounded-xl text-xl font-bold
 						shadow-lg transition-all sm:h-14 sm:w-14 sm:text-2xl md:h-16 md:w-16 md:text-2xl xl:h-20 xl:w-20 xl:text-3xl
 						{isActive && !isOnCooldown

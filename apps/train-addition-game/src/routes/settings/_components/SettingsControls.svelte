@@ -177,6 +177,51 @@
       </div>
     </div>
 
+    <!-- Cooldown Settings -->
+    <div class="border-t border-slate-100 pt-4 space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="space-y-1">
+          <div class="font-bold text-slate-700">שניות המתנה בטעות</div>
+          <div class="text-sm text-slate-500">זמן חסימה לאחר תשובה שגויה</div>
+        </div>
+        <input
+          id="cooldown-seconds"
+          type="number"
+          min="1"
+          max="30"
+          value={Math.round(settings.cooldownMs / 1000)}
+          onchange={(e) => {
+            const val = parseInt(e.currentTarget.value);
+            if (val >= 1 && val <= 30) {
+              settings.cooldownMs = val * 1000;
+            }
+          }}
+          class="w-20 px-3 py-2 bg-slate-50 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
+        />
+      </div>
+
+      <div class="flex items-center justify-between">
+        <div class="space-y-1">
+          <div class="font-bold text-slate-700">איפוס טיימר בלחיצה</div>
+          <div class="text-sm text-slate-500">לחיצה בזמן המתנה מאפסת את הספירה</div>
+        </div>
+        <button
+          dir="ltr"
+          class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          class:bg-blue-600={settings.resetCooldownOnTap}
+          class:bg-slate-200={!settings.resetCooldownOnTap}
+          onclick={() => (settings.resetCooldownOnTap = !settings.resetCooldownOnTap)}
+          aria-label="איפוס טיימר בלחיצה"
+        >
+          <span
+            class="absolute top-1 inline-block h-4 w-4 rounded-full bg-white transition-all duration-200 shadow-sm"
+            class:left-1={!settings.resetCooldownOnTap}
+            class:left-6={settings.resetCooldownOnTap}
+          ></span>
+        </button>
+      </div>
+    </div>
+
     <div class="flex items-center justify-between">
       <div class="space-y-1">
         <div class="font-bold text-slate-700">מצב קלט</div>

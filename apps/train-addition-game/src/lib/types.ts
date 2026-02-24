@@ -40,6 +40,8 @@ export interface TeacherSettings {
   boosterEnabled: boolean;
   // האם להשמיע שאלה מפורטת ("כמה זה X ועוד Y") או רגילה ("כמה רכבות יש")
   detailedQuestion: boolean;
+  // האם לאפס את טיימר ההמתנה בלחיצה במהלך cooldown
+  resetCooldownOnTap: boolean;
 }
 
 // קבועים
@@ -54,4 +56,5 @@ export const DEFAULT_SETTINGS: TeacherSettings = {
   gameMode: "manual_end", // ברירת מחדל חדשה: סיום ידני עם מסך "שחק שוב"
   boosterEnabled: true,
   detailedQuestion: false,
+  resetCooldownOnTap: false,
 };
