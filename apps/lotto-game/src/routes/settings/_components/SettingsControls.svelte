@@ -109,6 +109,32 @@
 </script>
 
 <div class="settings-container" dir="rtl">
+	<!-- 0. מצב משחק (Game Mode) -->
+	<section class="section">
+		<h2 class="section-title">
+			<span>🎮</span> מצב משחק
+		</h2>
+
+		<div class="setting-group">
+			<SegmentedControl
+				options={[
+					{ id: 'lotto', label: 'לוטו', icon: '🃏' },
+					{ id: 'memory', label: 'זיכרון', icon: '🧠' }
+				]}
+				value={settings.gameMode}
+				onchange={(id) => (settings.gameMode = id as 'lotto' | 'memory')}
+			/>
+		</div>
+
+		<p class="mode-description">
+			{#if settings.gameMode === 'memory'}
+				הכרטיסים מתחילים הפוכים. לחץ על כרטיס כדי להפוך אותו וגלה את הזוגות!
+			{:else}
+				כל הכרטיסים גלויים. מצא את הזוגות התואמים!
+			{/if}
+		</p>
+	</section>
+
 	<!-- 1. בחירת תוכן (Content Selection) -->
 	<section class="section">
 		<h2 class="section-title">
@@ -169,17 +195,19 @@
 
 			<!-- אפשרויות משחק -->
 			<div class="setting-group">
-				<div class="checkbox-group">
-					<input
-						type="checkbox"
-						id="enableDeselect"
-						bind:checked={settings.enableDeselect}
-						class="checkbox"
-					/>
-					<label for="enableDeselect" class="checkbox-label">
-						אפשר ביטול בחירה (בלחיצה שנייה)
-					</label>
-				</div>
+				{#if settings.gameMode !== 'memory'}
+					<div class="checkbox-group">
+						<input
+							type="checkbox"
+							id="enableDeselect"
+							bind:checked={settings.enableDeselect}
+							class="checkbox"
+						/>
+						<label for="enableDeselect" class="checkbox-label">
+							אפשר ביטול בחירה (בלחיצה שנייה)
+						</label>
+					</div>
+				{/if}
 				<div class="checkbox-group">
 					<input
 						type="checkbox"
@@ -191,6 +219,23 @@
 						הסתר כרטיסים שהותאמו
 					</label>
 				</div>
+			</div>
+
+			<!-- משך תצוגת משוב -->
+			<div class="setting-group">
+				<h3 class="setting-label">משך תצוגת משוב ({settings.feedbackDurationSec} שניות)</h3>
+				<div class="range-control">
+					<input
+						type="range"
+						min="1"
+						max="5"
+						step="0.5"
+						bind:value={settings.feedbackDurationSec}
+						class="range-slider"
+					/>
+					<span class="range-value">{settings.feedbackDurationSec}</span>
+				</div>
+				<p class="setting-hint">כמה זמן הכרטיסים נשארים גלויים אחרי לחיצה</p>
 			</div>
 		</div>
 	</section>
@@ -231,6 +276,18 @@
 						/>
 						<span class="range-value">{settings.totalRounds}</span>
 					</div>
+				</div>
+
+				<div class="checkbox-group">
+					<input
+						type="checkbox"
+						id="autoNextRound"
+						bind:checked={settings.autoNextRound}
+						class="checkbox"
+					/>
+					<label for="autoNextRound" class="checkbox-label">
+						מעבר אוטומטי לסבב הבא (ללא פופאפ)
+					</label>
 				</div>
 			</div>
 
@@ -638,5 +695,15 @@
 	.no-settings {
 		/* Visual */
 		@apply text-slate-500 text-center;
+	}
+
+	.mode-description {
+		/* Visual */
+		@apply text-sm text-slate-500 text-center;
+	}
+
+	.setting-hint {
+		/* Visual */
+		@apply text-xs text-slate-400;
 	}
 </style>

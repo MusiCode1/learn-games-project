@@ -1,5 +1,61 @@
 # יומן פיתוח - משחק לוטו (Lotto Game)
 
+## 2026-02-26 23:00
+
+### מצב משחק זיכרון, צבעים ייחודיים, והגדרות נוספות
+
+הוספת מצב **משחק זיכרון** (Memory) למשחק הלוטו, שיפור מנגנון הצבעים בצורות, והוספת הגדרות משחקיות חדשות.
+
+#### מה בוצע?
+
+**1. מצב משחק זיכרון (Memory Mode)**
+
+- הוספת `gameMode: 'lotto' | 'memory'` ל-settings store עם persistence ב-localStorage
+- כרטיסים מתחילים הפוכים (face-down) במצב זיכרון, עם אנימציית 3D flip (CSS `perspective` + `rotateY`)
+- גב כרטיס מעוצב (gradient indigo-to-purple עם דפוס דקורטיבי)
+- חסימת deselect אוטומטית במצב זיכרון (אי אפשר לבטל הפיכת כרטיס)
+- מונה ניסיונות (attempts) מוצג רק במצב זיכרון
+- כותרת דינמית: "משחק זיכרון" / "משחק לוטו"
+- toggle מצב משחק בהגדרות עם SegmentedControl
+
+**2. צבעים ייחודיים לצורות**
+
+- הרחבת פלטת הצבעים מ-8 ל-20 צבעים מובחנים (12 בסיסיים + 8 נוספים)
+- מנגנון color pool מבוסס shuffle — מבטיח צבע ייחודי לכל זוג
+- הוספת `prepareForGame()` ל-ContentProvider interface (אופציונלי) לאיפוס מצב פנימי
+- שימוש ב-`provider.prepareForGame?.()` ב-gameLogic לפני יצירת כרטיסים
+
+**3. הגדרות משחקיות חדשות**
+
+- **משך תצוגת משוב** (`feedbackDurationSec`): סליידר 1-5 שניות (step 0.5) — שולט כמה זמן הכרטיסים גלויים אחרי לחיצה
+- **חצי שנייה נוספת לנעילה**: אחרי סיום המשוב, הלוח נעול עוד 500ms למניעת לחיצות מוקדמות
+- **מעבר אוטומטי לסבב הבא** (`autoNextRound`): checkbox לדילוג על פופאפ ניצחון בין סבבים
+- **זוהר משוב**: אפקט glow ירוק (הצלחה) / אדום (שגיאה) על כרטיסים
+
+**4. תיקון באג**
+
+- הסרת משתנה `rewardTriggered` שלא הוגדר (שגיאת TypeScript קיימת)
+
+#### החלטות ארכיטקטורה
+
+- **שימוש חוזר בלוגיקה קיימת**: מצב הזיכרון לא שינה את `gameLogic.ts` — אותה לוגיקת יצירת זוגות והשוואה. ההבדל רק חזותי (Card.svelte)
+- **`prepareForGame()` אופציונלי**: רק shapes provider מממש אותו (לאיפוס color pool), שאר ה-providers לא צריכים לשנות כלום
+- **הפרדת תזמונים**: משוב ויזואלי ונעילת לחיצות מופרדים ב-`setTimeout` נפרדים — מאפשר 500ms buffer אחרי סיום המשוב
+
+#### קבצים שהשתנו
+
+| קובץ | שינוי |
+|-------|--------|
+| `src/lib/stores/settings.svelte.ts` | gameMode, feedbackDurationSec, autoNextRound |
+| `src/lib/components/Card.svelte` | 3D flip, face-down, glow effects |
+| `src/routes/+page.svelte` | attempts, dynamic timing, autoNextRound, memory mode logic |
+| `src/routes/settings/_components/SettingsControls.svelte` | game mode toggle, feedback slider, autoNextRound checkbox |
+| `src/lib/content/providers/shapes/index.ts` | 20 צבעים, color pool, prepareForGame |
+| `src/lib/content/types.ts` | prepareForGame optional method |
+| `src/lib/utils/gameLogic.ts` | prepareForGame call |
+
+---
+
 ## 2026-02-21 00:00
 
 ### הסרת @source עם path יחסי ל-learn-booster-kit

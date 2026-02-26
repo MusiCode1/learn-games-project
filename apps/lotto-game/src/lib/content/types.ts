@@ -59,6 +59,9 @@ export interface ContentProvider<TItem = unknown, TSettings = unknown> {
 	getDefaultSettings(): TSettings;
 
 	// === לוגיקת משחק ===
+	/** הכנה לפני תחילת משחק חדש (אופציונלי — לאיפוס מצב פנימי כמו מאגר צבעים) */
+	prepareForGame?(): void;
+
 	/** יצירת תוכן לכרטיס */
 	generateCardContent(item: TItem, settings: TSettings): CardContent;
 
