@@ -3,6 +3,9 @@
  */
 
 import type { ImagePack } from "$lib/types";
+import { APP_ASSETS_URL, asset } from "$lib/config";
+
+const img = (path: string) => asset(`${APP_ASSETS_URL}/images/${path}`);
 
 export const ALL_IMAGE_PACKS: ImagePack[] = [
   {
@@ -11,9 +14,9 @@ export const ALL_IMAGE_PACKS: ImagePack[] = [
     icon: "🐾",
     description: "חיות מוכרות",
     images: [
-      { id: "cat", name: "חתול", src: "/images/animals/cat.jpg", ttsText: "חתול" },
-      { id: "dog", name: "כלב", src: "/images/animals/dog.jpg", ttsText: "כלב" },
-      { id: "fish", name: "דג", src: "/images/animals/fish.jpg", ttsText: "דג" },
+      { id: "cat", name: "חתול", src: img("animals/cat.jpg"), ttsText: "חתול" },
+      { id: "dog", name: "כלב", src: img("animals/dog.jpg"), ttsText: "כלב" },
+      { id: "fish", name: "דג", src: img("animals/fish.jpg"), ttsText: "דג" },
     ],
   },
 ];

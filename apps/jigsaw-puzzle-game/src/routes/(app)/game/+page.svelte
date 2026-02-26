@@ -31,12 +31,7 @@
     unsubscribeConfig?.();
   });
 
-  // מעבר אוטומטי לפאזל הבא במצב רציף
-  $effect(() => {
-    if (gameState.phase === "PUZZLE_COMPLETE" && settings.gameMode === "continuous") {
-      setTimeout(() => gameState.nextPuzzle(), 2000);
-    }
-  });
+  // מעבר אוטומטי לפאזל הבא — מטופל ב-PuzzleComplete.svelte
 </script>
 
 <svelte:head>
@@ -68,8 +63,8 @@
     </div>
   {/if}
 
-  <!-- אזור הפאזל -->
-  {#if gameState.phase === "LOADING" || gameState.phase === "PLAYING" || gameState.phase === "PIECE_FEEDBACK"}
+  <!-- אזור הפאזל — נשאר גלוי גם בסיום כדי להציג את הפאזל המושלם -->
+  {#if gameState.phase === "LOADING" || gameState.phase === "PLAYING" || gameState.phase === "PIECE_FEEDBACK" || gameState.phase === "PUZZLE_COMPLETE"}
     <div class="flex-1 flex items-center justify-center px-4 pb-4 min-h-0">
       <div class="w-full h-full max-w-3xl max-h-[70vh]">
         <PuzzleCanvas />

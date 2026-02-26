@@ -53,13 +53,18 @@ export function createPuzzle(config: PuzzleConfig): HeadbreakerCanvas {
   const pieceHeight = Math.floor(containerHeight / (grid.rows + 1));
   const pieceSize = Math.min(pieceWidth, pieceHeight, 200);
 
-  // Outline — rounded (קלאסי) או squared (פשוט)
+  // Outline — rounded (עגול, כמו פאזל אמיתי) או squared (פשוט)
   const outline =
     outlineStyle === "rounded"
-      ? new headbreaker.outline.Rounded()
+      ? new headbreaker.outline.Rounded({
+          bezelize: true,
+          bezelDepth: 0.3,
+          insertDepth: 0.7,
+          borderLength: 0.25,
+        })
       : headbreaker.outline.Classic;
 
-  const lineSoftness = outlineStyle === "rounded" ? 0.18 : 0;
+  const lineSoftness = outlineStyle === "rounded" ? 0 : 0;
 
   const canvas = new headbreaker.Canvas(container.id, {
     width: containerWidth,
@@ -88,6 +93,27 @@ export function createPuzzle(config: PuzzleConfig): HeadbreakerCanvas {
     canvas.puzzle.forceConnectionWhileDragging();
   }
 
+  // מניעת חיבור שגוי — רק חלקים שהם שכנים אמיתיים ברשת יכולים להתחבר.
+  // headbreaker מחבר כל חלק עם insert תואם (Tab-Slot) שקרוב מספיק,
+  // גם אם הם לא שכנים ברשת. הבדיקה פה מוודאה ששני החלקים הם שכנים
+  // לפי targetPosition — הפרש של בדיוק pieceSize בציר אחד ו-0 בשני.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tol = pieceSize * 0.15;
+  canvas.puzzle.attachConnectionRequirement((piece1: any, piece2: any) => {
+    const t1 = piece1.metadata.targetPosition;
+    const t2 = piece2.metadata.targetPosition;
+
+    const dx = Math.abs(t1.x - t2.x);
+    const dy = Math.abs(t1.y - t2.y);
+
+    const isHorizontalNeighbor =
+      Math.abs(dx - pieceSize) < tol && dy < tol;
+    const isVerticalNeighbor =
+      dx < tol && Math.abs(dy - pieceSize) < tol;
+
+    return isHorizontalNeighbor || isVerticalNeighbor;
+  });
+
   // סינון חלקים — הצגת מסגרת בלבד
   if (pieceFilter === "border_only") {
     applyBorderOnlyFilter(canvas, grid);
@@ -96,7 +122,7 @@ export function createPuzzle(config: PuzzleConfig): HeadbreakerCanvas {
   // ערבוב החלקים
   canvas.shuffle(0.8);
 
-  // validator לבדיקת פתרון
+  // validator לבדיקת פתרון — מיקום מוחלט
   canvas.attachSolvedValidator();
 
   // אירוע חיבור חלק (piece, figure, targetPiece, targetFigure)

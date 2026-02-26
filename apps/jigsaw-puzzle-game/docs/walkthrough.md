@@ -1,5 +1,60 @@
 # Jigsaw Puzzle Game — יומן פיתוח
 
+## 2026-02-26 23:45
+
+### CDN, תיקון חיבורים, showcase סיום פאזל, ו-outline מותאם
+
+שילוב R2 bucket עם CDN לניהול מדיה, תיקון לוגיקת חיבור חלקים שגויים, הצגת פאזל מושלם 5 שניות לפני מעבר, ושיפור outline חלקים.
+
+#### מה בוצע?
+
+**1. תשתית CDN — Cloudflare R2**
+
+- יצירת bucket `tzlev-static` עם דומיין מותאם `static.tzlev.ovh`
+- מבנה היררכי: `shared/sounds/` (משותף לכל המשחקים), `apps/learn-games/jigsaw-puzzle-game/images/` (ספציפי)
+- תיקיית `assets/` בשורש המונורפו — mirror של ה-bucket
+- סקריפט `scripts/sync-assets.js` — סנכרון חכם עם hash-based change detection (MD5)
+- הגדרת CORS על ה-bucket + cache-bust עם `?v1` parameter
+- `config.ts` חדש — STATIC_BASE_URL, SHARED_URL, APP_ASSETS_URL, asset()
+- עדכון `image-packs.ts` ו-`sound.ts` לשימוש ב-CDN URLs
+
+**2. תמונות פאזל**
+
+- הורדת 3 תמונות חיות מ-Pexels (רישיון חופשי): חתול, כלב, דג
+- העלאה ל-R2 + צלילי snap.mp3 ו-success.mp3 לתיקייה משותפת
+
+**3. תיקון חיבור חלקים שגויים**
+
+- `attachConnectionRequirement` — בדיקה שחלקים שמנסים להתחבר הם שכנים אמיתיים ברשת
+- השוואת `targetPosition` של שני חלקים: הפרש של בדיוק `pieceSize` בציר אחד ו-~0 בשני
+- tolerance של 15% מגודל החלק
+
+**4. Showcase סיום פאזל**
+
+- הפאזל המושלם מוצג 5 שניות עם באנר חגיגה שקוף (לא מסתיר את הפאזל)
+- ה-canvas נשאר גלוי במצב PUZZLE_COMPLETE
+- במצב `continuous` — מעבר אוטומטי אחרי 5 שניות
+- במצב `manual_end` — כפתור "פאזל הבא" מופיע אחרי 5 שניות
+
+**5. Outline — ניסיונות שיפור (WIP)**
+
+- הפעלת פרמטרים של `outline.Rounded`: `bezelize: true`, `bezelDepth: 0.3`, `insertDepth: 0.7`, `borderLength: 0.25`
+- התוצאה עדיין לא מספקת — החלקים נראים גסים/זוויתיים
+- זוהתה הבעיה: headbreaker מייצר פוליגון עם מעט נקודות, ו-`lineSoftness` מתעלם במצב bezier
+- מתוכנן: Outline class מותאם עם עקומות חלקות וגיוון צורות בין חלקים
+
+#### החלטות ארכיטקטורה
+
+- **R2 bucket משותף (`tzlev-static`)**: במקום bucket לכל משחק — bucket אחד עם היררכיה. מאפשר שימוש חוזר בצלילים/תמונות בין משחקים
+- **Cache-bust עם query parameter**: במקום purge API (OAuth token לא תומך) — גרסה `?v1` בכל URL דרך `asset()` function
+- **Grid-neighbor validation**: headbreaker מחבר כל חלק עם Tab-Slot תואם שקרוב, גם אם לא שכנים. הפתרון — `attachConnectionRequirement` שבודק targetPosition
+
+#### מעקפים ופתרונות
+
+- **CORS על R2**: פורמט JSON ספציפי נדרש: `{"rules":[{"allowed":{"origins":["*"],"methods":["GET","HEAD"],"headers":["content-type"]}}]}` — לא `allowedOrigins` אלא `allowed.origins`
+- **Cache ללא CORS headers**: Cloudflare שמר responses ישנים בלי CORS. לא ניתן לנקות cache עם wrangler OAuth. פתרון: cache-bust עם `?v1`
+- **headbreaker Rounded + bezier מתעלם מ-tension**: כש-`isBezier()` מחזיר true, konva-painter מגדיר `tension: null`. הנקודות גם לא בפורמט bezier תקין של Konva. צריך outline מותאם או post-processing
+
 ## 2026-02-26 21:10
 
 ### גרסה ראשונית — משחק פאזל (jigsaw) עם headbreaker

@@ -70,8 +70,8 @@ export const DEFAULT_SETTINGS: TeacherSettings = {
   imagePackId: "animals",
   gridPresetIndex: 0, // 2×2
   outlineStyle: "squared",
-  proximity: 50,
-  allowDisconnect: false,
+  proximity: 30,
+  allowDisconnect: true,
   showReferenceImage: true,
   pieceFilter: "all",
   shuffleImages: false,
