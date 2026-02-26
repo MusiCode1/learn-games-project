@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@source "../../../../packages/learn-booster-kit";
+
+:root {
+  --color-correct: #22c55e;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.btn-large {
+  @apply min-h-20 min-w-20 rounded-2xl text-2xl font-bold shadow-lg transition-transform active:scale-95;
+}
