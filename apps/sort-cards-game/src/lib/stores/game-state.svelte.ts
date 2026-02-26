@@ -60,6 +60,17 @@ class GameStateStore {
     return this.round.cards.filter((c) => c.status === "pending" || c.status === "active").length;
   }
 
+  /** סה״כ כרטיסים בסיבוב */
+  get totalCardsInRound(): number {
+    return this.round?.cards.length ?? 0;
+  }
+
+  /** כמה כרטיסים מוינו בסיבוב */
+  get sortedCardsInRound(): number {
+    if (!this.round) return 0;
+    return this.round.cards.filter((c) => c.status === "sorted").length;
+  }
+
   /** כמה כרטיסים מוינו לכל קטגוריה */
   getSortedCount(categoryId: string): number {
     if (!this.round) return 0;
@@ -151,7 +162,11 @@ class GameStateStore {
       this.state = "FEEDBACK_CORRECT";
 
       playSuccess();
-      if (settings.voiceEnabled) speakCorrect();
+      if (settings.voiceEnabled) {
+        const category = this.round.definition.categories.find((c) => c.id === categoryId);
+        const cardText = card.ttsText || card.content || undefined;
+        speakCorrect(category?.name, cardText);
+      }
 
       setTimeout(() => {
         this.advanceToNextCard();

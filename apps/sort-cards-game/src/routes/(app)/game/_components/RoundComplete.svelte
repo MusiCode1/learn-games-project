@@ -7,9 +7,10 @@
   interface Props {
     onNextRound: () => void;
     onGetReward?: () => void;
+    rewardPending?: boolean;
   }
 
-  let { onNextRound, onGetReward }: Props = $props();
+  let { onNextRound, onGetReward, rewardPending = false }: Props = $props();
 </script>
 
 {#if gameState.state === "ROUND_COMPLETE" || gameState.state === "GAME_COMPLETE"}
@@ -62,7 +63,8 @@
       </h2>
       <button
         onclick={onGetReward}
-        class="rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 px-10 py-5 text-3xl font-bold text-white shadow-lg transition-all hover:scale-105 active:scale-95"
+        disabled={rewardPending}
+        class="rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 px-10 py-5 text-3xl font-bold text-white shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
       >
         🎁 קבל פרס
       </button>

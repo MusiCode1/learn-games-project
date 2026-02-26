@@ -30,10 +30,10 @@
     <img src={homeIcon} alt="בית" class="h-6 w-6 invert" />
   </button>
 
-  <!-- אינדיקציית סיבוב -->
+  <!-- אינדיקציית כרטיסים -->
   <div class="flex items-center gap-4 text-lg">
-    <span class="text-slate-400">סיבוב:</span>
-    <span class="font-bold text-green-400">{gameState.roundNumber}</span>
+    <span class="text-slate-400">כרטיס:</span>
+    <span class="font-bold text-green-400" dir="ltr">{gameState.sortedCardsInRound}/{gameState.totalCardsInRound}</span>
 
     <span class="text-slate-400">|</span>
 

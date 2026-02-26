@@ -28,7 +28,7 @@ function speakTTS(text: string): Promise<void> {
 
     // עדיפות 1: Fully Kiosk TTS
     if (fully) {
-      fully.textToSpeech(text, "he-IL");
+      fully.textToSpeech(text);
       setTimeout(resolve, 800);
       return;
     }
@@ -60,10 +60,20 @@ export function speak(text: string): void {
 }
 
 /**
- * הקראת משוב חיובי
+ * הקראת משוב חיובי עם הקשר
+ * @param categoryName שם הקטגוריה שאליה מויין הכרטיס
+ * @param cardText טקסט הכרטיס (ttsText / content)
  */
-export function speakCorrect(): void {
-  speakTTS("כל הכבוד!");
+export function speakCorrect(categoryName?: string, cardText?: string): void {
+  let text: string;
+  if (cardText && categoryName) {
+    text = `${cardText}, ${categoryName}! כל הכבוד!`;
+  } else if (categoryName) {
+    text = `${categoryName}! כל הכבוד!`;
+  } else {
+    text = "כל הכבוד!";
+  }
+  speakTTS(text);
 }
 
 /**

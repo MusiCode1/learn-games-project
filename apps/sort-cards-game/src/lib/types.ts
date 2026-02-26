@@ -29,6 +29,8 @@ export interface SortCard {
   content: string;
   categoryId: string;
   image?: string;
+  /** טקסט להקראה ב-TTS (אם שונה מ-content/image) */
+  ttsText?: string;
 }
 
 /** הגדרת סיבוב */

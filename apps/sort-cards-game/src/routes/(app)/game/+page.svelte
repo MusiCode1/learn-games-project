@@ -144,6 +144,7 @@
 <RoundComplete
   onNextRound={handleNextRound}
   onGetReward={handleGetReward}
+  rewardPending={isRewardPending}
 />
 
 <style>
