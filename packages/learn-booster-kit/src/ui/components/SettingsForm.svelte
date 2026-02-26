@@ -22,6 +22,7 @@
         setActiveProfile,
         setProfilesUiEnabled,
     } from "../../lib/config/profile-manager";
+    import OverlayTimerSettings from "./OverlayTimerSettings.svelte";
 
     interface Props {
         config: Config;
@@ -806,6 +807,17 @@
                 </div>
             </section>
         {/if}
+
+        <!-- טיימר אוברליי -->
+        <section class="settings-card space-y-3 text-right">
+            <div class="space-y-1">
+                <p class="font-medium text-base">טיימר אוברליי</p>
+                <p class="settings-help-text">
+                    הצגת טיימר ספירה לאחור מעל האפליקציה החיצונית ובחירת מיקומו על המסך.
+                </p>
+            </div>
+            <OverlayTimerSettings />
+        </section>
 
         <div
             id="show-example"

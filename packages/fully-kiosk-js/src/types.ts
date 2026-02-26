@@ -83,3 +83,349 @@ export interface TabInfo {
   title: string;
   active: boolean;
 }
+
+// ─────────────────────────────────────────────
+// מפתחות הגדרות Fully Kiosk
+// רשימה מבוססת על תיעוד רשמי + listSettings REST API
+// ─────────────────────────────────────────────
+
+/**
+ * מפתחות הגדרות בוליאניות — לשימוש עם getBooleanSetting / setBooleanSetting
+ */
+export type FullyBooleanSettingKey =
+  // Web Content
+  | 'enableFullscreenVideos'
+  | 'autoplayVideos'
+  | 'autoplayAudio'
+  | 'enableFileUpload'
+  | 'cameraCaptureUploads'
+  | 'videoCaptureUploads'
+  | 'audioRecordUploads'
+  | 'jsAlerts'
+  | 'enablePopups'
+  | 'webcamAccess'
+  | 'microphoneAccess'
+  | 'geoLocationAccess'
+  | 'viewLocalPdfFiles'
+  | 'viewRemotePdfFiles'
+  | 'playMedia'
+  | 'redirectBlocked'
+  | 'loadErrorUrlOnDisconnection'
+
+  // Web Browsing
+  | 'enablePullToRefresh'
+  | 'enableBackButton'
+  | 'loadStartUrlOnHomeButton'
+  | 'enableTapSound'
+  | 'swipeNavigation'
+  | 'pageTransitions'
+  | 'swipeToChangeTabs'
+  | 'waitInternetOnReload'
+  | 'readNfcTag'
+
+  // Web Zoom and Scaling
+  | 'enableZoom'
+  | 'loadOverview'
+  | 'useWideViewport'
+  | 'desktopMode'
+
+  // Web Auto Reload
+  | 'autoReloadOnIdle'
+  | 'reloadPageFailure'
+  | 'reloadOnScreenOn'
+  | 'reloadOnScreensaverStop'
+  | 'reloadOnWifiOn'
+  | 'reloadOnInternet'
+  | 'deleteCacheOnReload'
+  | 'deleteWebstorageOnReload'
+  | 'deleteHistoryOnReload'
+  | 'deleteCookiesOnReload'
+  | 'loadCurrentPageOnAutoReload'
+  | 'skipAutoReloadIfShowingStartUrl'
+
+  // Advanced Web Settings
+  | 'websiteIntegration'
+  | 'detectIBeacons'
+  | 'enableQrCodeScanner'
+  | 'softKeyboard'
+  | 'alwaysHideKeyboard'
+  | 'formAutoComplete'
+  | 'enableUserInteraction'
+  | 'enableLongTap'
+  | 'enableDragging'
+  | 'enableScrolling'
+  | 'enableOverscroll'
+  | 'thirdPartyCookies'
+  | 'resubmitFormDataOnReload'
+  | 'addRefererHeader'
+  | 'addXffHeader'
+  | 'addDntHeader'
+  | 'removeXFrameCspAndCorsProtection'
+  | 'enableWebFilter'
+  | 'enableSafeBrowsing'
+  | 'ignoreSSLerrors'
+  | 'pauseWebviewWhileInBackground'
+  | 'enableDrmProtectedContent'
+  | 'clearCacheEach'
+  | 'resumePlaybackWhenGettingToForeground'
+  | 'keepScreenOnWhileInFullscreenMode'
+  | 'webviewDebugging'
+  | 'textSelection'
+  | 'restartOnCrash'
+
+  // Toolbars and Appearance
+  | 'showNavigationBar'
+  | 'showStatusBar'
+  | 'showActionBar'
+  | 'showBackButton'
+  | 'showForwardButton'
+  | 'showRefreshButton'
+  | 'showHomeButton'
+  | 'showPrintButton'
+  | 'showShareButton'
+  | 'showBarcodeScanButton'
+  | 'showTabs'
+  | 'showCloseButtonsOnTabs'
+  | 'showNewTabButton'
+  | 'showAddressBar'
+  | 'showProgressBar'
+  | 'actionBarInSettings'
+
+  // Universal Launcher
+  | 'showAppLauncherOnStart'
+
+  // Screensaver
+  | 'screensaverFullscreen'
+  | 'cacheImages'
+  | 'screensaverDaydream'
+  | 'ignoreMotionDetectionWhenScreensaverGoesOnOff'
+
+  // Device Management
+  | 'keepScreenOn'
+  | 'forceScreenUnlock'
+  | 'launchOnBoot'
+  | 'forceImmersive'
+  | 'removeNavigationBar'
+  | 'removeStatusBar'
+  | 'turnScreenOffOnProximity'
+  | 'redirectAudioToPhoneEarpiece'
+  | 'resetWifiOnInternetDisconnection'
+
+  // Power Settings
+  | 'scheduleWakeupAndSleep'
+  | 'keepSleepingIfUnplugged'
+  | 'turnScreenOnOnPowerConnect'
+  | 'sleepOnPowerConnect'
+  | 'sleepOnPowerDisconnect'
+  | 'forceScreenOffIfNotPowered'
+  | 'batteryWarning'
+  | 'preventFromSleepWhileScreenOff'
+  | 'setCpuWakelock'
+  | 'setWifiWakelock'
+
+  // Kiosk Mode
+  | 'kioskMode'
+  | 'disableStatusBar'
+  | 'disableVolumeButtons'
+  | 'disablePowerButton'
+  | 'disableHomeButton'
+  | 'disableContextMenus'
+  | 'disableOtherApps'
+  | 'advancedKioskProtection'
+  | 'singleAppMode'
+  | 'disableNotifications'
+  | 'disableIncomingCalls'
+  | 'disableOutgoingCalls'
+  | 'disableScreenshots'
+  | 'lockSafeMode'
+  | 'disableCamera'
+  | 'confirmExit'
+  | 'ignoreJustOnceLauncher'
+
+  // Motion Detection
+  | 'motionDetection'
+  | 'detectFaces'
+  | 'triggerMotionOnlyWhenFacesDetected'
+  | 'pauseMotionInBackground'
+  | 'motionDetectionAcoustic'
+  | 'enableProximityMotionDetection'
+  | 'screenOnOnMotion'
+  | 'stopScreensaverOnMotion'
+  | 'stopWebReloadOnMotion'
+  | 'screenOffInDarkness'
+  | 'showCamPreview'
+
+  // Device Movement Detection
+  | 'movementDetection'
+  | 'screenOnOnMovement'
+  | 'stopScreensaverOnMovement'
+  | 'playAlarmSoundOnMovement'
+  | 'playAlarmSoundUntilPin'
+  | 'ignoreMotionWhenMoving'
+  | 'triggerMovementWhenDeviceUnplugged'
+
+  // Remote Administration
+  | 'remoteAdmin'
+  | 'remoteAdminLan'
+  | 'enableFileManagementOnRemoteAdmin'
+  | 'enableScreenshotOnRemoteAdmin'
+  | 'enableCamshotOnRemoteAdmin'
+  | 'enableRemoteAdminAdvertisingByMdnsSd'
+  | 'cloudService'
+  | 'transmitDeviceLocationToFullyCloud'
+  | 'usageStatistics'
+  | 'enableVersionInfo'
+
+  // KNOX
+  | 'knoxEnabled'
+  | 'knoxDisableStatusBar'
+  | 'knoxDisableCamera'
+  | 'knoxDisableScreenCapture'
+  | 'knoxDisableSafeMode'
+  | 'knoxDisableUsbHostStorage'
+  | 'knoxDisableMtp'
+
+  // MDM / Device Owner
+  | 'mdmDisableStatusBar'
+  | 'mdmDisableScreenCapture'
+  | 'mdmDisableUsbStorage'
+  | 'mdmDisableADB'
+
+  // Other
+  | 'restartAfterUpdate'
+  | 'runInForeground'
+  | 'showMenuHint'
+  | 'setRemoveSystemUI';
+
+/**
+ * מפתחות הגדרות מחרוזת — לשימוש עם getStringSetting / setStringSetting
+ * (כולל הגדרות מספריות שמועברות כ-string)
+ */
+export type FullyStringSettingKey =
+  // Web Content
+  | 'startURL'
+  | 'authUsername'
+  | 'authPassword'
+  | 'urlWhitelist'
+  | 'urlBlacklist'
+  | 'webOverlayUrl'
+  | 'webOverlayVerticalAlignment'
+  | 'errorURL'
+  | 'enableUrlOtherApps'
+  | 'searchProviderUrl'
+
+  // Web Zoom and Scaling
+  | 'initialScale'
+  | 'fontSize'
+
+  // Web Auto Reload
+  | 'reloadEachSeconds'
+
+  // Advanced Web Settings
+  | 'injectJavaScript'
+  | 'mixedContentMode'
+  | 'clientCertificateFile'
+  | 'clientCertificatePassword'
+  | 'cacheMode'
+  | 'userAgent'
+  | 'customUserAgentString'
+  | 'defaultWebviewBackgroundColor'
+  | 'graphicsAccelerationMode'
+  | 'selectWebviewImplementation'
+  | 'basicWebAutomation'
+
+  // Universal Launcher
+  | 'launcherApps'
+  | 'appLauncherBackgroundColor'
+  | 'launcherTextColor'
+  | 'launcherBackgroundImageUrl'
+  | 'appLauncherScaling'
+  | 'launcherInjectCode'
+  | 'applicationToRunOnStartInForeground'
+  | 'applicationsToRunOnStartInBackground'
+
+  // Toolbars and Appearance
+  | 'navigationBarColor'
+  | 'statusBarColor'
+  | 'actionBarTitle'
+  | 'actionBarBgColor'
+  | 'actionBarFgColor'
+  | 'actionBarIconUrl'
+  | 'actionBarBgUrl'
+  | 'customButtonAction'
+  | 'actionBarSize'
+  | 'newTabUrl'
+  | 'activeTabColor'
+  | 'inactiveTabColor'
+  | 'tabTextColor'
+  | 'addressBarBgColor'
+  | 'progressBarColor'
+
+  // Screensaver
+  | 'timeToScreensaverV2'
+  | 'screensaverPlaylist'
+  | 'screensaverWallpaperURL'
+  | 'screensaverBrightness'
+  | 'fadeInOutDuration'
+
+  // Device Management
+  | 'screenBrightness'
+  | 'forceScreenOrientation'
+  | 'timeToScreenOffV2'
+  | 'setDeviceName'
+  | 'bluetoothMode'
+  | 'wifiMode'
+  | 'hotspotMode'
+  | 'wifiConfiguration'
+  | 'wifiSettings'
+  | 'wifiSSID'
+  | 'wifiKey'
+  | 'setVolumeLevels'
+  | 'loadContentFromZipFile'
+
+  // Power Settings
+  | 'sleepSchedule'
+
+  // Kiosk Mode
+  | 'kioskExitGesture'
+  | 'kioskPin'
+  | 'kioskWifiPin'
+  | 'wifiSettingsPinAction'
+  | 'wifiSettingsPinCustomIntent'
+  | 'limitTheVolumeLevel'
+  | 'kioskAppWhitelist'
+  | 'appBlacklist'
+  | 'singleAppIntent'
+  | 'kioskHomeStartURL'
+  | 'volumeLicenseKey'
+
+  // Motion Detection
+  | 'motionSensitivity'
+  | 'motionFps'
+  | 'darknessLevel'
+  | 'motionCameraId'
+  | 'cameraApi'
+  | 'faceDetectionConfidence'
+  | 'motionSensitivityAcoustic'
+
+  // Device Movement Detection
+  | 'accelerometerSensitivity'
+  | 'compassSensitivity'
+  | 'alarmSoundFileUrl'
+  | 'movementBeaconList'
+  | 'movementBeaconDistance'
+
+  // Remote Administration
+  | 'remoteAdminPassword'
+
+  // Other
+  | 'autoImportSettings'
+  | 'remotePdfFileMode'
+  | 'localPdfFileMode'
+  | 'webPopupOptions'
+  | 'mdmApkToInstall';
+
+/**
+ * כל מפתחות ההגדרות — בוליאניים + מחרוזת
+ */
+export type FullySettingKey = FullyBooleanSettingKey | FullyStringSettingKey;

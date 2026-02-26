@@ -15,3 +15,5 @@ export { default as ProgressWidget } from "./ui/ProgressWidget.svelte";
 export { default as AdminGate } from "./ui/AdminGate.svelte";
 export { isFullyKiosk } from "./lib/fully-kiosk";
 export * as gingim from "./lib/gingim";
+export { default as OverlayTimerPage } from "./ui/OverlayTimerPage.svelte";
+export { default as OverlayTimerSettings } from "./ui/components/OverlayTimerSettings.svelte";

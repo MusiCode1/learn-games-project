@@ -18,8 +18,16 @@ interface GingimBoosterWatchdogTools {
   getRemainingSeconds: () => number | null;
 }
 
+interface GingimBoosterOverlayTools {
+  /** מפעיל את הטיימר עם משך נתון (ברירת מחדל: 30 שניות) */
+  start: (durationMs?: number) => Promise<boolean>;
+  /** עוצר את הטיימר */
+  stop: () => Promise<boolean>;
+}
+
 interface GingimBoosterTools {
   watchdog?: GingimBoosterWatchdogTools;
+  overlay?: GingimBoosterOverlayTools;
   [key: string]: unknown;
 }
 

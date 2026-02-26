@@ -87,14 +87,14 @@
 </svelte:head>
 
 <div class="relative flex flex-1 flex-col overflow-hidden">
-  <!-- Progress Widget -->
-  {#if settings.boosterEnabled}
+  <!-- Progress Widget — כרטיסים בסיבוב -->
+  {#if gameState.totalCardsInRound > 0}
     <div class="absolute top-4 right-2 z-50 pointer-events-auto">
       <ProgressWidget
-        value={gameState.winsSinceLastReward}
-        max={config?.turnsPerReward ?? 3}
+        value={gameState.sortedCardsInRound}
+        max={gameState.totalCardsInRound}
         orientation="vertical"
-        label="לפרס"
+        label="כרטיסים"
       />
     </div>
   {/if}

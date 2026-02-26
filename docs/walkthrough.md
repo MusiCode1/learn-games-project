@@ -1,7 +1,58 @@
 # יומן פיתוח (Walkthrough)
 
-מסמך זה מתעד שינויים **חוצי פרויקטים** ותשתית כללית במונוריפו.  
+מסמך זה מתעד שינויים **חוצי פרויקטים** ותשתית כללית במונוריפו.
+
 לתיעוד ספציפי של כל פרויקט, ראה את קובץ `docs/walkthrough.md` בתוך תיקיית הפרויקט.
+
+---
+
+## 2026-02-26 12:00
+
+### הגדרות טיימר אוברליי — הפעלה/כיבוי + מיקום וגודל בגרירה
+
+הוספת ממשק הגדרות לטיימר ה-Web Overlay, המאפשר למורה להפעיל/לכבות את הטיימר, לבחור את מיקומו על המסך בגרירה, ולשנות את גודלו.
+
+#### מה בוצע?
+
+**1. אחסון הגדרות אוברליי (חדש)**
+
+- מודול `overlay-settings.ts` — אחסון `enabled`, `xPercent`, `yPercent`, `sizePx` ב-localStorage
+- סנכרון אוטומטי לאוברליי דרך אירוע `StorageEvent` (same origin, different browsing context)
+- ברירות מחדל: מופעל, שמאל-אמצע (6%, 50%), גודל 140px
+
+**2. קומפוננטת הגדרות `OverlayTimerSettings.svelte` (חדשה)**
+
+- Toggle הפעלה/כיבוי הצגת הטיימר
+- כפתור "מיקום וגודל הטיימר" — פותח מסך גרירה full-screen עם רפליקת טיימר
+- בלון צף קומפקטי בשליש התחתון עם כפתורי +/- לגודל (80-220px) וכפתורי שמור/ביטול
+- גרירה באמצעות Pointer Events API (תומך טאצ' ומאוס)
+
+**3. עדכון OverlayTimerPage.svelte**
+
+- מיקום מוחלט מבוסס אחוזים (`position: absolute` + `transform: translate(-50%, -50%)`) במקום flex
+- גודל דינמי — SVG ופונט מותאמים ל-`sizePx`
+- בדיקת `enabled` — הטיימר מוצג רק כש-`timer.isActive && overlaySettings.enabled`
+- האזנה ל-`storage` event לעדכון בזמן אמת מדף ההגדרות
+
+**4. עדכון booster-service.ts**
+
+- בדיקת `loadOverlaySettings().enabled` לפני הגדרת Web Overlay ב-Fully ולפני שליחת פקודות start/stop
+
+**5. שילוב בהגדרות**
+
+- הוספת `<OverlayTimerSettings />` ב-`SettingsForm.svelte` (learn-booster-kit) — כל אפליקציה שמשתמשת בטופס מקבלת אוטומטית
+- הוספת `<OverlayTimerSettings />` בהגדרות sort-cards-game
+
+#### החלטות ארכיטקטורה
+
+- **localStorage ולא Config**: הגדרות תצוגה ספציפיות למכשיר, לא הגדרות פדגוגיות. החלפת פרופיל לא צריכה להשפיע.
+- **StorageEvent ולא BroadcastChannel**: אין צורך להרחיב את הפרוטוקול הקיים — `StorageEvent` מספיק לסנכרון חד-כיווני של הגדרות.
+- **Pointer Events API**: עובד בטאצ' ומאוס, כולל `setPointerCapture` לגרירה חלקה.
+
+#### מעקפים ופתרונות
+
+- **לחיצה על כפתורים מזיזה טיימר**: הוספת `stopPropagation()` על כל pointer events בפאנל הצף, כדי שלחיצה על כפתורי +/- או "שמור" לא תזיז את הטיימר.
+- **בלון צף קומפקטי**: עיצוב הפאנל כבלון קטן ב-`bottom: 15%` עם כפתורי +/- במקום slider, כדי לא לחסום את אזור הגרירה.
 
 ---
 
@@ -61,8 +112,8 @@
 
 #### החלטות ארכיטקטורה
 
-- **`@import 'package/styles'` במקום `@source '../node_modules/package'`**: זהו הפטרן המוצהר של Tailwind CSS 4 לספריות — הספרייה מייצאת קובץ CSS עם `@source`, הצרכן עושה `@import`. הفائدה: הצרכן לא צריך לדעת מה מבנה הקבצים הפנימי של הpackage.
-- **`@source '.'` ולא נתיב ספציפי**: סורק את כל `src/`, כולל קבצים עתידיים, ללא צורך לעדכן את הconfigs.
+- `**@import 'package/styles'` במקום `@source '../node_modules/package'`**: זהו הפטרן המוצהר של Tailwind CSS 4 לספריות — הספרייה מייצאת קובץ CSS עם `@source`, הצרכן עושה `@import`. הفائدה: הצרכן לא צריך לדעת מה מבנה הקבצים הפנימי של הpackage.
+- `**@source '.'` ולא נתיב ספציפי**: סורק את כל `src/`, כולל קבצים עתידיים, ללא צורך לעדכן את הconfigs.
 
 ---
 
@@ -102,18 +153,16 @@
 
 ### 🚀 מה בוצע
 
-1.  **Fully Kiosk Polyfill**:
-    - נוסף ממשק `FullyKiosk` ומימוש ב-`tts.ts`.
+1. **Fully Kiosk Polyfill**:
+  - נוסף ממשק `FullyKiosk` ומימוש ב-`tts.ts`.
     - המערכת מזהה אוטומטית אם היא רצה ב-Fully Kiosk ומשתמשת במנוע ה-TTS המובנה שלו (אמין יותר בקיוסק).
-
-2.  **שאלה ומשוב מפורטים**:
-    - נוספה הגדרה חדשה: `detailedQuestion`.
+2. **שאלה ומשוב מפורטים**:
+  - נוספה הגדרה חדשה: `detailedQuestion`.
     - **משוב הצלחה מפורט**: "נכון! 3 ועוד 3 שווה 6! כל הכבוד!".
     - **חזרה על השאלה בעת טעות**: אם "שאלה מפורטת" פעילה, לאחר טעות המערכת תשאל שוב "כמה זה X ועוד Y?" כדי לחזק את הלמידה.
     - **מקור אמת יחיד (`VOICE_ASSETS`)**: כל קבצי הקול והטקסטים אוחדו לאובייקט אחד ב-`tts.ts`, המאפשר ניהול קל ושימוש ב-TTS כגיבוי לכל חלק חסר.
-
-3.  **ממשק משתמש**:
-    - נוסף מתג (Toggle) בהגדרות לשליטה על "שאלה מפורטת".
+3. **ממשק משתמש**:
+  - נוסף מתג (Toggle) בהגדרות לשליטה על "שאלה מפורטת".
 
 ---
 
@@ -147,16 +196,14 @@
 
 ### 🚀 מה בוצע
 
-1.  **הגדרת סטנדרט**:
-    - נוצר מסמך [docs/component_structure.md](file:///d:/UserProjects/ThzoharHalev/learn-games-project/docs/component_structure.md) המתעד את האפשרויות והסטנדרט שנבחר.
-
-2.  **train-addition-game**:
-    - 8 קומפוננטות הועברו ל-`src/routes/game/_components`
+1. **הגדרת סטנדרט**:
+  - נוצר מסמך [docs/component_structure.md](file:///d:/UserProjects/ThzoharHalev/learn-games-project/docs/component_structure.md) המתעד את האפשרויות והסטנדרט שנבחר.
+2. **train-addition-game**:
+  - 8 קומפוננטות הועברו ל-`src/routes/game/_components`
     - `SettingsControls` הועבר ל-`src/routes/settings/_components`
     - נשאר רק `HeaderBar` ב-`src/lib/components` (משותף)
-
-3.  **wordys-game**:
-    - 8 קומפוננטות הועברו ל-`src/routes/(no-settings)/game/[shelfId]/[boxId]/_components`
+3. **wordys-game**:
+  - 8 קומפוננטות הועברו ל-`src/routes/(no-settings)/game/[shelfId]/[boxId]/_components`
     - `SettingsControls` הועבר ל-`src/routes/admin/settings/_components`
     - `src/lib/components` נמחק (ריק)
 
@@ -177,12 +224,12 @@
 ### 🛠️ שינויים שבוצעו
 
 1. **learn-booster-kit**:
-   - הוספו הרכיבים `src/ui/ProgressWidget.svelte` ו-`src/ui/AdminGate.svelte`.
-   - עודכן `src/index.ts` לייצוא הרכיבים החדשים.
+  - הוספו הרכיבים `src/ui/ProgressWidget.svelte` ו-`src/ui/AdminGate.svelte`.
+  - עודכן `src/index.ts` לייצוא הרכיבים החדשים.
 2. **wordys-game**:
-   - הוחלפו הייבואים המקומיים בייבוא מהספרייה המשותפת.
+  - הוחלפו הייבואים המקומיים בייבוא מהספרייה המשותפת.
 3. **train-addition-game**:
-   - עודכנו הרכיבים לשימוש ברכיבים המשותפים.
+  - עודכנו הרכיבים לשימוש ברכיבים המשותפים.
 
 ---
 
@@ -206,11 +253,11 @@
 
 ### 📜 מה בוצע
 
-1.  **עדכון נהלי פרויקט (`GEMINI.md`)**:
-    - **שפה**: הוגדר כי שדות ממשק המשימה יהיו בעברית בלבד.
+1. **עדכון נהלי פרויקט (`GEMINI.md`)**:
+  - **שפה**: הוגדר כי שדות ממשק המשימה יהיו בעברית בלבד.
     - **קוד**: הוסף סעיף המגדיר כי הערות ייכתבו בעברית, שמות באנגלית.
-2.  **תצורה**:
-    - עודכן `.gitignore` כך שיתעלם מקבצי לוג.
+2. **תצורה**:
+  - עודכן `.gitignore` כך שיתעלם מקבצי לוג.
 
 ---
 
@@ -220,11 +267,12 @@
 
 ### 🚀 מה בוצע
 
-1.  **יצירת מבנה**: הפרויקט אורגן מחדש עם תיקיות `apps/` ו-`packages/`.
-2.  **מיזוג היסטוריה**: השתמשנו ב-`git-filter-repo` לשכתוב ההיסטוריה.
-3.  **גיבוי**: נוצר ענף `original-state-backup`.
+1. **יצירת מבנה**: הפרויקט אורגן מחדש עם תיקיות `apps/` ו-`packages/`.
+2. **מיזוג היסטוריה**: השתמשנו ב-`git-filter-repo` לשכתוב ההיסטוריה.
+3. **גיבוי**: נוצר ענף `original-state-backup`.
 
 ### 📂 סטטוס נוכחי
 
 - **ענף ראשי**: `main` (מכיל את המונוריפו המאוחד).
 - **גיבוי**: `original-state-backup`.
+

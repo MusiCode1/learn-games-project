@@ -1,5 +1,5 @@
 import type { FullyKioskEvent } from './events';
-import type { AudioStream } from './types';
+import type { AudioStream, FullyBooleanSettingKey, FullyStringSettingKey, FullySettingKey } from './types';
 
 /**
  * ממשק מלא ל-Fully Kiosk JavaScript Interface (window.fully)
@@ -313,12 +313,12 @@ export interface FullyKiosk {
   // הגדרות Fully
   // ─────────────────────────────────────────────
 
-  getBooleanSetting(key: string): 'true' | 'false';
-  getStringSetting(key: string): string;
+  getBooleanSetting(key: FullyBooleanSettingKey): 'true' | 'false';
+  getStringSetting(key: FullyStringSettingKey): string;
   /** גרסה גולמית של הגדרה — לא מופיעה בתיעוד הרשמי אך קיימת באפליקציה */
-  getStringRawSetting(key: string): string;
-  setBooleanSetting(key: string, value: boolean): void;
-  setStringSetting(key: string, value: string): void;
+  getStringRawSetting(key: FullySettingKey): string;
+  setBooleanSetting(key: FullyBooleanSettingKey, value: boolean): void;
+  setStringSetting(key: FullyStringSettingKey, value: string): void;
   importSettingsFile(url: string): void;
 
   // ─────────────────────────────────────────────

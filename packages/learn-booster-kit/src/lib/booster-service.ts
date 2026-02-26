@@ -11,6 +11,8 @@ import { createTimer } from './utils/timer';
 import { sleep } from './utils/sleep';
 import { log } from './logger.svelte';
 import { createRewardWatchdog } from './watchdog/reward-watchdog';
+import { createOverlayChannel, sendCommand } from './overlay/overlay-channel';
+import { loadOverlaySettings } from './overlay/overlay-settings';
 
 const AFTER_REWARD_DELAY_MS = 2500;
 const FULLY_POLL_INTERVAL_MS = 1000;
@@ -33,6 +35,10 @@ class BoosterService {
     private videoControls?: PlayerControls;
     private siteControls?: SiteBoosterControls;
     private settingsControls?: { show: () => void, hide: () => void };
+
+    // Overlay
+    private overlayChannel: BroadcastChannel | null = null;
+    private overlayConfigured = false;
 
     // State
     private rewardActiveStore = writable(false);
@@ -93,6 +99,18 @@ class BoosterService {
             logRemainingSeconds: () => this.rewardWatchdog.logRemainingSeconds(),
             getRemainingSeconds: () => this.rewardWatchdog.getRemainingSeconds(),
             watchStateUntilReturn: (options) => this.rewardWatchdog.watchStateUntilReturn(options)
+        };
+        window.GingimBoosterTools.overlay = {
+            start: (durationMs = 30_000) => sendCommand(this.getOverlayChannel(), {
+                type: 'start',
+                durationMs,
+                startedAtMs: Date.now()
+            }),
+            stop: () => sendCommand(this.getOverlayChannel(), {
+                type: 'stop',
+                durationMs: 0,
+                startedAtMs: 0
+            })
         };
     }
 
@@ -257,6 +275,34 @@ class BoosterService {
         await sleep(AFTER_REWARD_DELAY_MS);
     }
 
+    private ensureOverlayConfigured(fully: any): void {
+        if (this.overlayConfigured) return;
+        try {
+            if (!loadOverlaySettings().enabled) {
+                log('Overlay timer disabled — skipping Web Overlay configuration');
+                this.overlayConfigured = true;
+                return;
+            }
+            const overlayUrl = `${window.location.origin}/overlay-timer`;
+            const currentUrl = fully.getStringSetting('webOverlayUrl');
+            if (currentUrl !== overlayUrl) {
+                fully.setStringSetting('webOverlayUrl', overlayUrl);
+                fully.setStringSetting('webOverlayVerticalAlignment', 'bottom');
+                log('Web Overlay configured:', overlayUrl);
+            }
+            this.overlayConfigured = true;
+        } catch (e) {
+            log('Failed to configure Web Overlay:', e);
+        }
+    }
+
+    private getOverlayChannel(): BroadcastChannel {
+        if (!this.overlayChannel) {
+            this.overlayChannel = createOverlayChannel();
+        }
+        return this.overlayChannel;
+    }
+
     private async handleAppReward(
         config: Config,
         delay?: number,
@@ -272,6 +318,16 @@ class BoosterService {
         if (typeof window !== 'undefined' && (window as any).fully) {
             const fully = (window as any).fully;
             if (!appConfig.app.packageName) throw new Error('No package name defined');
+
+            this.ensureOverlayConfigured(fully);
+            const overlayEnabled = loadOverlaySettings().enabled;
+            if (overlayEnabled) {
+                await sendCommand(this.getOverlayChannel(), {
+                    type: 'start',
+                    durationMs: config.rewardDisplayDurationMs,
+                    startedAtMs: Date.now()
+                });
+            }
 
             fully.startApplication(appConfig.app.packageName);
             fully.bringToForeground(config.rewardDisplayDurationMs);
@@ -331,6 +387,13 @@ class BoosterService {
                 stopWatchdog?.();
                 fullyWatcher?.cancel();
                 cleanupVisibility?.();
+                if (overlayEnabled) {
+                    await sendCommand(this.getOverlayChannel(), {
+                        type: 'stop',
+                        durationMs: 0,
+                        startedAtMs: 0
+                    });
+                }
             }
 
             fully.bringToForeground();

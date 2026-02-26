@@ -10,6 +10,7 @@
     getAppsList as getAppsListFromFully,
     type AppListItem,
     isFullyKiosk,
+    OverlayTimerSettings,
   } from "learn-booster-kit";
   import { onMount, onDestroy } from "svelte";
 
@@ -293,6 +294,19 @@
                     class="w-full px-3 py-2 text-sm bg-white rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-700 text-center"
                   />
                 </div>
+              </div>
+
+              <!-- בדיקת מחזק -->
+              <button
+                onclick={async () => { await boosterService.triggerReward(); }}
+                class="w-full rounded-lg bg-amber-100 px-4 py-2 text-sm font-bold text-amber-700 transition-colors hover:bg-amber-200"
+              >
+                בדיקת מחזק
+              </button>
+
+              <!-- הגדרות טיימר אוברליי -->
+              <div class="pt-2 border-t border-slate-200 mt-2">
+                <OverlayTimerSettings />
               </div>
 
               <!-- הגדרות ספציפיות לסוג -->
