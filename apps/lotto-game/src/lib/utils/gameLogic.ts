@@ -13,6 +13,7 @@ export interface Card {
 	isSelected: boolean;
 	isMatched: boolean;
 	isError?: boolean;
+	isSuccess?: boolean;
 }
 
 // ===== ייצוא מחדש מהספקים =====
@@ -75,6 +76,9 @@ export function generateCards<TSettings = unknown>(
 	// בחירת פריטים למשחק
 	const gameItems = selectItems(selectedItems, pairCount);
 	const cards: Card[] = [];
+
+	// איפוס מצב פנימי של ה-provider (כמו מאגר צבעים)
+	provider.prepareForGame?.();
 
 	// יצירת זוגות כרטיסים
 	gameItems.forEach((item) => {

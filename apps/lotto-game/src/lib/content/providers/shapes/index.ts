@@ -26,20 +26,54 @@ export const SHAPES: ShapeDefinition[] = [
 	{ id: 'cross', name: 'פלוס' }
 ];
 
-/** רשימת הצבעים הזמינים */
+/** רשימת הצבעים הזמינים — 20 צבעים מובחנים לתמיכה בעד 20 זוגות */
 const COLORS = [
+	// === צבעים בסיסיים (12 — מובחנים מאוד) ===
 	'#EF4444', // אדום
-	'#3B82F6', // כחול
-	'#22C55E', // ירוק
-	'#A855F7', // סגול
 	'#F97316', // כתום
-	'#EC4899', // ורוד
+	'#EAB308', // צהוב
+	'#84CC16', // ליים
+	'#22C55E', // ירוק
 	'#14B8A6', // טורקיז
-	'#EAB308' // צהוב
+	'#3B82F6', // כחול
+	'#A855F7', // סגול
+	'#D946EF', // פוקסיה
+	'#EC4899', // ורוד
+	'#92400E', // חום
+	'#6B7280', // אפור
+	// === צבעים נוספים (8 — מובחנים מספיק עם שילוב צורות) ===
+	'#06B6D4', // ציאן
+	'#4338CA', // אינדיגו
+	'#D97706', // ענבר
+	'#047857', // אמרלד
+	'#F43F5E', // ורדרד
+	'#1E3A8A', // כחול כהה
+	'#881337', // בורדו
+	'#4D7C0F'  // זית
 ];
 
 /** הצבע המוגדר כברירת מחדל למצב אחיד */
 const DEFAULT_UNIFORM_COLOR = '#3B82F6'; // כחול
+
+/**
+ * מאגר צבעים מעורבב — מבטיח צבע ייחודי לכל זוג במשחק.
+ * מתאפס בתחילת כל משחק דרך prepareForGame().
+ */
+let shuffledColorPool: string[] = [];
+let colorPoolIndex = 0;
+
+function resetColorPool() {
+	shuffledColorPool = [...COLORS].sort(() => Math.random() - 0.5);
+	colorPoolIndex = 0;
+}
+
+function getNextUniqueColor(): string {
+	if (colorPoolIndex >= shuffledColorPool.length) {
+		// אם נגמרו הצבעים (יותר זוגות מצבעים), ערבב מחדש
+		resetColorPool();
+	}
+	return shuffledColorPool[colorPoolIndex++];
+}
 
 /** הגדרות ספק הצורות */
 export interface ShapesProviderSettings {
@@ -74,6 +108,10 @@ export const shapesProvider: ContentProvider<ShapeDefinition, ShapesProviderSett
 		};
 	},
 
+	prepareForGame() {
+		resetColorPool();
+	},
+
 	generateCardContent(shape: ShapeDefinition, settings: ShapesProviderSettings): CardContent {
 		// קביעת צבע לפי מצב הצבעים
 		let color: string;
@@ -81,8 +119,8 @@ export const shapesProvider: ContentProvider<ShapeDefinition, ShapesProviderSett
 		if (settings.colorMode === 'uniform') {
 			color = DEFAULT_UNIFORM_COLOR;
 		} else {
-			// צבע רנדומלי
-			color = COLORS[Math.floor(Math.random() * COLORS.length)];
+			// צבע ייחודי מהמאגר המעורבב
+			color = getNextUniqueColor();
 		}
 
 		const data: ShapeContentData = {

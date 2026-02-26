@@ -27,9 +27,16 @@
 	let showRewardButton = $state(false);
 	let isRewardPending = $state(false);
 
-	// כותרת דינמית לפי סוג התוכן
+	// כותרת דינמית לפי סוג התוכן ומצב המשחק
 	const provider = $derived(contentRegistry.get(settings.contentProviderId));
-	const gameTitle = $derived(`משחק לוטו ${provider.displayName}`);
+	const gameTitle = $derived(
+		settings.gameMode === 'memory'
+			? `משחק זיכרון ${provider.displayName}`
+			: `משחק לוטו ${provider.displayName}`
+	);
+
+	// מונה ניסיונות (רלוונטי למצב זיכרון)
+	let attempts = $state(0);
 
 	onMount(async () => {
 
@@ -73,6 +80,7 @@
 		cards = newCards;
 		selectedCards = [];
 		matches = 0;
+		attempts = 0;
 		isLocked = false;
 		won = false;
 		showRewardButton = false;
@@ -91,8 +99,8 @@
 
 		// התעלם אם כבר מותאם או נבחר
 		if (clickedCard.isMatched || clickedCard.isSelected) {
-			if (clickedCard.isSelected && settings.enableDeselect) {
-				// ביטול בחירה (רק אם מותר)
+			if (clickedCard.isSelected && settings.enableDeselect && settings.gameMode !== 'memory') {
+				// ביטול בחירה (רק אם מותר, לא במצב זיכרון)
 				cards[clickedCardIndex].isSelected = false;
 				selectedCards = selectedCards.filter(index => index !== clickedCardIndex);
 			}
@@ -106,6 +114,7 @@
 		// בדיקת התאמה
 		if (selectedCards.length === 2) {
 			isLocked = true;
+			attempts += 1;
 
 			const firstIndex = selectedCards[0];
 			const secondIndex = selectedCards[1];
@@ -114,25 +123,38 @@
 
 			// השתמש בפונקציית ההשוואה מה-provider
 			const currentProvider = contentRegistry.get(settings.contentProviderId);
+			const feedbackMs = settings.feedbackDurationSec * 1000;
+			const unlockDelayMs = feedbackMs + 500; // חצי שנייה נוספת אחרי המשוב
+
 			if (contentMatches(firstCard, secondCard, currentProvider)) {
-				// התאמה!
+				// התאמה! — הצג זוהר הצלחה
 				playSuccess();
+				cards[firstIndex].isSuccess = true;
+				cards[secondIndex].isSuccess = true;
+
 				setTimeout(() => {
 					cards[firstIndex].isMatched = true;
 					cards[secondIndex].isMatched = true;
 					cards[firstIndex].isSelected = false;
 					cards[secondIndex].isSelected = false;
+					cards[firstIndex].isSuccess = false;
+					cards[secondIndex].isSuccess = false;
 
 					matches += 1;
 					selectedCards = [];
-					isLocked = false;
 
 					if (matches === settings.pairCount) {
+						isLocked = false;
 						handleWin();
 					}
-				}, 500);
+				}, feedbackMs);
+
+				// שחרור נעילה אחרי המשוב + חצי שנייה (אם לא ניצחון)
+				setTimeout(() => {
+					if (!won) isLocked = false;
+				}, unlockDelayMs);
 			} else {
-				// אין התאמה
+				// אין התאמה — הצג לתלמיד כדי לזכור
 				playError();
 				cards[firstIndex].isError = true;
 				cards[secondIndex].isError = true;
@@ -142,10 +164,13 @@
 					cards[secondIndex].isSelected = false;
 					cards[firstIndex].isError = false;
 					cards[secondIndex].isError = false;
-					
 					selectedCards = [];
+				}, feedbackMs);
+
+				// שחרור נעילה אחרי המשוב + חצי שנייה
+				setTimeout(() => {
 					isLocked = false;
-				}, 1000);
+				}, unlockDelayMs);
 			}
 		}
 	}
@@ -165,11 +190,9 @@
 				// הפעלה אוטומטית
 				boosterService.triggerReward();
 				winsCount = 0;
-				rewardTriggered = true;
 			} else {
 				// הפעלה ידנית - הצגת כפתור
 				showRewardButton = true;
-				rewardTriggered = true; // טכנית עצרנו להפסקת פרס
 			}
 		}
 
@@ -178,7 +201,13 @@
 		if (!showRewardButton) {
 			const hasNextRound = settings.loopMode === 'infinite' || currentRound < settings.totalRounds;
 			if (hasNextRound) {
-				nextRoundTimer = 5;
+				if (settings.autoNextRound) {
+					// מעבר אוטומטי לסבב הבא ללא פופאפ
+					won = false;
+					startNewGame(currentRound + 1);
+				} else {
+					nextRoundTimer = 5;
+				}
 			}
 		}
 	}
@@ -225,6 +254,13 @@
 				<div class="stat-badge rounds">
 					<span class="stat-label">סבב:</span>
 					<span class="stat-value">{currentRound}</span>
+				</div>
+			{/if}
+
+			{#if settings.gameMode === 'memory'}
+				<div class="stat-badge attempts">
+					<span class="stat-label">ניסיונות:</span>
+					<span class="stat-value">{attempts}</span>
 				</div>
 			{/if}
 
@@ -391,6 +427,16 @@
 	.stat-badge.rounds .stat-value {
 		/* Visual */
 		@apply text-purple-600;
+	}
+
+	.stat-badge.attempts {
+		/* Visual */
+		@apply bg-amber-50 border-amber-100;
+	}
+
+	.stat-badge.attempts .stat-value {
+		/* Visual */
+		@apply text-amber-600;
 	}
 
 	.settings-button {

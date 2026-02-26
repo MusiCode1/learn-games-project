@@ -6,9 +6,12 @@ const CURRENT_VERSION = 2; // גרסה 2 - מודולרי
 
 export const DEFAULT_SETTINGS = {
 	schemaVersion: CURRENT_VERSION,
+	// מצב משחק
+	gameMode: 'lotto' as 'lotto' | 'memory',
+
 	// הגדרות משחק
 	pairCount: 10,
-	
+
 	// הגדרות תוכן - מודולרי
 	contentProviderId: 'letters',
 	contentSettings: {} as Record<string, unknown>,
@@ -23,12 +26,15 @@ export const DEFAULT_SETTINGS = {
 
 	// הגדרות משחקיות
 	enableDeselect: true,
-	hideMatchedCards: false
+	hideMatchedCards: false,
+	feedbackDurationSec: 2,
+	autoNextRound: false
 };
 
 export type LottoSettings = typeof DEFAULT_SETTINGS;
 
 class SettingsStore {
+	gameMode = $state<'lotto' | 'memory'>(DEFAULT_SETTINGS.gameMode);
 	pairCount = $state(DEFAULT_SETTINGS.pairCount);
 	contentProviderId = $state(DEFAULT_SETTINGS.contentProviderId);
 	contentSettings = $state<Record<string, unknown>>({});
@@ -38,6 +44,8 @@ class SettingsStore {
 	autoBooster = $state(DEFAULT_SETTINGS.autoBooster);
 	enableDeselect = $state(DEFAULT_SETTINGS.enableDeselect);
 	hideMatchedCards = $state(DEFAULT_SETTINGS.hideMatchedCards);
+	feedbackDurationSec = $state(DEFAULT_SETTINGS.feedbackDurationSec);
+	autoNextRound = $state(DEFAULT_SETTINGS.autoNextRound);
 
 	constructor() {
 		if (browser) {
@@ -108,6 +116,7 @@ class SettingsStore {
 	toJSON() {
 		return {
 			schemaVersion: CURRENT_VERSION,
+			gameMode: this.gameMode,
 			pairCount: this.pairCount,
 			contentProviderId: this.contentProviderId,
 			contentSettings: this.contentSettings,
@@ -116,7 +125,9 @@ class SettingsStore {
 			boosterEnabled: this.boosterEnabled,
 			autoBooster: this.autoBooster,
 			enableDeselect: this.enableDeselect,
-			hideMatchedCards: this.hideMatchedCards
+			hideMatchedCards: this.hideMatchedCards,
+			feedbackDurationSec: this.feedbackDurationSec,
+			autoNextRound: this.autoNextRound
 		};
 	}
 
@@ -127,7 +138,8 @@ class SettingsStore {
 			// מיגרציה מגרסה ישנה (contentType, selectedLetters, selectedShapes)
 			this.migrateFromV1(parsed);
 		} else {
-			// גרסה 2 - מבנה חדש
+			// גרסה 2+ - מבנה מודולרי
+			this.gameMode = parsed.gameMode ?? DEFAULT_SETTINGS.gameMode;
 			this.pairCount = parsed.pairCount ?? DEFAULT_SETTINGS.pairCount;
 			this.contentProviderId = parsed.contentProviderId ?? DEFAULT_SETTINGS.contentProviderId;
 			this.contentSettings = parsed.contentSettings ?? {};
@@ -137,6 +149,8 @@ class SettingsStore {
 			this.autoBooster = parsed.autoBooster ?? DEFAULT_SETTINGS.autoBooster;
 			this.enableDeselect = parsed.enableDeselect ?? DEFAULT_SETTINGS.enableDeselect;
 			this.hideMatchedCards = parsed.hideMatchedCards ?? DEFAULT_SETTINGS.hideMatchedCards;
+			this.feedbackDurationSec = parsed.feedbackDurationSec ?? DEFAULT_SETTINGS.feedbackDurationSec;
+			this.autoNextRound = parsed.autoNextRound ?? DEFAULT_SETTINGS.autoNextRound;
 		}
 	}
 
@@ -169,6 +183,7 @@ class SettingsStore {
 
 	reset() {
 		const provider = contentRegistry.get(this.contentProviderId);
+		this.gameMode = DEFAULT_SETTINGS.gameMode;
 		this.pairCount = DEFAULT_SETTINGS.pairCount;
 		this.contentSettings = provider.getDefaultSettings() as Record<string, unknown>;
 		this.loopMode = DEFAULT_SETTINGS.loopMode;
@@ -177,6 +192,8 @@ class SettingsStore {
 		this.autoBooster = DEFAULT_SETTINGS.autoBooster;
 		this.enableDeselect = DEFAULT_SETTINGS.enableDeselect;
 		this.hideMatchedCards = DEFAULT_SETTINGS.hideMatchedCards;
+		this.feedbackDurationSec = DEFAULT_SETTINGS.feedbackDurationSec;
+		this.autoNextRound = DEFAULT_SETTINGS.autoNextRound;
 	}
 }
 
