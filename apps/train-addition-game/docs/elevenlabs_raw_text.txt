@@ -40,6 +40,9 @@
 
 [curious] כמה קרונות יש עכשיו?
 
+[curious] כמה זה,
+[cheerful] רכבות, ועוד -
+
 [excited] נכון!
 [happy] כל הכבוד!
 [sympathetic] לא נכון.

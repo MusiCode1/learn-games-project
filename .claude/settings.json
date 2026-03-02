@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add apps/train-addition-game/src/lib/types.ts apps/train-addition-game/src/lib/stores/settings.svelte.ts apps/train-addition-game/src/routes/game/_components/AnswerPanel.svelte apps/train-addition-game/src/routes/settings/_components/SettingsControls.svelte apps/train-addition-game/docs/walkthrough.md)",
+      "Bash(bunx sv create sort-cards-game --template minimal --types ts)",
+      "WebFetch(domain:svelte.dev)",
+      "Bash(npx svelte-check --tsconfig ./tsconfig.json)",
+      "Bash(grep -E '\"\"src\\\\\\\\\\\\\\\\')"
+    ]
+  }
+}

@@ -47,3 +47,4 @@ apps/train-addition-game/static/assets/
 *.zip
 *.rar
 *.7z
+.playwright-cli

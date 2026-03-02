@@ -264,7 +264,7 @@ export function speakChooseAnswer(a?: number, b?: number): void {
     typeof b === "number"
   ) {
     // "כמה זה" -> num_a -> "רכבות, ועוד" -> num_b
-    playSequence(["how_many_is", getNumberKey(a), "trains_plus", getNumberKey(b)]);
+    playSequence(["how_many_is", getNumberKey(a), "plus", getNumberKey(b)]);
   } else {
     playAsset("how_many");
   }
