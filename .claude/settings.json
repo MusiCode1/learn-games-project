@@ -5,7 +5,8 @@
       "Bash(bunx sv create sort-cards-game --template minimal --types ts)",
       "WebFetch(domain:svelte.dev)",
       "Bash(npx svelte-check --tsconfig ./tsconfig.json)",
-      "Bash(grep -E '\"\"src\\\\\\\\\\\\\\\\')"
+      "Bash(grep -E '\"\"src\\\\\\\\\\\\\\\\')",
+      "Bash(git checkout dev)"
     ]
   }
 }
