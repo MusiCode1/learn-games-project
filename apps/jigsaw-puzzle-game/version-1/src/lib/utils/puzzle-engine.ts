@@ -57,7 +57,7 @@ export function createPuzzle(config: PuzzleConfig): HeadbreakerCanvas {
   // Outline — rounded (SmoothOutline מותאם) או squared (פשוט)
   const outline =
     outlineStyle === "rounded"
-      ? headbreaker.outline.Rounded // new SmoothOutline() — temporarily disabled
+      ? new headbreaker.outline.Rounded() // new SmoothOutline() — temporarily disabled
       : headbreaker.outline.Classic;
 
   const lineSoftness = outlineStyle === "rounded" ? 0.15 : 0;

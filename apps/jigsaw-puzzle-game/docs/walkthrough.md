@@ -1,5 +1,33 @@
 # Jigsaw Puzzle Game — יומן פיתוח
 
+## 2026-03-02 00:00
+
+### ארגון מחדש ל-version-1, ביטול זמני smooth-outline, תיקון outline.draw
+
+ארגון קבצי האפליקציה לתיקיית `version-1`, ביטול זמני של `SmoothOutline` לצרכי יציבות מיידית, ותיקון שגיאת `outline.draw is not a function`.
+
+#### מה בוצע?
+
+**1. ארגון קבצים**
+
+- כל קבצי האפליקציה הועברו מ-`apps/jigsaw-puzzle-game/src/` לתוך `apps/jigsaw-puzzle-game/version-1/`
+- מאפשר מקום לגרסאות עתידיות תחת אותה תיקיית אפליקציה
+
+**2. ביטול זמני של SmoothOutline**
+
+- `SmoothOutline` (מ-`smooth-outline.ts`) לא הצליח לרוץ — גרם לכשלון יצירת הפאזל
+- ה-import הוסתר בהערה, הוחלף ב-`new headbreaker.outline.Rounded()`
+
+**3. תיקון `outline.draw is not a function`**
+
+- לאחר ההחלפה, התגלה שגיאה נוספת: `headbreaker.outline.Rounded` (ללא `new`) מחזיר class constructor ולא instance
+- headbreaker מצפה לאובייקט עם method `draw` — תוקן ל-`new headbreaker.outline.Rounded()`
+
+#### מעקפים ופתרונות
+
+- **SmoothOutline מנותק זמנית**: ה-import מוסתר בהערה ב-`puzzle-engine.ts`. לחיבור מחדש — להסיר את ה-comment משורה 19 ולשחזר את שורה 60 ל-`new SmoothOutline()`
+- **`headbreaker.outline.Classic` לא דורש `new`** (כנראה instance סטטי), אבל `Rounded` כן דורש — ייתכן אי-עקביות בתוך ה-API של headbreaker
+
 ## 2026-02-26 23:45
 
 ### CDN, תיקון חיבורים, showcase סיום פאזל, ו-outline מותאם
