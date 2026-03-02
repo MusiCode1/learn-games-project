@@ -16,6 +16,7 @@
 
 import headbreaker from "headbreaker";
 import type { GridConfig, OutlineStyle, PieceFilter } from "$lib/types";
+// import { SmoothOutline } from "./smooth-outline"; // temporarily disabled
 
 export interface PuzzleConfig {
   container: HTMLDivElement;
@@ -53,18 +54,13 @@ export function createPuzzle(config: PuzzleConfig): HeadbreakerCanvas {
   const pieceHeight = Math.floor(containerHeight / (grid.rows + 1));
   const pieceSize = Math.min(pieceWidth, pieceHeight, 200);
 
-  // Outline — rounded (עגול, כמו פאזל אמיתי) או squared (פשוט)
+  // Outline — rounded (SmoothOutline מותאם) או squared (פשוט)
   const outline =
     outlineStyle === "rounded"
-      ? new headbreaker.outline.Rounded({
-          bezelize: true,
-          bezelDepth: 0.3,
-          insertDepth: 0.7,
-          borderLength: 0.25,
-        })
+      ? headbreaker.outline.Rounded // new SmoothOutline() — temporarily disabled
       : headbreaker.outline.Classic;
 
-  const lineSoftness = outlineStyle === "rounded" ? 0 : 0;
+  const lineSoftness = outlineStyle === "rounded" ? 0.15 : 0;
 
   const canvas = new headbreaker.Canvas(container.id, {
     width: containerWidth,
