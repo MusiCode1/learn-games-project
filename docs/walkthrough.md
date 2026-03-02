@@ -112,8 +112,8 @@
 
 #### החלטות ארכיטקטורה
 
-- `**@import 'package/styles'` במקום `@source '../node_modules/package'`**: זהו הפטרן המוצהר של Tailwind CSS 4 לספריות — הספרייה מייצאת קובץ CSS עם `@source`, הצרכן עושה `@import`. הفائدה: הצרכן לא צריך לדעת מה מבנה הקבצים הפנימי של הpackage.
-- `**@source '.'` ולא נתיב ספציפי**: סורק את כל `src/`, כולל קבצים עתידיים, ללא צורך לעדכן את הconfigs.
+- `**@import 'package/styles'` במקום `@source '../node_modules/package'`\*\*: זהו הפטרן המוצהר של Tailwind CSS 4 לספריות — הספרייה מייצאת קובץ CSS עם `@source`, הצרכן עושה `@import`. הفائدה: הצרכן לא צריך לדעת מה מבנה הקבצים הפנימי של הpackage.
+- `**@source '.'` ולא נתיב ספציפי\*\*: סורק את כל `src/`, כולל קבצים עתידיים, ללא צורך לעדכן את הconfigs.
 
 ---
 
@@ -154,15 +154,20 @@
 ### 🚀 מה בוצע
 
 1. **Fully Kiosk Polyfill**:
-  - נוסף ממשק `FullyKiosk` ומימוש ב-`tts.ts`.
-    - המערכת מזהה אוטומטית אם היא רצה ב-Fully Kiosk ומשתמשת במנוע ה-TTS המובנה שלו (אמין יותר בקיוסק).
+
+- נוסף ממשק `FullyKiosk` ומימוש ב-`tts.ts`.
+  - המערכת מזהה אוטומטית אם היא רצה ב-Fully Kiosk ומשתמשת במנוע ה-TTS המובנה שלו (אמין יותר בקיוסק).
+
 2. **שאלה ומשוב מפורטים**:
-  - נוספה הגדרה חדשה: `detailedQuestion`.
-    - **משוב הצלחה מפורט**: "נכון! 3 ועוד 3 שווה 6! כל הכבוד!".
-    - **חזרה על השאלה בעת טעות**: אם "שאלה מפורטת" פעילה, לאחר טעות המערכת תשאל שוב "כמה זה X ועוד Y?" כדי לחזק את הלמידה.
-    - **מקור אמת יחיד (`VOICE_ASSETS`)**: כל קבצי הקול והטקסטים אוחדו לאובייקט אחד ב-`tts.ts`, המאפשר ניהול קל ושימוש ב-TTS כגיבוי לכל חלק חסר.
+
+- נוספה הגדרה חדשה: `detailedQuestion`.
+  - **משוב הצלחה מפורט**: "נכון! 3 ועוד 3 שווה 6! כל הכבוד!".
+  - **חזרה על השאלה בעת טעות**: אם "שאלה מפורטת" פעילה, לאחר טעות המערכת תשאל שוב "כמה זה X ועוד Y?" כדי לחזק את הלמידה.
+  - **מקור אמת יחיד (`VOICE_ASSETS`)**: כל קבצי הקול והטקסטים אוחדו לאובייקט אחד ב-`tts.ts`, המאפשר ניהול קל ושימוש ב-TTS כגיבוי לכל חלק חסר.
+
 3. **ממשק משתמש**:
-  - נוסף מתג (Toggle) בהגדרות לשליטה על "שאלה מפורטת".
+
+- נוסף מתג (Toggle) בהגדרות לשליטה על "שאלה מפורטת".
 
 ---
 
@@ -197,15 +202,20 @@
 ### 🚀 מה בוצע
 
 1. **הגדרת סטנדרט**:
-  - נוצר מסמך [docs/component_structure.md](file:///d:/UserProjects/ThzoharHalev/learn-games-project/docs/component_structure.md) המתעד את האפשרויות והסטנדרט שנבחר.
+
+- נוצר מסמך [docs/component_structure.md](file:///d:/UserProjects/ThzoharHalev/learn-games-project/docs/component_structure.md) המתעד את האפשרויות והסטנדרט שנבחר.
+
 2. **train-addition-game**:
-  - 8 קומפוננטות הועברו ל-`src/routes/game/_components`
-    - `SettingsControls` הועבר ל-`src/routes/settings/_components`
-    - נשאר רק `HeaderBar` ב-`src/lib/components` (משותף)
+
+- 8 קומפוננטות הועברו ל-`src/routes/game/_components`
+  - `SettingsControls` הועבר ל-`src/routes/settings/_components`
+  - נשאר רק `HeaderBar` ב-`src/lib/components` (משותף)
+
 3. **wordys-game**:
-  - 8 קומפוננטות הועברו ל-`src/routes/(no-settings)/game/[shelfId]/[boxId]/_components`
-    - `SettingsControls` הועבר ל-`src/routes/admin/settings/_components`
-    - `src/lib/components` נמחק (ריק)
+
+- 8 קומפוננטות הועברו ל-`src/routes/(no-settings)/game/[shelfId]/[boxId]/_components`
+  - `SettingsControls` הועבר ל-`src/routes/admin/settings/_components`
+  - `src/lib/components` נמחק (ריק)
 
 ### 📚 הנחיות להמשך
 
@@ -224,12 +234,17 @@
 ### 🛠️ שינויים שבוצעו
 
 1. **learn-booster-kit**:
-  - הוספו הרכיבים `src/ui/ProgressWidget.svelte` ו-`src/ui/AdminGate.svelte`.
-  - עודכן `src/index.ts` לייצוא הרכיבים החדשים.
+
+- הוספו הרכיבים `src/ui/ProgressWidget.svelte` ו-`src/ui/AdminGate.svelte`.
+- עודכן `src/index.ts` לייצוא הרכיבים החדשים.
+
 2. **wordys-game**:
-  - הוחלפו הייבואים המקומיים בייבוא מהספרייה המשותפת.
+
+- הוחלפו הייבואים המקומיים בייבוא מהספרייה המשותפת.
+
 3. **train-addition-game**:
-  - עודכנו הרכיבים לשימוש ברכיבים המשותפים.
+
+- עודכנו הרכיבים לשימוש ברכיבים המשותפים.
 
 ---
 
@@ -254,10 +269,13 @@
 ### 📜 מה בוצע
 
 1. **עדכון נהלי פרויקט (`GEMINI.md`)**:
-  - **שפה**: הוגדר כי שדות ממשק המשימה יהיו בעברית בלבד.
-    - **קוד**: הוסף סעיף המגדיר כי הערות ייכתבו בעברית, שמות באנגלית.
+
+- **שפה**: הוגדר כי שדות ממשק המשימה יהיו בעברית בלבד.
+  - **קוד**: הוסף סעיף המגדיר כי הערות ייכתבו בעברית, שמות באנגלית.
+
 2. **תצורה**:
-  - עודכן `.gitignore` כך שיתעלם מקבצי לוג.
+
+- עודכן `.gitignore` כך שיתעלם מקבצי לוג.
 
 ---
 
@@ -275,4 +293,3 @@
 
 - **ענף ראשי**: `main` (מכיל את המונוריפו המאוחד).
 - **גיבוי**: `original-state-backup`.
-
