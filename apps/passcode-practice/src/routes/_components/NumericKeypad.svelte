@@ -31,7 +31,7 @@
   const showBackspace = $derived(gameState.entered.length > 0);
 </script>
 
-<div class="flex flex-col items-center gap-4">
+<div dir="ltr" class="flex flex-col items-center gap-4">
   {#each ROWS as row}
     <div class="flex gap-4">
       {#each row as key}
