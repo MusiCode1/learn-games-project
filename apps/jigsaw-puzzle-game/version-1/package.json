@@ -14,7 +14,7 @@
   "dependencies": {
     "headbreaker": "^3.0.0",
     "konva": "^9.3.0",
-    "learn-booster-kit": "*"
+    "learn-booster-kit": "workspace:*"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^7.0.0",

@@ -46,13 +46,13 @@
         "vitest-browser-svelte": "^2.0.1",
       },
     },
-    "apps/jigsaw-puzzle-game": {
+    "apps/jigsaw-puzzle-game/version-1": {
       "name": "jigsaw-puzzle-game",
       "version": "0.1.0",
       "dependencies": {
         "headbreaker": "^3.0.0",
         "konva": "^9.3.0",
-        "learn-booster-kit": "*",
+        "learn-booster-kit": "workspace:*",
       },
       "devDependencies": {
         "@sveltejs/adapter-auto": "^7.0.0",
@@ -1366,7 +1366,7 @@
 
     "jackspeak": ["jackspeak@3.4.3", "", { "dependencies": { "@isaacs/cliui": "^8.0.2" }, "optionalDependencies": { "@pkgjs/parseargs": "^0.11.0" } }, "sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw=="],
 
-    "jigsaw-puzzle-game": ["jigsaw-puzzle-game@workspace:apps/jigsaw-puzzle-game"],
+    "jigsaw-puzzle-game": ["jigsaw-puzzle-game@workspace:apps/jigsaw-puzzle-game/version-1"],
 
     "jiti": ["jiti@2.6.1", "", { "bin": { "jiti": "lib/jiti-cli.mjs" } }, "sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ=="],
 

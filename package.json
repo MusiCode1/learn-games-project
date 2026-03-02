@@ -3,7 +3,8 @@
   "private": true,
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "apps/jigsaw-puzzle-game/*"
   ],
   "scripts": {
     "dev": "bun run --filter '*' dev",
