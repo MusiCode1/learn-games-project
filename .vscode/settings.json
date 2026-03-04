@@ -5,5 +5,7 @@
   "css.customData": [".vscode/tailwind.json"],
   "tailwindCSS.includeLanguages": {
     "svelte": "html"
-  }
+  },
+  "claudeCode.allowDangerouslySkipPermissions": true,
+  
 }
