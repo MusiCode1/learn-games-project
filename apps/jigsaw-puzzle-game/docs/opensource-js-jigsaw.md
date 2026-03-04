@@ -1,7 +1,7 @@
 ### הבחירה שלי
 
 הפרוייקט שהכי אהבתי:
-https://github.com/immanuel404/Jigsaw-Puzzle
+https://github.com/codeaashu/Jigsaw-Puzzle-Game
 
 בטח. הנה כמה ספריות/פרויקטים מוכנים של **jigsaw puzzle אונליין** (JS), מסודר לפי “הכי שימושי מהר”:
 
