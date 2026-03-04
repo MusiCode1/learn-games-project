@@ -1,5 +1,43 @@
 # Jigsaw Puzzle Game — יומן פיתוח
 
+## 2026-03-04 19:00
+
+### version-2 — תיקון באגים מ-PR review (#6)
+
+תיקון באגים שזוהו כמוצדקים מתוך הערות בוטים (cursor, chatgpt-codex) על PR #6. חלק מההערות נפסלו לאחר בחינה ביקורתית מול הקוד.
+
+#### מה בוצע?
+
+**1. תיקון image error תוקע ב-LOADING**
+
+- בעיה: `img.onerror` ב-PuzzleCanvas רק הדפיס log ולא שינה phase — המשתמש נתקע
+- תיקון: `onerror` קורא `gameState.advanceToNextImage()` כדי לדלג לתמונה הבאה
+- `advanceToNextImage` הפך ל-public ב-game-state
+
+**2. תיקון piece counter קוסמטי**
+
+- בעיה: N חלקים דורשים N-1 merges, אז ה-counter הציג 8/9 במקום מלא. בנוסף, cascade merge (drop שמחבר כמה קבוצות) ספר רק +1
+- תיקון: `totalPieces` = N-1, `checkMerge` סופר merges ומעביר count ל-`notifyPieceConnected(count)`
+- שינוי signature ב-4 קבצים: puzzle-interaction.ts, puzzle.ts, game-state.svelte.ts, PuzzleCanvas.svelte
+- הערה: ה-win check מבוסס על `polyPieces.length === 1` ולא על ה-counter, אז המשחק עצמו עבד גם לפני
+
+**3. Guard נגד רקורסיה אינסופית ב-loadPuzzle**
+
+- בעיה: אם `imageQueue` ריק, `loadPuzzle` קרא לעצמו אינסופית → stack overflow
+- תיקון: guard בתחילת הפונקציה שבודק `imageQueue.length === 0` ומחזיר ל-INIT
+
+**4. תיקון scatter offset**
+
+- בעיה: `optimInitial` חישב scatter rects בלי `offsx`/`offsy`, מה שגרם לחפיפה קלה עם אזור התמונה הממורכזת
+- תיקון: הוספת offset לכל ה-rects שמתייחסים ל-`gameWidth`/`gameHeight` כקואורדינטה
+
+#### הערות שנפסלו מה-PR
+
+- **snap distance override לא עובד** — לא נכון, ה-override כבר קורה אחרי `init()` מתיקון קודם
+- **double init ב-mount** — לא נכון, `onMount` רק רושם resize listener, כבר תוקן קודם
+- **shuffle כפולה** — הגרסה ב-game-state מחזירה copy (immutable), בעוד `arrayShuffle` עובד in-place — ההפרדה מוצדקת
+- **`.vscode/settings.json` מסוכן ב-repo** — הקובץ מכיל רק `files.associations` ל-Tailwind, לגיטימי לגמרי
+
 ## 2026-03-04 17:30
 
 ### version-2 — מנוע פאזל חדש מבוסס Canvas + תיקוני UI ומגנטיות
