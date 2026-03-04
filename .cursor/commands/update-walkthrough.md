@@ -1,4 +1,5 @@
 ---
+name: update-walkthrough
 description: עדכון יומן פיתוח (Walkthrough)
 ---
 

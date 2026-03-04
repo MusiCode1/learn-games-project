@@ -1,5 +1,59 @@
 # Jigsaw Puzzle Game — יומן פיתוח
 
+## 2026-03-04 17:30
+
+### version-2 — מנוע פאזל חדש מבוסס Canvas + תיקוני UI ומגנטיות
+
+מנוע פאזל חדש לחלוטין (version-2) שמחליף את headbreaker בפתרון מבוסס Canvas טהור, בהשראת פרויקט codeaashu. כולל יצירת צורות Bezier דינמיות, drag & drop ישיר על Canvas, מערכת snap/connect, ו-emboss styling. לאחר הבנייה תוקנו באגים: חלקים כפולים, גודל חלקים, רקע, layout, ומגנטיות.
+
+#### מה בוצע?
+
+**1. מנוע פאזל חדש (`src/lib/puzzle/`)**
+
+- `puzzle.ts` — מחלקה ראשית: יצירת grid, חישוב scaling דינמי, פיזור חלקים ל-margins (optimInitial), ניהול z-index
+- `piece.ts` — חלק בודד ברשת: שמירת מיקום grid, edges עם Bezier curves, twist functions
+- `polypiece.ts` — קבוצת חלקים מחוברים: drag, snap detection (ifNear), contour tracing (wall-following), ציור על canvas נפרד
+- `math.ts` — Point class, alea PRNG, shuffle, Bezier utilities
+- `twists.ts` — 3 סגנונות צורה: classic, wave, diamond — כל אחד עם twist function שמגדירה את עקומות ה-Bezier של קצוות החלקים
+- `interaction.ts` — ניהול אירועי mouse/touch: mousedown על חלק, drag, snap check ב-mouseup
+
+**2. תיקון באג כפל חלקים**
+
+- `loadCurrentPuzzle()` נקרא פעמיים: ב-`onMount` וגם ב-`$effect` שעוקב אחרי `gameState.phase === "LOADING"`
+- תוקן: הוסר הקריאה מ-`onMount`, נשאר רק ה-`$effect`
+- תוצאה: מספר canvas elements ירד מ-10 ל-5 (עבור 2×2)
+
+**3. תיקון גודל חלקים דינמי**
+
+- בעיה: `maxWidth = 0.95 * contWidth` — כל חלק ~50% מהמסך ב-2×2, לא נשאר מקום לפיזור
+- פתרון: `maxPieceFraction = 0.20` — כל חלק עד 20% מה-container
+- נוסחה: `maxFactor = min(0.95, max(0.30, min(0.20*nx, 0.20*ny)))`
+- תוצאות: 2×2→0.40, 3×3→0.60, 4×4→0.80, 6×6→0.95
+
+**4. תיקוני UI**
+
+- הסרת `background-color: #fff1e7` מ-PuzzleCanvas — הרקע יורש gradient מהלייאוט (`bg-linear-to-b from-sky-100 via-blue-50 to-indigo-100`)
+- הכותרת (שם התמונה) הפכה ל-`absolute` עם `pointer-events-none` — צפה מעל ה-canvas בלי לתפוס מקום בלייאוט
+- Canvas wrapper שונה ל-`absolute inset-0` לכיסוי מלא
+- ImagePreview הוגדל: collapsed 64→80px, expanded 192×144→224×176px
+
+**5. תיקון מגנטיות (snap distance)**
+
+- בעיה: הגדרת proximity בסליידר לא השפיעה — ה-override של `dConnect` בוצע **לפני** `puzzle.init()`, ו-`scale()` דרס אותו
+- תיקון: הזזת `puzzle.dConnect = ...` ל**אחרי** `puzzle.init()`
+- הסרת `snapDistance` מהאופציות (לא נקרא ב-constructor)
+
+#### החלטות ארכיטקטורה
+
+- **מנוע Canvas עצמאי במקום headbreaker**: headbreaker v3 הגביל שליטה ב-outline, API לא מתועד, וחלקים נראו גסים. המנוע החדש מבוסס על codeaashu עם שליטה מלאה ב-Bezier curves, canvas-per-piece, ו-emboss effects
+- **Canvas per piece (PolyPiece)**: כל קבוצת חלקים מצוירת על canvas נפרד — מאפשר drag חלק בלי לצייר מחדש את כל הפאזל, וביצועים טובים
+- **Dynamic maxFactor**: במקום ערך קבוע (0.95), הנוסחה מתאימה את גודל החלקים לגודל הגריד — גרידים קטנים מקבלים חלקים קטנים עם הרבה מרווח לפיזור
+
+#### מעקפים ופתרונות
+
+- **dConnect override timing**: ב-Svelte 5, `$effect` רץ אחרי mount, כך שה-puzzle נוצר ב-effect. ה-override חייב להיות אחרי `init()` כי `scale()` מאפס את `dConnect`. סדר: `new Puzzle()` → `init()` → override `dConnect`
+- **Chromium system dependencies**: הרצת Playwright ב-container Linux דרשה התקנה ידנית של ~12 ספריות מערכת (libnss3, libgbm1, libxfixes3 וכו')
+
 ## 2026-03-02 00:00
 
 ### ארגון מחדש ל-version-1, ביטול זמני smooth-outline, תיקון outline.draw

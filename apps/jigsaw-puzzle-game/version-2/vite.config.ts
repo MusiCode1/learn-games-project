@@ -5,6 +5,11 @@ import { playwright } from '@vitest/browser-playwright';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
+	server: {
+		allowedHosts: true,
+		host: true,
+		open: true
+	},
 	plugins: [tailwindcss(), sveltekit(), devtoolsJson()],
 	test: {
 		expect: { requireAssertions: true },

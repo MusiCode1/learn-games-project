@@ -17,6 +17,9 @@
 		"test:e2e": "playwright test",
 		"gen": "wrangler types"
 	},
+	"dependencies": {
+		"learn-booster-kit": "workspace:*"
+	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.2",
 		"@eslint/js": "^9.39.2",

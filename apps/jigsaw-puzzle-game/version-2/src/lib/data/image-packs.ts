@@ -1,0 +1,28 @@
+/**
+ * חבילות תמונות לפאזל
+ */
+
+import type { ImagePack } from "$lib/types";
+import { APP_ASSETS_URL, asset } from "$lib/config";
+
+const img = (path: string) => asset(`${APP_ASSETS_URL}/images/${path}`);
+
+export const ALL_IMAGE_PACKS: ImagePack[] = [
+  {
+    id: "animals",
+    name: "חיות",
+    icon: "\u{1F43E}",
+    description: "חיות מוכרות",
+    images: [
+      { id: "dog", name: "כלב", src: img("animals/dog.jpg"), ttsText: "כלב" },
+    ],
+  },
+];
+
+export function getPackById(id: string): ImagePack | undefined {
+  return ALL_IMAGE_PACKS.find((p) => p.id === id);
+}
+
+export function getDefaultPack(): ImagePack {
+  return ALL_IMAGE_PACKS[0];
+}
