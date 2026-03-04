@@ -21,7 +21,6 @@
   }
 
   onMount(() => {
-    loadCurrentPuzzle();
     window.addEventListener("resize", handleResize);
   });
 
@@ -56,15 +55,12 @@
     img.onload = () => {
       try {
         const grid = gameState.currentGrid;
-        const snapDistance = Math.max(10, settings.proximity);
-
         puzzle = new Puzzle({
           container: containerEl,
           image: img,
           columns: grid.columns,
           rows: grid.rows,
           shapeStyle: settings.shapeStyle,
-          snapDistance,
           onPieceConnected: () => {
             gameState.onPieceConnected();
           },
@@ -73,13 +69,13 @@
           },
         });
 
-        // Override snap distance based on proximity setting
+        puzzle.init();
+
+        // Override snap distance based on proximity setting (must be AFTER init)
         puzzle.dConnect = Math.max(
           10,
           Math.min(puzzle.scalex, puzzle.scaley) * (settings.proximity / 300),
         );
-
-        puzzle.init();
 
         interaction = new PuzzleInteraction(puzzle);
         interaction.attach();
@@ -99,5 +95,4 @@
 <div
   bind:this={containerEl}
   class="absolute inset-0 overflow-hidden"
-  style="background-color: #fff1e7;"
 ></div>

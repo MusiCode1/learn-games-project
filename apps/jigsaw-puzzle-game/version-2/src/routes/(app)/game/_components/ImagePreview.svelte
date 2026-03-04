@@ -12,10 +12,10 @@
   <button
     onclick={() => { expanded = !expanded; }}
     class="fixed bottom-4 left-4 z-30 rounded-xl bg-white/90 p-1 shadow-lg transition-all duration-300 hover:scale-105 border-2 border-slate-300"
-    class:w-16={!expanded}
-    class:h-16={!expanded}
-    class:w-48={expanded}
-    class:h-36={expanded}
+    class:w-20={!expanded}
+    class:h-20={!expanded}
+    class:w-56={expanded}
+    class:h-44={expanded}
     aria-label={expanded ? "הקטן תמונת עזר" : "הגדל תמונת עזר"}
   >
     <img

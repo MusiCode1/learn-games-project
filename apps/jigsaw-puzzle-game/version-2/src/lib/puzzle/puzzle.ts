@@ -197,8 +197,14 @@ export class Puzzle {
 
   /** Compute pixel dimensions, render source image to hidden canvas */
   scale(): void {
-    const maxWidth = 0.95 * this.contWidth;
-    const maxHeight = 0.95 * this.contHeight;
+    // Cap piece size: each piece ≤ ~20% of container. Small grids get more margin for scattering.
+    const maxPieceFraction = 0.20;
+    const maxFactor = mmin(
+      0.95,
+      mmax(0.30, mmin(maxPieceFraction * this.nx, maxPieceFraction * this.ny)),
+    );
+    const maxWidth = maxFactor * this.contWidth;
+    const maxHeight = maxFactor * this.contHeight;
 
     this.gameHeight = maxHeight;
     this.gameWidth =

@@ -36,7 +36,7 @@
   <title>פאזל - משחק</title>
 </svelte:head>
 
-<div class="relative flex flex-1 flex-col overflow-hidden">
+<div class="relative flex-1 overflow-hidden">
   <!-- Progress Widget — חלקים שחוברו -->
   {#if settings.boosterEnabled && gameState.phase !== "INIT"}
     <div class="absolute top-4 right-2 z-50 pointer-events-auto">
@@ -51,7 +51,7 @@
 
   <!-- כותרת התמונה -->
   {#if gameState.currentImage && (gameState.phase === "PLAYING" || gameState.phase === "PIECE_FEEDBACK")}
-    <div class="animate-slide-up text-center py-3 pointer-events-none z-20">
+    <div class="absolute top-0 left-0 right-0 animate-slide-up text-center py-3 pointer-events-none z-20">
       <h2 class="text-2xl md:text-3xl font-black text-slate-700 drop-shadow-sm">
         {gameState.currentImage.name}
       </h2>
@@ -63,7 +63,7 @@
 
   <!-- אזור הפאזל — full-screen canvas, תופס את כל השטח -->
   {#if gameState.phase === "LOADING" || gameState.phase === "PLAYING" || gameState.phase === "PIECE_FEEDBACK" || gameState.phase === "PUZZLE_COMPLETE"}
-    <div class="flex-1 relative min-h-0">
+    <div class="absolute inset-0">
       <PuzzleCanvas />
     </div>
   {/if}
