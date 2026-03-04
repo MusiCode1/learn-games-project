@@ -101,10 +101,18 @@ export async function loadGoogleDriveVideos(
 }
 
 export async function loadDefaultGoogleDriveVideos(): Promise<VideoList> {
-  try {
-    const defaultFolderId = extractGoogleDriveFolderId(
-      import.meta.env.VITE_GOOGLE_DRIVE_DEFAULT_FOLDER
+  const rawDefaultFolder = import.meta.env.VITE_GOOGLE_DRIVE_DEFAULT_FOLDER;
+
+  if (!rawDefaultFolder) {
+    console.error(
+      '[learn-booster] VITE_GOOGLE_DRIVE_DEFAULT_FOLDER חסר או לא מוגדר. ' +
+      'לא ניתן לטעון סרטונים מתיקיית ברירת המחדל'
     );
+    return [];
+  }
+
+  try {
+    const defaultFolderId = extractGoogleDriveFolderId(rawDefaultFolder);
     const driveUrls = await getFolderVideosUrls(defaultFolderId);
 
     if (driveUrls.length > 0) {

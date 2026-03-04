@@ -50,6 +50,7 @@
       .catch((err) => {
         paused = true;
         error = `שגיאה בהפעלת הסרטון: ${err.message}`;
+        timer.start(); // הבטח שהטיימר ממשיך לרוץ גם בשגיאה
       });
   }
 
@@ -100,6 +101,7 @@
     loading = false;
     error = `שגיאה בטעינת הסרטון`;
     console.error("שגיאת וידאו:", event);
+    timer.start(); // הבטח שהטיימר ממשיך לרוץ גם בשגיאה
   }
 
   function onClickVideoToggle() {
@@ -166,37 +168,41 @@
 
     <!-- תוכן -->
     <div id="content" class="p-[2.5vw]">
-      {#if loading}
+      {#if loading && !error}
         <LoadingSpinner message="טוען את הסרטון..." />
       {/if}
 
       {#if error}
-        <div class="text-red-500 text-center mb-4">{error}</div>
+        <div class="flex flex-col items-center justify-center gap-3 py-10 text-center">
+          <div class="text-5xl">⚠️</div>
+          <div class="text-red-600 text-lg font-bold">{error}</div>
+          <div class="text-gray-500 text-sm">הסרטון ייסגר אוטומטית בעוד {time}</div>
+        </div>
+      {:else}
+        <!-- svelte-ignore a11y_media_has_caption -->
+        <video
+          controls
+          controlslist="nodownload nofullscreen noplaybackrate noremoteplayback novolume"
+          preload="auto"
+          bind:this={videoElement}
+          bind:paused
+          class="rounded-lg
+          border border-gray-500
+          bg-gray-400
+          w-full
+          "
+          class:hide-progress={hideProgress}
+          onloadeddata={handleVideoLoaded}
+          onerror={handleVideoError}
+          onclick={onClickVideoToggle}
+          onended={handleVideoEnded}
+          onwaiting={() => timer.pause()}
+          onplaying={() => timer.start()}
+        >
+          <source src={videoUrl} type={mimeType} />
+          הדפדפן שלך לא תומך בתגית וידאו.
+        </video>
       {/if}
-
-      <!-- svelte-ignore a11y_media_has_caption -->
-      <video
-        controls
-        controlslist="nodownload nofullscreen noplaybackrate noremoteplayback novolume"
-        preload="auto"
-        bind:this={videoElement}
-        bind:paused
-        class="rounded-lg
-        border border-gray-500
-        bg-gray-400
-        w-full
-        "
-        class:hide-progress={hideProgress}
-        onloadeddata={handleVideoLoaded}
-        onerror={handleVideoError}
-        onclick={onClickVideoToggle}
-        onended={handleVideoEnded}
-        onwaiting={() => timer.pause()}
-        onplaying={() => timer.start()}
-      >
-        <source src={videoUrl} type={mimeType} />
-        הדפדפן שלך לא תומך בתגית וידאו.
-      </video>
     </div>
   </div>
 </div>
