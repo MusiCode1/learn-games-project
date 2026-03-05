@@ -31,6 +31,8 @@ export interface PuzzleOptions {
 
 export class Puzzle {
   container: HTMLElement;
+  /** Wrapper div for all piece canvases — zoom/pan transform is applied here */
+  piecesLayer: HTMLDivElement;
   /** Hidden canvas with the scaled source image */
   gameCanvas: HTMLCanvasElement;
   gameCtx!: CanvasRenderingContext2D;
@@ -81,7 +83,14 @@ export class Puzzle {
     this.onPieceConnected = options.onPieceConnected;
     this.onPuzzleSolved = options.onPuzzleSolved;
 
-    // Create hidden canvas for source image
+    // Create pieces layer wrapper for zoom/pan
+    this.piecesLayer = document.createElement("div");
+    this.piecesLayer.style.position = "absolute";
+    this.piecesLayer.style.inset = "0";
+    this.piecesLayer.style.transformOrigin = "0 0";
+    this.container.appendChild(this.piecesLayer);
+
+    // Create hidden canvas for source image (outside piecesLayer)
     this.gameCanvas = document.createElement("canvas");
     this.gameCanvas.style.display = "none";
     this.container.appendChild(this.gameCanvas);
@@ -412,7 +421,7 @@ export class Puzzle {
     this.onPuzzleSolved?.();
   }
 
-  /** Handle window resize */
+  /** Handle window resize — also resets zoom/pan */
   handleResize(): void {
     const prevWidth = this.contWidth;
     const prevHeight = this.contHeight;
@@ -431,6 +440,9 @@ export class Puzzle {
       pp.moveTo(nx, ny);
       pp.drawImage();
     });
+
+    // Reset zoom/pan transform on resize
+    this.piecesLayer.style.transform = "";
   }
 
   /** Cleanup — remove all canvas elements */
@@ -441,6 +453,9 @@ export class Puzzle {
       }
     });
     this.polyPieces = [];
+    if (this.piecesLayer.parentNode) {
+      this.piecesLayer.parentNode.removeChild(this.piecesLayer);
+    }
     if (this.gameCanvas.parentNode) {
       this.gameCanvas.parentNode.removeChild(this.gameCanvas);
     }

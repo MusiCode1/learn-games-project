@@ -39,6 +39,7 @@
   });
 
   function handleResize() {
+    interaction?.resetZoom();
     puzzle?.handleResize();
   }
 
