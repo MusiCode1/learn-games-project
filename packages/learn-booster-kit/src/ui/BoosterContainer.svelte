@@ -151,7 +151,7 @@
   }
 
   /* Re-enable pointer events for the modal wrapper */
-  :global(#learn-booster-root > .fixed) {
+  :global(#learn-booster-root .fixed) {
     pointer-events: auto;
   }
 
