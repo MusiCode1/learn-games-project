@@ -6,7 +6,7 @@ import type { TeacherSettings, ShapeStyle, PieceFilter } from "$lib/types";
 import { DEFAULT_SETTINGS } from "$lib/types";
 
 const STORAGE_KEY = "jigsaw-puzzle-v2-settings";
-const CURRENT_VERSION = 1;
+const CURRENT_VERSION = 2;
 
 class SettingsStore {
   imagePackId = $state(DEFAULT_SETTINGS.imagePackId);
@@ -20,6 +20,7 @@ class SettingsStore {
   boosterEnabled = $state(DEFAULT_SETTINGS.boosterEnabled);
   voiceEnabled = $state(DEFAULT_SETTINGS.voiceEnabled);
   gameMode = $state<"continuous" | "manual_end">(DEFAULT_SETTINGS.gameMode);
+  showContinueButton = $state(DEFAULT_SETTINGS.showContinueButton);
 
   constructor() {
     if (typeof globalThis?.localStorage !== "undefined") {
@@ -40,7 +41,12 @@ class SettingsStore {
       try {
         const parsed = JSON.parse(saved);
         this.imagePackId = parsed.imagePackId ?? DEFAULT_SETTINGS.imagePackId;
-        this.gridPresetIndex = parsed.gridPresetIndex ?? DEFAULT_SETTINGS.gridPresetIndex;
+        // מיגרציה מ-v1: הזזת gridPresetIndex ב-+1 (נוסף 2×1 בהתחלה של GRID_PRESETS)
+        if ((parsed.schemaVersion ?? 1) < 2 && parsed.gridPresetIndex !== undefined) {
+          this.gridPresetIndex = parsed.gridPresetIndex + 1;
+        } else {
+          this.gridPresetIndex = parsed.gridPresetIndex ?? DEFAULT_SETTINGS.gridPresetIndex;
+        }
         this.shapeStyle = parsed.shapeStyle ?? DEFAULT_SETTINGS.shapeStyle;
         this.proximity = parsed.proximity ?? DEFAULT_SETTINGS.proximity;
         this.allowDisconnect = parsed.allowDisconnect ?? DEFAULT_SETTINGS.allowDisconnect;
@@ -50,6 +56,7 @@ class SettingsStore {
         this.boosterEnabled = parsed.boosterEnabled ?? DEFAULT_SETTINGS.boosterEnabled;
         this.voiceEnabled = parsed.voiceEnabled ?? DEFAULT_SETTINGS.voiceEnabled;
         this.gameMode = parsed.gameMode ?? DEFAULT_SETTINGS.gameMode;
+        this.showContinueButton = parsed.showContinueButton ?? DEFAULT_SETTINGS.showContinueButton;
       } catch (e) {
         console.error("Failed to parse settings", e);
       }
@@ -70,6 +77,7 @@ class SettingsStore {
       boosterEnabled: this.boosterEnabled,
       voiceEnabled: this.voiceEnabled,
       gameMode: this.gameMode,
+      showContinueButton: this.showContinueButton,
     };
   }
 
@@ -90,6 +98,7 @@ class SettingsStore {
     this.boosterEnabled = DEFAULT_SETTINGS.boosterEnabled;
     this.voiceEnabled = DEFAULT_SETTINGS.voiceEnabled;
     this.gameMode = DEFAULT_SETTINGS.gameMode;
+    this.showContinueButton = DEFAULT_SETTINGS.showContinueButton;
   }
 }
 

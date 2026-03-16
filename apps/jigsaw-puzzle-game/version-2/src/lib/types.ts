@@ -24,6 +24,7 @@ export interface GridConfig {
 }
 
 export const GRID_PRESETS: GridConfig[] = [
+  { columns: 2, rows: 1, label: "2×1" },
   { columns: 2, rows: 2, label: "2×2" },
   { columns: 3, rows: 2, label: "3×2" },
   { columns: 3, rows: 3, label: "3×3" },
@@ -64,11 +65,12 @@ export interface TeacherSettings {
   boosterEnabled: boolean;
   voiceEnabled: boolean;
   gameMode: "continuous" | "manual_end";
+  showContinueButton: boolean;
 }
 
 export const DEFAULT_SETTINGS: TeacherSettings = {
   imagePackId: "animals",
-  gridPresetIndex: 0, // 2×2
+  gridPresetIndex: 1, // 2×2 (index 1 after adding 2×1 at index 0)
   shapeStyle: "classic",
   proximity: 30,
   allowDisconnect: true,
@@ -78,4 +80,5 @@ export const DEFAULT_SETTINGS: TeacherSettings = {
   boosterEnabled: true,
   voiceEnabled: false,
   gameMode: "manual_end",
+  showContinueButton: false,
 };

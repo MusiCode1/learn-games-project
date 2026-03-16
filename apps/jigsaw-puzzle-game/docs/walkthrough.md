@@ -1,5 +1,89 @@
 # Jigsaw Puzzle Game — יומן פיתוח
 
+## 2026-03-17 10:00
+
+### version-2 — שיפור גרירת תמונת עזר: snap לצלע + תיקון חפיפה עם header
+
+עדכון מנגנון הגרירה ב-`ImagePreview.svelte`: הוחלפה גרירה ל-4 פינות בגרירה חופשית לאורך כל אחת מ-4 הצלעות של המסך (snap לצלע הקרובה). תוקן גם מיקום הצלע העליונה.
+
+#### מה בוצע?
+
+**1. מעבר מ-4 פינות לגרירה לאורך כל הצלעות (`ImagePreview.svelte`)**
+
+- הוחלף HTML5 Drag API ב-Pointer Events API (`pointerdown/move/up/cancel`) עם `setPointerCapture`
+- המצב השתנה מ-`Corner` (4 פינות) ל-`EdgePosition { edge, offset }` — שומר צלע + היסט לאורכה
+- ב-`pointerup`: חישוב הצלע הקרובה לפי `min(dTop, dBottom, dLeft, dRight)`, clamping ב-`[MARGIN, max-ELEM-MARGIN]`
+- `positionStyle()` ממפה EdgePosition לסגנון CSS `fixed`
+- localStorage: המפתח שונה מ-`"jigsaw-preview-corner"` ל-`"jigsaw-preview-edge-position"`
+
+**2. תיקון חפיפה עם ה-header בצלע העליונה**
+
+- `HEADER_H` הועלה מ-52 ל-72 (header `py-3` + button `p-2` + icon `h-6` + `shadow-md` ≈ 72px)
+- `clampV` משתמש ב-`HEADER_H + MARGIN` כמינימום לצלעות שמאל/ימין כדי לשמור גם עליהן מחוץ לאזור ה-header
+
+#### החלטות ארכיטקטורה
+
+- **Pointer Events במקום HTML5 Drag**: HTML5 Drag API לא מאפשר מעקב מיקום חי בזמן הגרירה, ולא עובד טוב ב-touch. Pointer Events + `setPointerCapture` פותר את שניהם — מאפשר ghost מיקום (`isDragging`) ועובד על מובייל
+- **`isPointerDown` flag**: `pointermove` מופעל גם על hover ללא לחיצה — הוספת flag מונעת הפעלת drag בטעות בריחוף בלבד
+
+#### מעקפים ופתרונות
+
+- **`HEADER_H` קבוע (72) ולא דינמי**: ניתן היה למדוד את ה-header ב-`onMount`, אך ה-header בגודל קבוע ידוע — קבוע פשוט מספיק ומונע תלות ב-DOM
+
+## 2026-03-16 23:55
+
+### version-2 — תיקונים ושיפורי UX: גרירת תמונת עזר, overlay, פרס, גריד 2×1
+
+5 שיפורים: גרירת תמונת עזר ל-4 פינות, הסתרת "פאזל הבא" כשמגיע פרס, הסרת חסימת כפתורי ניווט על ידי overlays, הגדרה חדשה לכפתור "המשך לפאזל הבא", וגריד 2×1 (2 חלקים).
+
+#### מה בוצע?
+
+**1. גרירת תמונת עזר ל-4 פינות (`ImagePreview.svelte`)**
+
+- הוספת drag & drop (HTML5 Drag API) לתמונת העזר הקטנה
+- ב-`dragend`: חישוב פינה קרובה לפי `clientX/Y` ביחס למרכז המסך
+- 4 פינות אפשריות: `top-left`, `top-right`, `bottom-left` (ברירת מחדל), `bottom-right`
+- שמירת הפינה הנבחרת ב-localStorage תחת `"jigsaw-preview-corner"` — נזכר לאחר רענון
+- הוספת cursor styles: `cursor-grab` / `cursor-grabbing`
+
+**2. הסתרת "פאזל הבא" כשמגיע פרס (`game-state.svelte.ts`, `PuzzleComplete.svelte`)**
+
+- נוסף getter `isRewardDue` ל-`GameStateStore` — בודק אם `winsSinceLastReward >= turnsPerReward`
+- ב-`PuzzleComplete.svelte`: אחרי 5 שניות showcase, אם `isRewardDue` — מעבר אוטומטי ל-REWARD_TIME (ללא הצגת כפתור "פאזל הבא")
+- כפתור "פאזל הבא" מוצג רק כשלא מגיע פרס: `!gameState.isRewardDue`
+
+**3. הסרת חסימת כפתורי בית/הגדרות (`PuzzleComplete.svelte`)**
+
+- כל div-י overlay שונו ל-`pointer-events-none`
+- רק הכפתורים עצמם (`pointer-events-auto`) — HeaderBar נגיש בכל עת גם כשה-overlay פתוח
+
+**4. הגדרה חדשה: כפתור "המשך לפאזל הבא" (`types.ts`, `settings.svelte.ts`, `settings/+page.svelte`, `PuzzleComplete.svelte`)**
+
+- נוסף שדה `showContinueButton: boolean` להגדרות המורה (ברירת מחדל: `false`)
+- כשמופעל: כפתור "🧩 המשך לפאזל הבא" מופיע ב-REWARD_TIME לצד "🎁 קבל פרס"
+- הכפתור קורא ל-`gameState.skipReward()` — מאפס `winsSinceLastReward` ועובר לפאזל הבא
+
+**5. גריד 2×1 (2 חלקים) (`types.ts`, `settings.svelte.ts`)**
+
+- נוסף `{ columns: 2, rows: 1, label: "2×1" }` בתחילת `GRID_PRESETS`
+- `DEFAULT_SETTINGS.gridPresetIndex` עודכן מ-0 ל-1 (שומר 2×2 כברירת מחדל)
+- `CURRENT_VERSION` הועלה מ-1 ל-2 עם מיגרציה: טעינת הגדרות שמורות מ-v1 מגדיל `gridPresetIndex` ב-+1
+
+**6. תיקון CSS import שבור (`layout.css`)**
+
+- הוחזר `@import 'learn-booster-kit/styles'` (בלי `.css`) שתואם את exports map של החבילה
+- הרצת `bun install` מהשורש לחיבור workspace package
+
+#### החלטות ארכיטקטורה
+
+- **HTML5 Drag API לגרירת פינות**: במקום Pointer Events מלאים, נבחר HTML5 drag כי המטרה היא snap לפינה — לא מעקב מיקום מדויק. `dragend` מספיק לחישוב פינה יעד
+- **`isRewardDue` כ-getter ולא כ-Svelte store**: הערך מחושב מ-`winsSinceLastReward` (שהוא `$state`) ומ-booster config — getter מספיק, ה-reactivity של Svelte 5 מטפל בעדכון אוטומטי
+- **`pointer-events-none` על overlays**: במקום העלאת z-index של ה-header, כל ה-overlays הפכו ל-`none` עם `pointer-events-auto` רק על כפתורי הפעולה — לא נדרשת שינוי ב-HeaderBar
+
+#### מעקפים ופתרונות
+
+- **מיגרציה של `gridPresetIndex`**: הוספת גריד 2×1 בתחילת המערך הזיזה את כל האינדקסים. מנגנון מיגרציה ב-`settings.svelte.ts` מגדיל ב-+1 בטעינה מגרסה 1 כדי לשמר הגדרות קיימות
+
 ## 2026-03-04 17:30
 
 ### version-2 — מנוע פאזל חדש מבוסס Canvas + תיקוני UI ומגנטיות

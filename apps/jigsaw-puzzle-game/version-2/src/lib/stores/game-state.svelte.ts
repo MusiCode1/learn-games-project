@@ -43,6 +43,14 @@ class GameStateStore {
     return GRID_PRESETS[settings.gridPresetIndex] ?? GRID_PRESETS[0];
   }
 
+  /** האם מגיע פרס בלחיצת "הבא" הקרובה */
+  get isRewardDue(): boolean {
+    if (!settings.boosterEnabled) return false;
+    const config = get(boosterService.config);
+    const turnsForReward = config ? config.turnsPerReward : 3;
+    return this.winsSinceLastReward >= turnsForReward;
+  }
+
   /**
    * התחלת משחק חדש
    */
@@ -129,6 +137,14 @@ class GameStateStore {
     } else {
       this.advanceToNextImage();
     }
+  }
+
+  /**
+   * דילוג על פרס — מתקדם לפאזל הבא ללא קבלת פרס
+   */
+  skipReward(): void {
+    this.winsSinceLastReward = 0;
+    this.advanceToNextImage();
   }
 
   /**

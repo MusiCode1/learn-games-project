@@ -22,6 +22,9 @@
         // במצב רציף — ממשיכים אוטומטית אחרי ה-showcase
         if (settings.gameMode === "continuous") {
           gameState.nextPuzzle();
+        } else if (gameState.isRewardDue) {
+          // אם מגיע פרס — עוברים ישירות ל-REWARD_TIME (ללא הצגת כפתור "פאזל הבא")
+          gameState.nextPuzzle();
         }
       }, 5000);
     } else {
@@ -80,12 +83,12 @@
       {/if}
     </div>
 
-    <!-- כפתורי פעולה — מופיעים רק אחרי 5 שניות, במצב ידני -->
-    {#if showcaseFinished && settings.gameMode === "manual_end"}
+    <!-- כפתורי פעולה — מופיעים רק אחרי 5 שניות, במצב ידני, כשלא מגיע פרס -->
+    {#if showcaseFinished && settings.gameMode === "manual_end" && !gameState.isRewardDue}
       <div class="animate-fade-in pointer-events-auto">
         <button
           onclick={handleNextPuzzle}
-          class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-green-500 to-green-700 px-12 py-8 text-4xl font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95"
+          class="group relative overflow-hidden rounded-3xl bg-linear-to-br from-green-500 to-green-700 px-12 py-8 text-4xl font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95"
         >
           <span class="flex items-center gap-4">🧩 פאזל הבא</span>
         </button>
@@ -93,25 +96,40 @@
     {/if}
   </div>
 
-  <!-- רקע חצי-שקוף — מופיע רק כשמציגים כפתורים -->
-  {#if showcaseFinished && settings.gameMode === "manual_end"}
-    <div class="fixed inset-0 z-40 bg-black/30"></div>
+  <!-- רקע חצי-שקוף — מופיע רק כשמציגים כפתורים, לא חוסם קליקים -->
+  {#if showcaseFinished && settings.gameMode === "manual_end" && !gameState.isRewardDue}
+    <div class="fixed inset-0 z-40 bg-black/30 pointer-events-none"></div>
   {/if}
 {:else if gameState.phase === "REWARD_TIME" && settings.gameMode !== "continuous"}
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-    <div class="animate-fade-in text-center">
+  <!-- רקע חצי-שקוף — לא חוסם קליקים על לחצני הבר -->
+  <div class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+    <div class="animate-fade-in text-center pointer-events-auto">
       <h2 class="mb-8 text-6xl font-black text-white drop-shadow-lg">
         🎉 כל הכבוד! 🎉
       </h2>
-      <button
-        onclick={handleGetReward}
-        disabled={isRewardPending}
-        class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-500 to-purple-700 px-12 py-8 text-4xl font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-purple-400/50 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
-      >
-        <span class="flex items-center gap-4"> 🎁 קבל פרס </span>
-      </button>
+      <div class="flex gap-4 justify-center flex-wrap">
+        <button
+          onclick={handleGetReward}
+          disabled={isRewardPending}
+          class="group relative overflow-hidden rounded-3xl bg-linear-to-br from-purple-500 to-purple-700 px-12 py-8 text-4xl font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-purple-400/50 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
+        >
+          <span class="flex items-center gap-4"> 🎁 קבל פרס </span>
+        </button>
+
+        {#if settings.showContinueButton}
+          <button
+            onclick={() => gameState.skipReward()}
+            disabled={isRewardPending}
+            class="group relative overflow-hidden rounded-3xl bg-linear-to-br from-blue-500 to-blue-700 px-12 py-8 text-4xl font-bold text-white shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-blue-400/50 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
+          >
+            <span class="flex items-center gap-4">🧩 המשך לפאזל הבא</span>
+          </button>
+        {/if}
+      </div>
     </div>
   </div>
+  <!-- רקע חצי-שקוף מאחורי הכפתורים — לא חוסם קליקים -->
+  <div class="fixed inset-0 z-40 bg-black/30 pointer-events-none"></div>
 {/if}
 
 <style>
