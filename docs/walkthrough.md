@@ -6,6 +6,26 @@
 
 ---
 
+## 2026-03-04 19:00
+
+### learn-booster-kit — תיקון pointer-events במודל ובקונטיינר
+
+תיקון שני באגים ב-CSS של learn-booster-kit שגרמו לקליקים לא מכוונים על אלמנטים מאחורי מודל שקוף.
+
+#### מה בוצע?
+
+**1. תיקון selector ב-BoosterContainer.svelte**
+
+- בעיה: `:global(#learn-booster-root > .fixed)` לא תפס אלמנטים nested, רק ילדים ישירים
+- תיקון: הסרת `>` — `:global(#learn-booster-root .fixed)` כדי לתפוס כל צאצא עם `.fixed`
+
+**2. תיקון pointer-events ב-Modal.svelte**
+
+- בעיה: מודל שקוף (`opacity: 0`) עדיין תפס קליקים, חסם אינטראקציה עם רכיבים מאחוריו
+- תיקון: `pointer-events: none` במצב נסתר, `pointer-events: auto` במצב `.visible`
+
+---
+
 ## 2026-02-26 12:00
 
 ### הגדרות טיימר אוברליי — הפעלה/כיבוי + מיקום וגודל בגרירה

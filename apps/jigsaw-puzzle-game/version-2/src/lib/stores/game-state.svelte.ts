@@ -75,17 +75,22 @@ class GameStateStore {
    * טעינת פאזל חדש מהתור
    */
   loadPuzzle(): void {
-    const image = this.imageQueue[this.currentImageIndex];
+    if (this.imageQueue.length === 0) {
+      console.error("No images in queue");
+      this.phase = "INIT";
+      return;
+    }
+
+    let image = this.imageQueue[this.currentImageIndex];
     if (!image) {
       // חזרה להתחלה
       this.currentImageIndex = 0;
-      this.loadPuzzle();
-      return;
+      image = this.imageQueue[0];
     }
 
     this.currentImage = image;
     this.connectedPieces = 0;
-    this.totalPieces = this.currentGrid.columns * this.currentGrid.rows;
+    this.totalPieces = this.currentGrid.columns * this.currentGrid.rows - 1;
     this.phase = "LOADING";
   }
 
@@ -99,8 +104,8 @@ class GameStateStore {
   /**
    * חלק התחבר
    */
-  onPieceConnected(): void {
-    this.connectedPieces++;
+  onPieceConnected(count: number = 1): void {
+    this.connectedPieces += count;
     this.phase = "PIECE_FEEDBACK";
     playSnap();
 
@@ -158,7 +163,7 @@ class GameStateStore {
   /**
    * מעבר לתמונה הבאה
    */
-  private advanceToNextImage(): void {
+  advanceToNextImage(): void {
     this.currentImageIndex++;
     if (this.currentImageIndex >= this.imageQueue.length) {
       this.currentImageIndex = 0;

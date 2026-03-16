@@ -119,7 +119,7 @@ export class PuzzleInteraction {
   /** Cascade merge — keep checking for additional nearby merges after drop */
   private checkMerge(moved: PolyPiece): void {
     let doneSomething: boolean;
-    let mergeHappened = false;
+    let mergeCount = 0;
 
     do {
       doneSomething = false;
@@ -135,15 +135,15 @@ export class PuzzleInteraction {
             moved.merge(pp);
           }
           doneSomething = true;
-          mergeHappened = true;
+          mergeCount++;
           break;
         }
       }
     } while (doneSomething);
 
-    if (mergeHappened) {
+    if (mergeCount > 0) {
       this.puzzle.evaluateZIndex();
-      this.puzzle.notifyPieceConnected();
+      this.puzzle.notifyPieceConnected(mergeCount);
     }
 
     // Win check

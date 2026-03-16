@@ -23,10 +23,12 @@
 
     .modal {
         opacity: 0;
+        pointer-events: none;
         transition: opacity 0.5s;
     }
 
     .modal.visible {
         opacity: 1;
+        pointer-events: auto;
     }
 </style>

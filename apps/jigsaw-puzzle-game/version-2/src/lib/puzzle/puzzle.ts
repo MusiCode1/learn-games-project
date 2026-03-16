@@ -25,7 +25,7 @@ export interface PuzzleOptions {
   rows: number;
   shapeStyle: ShapeStyle;
   snapDistance?: number;
-  onPieceConnected?: () => void;
+  onPieceConnected?: (count: number) => void;
   onPuzzleSolved?: () => void;
 }
 
@@ -69,7 +69,7 @@ export class Puzzle {
   zIndexSup = 0;
 
   shapeStyle: ShapeStyle;
-  private onPieceConnected?: () => void;
+  private onPieceConnected?: (count: number) => void;
   private onPuzzleSolved?: () => void;
 
   constructor(options: PuzzleOptions) {
@@ -259,7 +259,7 @@ export class Puzzle {
     if (freex > 1.5 * this.scalex) {
       where[1] = 1;
       rects[1] = {
-        x0: this.gameWidth - 0.5 * this.scalex,
+        x0: this.offsx + this.gameWidth - 0.5 * this.scalex,
         x1: maxx,
         y0: miny,
         y1: maxy,
@@ -280,7 +280,7 @@ export class Puzzle {
       rects[2] = {
         x0: minx,
         x1: maxx,
-        y0: this.gameHeight - 0.5 * this.scaley,
+        y0: this.offsy + this.gameHeight - 0.5 * this.scaley,
         y1: this.contHeight - 1.5 * this.scaley,
       };
     }
@@ -299,7 +299,7 @@ export class Puzzle {
       // Not enough margin space — spread in best available margin
       if (freex - freey > 0.2 * this.scalex || where[1]) {
         this.spreadInRectangle({
-          x0: this.gameWidth - this.scalex / 2,
+          x0: this.offsx + this.gameWidth - this.scalex / 2,
           x1: maxx,
           y0: miny,
           y1: maxy,
@@ -308,7 +308,7 @@ export class Puzzle {
         this.spreadInRectangle({
           x0: minx,
           x1: maxx,
-          y0: this.gameHeight - this.scaley / 2,
+          y0: this.offsy + this.gameHeight - this.scaley / 2,
           y1: maxy,
         });
       } else {
@@ -316,12 +316,12 @@ export class Puzzle {
           this.spreadInRectangle({
             x0: minx,
             x1: maxx,
-            y0: this.gameHeight - this.scaley / 2,
+            y0: this.offsy + this.gameHeight - this.scaley / 2,
             y1: maxy,
           });
         } else {
           this.spreadInRectangle({
-            x0: this.gameWidth - this.scalex / 2,
+            x0: this.offsx + this.gameWidth - this.scalex / 2,
             x1: maxx,
             y0: miny,
             y1: maxy,
@@ -404,8 +404,8 @@ export class Puzzle {
   }
 
   /** Notify callbacks */
-  notifyPieceConnected(): void {
-    this.onPieceConnected?.();
+  notifyPieceConnected(count: number): void {
+    this.onPieceConnected?.(count);
   }
 
   notifyPuzzleSolved(): void {

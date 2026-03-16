@@ -61,8 +61,8 @@
           columns: grid.columns,
           rows: grid.rows,
           shapeStyle: settings.shapeStyle,
-          onPieceConnected: () => {
-            gameState.onPieceConnected();
+          onPieceConnected: (count: number) => {
+            gameState.onPieceConnected(count);
           },
           onPuzzleSolved: () => {
             gameState.onPuzzleSolved();
@@ -87,6 +87,7 @@
     };
     img.onerror = () => {
       console.error("Failed to load image:", gameState.currentImage?.src);
+      gameState.advanceToNextImage();
     };
     img.src = gameState.currentImage.src;
   }
