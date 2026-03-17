@@ -70,6 +70,15 @@ export class Puzzle {
   /** Z-index counter */
   zIndexSup = 0;
 
+  /** Base device pixel ratio (window.devicePixelRatio) */
+  baseDpr: number;
+  /** gameCanvas source resolution — fixed high value for zoom headroom */
+  gameDpr: number = 1;
+  /** Piece canvas resolution — dynamic, changes with zoom level */
+  dpr: number;
+
+  private static readonly MAX_RENDER_DPR = 4;
+
   shapeStyle: ShapeStyle;
   private onPieceConnected?: (count: number) => void;
   private onPuzzleSolved?: () => void;
@@ -82,6 +91,8 @@ export class Puzzle {
     this.shapeStyle = options.shapeStyle;
     this.onPieceConnected = options.onPieceConnected;
     this.onPuzzleSolved = options.onPuzzleSolved;
+    this.baseDpr = window.devicePixelRatio || 1;
+    this.dpr = this.baseDpr;
 
     // Create pieces layer wrapper for zoom/pan
     this.piecesLayer = document.createElement("div");
@@ -225,10 +236,17 @@ export class Puzzle {
         this.gameWidth * (this.srcImage.naturalHeight / this.srcImage.naturalWidth);
     }
 
-    this.gameCanvas.width = this.gameWidth;
-    this.gameCanvas.height = this.gameHeight;
+    // gameCanvas at high resolution for zoom headroom
+    this.gameDpr = mmin(
+      Puzzle.MAX_RENDER_DPR,
+      mmax(this.baseDpr, this.srcImage.naturalWidth / this.gameWidth),
+    );
+    this.gameCanvas.width = this.gameWidth * this.gameDpr;
+    this.gameCanvas.height = this.gameHeight * this.gameDpr;
     this.gameCtx = this.gameCanvas.getContext("2d")!;
+    this.gameCtx.scale(this.gameDpr, this.gameDpr);
     this.gameCtx.drawImage(this.srcImage, 0, 0, this.gameWidth, this.gameHeight);
+    this.dpr = this.baseDpr;
 
     this.scalex = this.gameWidth / this.nx;
     this.scaley = this.gameHeight / this.ny;
@@ -419,6 +437,14 @@ export class Puzzle {
 
   notifyPuzzleSolved(): void {
     this.onPuzzleSolved?.();
+  }
+
+  /** Redraw pieces at resolution matching the current zoom level */
+  redrawPieces(zoomScale: number): void {
+    const newDpr = mmin(Puzzle.MAX_RENDER_DPR, this.baseDpr * zoomScale);
+    if (mabs(newDpr - this.dpr) / this.dpr < 0.05) return;
+    this.dpr = newDpr;
+    this.polyPieces.forEach((pp) => pp.drawImage());
   }
 
   /** Handle window resize — also resets zoom/pan */

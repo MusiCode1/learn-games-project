@@ -273,24 +273,33 @@ export class PolyPiece {
    */
   drawImage(): void {
     const puzzle = this.puzzle;
+    const dpr = puzzle.dpr;
     this.nx = this.pckxmax - this.pckxmin + 1;
     this.ny = this.pckymax - this.pckymin + 1;
-    this.canvas.width = this.nx * puzzle.scalex;
-    this.canvas.height = this.ny * puzzle.scaley;
+
+    const cssW = this.nx * puzzle.scalex;
+    const cssH = this.ny * puzzle.scaley;
+    this.canvas.width = cssW * dpr;
+    this.canvas.height = cssH * dpr;
+    this.canvas.style.width = cssW + "px";
+    this.canvas.style.height = cssH + "px";
 
     this.offsx = (this.pckxmin - 0.5) * puzzle.scalex;
     this.offsy = (this.pckymin - 0.5) * puzzle.scaley;
 
-    // Build composite path for hit testing
+    // Scale context for HiDPI — all drawing stays in CSS pixel coordinates
+    this.ctx.scale(dpr, dpr);
+
+    // Build composite path for hit testing (CSS pixel coordinates)
     this.path = new Path2D();
     this.drawPath(this.path, -this.offsx, -this.offsy);
 
-    // Draw shadow
+    // Draw shadow (shadow props are NOT affected by transform — scale by dpr)
     this.ctx.fillStyle = "none";
     this.ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
-    this.ctx.shadowBlur = 4;
-    this.ctx.shadowOffsetX = 4;
-    this.ctx.shadowOffsetY = 4;
+    this.ctx.shadowBlur = 4 * dpr;
+    this.ctx.shadowOffsetX = 4 * dpr;
+    this.ctx.shadowOffsetY = 4 * dpr;
     this.ctx.fill(this.path);
     this.ctx.shadowColor = "rgba(0, 0, 0, 0)";
 
@@ -310,7 +319,8 @@ export class PolyPiece {
 
       this.ctx.clip(path);
 
-      // Blit image region
+      // Blit image region — source coords in gameCanvas pixels (× gameDpr)
+      const gameDpr = puzzle.gameDpr;
       const srcx = pp.kx ? (pp.kx - 0.5) * puzzle.scalex : 0;
       const srcy = pp.ky ? (pp.ky - 0.5) * puzzle.scaley : 0;
       const destx =
@@ -320,10 +330,14 @@ export class PolyPiece {
 
       let w = 2 * puzzle.scalex;
       let h = 2 * puzzle.scaley;
-      if (srcx + w > puzzle.gameCanvas.width) w = puzzle.gameCanvas.width - srcx;
-      if (srcy + h > puzzle.gameCanvas.height) h = puzzle.gameCanvas.height - srcy;
+      if (srcx + w > puzzle.gameWidth) w = puzzle.gameWidth - srcx;
+      if (srcy + h > puzzle.gameHeight) h = puzzle.gameHeight - srcy;
 
-      this.ctx.drawImage(puzzle.gameCanvas, srcx, srcy, w, h, destx, desty, w, h);
+      this.ctx.drawImage(
+        puzzle.gameCanvas,
+        srcx * gameDpr, srcy * gameDpr, w * gameDpr, h * gameDpr,
+        destx, desty, w, h,
+      );
 
       // Emboss — dark shadow stroke
       this.ctx.translate(puzzle.embossThickness / 2, -puzzle.embossThickness / 2);
@@ -338,6 +352,9 @@ export class PolyPiece {
 
       this.ctx.restore();
     });
+
+    // Reset transform so isPointInPath works in CSS pixel coordinates
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   /** Move canvas element to position */

@@ -57,6 +57,9 @@ export class PuzzleInteraction {
   // Double-tap detection
   private lastTapTime = 0;
 
+  // Debounced hi-res redraw after zoom settles
+  private redrawTimer: ReturnType<typeof setTimeout> | null = null;
+
   private boundPointerDown: (e: PointerEvent) => void;
   private boundPointerMove: (e: PointerEvent) => void;
   private boundPointerUp: (e: PointerEvent) => void;
@@ -92,6 +95,7 @@ export class PuzzleInteraction {
     this.container.removeEventListener("pointerup", this.boundPointerUp);
     this.container.removeEventListener("pointercancel", this.boundPointerUp);
     this.container.removeEventListener("wheel", this.boundWheel);
+    if (this.redrawTimer) clearTimeout(this.redrawTimer);
   }
 
   /** Reset zoom and pan to defaults */
@@ -100,6 +104,16 @@ export class PuzzleInteraction {
     this.panX = 0;
     this.panY = 0;
     this.applyTransform();
+    this.scheduleHiResRedraw();
+  }
+
+  /** Schedule a hi-res redraw after zoom interaction settles (debounced 150ms) */
+  private scheduleHiResRedraw(): void {
+    if (this.redrawTimer) clearTimeout(this.redrawTimer);
+    this.redrawTimer = setTimeout(() => {
+      this.redrawTimer = null;
+      this.puzzle.redrawPieces(this.scale);
+    }, 150);
   }
 
   /** Convert screen coordinates to puzzle-space coordinates (accounting for zoom/pan) */
@@ -222,6 +236,7 @@ export class PuzzleInteraction {
 
     const zoomFactor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
     this.zoomAt(screenX, screenY, this.scale * zoomFactor);
+    this.scheduleHiResRedraw();
   }
 
   private onPointerDown(e: PointerEvent): void {
@@ -323,6 +338,7 @@ export class PuzzleInteraction {
     // If we were pinching and one finger lifts, reset pinch state
     if (this.activePointers.length === 1) {
       this.pinchStartDist = 0;
+      this.scheduleHiResRedraw();
       // Don't start a new drag/pan from the remaining finger
       return;
     }
