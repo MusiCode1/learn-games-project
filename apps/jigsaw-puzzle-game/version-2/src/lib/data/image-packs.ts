@@ -14,7 +14,9 @@ export const ALL_IMAGE_PACKS: ImagePack[] = [
     icon: "\u{1F43E}",
     description: "חיות מוכרות",
     images: [
+      { id: "cat", name: "חתול", src: img("animals/cat.jpg"), ttsText: "חתול" },
       { id: "dog", name: "כלב", src: img("animals/dog.jpg"), ttsText: "כלב" },
+      { id: "fish", name: "דג", src: img("animals/fish.jpg"), ttsText: "דג" },
     ],
   },
 ];
