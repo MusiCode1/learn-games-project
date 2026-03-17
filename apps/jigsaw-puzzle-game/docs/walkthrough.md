@@ -84,6 +84,56 @@
 
 - **מיגרציה של `gridPresetIndex`**: הוספת גריד 2×1 בתחילת המערך הזיזה את כל האינדקסים. מנגנון מיגרציה ב-`settings.svelte.ts` מגדיל ב-+1 בטעינה מגרסה 1 כדי לשמר הגדרות קיימות
 
+## 2026-03-05 00:00
+
+### version-2 — הוספת Zoom & Pan לפאזל
+
+הוספת יכולת zoom ו-pan לפאזל: גלגלת עכבר בדסקטופ, צביטה (pinch) בטאצ', גרירת הלוח על אזור ריק, ודאבל-טאפ לאיפוס. הזום מאפשר התמקדות באזור מסוים בלוח ואף התרחקות לתצוגת-על.
+
+#### מה בוצע?
+
+**1. הוספת `piecesLayer` wrapper ב-`puzzle.ts`**
+
+- property חדש `piecesLayer: HTMLDivElement` — div פנימי בתוך הקונטיינר
+- נוצר ב-constructor עם `position: absolute; inset: 0; transform-origin: 0 0`
+- כל canvas של חלק מצורף ל-`piecesLayer` (במקום ל-`container`)
+- ה-`gameCanvas` הנסתר נשאר מחוץ ל-wrapper (ב-`container` ישירות)
+- `destroy()` מנקה גם את ה-wrapper
+- `handleResize()` מאפס את ה-transform של ה-wrapper
+
+**2. עדכון `polypiece.ts`**
+
+- `puzzle.container.appendChild` → `puzzle.piecesLayer.appendChild`
+- `puzzle.container.removeChild` → `puzzle.piecesLayer.removeChild` (ב-merge)
+
+**3. שכתוב `puzzle-interaction.ts` — zoom/pan מלא**
+
+- **Wheel zoom (דסקטופ)**: גלגלת עכבר, זום ×1.1 לכל גלגול לכיוון מיקום הסמן
+- **Pinch zoom (טאצ')**: מעקב אחרי 2 פוינטרים, זום יחסי לפי שינוי מרחק, מרכז הצביטה נשאר קבוע
+- **Pan**: גרירה על אזור ריק מזיזה את כל הלוח
+- **Double-tap reset**: דאבל-טאפ/קליק על אזור ריק (בתוך 300ms) → איפוס ל-scale=1, pan=0
+- **תרגום קואורדינטות**: `toPuzzleCoords` מחלק ב-scale ומחסיר pan לפני hit-testing ו-drag
+- **Clamp**: הלוח לא יכול לצאת לחלוטין מהמסך — שומר לפחות 20% גלוי
+
+**4. עדכון `PuzzleCanvas.svelte`**
+
+- `handleResize` קורא `interaction?.resetZoom()` לפני `puzzle?.handleResize()`
+
+#### גבולות זום
+
+- **התרחקות**: עד `MIN_SCALE = 0.3` (30% — תצוגת-על)
+- **התקרבות**: עד `MAX_SCALE = 3` (300%)
+
+#### החלטות ארכיטקטורה
+
+- **CSS Transform על wrapper במקום שינוי ה-engine**: הגישה הכי נקייה — לא משנה את לוגיקת הציור, המיזוג, ה-snap, וה-hit-testing (שנשאר ביחידות פאזל). שכבת הזום נפרדת לחלוטין מה-engine
+- **`transform-origin: 0 0`**: מפשט את חישובי ה-pan — `panX/panY` מייצגים היסט מוחלט מהפינה שמאל-עליונה
+
+#### מעקפים ופתרונות
+
+- **Hit-testing בזום**: `isPointInPath` עובד בקואורדינטות הפאזל הפנימיות — `toPuzzleCoords` מחשב `(screenX - panX) / scale` לפני העברה ל-hitTest. הגרירה עובדת זהה כי גם anchor וגם מיקום נוכחי מתורגמים באותו אופן, כך שהדלתא שמרה
+- **Pinch vs drag**: אצבע שנייה שיורדת מבטלת מיידית drag/pan קיים ועוברת ל-pinch mode. כשאצבע אחת עולה מ-pinch, `pinchStartDist` מאופס ולא מתחיל drag חדש מהאצבע הנשארת
+
 ## 2026-03-04 19:00
 
 ### version-2 — תיקון באגים מ-PR review (#6)

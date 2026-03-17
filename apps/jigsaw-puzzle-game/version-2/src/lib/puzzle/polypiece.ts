@@ -58,7 +58,7 @@ export class PolyPiece {
     this.listLoops();
 
     this.canvas = document.createElement("canvas");
-    puzzle.container.appendChild(this.canvas);
+    puzzle.piecesLayer.appendChild(this.canvas);
     this.canvas.style.position = "absolute";
     this.canvas.style.pointerEvents = "none";
     this.ctx = this.canvas.getContext("2d")!;
@@ -77,7 +77,7 @@ export class PolyPiece {
     this.puzzle.polyPieces.splice(kOther, 1);
 
     // Remove other's canvas from DOM
-    this.puzzle.container.removeChild(otherPoly.canvas);
+    this.puzzle.piecesLayer.removeChild(otherPoly.canvas);
 
     // Absorb pieces and update bounding box
     for (const piece of otherPoly.pieces) {
