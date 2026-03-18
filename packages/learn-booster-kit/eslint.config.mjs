@@ -41,5 +41,11 @@ pluginJs.configs.recommended,
         'eqeqeq': ['error', 'always'],
         'no-console': ['warn', { allow: ['warn', 'error'] }],
         'max-len': ['warn', { code: 120 }]
+    },
+
+    parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+
     }
 }];
