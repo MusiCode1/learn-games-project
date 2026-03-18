@@ -2,22 +2,24 @@
  * BroadcastChannel wrapper עם מנגנון ACK + retry לתקשורת בין הדף הראשי לאוברליי.
  */
 
+import { type } from "arktype";
+
 const CHANNEL_NAME = 'overlay-timer';
 const ACK_TIMEOUT_MS = 200;
 const MAX_RETRIES = 10;
 const LOG_PREFIX = '[overlay-channel]';
 
-// ─── טיפוסים ───────────────────────────────────────────
+// ─── schemas וטיפוסים ────────────────────────────────────
 
-export interface TimerCommand {
-  type: 'start' | 'stop';
-  durationMs: number;
-  startedAtMs: number;
-}
+export const TimerCommandSchema = type({
+  type: "'start' | 'stop'",
+  durationMs: "number",
+  startedAtMs: "number",
+});
+export type TimerCommand = typeof TimerCommandSchema.infer;
 
-export interface TimerAck {
-  type: 'ack';
-}
+export const TimerAckSchema = type({ type: "'ack'" });
+export type TimerAck = typeof TimerAckSchema.infer;
 
 export type OverlayMessage = TimerCommand | TimerAck;
 
@@ -103,22 +105,21 @@ export function listenForCommands(
 ): () => void {
   console.info(`${LOG_PREFIX} Listening for commands...`);
 
-  const onMessage = (event: MessageEvent<OverlayMessage>) => {
+  const onMessage = (event: MessageEvent<unknown>) => {
     const data = event.data;
-    if (!data || typeof data.type !== 'string') {
+    const result = TimerCommandSchema(data);
+    if (result instanceof type.errors) {
       console.warn(`${LOG_PREFIX} Received invalid message:`, data);
       return;
     }
-    if (data.type === 'start' || data.type === 'stop') {
-      console.info(`${LOG_PREFIX} Received command: "${data.type}"`,
-        data.type === 'start' ? `duration=${data.durationMs}ms` : '');
-      try {
-        channel.postMessage({ type: 'ack' } satisfies TimerAck);
-      } catch (e) {
-        console.error(`${LOG_PREFIX} Failed to send ACK:`, e);
-      }
-      onCommand(data);
+    console.info(`${LOG_PREFIX} Received command: "${result.type}"`,
+      result.type === 'start' ? `duration=${result.durationMs}ms` : '');
+    try {
+      channel.postMessage({ type: 'ack' } satisfies TimerAck);
+    } catch (e) {
+      console.error(`${LOG_PREFIX} Failed to send ACK:`, e);
     }
+    onCommand(result);
   };
 
   channel.addEventListener('message', onMessage);

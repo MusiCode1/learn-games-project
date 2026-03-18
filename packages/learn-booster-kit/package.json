@@ -47,14 +47,15 @@
     "vitest": "^4.0.15"
   },
   "dependencies": {
-    "fully-kiosk-js": "*",
     "@fontsource/heebo": "^5.1.0",
     "@playwright/test": "^1.51.1",
     "@tailwindcss/postcss": "^4.1.17",
     "@tailwindcss/vite": "^4.1.17",
+    "arktype": "^2.2.0",
     "baseline-browser-mapping": "^2.9.0",
     "caniuse-lite": "^1.0.30001759",
-    "dotenv": "^16.4.7",
+    "dotenv": "^17.3.1",
+    "fully-kiosk-js": "*",
     "vite-plugin-css-injected-by-js": "^3.5.2"
   }
 }

@@ -1,18 +1,21 @@
 import { decryptText } from "../utils/encript-decrypt-text";
 import { getAllConfig, addConfigListener } from "../config/config-manager";
+import { env } from "../config/env";
+import { AppListItemSchema } from "../../schemas";
+import { type } from "arktype";
 
 import type { AppListItem } from "../../types";
 import { isFullyKiosk } from "./fully-kiosk";
 
 const filePath = "/data/user/0/com.fullykiosk.emm/files/remote-admin-pass";
-const passwordKey = import.meta.env.VITE_PASS_KEY;
+const passwordKey = env.VITE_PASS_KEY ?? "";
 const aad = "learn-booster-fully-kiosk-key:v1";
 const OLD_AAD = "gingim-booster-fully-kiosk-key:v1";
 let environmentMode = "";
 
 let exampleAppList: AppListItem[] | [] = [];
 
-const DEMO_APP_LIST_ORIGIN = import.meta.env.VITE_DEMO_APP_LIST_ORIGIN as string | undefined;
+const DEMO_APP_LIST_ORIGIN = env.VITE_DEMO_APP_LIST_ORIGIN;
 
 let currrntUrl: URL | null = null;
 try {
@@ -69,22 +72,18 @@ async function getFullyKioskPasswordOld() {
   }
 }
 
-async function getExampleAppList() {
+async function getExampleAppList(): Promise<AppListItem[]> {
   const origin = currrntUrl?.origin || "";
-  return fetch(origin + "/example-app-list.json")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data: AppListItem[]) => {
-      return data;
-    })
-    .catch((error) => {
-      console.error("Error fetching example app list:", error);
-      throw error;
-    });
+  const response = await fetch(origin + "/example-app-list.json");
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const data: unknown = await response.json();
+  const result = AppListItemSchema.array()(data);
+  if (result instanceof type.errors) {
+    throw new Error(`Invalid example app list: ${result.summary}`);
+  }
+  return result;
 }
 
 async function getFullyKioskPassword() {
@@ -135,7 +134,11 @@ export async function getAppsList() {
     throw new Error(`HTTP error! status: ${rowResponse.status}`);
   }
 
-  const response = (await rowResponse.json()) as AppListItem[];
+  const data: unknown = await rowResponse.json();
+  const result = AppListItemSchema.array()(data);
+  if (result instanceof type.errors) {
+    throw new Error(`Invalid app list response: ${result.summary}`);
+  }
 
-  return response;
+  return result;
 }

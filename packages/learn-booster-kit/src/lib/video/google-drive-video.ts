@@ -1,6 +1,7 @@
 import type { DriveFile } from "../../types";
+import { env } from "../config/env";
 
-const key = import.meta.env.VITE_GOOGLE_DRIVE_API_TOKEN;
+const key = env.VITE_GOOGLE_DRIVE_API_TOKEN ?? "";
 
 if (!key) {
     console.error(
@@ -24,6 +25,11 @@ export const getVideoUrl = (fileId: string): string => {
 };
 
 export const getFilesFromGDrive = async (folderId: string): Promise<DriveFile[]> => {
+
+    if (!key) {
+        console.error('[learn-booster] getFilesFromGDrive: API key חסר, מדלג על קריאה ל-Google Drive');
+        return [];
+    }
 
     if (!folderId) {
         console.error('[learn-booster] getFilesFromGDrive: מזהה תיקייה ריק או חסר');

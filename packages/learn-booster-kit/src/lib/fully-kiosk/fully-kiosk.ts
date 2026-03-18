@@ -1,4 +1,7 @@
-import type { FullyItem, FullyKiosk } from '../../types'
+import type { FullyKiosk } from '../../types'
+import { FullyItemSchema } from '../../schemas'
+import { type } from 'arktype'
+
 const MOVIES_PATH = '/sdcard/Movies/';
 const BASE_URL = 'https://localhost';
 
@@ -8,10 +11,6 @@ declare global {
     interface Window {
         fully?: FullyKiosk;
     }
-}
-
-function filterMP4Files(items: FullyItem[]): FullyItem[] {
-    return items.filter(item => item.type === 'file' && item.name.endsWith('.mp4'));
 }
 
 export function getFileList(): string[] | false {
@@ -24,9 +23,21 @@ export function getFileList(): string[] | false {
         return false;
     }
 
-    const fileList = JSON.parse(fileListStr) as FullyItem[];
-    const mp4Files = filterMP4Files(fileList);
+    let parsed: unknown;
+    try {
+        parsed = JSON.parse(fileListStr);
+    } catch {
+        console.error("[fully-kiosk] Invalid JSON from getFileList");
+        return false;
+    }
 
+    const result = FullyItemSchema.array()(parsed);
+    if (result instanceof type.errors) {
+        console.error("[fully-kiosk] getFileList response invalid:", result.summary);
+        return false;
+    }
+
+    const mp4Files = result.filter(item => item.type === 'file' && item.name.endsWith('.mp4'));
     return mp4Files.map(item => BASE_URL + MOVIES_PATH + item.name);
 }
 

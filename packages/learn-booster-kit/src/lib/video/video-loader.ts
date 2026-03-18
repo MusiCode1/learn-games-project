@@ -6,6 +6,7 @@ import {
 import { shuffleArray } from "../utils/shuffle-array";
 import { getFileList } from "../fully-kiosk/fully-kiosk";
 import { log } from "../logger.svelte";
+import { env } from "../config/env";
 
 const devMode = import.meta.env.DEV,
   selfUrl = import.meta.url;
@@ -101,7 +102,7 @@ export async function loadGoogleDriveVideos(
 }
 
 export async function loadDefaultGoogleDriveVideos(): Promise<VideoList> {
-  const rawDefaultFolder = import.meta.env.VITE_GOOGLE_DRIVE_DEFAULT_FOLDER;
+  const rawDefaultFolder = env.VITE_GOOGLE_DRIVE_DEFAULT_FOLDER;
 
   if (!rawDefaultFolder) {
     console.error(

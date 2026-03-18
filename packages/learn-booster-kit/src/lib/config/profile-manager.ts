@@ -1,4 +1,9 @@
 import { getDefaultConfig } from "./default-config";
+import {
+    ProfilesStateSchema,
+    ProfilesExportPayloadSchema,
+} from '../../schemas';
+import { type } from "arktype";
 
 import type {
     Config, Profile,
@@ -208,26 +213,31 @@ export function exportProfiles(): ProfilesExportPayload {
     };
 }
 
-export function importProfiles(payload: ProfilesExportPayload, options: { replace?: boolean } = {}): ProfilesState {
+export function importProfiles(payload: unknown, options: { replace?: boolean } = {}): ProfilesState {
     assertInitialized();
 
-    if (payload.schemaVersion !== SCHEMA_VERSION) {
-        throw new Error(`Unsupported profiles schema version: ${payload.schemaVersion}`);
+    const result = ProfilesExportPayloadSchema(payload);
+    if (result instanceof type.errors) {
+        throw new Error(`Invalid import payload: ${result.summary}`);
+    }
+    const validPayload: ProfilesExportPayload = result;
+
+    if (validPayload.schemaVersion !== SCHEMA_VERSION) {
+        throw new Error(`Unsupported profiles schema version: ${validPayload.schemaVersion}`);
     }
 
     const nextState = options.replace ? createEmptyState() : cloneState(state);
 
     if (options.replace) {
-        nextState.uiEnabled = payload.uiEnabled ?? false;
+        nextState.uiEnabled = validPayload.uiEnabled ?? false;
     } else {
-        nextState.uiEnabled = payload.uiEnabled ?? nextState.uiEnabled;
+        nextState.uiEnabled = validPayload.uiEnabled ?? nextState.uiEnabled;
     }
 
     const importedProfiles: Record<string, Profile> = {};
     const importedOrder: string[] = [];
 
-    for (const profile of payload.profiles) {
-        if (!profile || typeof profile !== 'object') continue;
+    for (const profile of validPayload.profiles) {
         const normalized = buildProfile({
             id: profile.id,
             name: profile.name,
@@ -254,8 +264,8 @@ export function importProfiles(payload: ProfilesExportPayload, options: { replac
         ];
     }
 
-    nextState.activeProfileId = (payload.activeProfileId && importedProfiles[payload.activeProfileId])
-        ? payload.activeProfileId
+    nextState.activeProfileId = (validPayload.activeProfileId && importedProfiles[validPayload.activeProfileId])
+        ? validPayload.activeProfileId
         : nextState.order[0] ?? null;
 
     nextState.dirtyConfig = null;
@@ -303,9 +313,16 @@ function loadFromStorage(): void {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return;
-        const parsed = JSON.parse(raw) as ProfilesState | null;
+        const parsed: unknown = JSON.parse(raw);
         if (!parsed) return;
-        state = normalizeState(parsed);
+        const result = ProfilesStateSchema(parsed);
+        if (result instanceof type.errors) {
+            // storage חלקי/פגום — normalizeState עדיין תנסה לשחזר את מה שאפשר
+            console.warn('Profiles storage has validation issues, normalizing:', result.summary);
+            state = normalizeState(parsed as Partial<ProfilesState>);
+        } else {
+            state = normalizeState(result);
+        }
     } catch (error) {
         console.error('Failed to load profiles from storage:', error);
         state = createEmptyState();

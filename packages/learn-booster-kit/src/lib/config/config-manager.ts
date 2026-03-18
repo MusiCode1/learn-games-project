@@ -7,16 +7,18 @@ import {
 } from "./profile-manager";
 import { getDefaultConfig } from "./default-config";
 import { loadVideoUrls } from "../video/video-loader";
+import { CONFIG_SCHEMA_REGISTRY, CONFIG_SCHEMA_VERSION, ConfigSchema, OldConfigSchema } from "../../schemas";
+import { type } from "arktype";
+import { env } from "./env";
 
-import type { Config } from "../../types";
+import type { Config, OldConfig } from "../../types";
 
 const OLD_LOCAL_STORAGE_KEY = "gingim-booster-config";
 const LOCAL_STORAGE_KEY = "learn-booster-config";
 
-const GOOGLE_DRIVE_DEFAULT_FOLDER = import.meta.env
-  .VITE_GOOGLE_DRIVE_DEFAULT_FOLDER;
+const GOOGLE_DRIVE_DEFAULT_FOLDER = env.VITE_GOOGLE_DRIVE_DEFAULT_FOLDER ?? "";
 
-const SITE_DEFAULT_URL = import.meta.env.VITE_SITE_DEFAULT_UTL;
+const SITE_DEFAULT_URL = env.VITE_SITE_DEFAULT_UTL ?? "";
 
 type ConfigChangeListener = (config: Config) => void;
 const listeners: ConfigChangeListener[] = [];
@@ -52,7 +54,16 @@ export async function updateConfig(updates: Partial<Config>): Promise<Config> {
     }
   }
 
-  appConfig = deepMerge({ ...appConfig }, updates);
+  const candidate = deepMerge({ ...appConfig }, updates);
+
+  // validation לפני שמירה — חוסם נתונים לא תקינים מהטופס או מקוד חיצוני
+  const result = ConfigSchema(candidate);
+  if (result instanceof type.errors) {
+    console.error("updateConfig: config לא תקין, לא נשמר:", result.summary);
+    throw new Error(`Invalid config: ${result.summary}`);
+  }
+
+  appConfig = result;
 
   if (appConfig.rewardType === "video") {
     await setVideosUrls(appConfig);
@@ -112,11 +123,28 @@ export function loadConfigFromStorage(): boolean {
     const storedConfig = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!storedConfig) return false;
 
-    const parsedConfig = JSON.parse(storedConfig);
-    if (typeof parsedConfig !== "object" || parsedConfig === null) return false;
+    const parsed = JSON.parse(storedConfig) as Record<string, unknown>;
+    if (typeof parsed !== "object" || parsed === null) return false;
 
-    appConfig = deepMerge({ ...defaultConfig }, parsedConfig);
+    // קריאת גרסת schema — ברירת מחדל 1 לנתונים ישנים שאין להם שדה זה
+    const version = typeof parsed._configSchemaVersion === "number"
+      ? parsed._configSchemaVersion
+      : 1;
 
+    const schema = CONFIG_SCHEMA_REGISTRY[version as keyof typeof CONFIG_SCHEMA_REGISTRY];
+    if (!schema) {
+      console.warn(`Config: גרסת schema לא מוכרת: ${version}, מתעלם מהנתונים השמורים`);
+      return false;
+    }
+
+    // partial() כי storage שומר רק overrides, לא config מלא
+    const result = schema.partial()(parsed);
+    if (result instanceof type.errors) {
+      console.warn("Config from storage failed validation:", result.summary);
+      return false;
+    }
+
+    appConfig = deepMerge({ ...defaultConfig }, result);
     notifyConfigListeners();
     return true;
   } catch (error) {
@@ -127,7 +155,10 @@ export function loadConfigFromStorage(): boolean {
 
 export function saveConfigToStorage(): boolean {
   try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appConfig));
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
+      _configSchemaVersion: CONFIG_SCHEMA_VERSION,
+      ...appConfig,
+    }));
     return true;
   } catch (error) {
     console.error("שגיאה בשמירת הגדרות ל-localStorage:", error);
@@ -143,6 +174,15 @@ export function resetConfig(): void {
 export async function initializeConfig(): Promise<Config> {
   resetConfig();
   loadConfigFromStorage();
+
+  // migration מ-OldConfig אם window.config מכיל פורמט ישן
+  if (window.config) {
+    const oldResult = OldConfigSchema(window.config);
+    if (!(oldResult instanceof type.errors)) {
+      const migrated = migrateOldConfig(oldResult);
+      appConfig = deepMerge({ ...appConfig }, migrated);
+    }
+  }
 
   await initializeProfiles(appConfig);
   const activeProfile = getActiveProfile();
@@ -235,7 +275,7 @@ function getEnvVals() {
     selfUrl = import.meta.url,
     isDevServer = import.meta.env.DEV as boolean,
     devMode = import.meta.env.DEV,
-    deployServer = import.meta.env.VITE_PRJ_DOMAIN as string,
+    deployServer = env.VITE_PRJ_DOMAIN ?? "",
     isDeployServer = (hostname === deployServer);
 
   return {
@@ -254,5 +294,21 @@ function getEnvVals() {
     isGamesListPage: false,
     /** @deprecated gingim-specific, always false */
     isGingimHomepage: false,
+  };
+}
+
+function migrateOldConfig(old: OldConfig): Partial<Config> {
+  return {
+    rewardType: old.mode === "app" ? "app" : "video",
+    rewardDisplayDurationMs: old.videoDisplayTimeInMS,
+    turnsPerReward: old.turnsPerVideo,
+    video: {
+      videos: old.videoUrls.map(url => ({ url, mimeType: "video/mp4" })),
+      source: old.videoSource,
+      googleDriveFolderUrl: old.googleDriveFolderUrl,
+      hideProgressBar: old.hideVideoProgress,
+    },
+    app: { packageName: old.appName },
+    system: old.systemConfig,
   };
 }

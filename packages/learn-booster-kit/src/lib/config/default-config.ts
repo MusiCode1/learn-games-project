@@ -1,8 +1,13 @@
 import type { Config } from "../../types";
+import { env } from "./env";
 
-const GOOGLE_DRIVE_DEFAULT_FOLDER = import.meta.env
-  .VITE_GOOGLE_DRIVE_DEFAULT_FOLDER;
-const SITE_DEFAULT_URL = import.meta.env.VITE_SITE_DEFAULT_UTL;
+const GOOGLE_DRIVE_DEFAULT_FOLDER = env.VITE_GOOGLE_DRIVE_DEFAULT_FOLDER;
+const SITE_DEFAULT_URL = env.VITE_SITE_DEFAULT_UTL ?? "";
+
+const fallbackVideo =
+    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+
+const DEFAULT_APP_PACKAGE = env.VITE_DEFAULT_APP_PACKAGE;
 
 const defaultConfig: Config = {
   appVersion: "0.0.1",
@@ -38,12 +43,12 @@ const defaultConfig: Config = {
   video: {
     videos: [],
     source: "google-drive",
-    googleDriveFolderUrl: GOOGLE_DRIVE_DEFAULT_FOLDER,
+    googleDriveFolderUrl: GOOGLE_DRIVE_DEFAULT_FOLDER?? "https://drive.google.com/drive/u/0/folders/1G3cbW10H6Oe-5VFBJtjJn7okuA3vHaUA",
     hideProgressBar: false,
   },
 
   app: {
-    packageName: "com.google.android.youtube",
+    packageName: DEFAULT_APP_PACKAGE ?? "com.google.android.youtube",
   },
 
   booster: {
