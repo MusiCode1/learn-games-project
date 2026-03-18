@@ -82,6 +82,7 @@ export class Puzzle {
   shapeStyle: ShapeStyle;
   private onPieceConnected?: (count: number) => void;
   private onPuzzleSolved?: () => void;
+  private solved = false;
 
   constructor(options: PuzzleOptions) {
     this.container = options.container;
@@ -436,6 +437,8 @@ export class Puzzle {
   }
 
   notifyPuzzleSolved(): void {
+    if (this.solved) return;
+    this.solved = true;
     this.onPuzzleSolved?.();
   }
 

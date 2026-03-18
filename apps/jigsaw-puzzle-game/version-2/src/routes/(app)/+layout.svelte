@@ -14,7 +14,7 @@
 </script>
 
 <div
-  class="flex h-screen flex-col overflow-hidden bg-linear-to-b from-sky-100 via-blue-50 to-indigo-100"
+  class="flex h-screen flex-col bg-linear-to-b from-sky-100 via-blue-50 to-indigo-100"
 >
   <HeaderBar />
   {@render children()}
