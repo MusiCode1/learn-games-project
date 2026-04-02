@@ -30,10 +30,25 @@ class GameStateStore {
   // --- Cooldown ---
   cooldownUntilTs = $state(0);
 
+  // --- Per-digit feedback (מצב עיוור) ---
+  digitStatuses = $state<Array<"correct" | "wrong" | "">>([]);
+
+  // --- Hint cooldown ---
+  hintCooldownUntilTs = $state(0);
+  hintVisibleUntilTs = $state(0);
+
   // =================== DERIVED ===================
 
   get isOnCooldown(): boolean {
     return Date.now() < this.cooldownUntilTs;
+  }
+
+  get isHintOnCooldown(): boolean {
+    return Date.now() < this.hintCooldownUntilTs;
+  }
+
+  get isHintVisible(): boolean {
+    return Date.now() < this.hintVisibleUntilTs;
   }
 
   get canPress(): boolean {
@@ -59,7 +74,29 @@ class GameStateStore {
       this.state = "ENTERING";
     }
 
+    const pos = this.entered.length;
     this.entered += digit;
+
+    // מצב עיוור: בדיקה פר-ספרה
+    if (!settings.showHint) {
+      if (digit === settings.passcode[pos]) {
+        this.digitStatuses[pos] = "correct";
+      } else {
+        this.digitStatuses[pos] = "wrong";
+        this.state = "ERROR";
+        this.cooldownUntilTs = Date.now() + settings.cooldownMs;
+        if (settings.voiceEnabled) speakWrong();
+        setTimeout(() => {
+          if (this.state !== "ERROR") return;
+          // מוחקים רק את הספרה השגויה, שומרים את הנכונות שלפניה
+          this.entered = this.entered.slice(0, pos);
+          this.digitStatuses = this.digitStatuses.slice(0, pos);
+          this.state = pos > 0 ? "ENTERING" : "IDLE";
+          this.cooldownUntilTs = 0;
+        }, settings.cooldownMs);
+        return;
+      }
+    }
 
     // בדיקה אוטומטית כשמגיעים לאורך הסיסמא
     if (this.entered.length >= settings.passcode.length) {
@@ -89,6 +126,17 @@ class GameStateStore {
     this.entered = "";
     this.state = "IDLE";
     this.cooldownUntilTs = 0;
+    this.digitStatuses = [];
+  }
+
+  /**
+   * הצגת רמז — עם צינון
+   */
+  useHint(): void {
+    if (this.isHintOnCooldown) return;
+    // שלב 1: הצגת רמז, שלב 2: המתנה — סדרתיים
+    this.hintVisibleUntilTs = Date.now() + settings.hintVisibleMs;
+    this.hintCooldownUntilTs = Date.now() + settings.hintVisibleMs + settings.hintCooldownMs;
   }
 
   /**
@@ -108,6 +156,9 @@ class GameStateStore {
     this.correctCount = 0;
     this.winsSinceLastReward = 0;
     this.cooldownUntilTs = 0;
+    this.digitStatuses = [];
+    this.hintCooldownUntilTs = 0;
+    this.hintVisibleUntilTs = 0;
   }
 
   /**

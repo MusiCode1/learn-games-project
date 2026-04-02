@@ -155,7 +155,7 @@
       </div>
 
       <!-- === הצגת רמז === -->
-      <div class="rounded-2xl bg-white/10 p-5 shadow-md">
+      <div class="rounded-2xl bg-white/10 p-5 shadow-md space-y-3">
         <label class="flex cursor-pointer items-center justify-between">
           <div>
             <span class="text-lg font-bold text-white">הצג רמז מעל הלוח</span>
@@ -167,6 +167,54 @@
             class="h-6 w-6 accent-blue-400"
           />
         </label>
+
+        {#if !settings.showHint}
+          <div transition:slide={{ duration: 200 }} class="border-t border-white/10 pt-3 space-y-4">
+            <!-- כמה זמן להציג רמז -->
+            <div class="flex items-center justify-between gap-4">
+              <div>
+                <span class="text-sm font-medium text-white">זמן הצגת רמז</span>
+                <p class="text-xs text-slate-400">שניות שהסיסמא גלויה</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="1"
+                  value={settings.hintVisibleMs / 1000}
+                  oninput={(e) => {
+                    const v = parseInt(e.currentTarget.value);
+                    if (v >= 1) settings.hintVisibleMs = v * 1000;
+                  }}
+                  class="w-20 rounded-lg border border-white/20 bg-white/10 px-3 py-2
+                         text-center text-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+                />
+                <span class="text-sm text-slate-400">שנ׳</span>
+              </div>
+            </div>
+
+            <!-- כמה זמן המתנה בין רמזים -->
+            <div class="flex items-center justify-between gap-4">
+              <div>
+                <span class="text-sm font-medium text-white">המתנה בין רמזים</span>
+                <p class="text-xs text-slate-400">שניות לפני שאפשר לבקש רמז נוסף</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="1"
+                  value={settings.hintCooldownMs / 1000}
+                  oninput={(e) => {
+                    const v = parseInt(e.currentTarget.value);
+                    if (v >= 1) settings.hintCooldownMs = v * 1000;
+                  }}
+                  class="w-20 rounded-lg border border-white/20 bg-white/10 px-3 py-2
+                         text-center text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                />
+                <span class="text-sm text-slate-400">שנ׳</span>
+              </div>
+            </div>
+          </div>
+        {/if}
       </div>
 
       <!-- === זמן cooldown === -->

@@ -2,6 +2,8 @@
  * הגדרות מורה עם שמירה ב-localStorage
  */
 
+import { browser } from "$app/environment";
+
 const STORAGE_KEY = "passcode-practice-settings";
 const CURRENT_VERSION = 1;
 
@@ -9,6 +11,8 @@ export interface PasscodeSettings {
   passcode: string;
   showHint: boolean;
   cooldownMs: number;
+  hintVisibleMs: number;
+  hintCooldownMs: number;
   voiceEnabled: boolean;
   speakDigits: boolean;
   boosterEnabled: boolean;
@@ -18,6 +22,8 @@ export const DEFAULT_SETTINGS: PasscodeSettings = {
   passcode: "1234",
   showHint: true,
   cooldownMs: 2000,
+  hintVisibleMs: 3000,
+  hintCooldownMs: 8000,
   voiceEnabled: true,
   speakDigits: false,
   boosterEnabled: true,
@@ -30,12 +36,14 @@ class SettingsStore {
   passcode = $state(DEFAULT_SETTINGS.passcode);
   showHint = $state(DEFAULT_SETTINGS.showHint);
   cooldownMs = $state(DEFAULT_SETTINGS.cooldownMs);
+  hintVisibleMs = $state(DEFAULT_SETTINGS.hintVisibleMs);
+  hintCooldownMs = $state(DEFAULT_SETTINGS.hintCooldownMs);
   voiceEnabled = $state(DEFAULT_SETTINGS.voiceEnabled);
   speakDigits = $state(DEFAULT_SETTINGS.speakDigits);
   boosterEnabled = $state(DEFAULT_SETTINGS.boosterEnabled);
 
   constructor() {
-    if (typeof globalThis?.localStorage !== "undefined") {
+    if (browser) {
       this.load();
     }
 
@@ -56,6 +64,8 @@ class SettingsStore {
         this.passcode = parsed.passcode ?? DEFAULT_SETTINGS.passcode;
         this.showHint = parsed.showHint ?? DEFAULT_SETTINGS.showHint;
         this.cooldownMs = parsed.cooldownMs ?? DEFAULT_SETTINGS.cooldownMs;
+        this.hintVisibleMs = parsed.hintVisibleMs ?? DEFAULT_SETTINGS.hintVisibleMs;
+        this.hintCooldownMs = parsed.hintCooldownMs ?? DEFAULT_SETTINGS.hintCooldownMs;
         this.voiceEnabled = parsed.voiceEnabled ?? DEFAULT_SETTINGS.voiceEnabled;
         this.speakDigits = parsed.speakDigits ?? DEFAULT_SETTINGS.speakDigits;
         this.boosterEnabled = parsed.boosterEnabled ?? DEFAULT_SETTINGS.boosterEnabled;
@@ -71,6 +81,8 @@ class SettingsStore {
       passcode: this.passcode,
       showHint: this.showHint,
       cooldownMs: this.cooldownMs,
+      hintVisibleMs: this.hintVisibleMs,
+      hintCooldownMs: this.hintCooldownMs,
       voiceEnabled: this.voiceEnabled,
       speakDigits: this.speakDigits,
       boosterEnabled: this.boosterEnabled,
@@ -78,7 +90,7 @@ class SettingsStore {
   }
 
   private save(): void {
-    if (typeof window?.localStorage === "undefined") return;
+    if (!browser) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.toJSON()));
   }
 
@@ -86,6 +98,8 @@ class SettingsStore {
     this.passcode = DEFAULT_SETTINGS.passcode;
     this.showHint = DEFAULT_SETTINGS.showHint;
     this.cooldownMs = DEFAULT_SETTINGS.cooldownMs;
+    this.hintVisibleMs = DEFAULT_SETTINGS.hintVisibleMs;
+    this.hintCooldownMs = DEFAULT_SETTINGS.hintCooldownMs;
     this.voiceEnabled = DEFAULT_SETTINGS.voiceEnabled;
     this.speakDigits = DEFAULT_SETTINGS.speakDigits;
     this.boosterEnabled = DEFAULT_SETTINGS.boosterEnabled;

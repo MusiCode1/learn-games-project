@@ -22,9 +22,14 @@
   dir="ltr"
 >
   {#each Array(passcodeLength) as _, i}
+    {@const status = gameState.digitStatuses[i]}
     <div
       class="h-5 w-5 rounded-full border-2 transition-all duration-200
-             {i < filledCount
+             {status === 'correct'
+               ? 'border-green-400 bg-green-400 scale-110 ring-2 ring-green-300/50'
+               : status === 'wrong'
+               ? 'border-red-400 bg-red-400 scale-110 ring-2 ring-red-300/50'
+               : i < filledCount
                ? 'border-white bg-white scale-110'
                : 'border-white/60 bg-transparent'}"
     ></div>

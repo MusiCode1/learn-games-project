@@ -89,8 +89,8 @@
   <!-- אזור מרכזי -->
   <div class="flex w-full max-w-xs flex-col items-center gap-6">
 
-    <!-- כרטיס רמז (מוצג כשshowHint מופעל) -->
-    <PasscodeHint />
+    <!-- כרטיס רמז / כפתור רמז -->
+    <PasscodeHint {now} />
 
     <!-- נקודות התקדמות -->
     <PasscodeDots />
