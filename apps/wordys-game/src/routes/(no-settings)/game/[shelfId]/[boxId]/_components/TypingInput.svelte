@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { playError, playSuccess, speak } from '$lib/utils/sound';
+	import { playError, playSuccess, speakLetter } from '$lib/utils/sound';
 	import { settings } from '$lib/stores/settings.svelte';
 
 	interface Props {
@@ -37,10 +37,10 @@
 		}
 	}
 
-	/** הקראת אות ממקלדת פיזית */
+	/** הקראת אות ממקלדת פיזית — מושהית כדי לתת לצליל הצלחה/שגיאה לעבור קודם */
 	function handleKeydown(e: KeyboardEvent) {
 		if (settings.speakLetters && e.key.length === 1) {
-			speak(e.key, true);
+			setTimeout(() => speakLetter(e.key), 500);
 		}
 	}
 

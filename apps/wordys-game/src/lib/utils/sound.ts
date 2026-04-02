@@ -1,5 +1,24 @@
 import { getAssetUrl } from '$lib/services/assets';
 
+const HEBREW_LETTER_NAMES: Record<string, string> = {
+	'א': 'אָלֶף', 'ב': 'בֵּית', 'ג': 'גִּימֶל', 'ד': 'דָּלֶת',
+	'ה': 'הֵא', 'ו': 'וָו', 'ז': 'זַיִן', 'ח': 'חֵית',
+	'ט': 'טֵית', 'י': 'יוֹד', 'כ': 'כָּף', 'ך': 'כָּף סוֹפִית',
+	'ל': 'לָמֶד', 'מ': 'מֵם', 'ם': 'מֵם סוֹפִית',
+	'נ': 'נוּן', 'ן': 'נוּן סוֹפִית', 'ס': 'סָמֶך',
+	'ע': 'עַיִן', 'פ': 'פֵּא', 'ף': 'פֵּא סוֹפִית',
+	'צ': 'צָדִי', 'ץ': 'צָדִי סוֹפִית', 'ק': 'קוֹף',
+	'ר': 'רֵישׁ', 'ש': 'שִׁין', 'ת': 'תָּו',
+};
+
+/**
+ * הקראת שם האות בעברית (אָלֶף, בֵּית...)
+ */
+export function speakLetter(char: string): void {
+	const name = HEBREW_LETTER_NAMES[char] ?? char;
+	speak(name, true);
+}
+
 export function speak(text: string, interrupt = true): Promise<void> {
 	return new Promise((resolve) => {
 		if (!('speechSynthesis' in window)) {

@@ -9,7 +9,7 @@
 	import { settings } from '$lib/stores/settings.svelte';
 	import type { Card } from '$lib/types';
 
-	import { playSuccess, playError, speak, playAudio } from '$lib/utils/sound';
+	import { playSuccess, playError, speak, speakLetter, playAudio } from '$lib/utils/sound';
 	import { getCardImageUrl, getCardAudioUrl } from '$lib/services/assets';
 	import VirtualKeyboard from './VirtualKeyboard.svelte';
 	import { boosterService, ProgressWidget } from 'learn-booster-kit';
@@ -67,18 +67,19 @@
 	function handleVirtualKeyPress(char: string) {
 		if (isHintActive) return;
 
-		// הקראת אות
-		if (settings.speakLetters) {
-			speak(char, true);
-		}
-
 		// מצב מתחילים: חסימת אות שגויה
 		if (settings.beginnerMode) {
 			const nextExpected = currentWord?.word[typedValue.length];
 			if (char !== nextExpected) {
 				playError();
+				if (settings.speakLetters) setTimeout(() => speakLetter(char), 500);
 				return;
 			}
+		}
+
+		// הקראת אות — אחרי צליל ההצלחה (שמגיע מ-TypingInput)
+		if (settings.speakLetters) {
+			setTimeout(() => speakLetter(char), 500);
 		}
 
 		typedValue += char;
@@ -136,12 +137,12 @@
 	// Derived state for current word
 	let currentWord = $derived(playQueue[currentIndex]);
 
-	function playCardAudio() {
+	function playCardAudio(): Promise<void> {
 		const audioUrl = getCardAudioUrl(currentWord.id);
 		if (audioUrl) {
-			playAudio(audioUrl);
+			return playAudio(audioUrl);
 		} else {
-			speak(currentWord.word);
+			return speak(currentWord.word);
 		}
 	}
 
@@ -154,7 +155,7 @@
 
 		// 2. Speak word (or play recording)
 		if (currentWord) {
-			playCardAudio();
+			await playCardAudio();
 		}
 
 		// 3. Speak feedback
