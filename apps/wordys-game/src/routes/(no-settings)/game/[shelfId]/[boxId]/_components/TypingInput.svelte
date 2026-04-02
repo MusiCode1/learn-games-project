@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { playError } from '$lib/utils/sound';
+	import { playError, playSuccess, speak } from '$lib/utils/sound';
 	import { settings } from '$lib/stores/settings.svelte';
 
 	interface Props {
@@ -10,7 +10,7 @@
 
 	let { targetWord, onSuccess, value = $bindable('') }: Props = $props();
 	let isError = $state(false);
-	let shakeTrigger = $state(0); // Counter to force re-render of shake animation
+	let shakeTrigger = $state(0);
 	let inputRef: HTMLInputElement | undefined = $state();
 
 	$effect(() => {
@@ -24,31 +24,49 @@
 		value = input.value;
 	}
 
+	/** מצב מתחילים: חסימת תווים שגויים ממקלדת פיזית */
+	function handleBeforeInput(e: InputEvent) {
+		if (!settings.beginnerMode) return;
+		if (e.inputType === 'deleteContentBackward' || e.inputType === 'deleteContentForward') return;
+		const newChar = e.data;
+		if (!newChar) return;
+		const nextExpected = targetWord[value.length];
+		if (newChar !== nextExpected) {
+			e.preventDefault();
+			playError();
+		}
+	}
+
+	/** הקראת אות ממקלדת פיזית */
+	function handleKeydown(e: KeyboardEvent) {
+		if (settings.speakLetters && e.key.length === 1) {
+			speak(e.key, true);
+		}
+	}
+
 	$effect(() => {
-		// Detect changes in value
 		if (value === previousValue) return;
 
 		const isDeletion = value.length < previousValue.length;
 		previousValue = value;
 
-		// Check if the current input matches the beginning of the target word
 		if (targetWord.startsWith(value)) {
 			isError = false;
 
-			// Check for complete match
+			// מצב מתחילים: צליל הצלחה על כל אות נכונה (לא על סיום מילה)
+			if (settings.beginnerMode && !isDeletion && value.length > 0 && value !== targetWord) {
+				playSuccess();
+			}
+
 			if (value === targetWord && value.length > 0) {
 				onSuccess();
 			}
 		} else {
-			// Error!
-			// Always play sound and trigger shake on error
-			// BUT skip if user is deleting (correcting)
-			// AND skip if value is empty (reset)
 			if (settings.errorFeedback && !isDeletion && value.length > 0) {
 				playError();
 			}
 			isError = true;
-			shakeTrigger++; // Increment to trigger animation replay
+			shakeTrigger++;
 		}
 	});
 </script>
@@ -66,6 +84,8 @@
 			placeholder="הקלד את המילה..."
 			{value}
 			oninput={handleInput}
+			onbeforeinput={handleBeforeInput}
+			onkeydown={handleKeydown}
 			dir="rtl"
 			style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;"
 		/>

@@ -2,7 +2,7 @@
  * ⚠️ חשוב: יש לעדכן את CURRENT_VERSION לאחר כל שינוי במבנה ההגדרות (SettingsStore),
  * ולוודא שפונקציית ה-migrate מטפלת בגרסה הישנה ובערכי ברירת מחדל.
  */
-const CURRENT_VERSION = 3;
+const CURRENT_VERSION = 4;
 const STORAGE_KEY = 'wordys-settings';
 
 const DEFAULT_SETTINGS = {
@@ -16,7 +16,9 @@ const DEFAULT_SETTINGS = {
 	autoBoosterLoop: false,
 	hintEnabled: true,
 	hintDuration: 1500,
-	hintCooldown: 0
+	hintCooldown: 0,
+	beginnerMode: false,
+	speakLetters: false
 } as const;
 
 export type Settings = typeof DEFAULT_SETTINGS;
@@ -65,9 +67,17 @@ export class SettingsStore {
 	// זמן צינון (Cooldown) בין רמזים בשניות (0 = ללא הגבלה)
 	hintCooldown = $state<number>(DEFAULT_SETTINGS.hintCooldown);
 
+	// === מצב מתחילים ===
+
+	// טעויות לא נכתבות, חיווי על כל אות נכונה וטשטוש אותיות עתידיות
+	beginnerMode = $state<boolean>(DEFAULT_SETTINGS.beginnerMode);
+
+	// הקראת האות בעת לחיצה על מקש (TTS)
+	speakLetters = $state<boolean>(DEFAULT_SETTINGS.speakLetters);
+
 	constructor() {
 		// טעינה ראשונית
-		if (typeof globalThis?.localStorage !== 'undefined') {
+		if (typeof globalThis?.localStorage?.getItem === 'function') {
 			this.load();
 		}
 
@@ -104,7 +114,7 @@ export class SettingsStore {
 
 	// פונקציה פרטית לשמירת ההגדרות
 	private save() {
-		if (typeof window?.localStorage === 'undefined') return;
+		if (typeof window?.localStorage?.setItem !== 'function') return;
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(this.toJSON()));
 	}
 

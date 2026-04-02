@@ -99,6 +99,28 @@
 </script>
 
 <div class="space-y-6" dir="rtl">
+	<!-- Setting: Beginner Mode -->
+	<div class="flex items-center justify-between">
+		<div class="space-y-1">
+			<div class="font-bold text-slate-800">מצב מתחילים</div>
+			<div class="text-sm text-slate-500">טעויות לא נכתבות, חיווי על כל אות נכונה וטשטוש אותיות עתידיות</div>
+		</div>
+		<button
+			dir="ltr"
+			aria-label="מצב מתחילים"
+			class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+			class:bg-blue-600={settings.beginnerMode}
+			class:bg-slate-200={!settings.beginnerMode}
+			onclick={() => (settings.beginnerMode = !settings.beginnerMode)}
+		>
+			<span
+				class="absolute top-1 inline-block h-4 w-4 rounded-full bg-white transition-all duration-200 shadow-sm"
+				class:left-1={!settings.beginnerMode}
+				class:left-6={settings.beginnerMode}
+			></span>
+		</button>
+	</div>
+
 	<!-- Setting: Word Display Mode -->
 	<div class="flex items-center justify-between">
 		<div class="space-y-1">
@@ -223,6 +245,28 @@
 				class="absolute top-1 inline-block h-4 w-4 rounded-full bg-white transition-all duration-200 shadow-sm"
 				class:left-1={!settings.errorFeedback}
 				class:left-6={settings.errorFeedback}
+			></span>
+		</button>
+	</div>
+
+	<!-- Setting: Speak Letters (TTS) -->
+	<div class="flex items-center justify-between">
+		<div class="space-y-1">
+			<div class="font-bold text-slate-800">הקראת אותיות</div>
+			<div class="text-sm text-slate-500">הקראת האות בעת לחיצה על מקש</div>
+		</div>
+		<button
+			dir="ltr"
+			aria-label="הקראת אותיות"
+			class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+			class:bg-blue-600={settings.speakLetters}
+			class:bg-slate-200={!settings.speakLetters}
+			onclick={() => (settings.speakLetters = !settings.speakLetters)}
+		>
+			<span
+				class="absolute top-1 inline-block h-4 w-4 rounded-full bg-white transition-all duration-200 shadow-sm"
+				class:left-1={!settings.speakLetters}
+				class:left-6={settings.speakLetters}
 			></span>
 		</button>
 	</div>

@@ -9,7 +9,7 @@
 	import { settings } from '$lib/stores/settings.svelte';
 	import type { Card } from '$lib/types';
 
-	import { playSuccess, speak, playAudio } from '$lib/utils/sound';
+	import { playSuccess, playError, speak, playAudio } from '$lib/utils/sound';
 	import { getCardImageUrl, getCardAudioUrl } from '$lib/services/assets';
 	import VirtualKeyboard from './VirtualKeyboard.svelte';
 	import { boosterService, ProgressWidget } from 'learn-booster-kit';
@@ -65,7 +65,22 @@
 	}
 
 	function handleVirtualKeyPress(char: string) {
-		if (isHintActive) return; // Prevent typing while hint is active? Optional.
+		if (isHintActive) return;
+
+		// הקראת אות
+		if (settings.speakLetters) {
+			speak(char, true);
+		}
+
+		// מצב מתחילים: חסימת אות שגויה
+		if (settings.beginnerMode) {
+			const nextExpected = currentWord?.word[typedValue.length];
+			if (char !== nextExpected) {
+				playError();
+				return;
+			}
+		}
+
 		typedValue += char;
 	}
 

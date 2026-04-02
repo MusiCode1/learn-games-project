@@ -69,28 +69,27 @@
 			<div class="flex {segment.isSpace ? 'contents' : 'flex-nowrap gap-2 md:gap-4'}">
 				{#each segment.text.split('') as char, i}
 					{@const globalIndex = segment.startIndex + i}
+					{@const isCompleted = globalIndex < currentIndex}
+					{@const isCurrent = globalIndex === currentIndex}
+					{@const isFuture = globalIndex > currentIndex}
 					<div
 						id="charDisplay"
 						class="
 					flex items-center justify-center
-					{/* aspect-square/roughly portrait: אנו רוצים יחס של קלף (בערך 2:3 או 5:7) */ ''}
 					aspect-[5/7]
-					
-					{/* Sizing Logic (Container Queries):
-					   השתדרגנו ל-Container Queries (@container).
-					   כעת הגודל נקבע לפי רוחב המיכל (cqw) ולא רוחב המסך (vw).
-					   הסרנו את "תקרת הזכוכית" הנמוכה (80px), ועכשיו הכרטיס יכול לגדול עד 200px/150px
-					   בהתאם למקום הפנוי, אך שומר על מינימום קריא (45px).
-					*/ ''}
+
 					{isLongWord || compact
 							? 'w-[clamp(45px,11cqh,150px)] text-[clamp(1.5rem,12cqw,10rem)]'
 							: 'w-[clamp(60px,15cqw,220px)] text-[clamp(2rem,12cqw,10rem)]'}
-					
-					{settings.highlightCurrentChar &&
-						globalIndex === currentIndex &&
-						(settings.wordDisplayMode !== 'hidden' || forceShow)
+
+					{settings.beginnerMode && isCompleted
+						? 'bg-green-300 border-green-500 border-b-green-600'
+						: settings.highlightCurrentChar &&
+						  isCurrent &&
+						  (settings.wordDisplayMode !== 'hidden' || forceShow)
 							? 'bg-yellow-200 border-amber-600 ring-4 ring-amber-400 ring-opacity-50 scale-110 shadow-2xl animate-pulse-fast z-10'
 							: 'bg-yellow-200 border-amber-500'}
+					{settings.beginnerMode && isFuture ? 'opacity-25 blur-[2px]' : ''}
 					border-4 border-b-8
 					rounded-xl md:rounded-2xl
 					shadow-md
