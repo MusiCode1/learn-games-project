@@ -1,0 +1,7 @@
+[
+  { "filename": "hello.mp3", "text": "שָׁלוֹם" },
+  { "filename": "correct.mp3", "text": "נָכוֹן! כָּל הַכָּבוֹד!" },
+  { "filename": "try_again.mp3", "text": "לֹא נָכוֹן. נַסֵּה שׁוּב." },
+  { "filename": "lets_start.mp3", "text": "בּוֹא נַתְחִיל!" },
+  { "filename": "well_done.mp3", "text": "עָשִׂיתָ עֲבוֹדָה מְצוּיֶנֶת!" }
+]
