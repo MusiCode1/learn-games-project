@@ -75,6 +75,8 @@ export interface TeacherSettings {
   beginnerMode: boolean;
   /** ערבוב מיקום חלקים — true=מפוזרים, false=מסודרים בשורה */
   shufflePiecePlacement: boolean;
+  /** מצב נעילה לתלמידים — מסתיר את כפתור הבית בזמן משחק */
+  studentLockMode: boolean;
 }
 
 export const DEFAULT_SETTINGS: TeacherSettings = {
@@ -92,4 +94,5 @@ export const DEFAULT_SETTINGS: TeacherSettings = {
   showContinueButton: false,
   beginnerMode: false,
   shufflePiecePlacement: true,
+  studentLockMode: false,
 };

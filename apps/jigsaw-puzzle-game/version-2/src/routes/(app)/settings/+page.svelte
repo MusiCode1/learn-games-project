@@ -124,6 +124,23 @@
         </label>
       </div>
 
+      <!-- מצב נעילה לתלמידים -->
+      <div class="rounded-2xl bg-rose-50 p-5 shadow-md border-2 border-rose-200">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">מצב נעילה לתלמידים</span>
+            <p class="text-sm text-slate-500">
+              מסתיר את כפתור הבית העליון בזמן המשחק
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            bind:checked={settings.studentLockMode}
+            class="h-6 w-6 accent-rose-500"
+          />
+        </label>
+      </div>
+
       <!-- חבילת תמונות -->
       <div class="rounded-2xl bg-white/80 p-5 shadow-md">
         <label class="block text-lg font-bold text-slate-700 mb-3">
