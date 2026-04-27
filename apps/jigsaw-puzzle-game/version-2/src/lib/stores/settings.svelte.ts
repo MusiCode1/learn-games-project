@@ -3,10 +3,10 @@
  */
 
 import type { TeacherSettings, ShapeStyle, PieceFilter } from "$lib/types";
-import { DEFAULT_SETTINGS } from "$lib/types";
+import { DEFAULT_SETTINGS, BEGINNER_MAX_GRID_INDEX } from "$lib/types";
 
 const STORAGE_KEY = "jigsaw-puzzle-v2-settings";
-const CURRENT_VERSION = 2;
+const CURRENT_VERSION = 3;
 
 class SettingsStore {
   imagePackId = $state(DEFAULT_SETTINGS.imagePackId);
@@ -21,9 +21,11 @@ class SettingsStore {
   voiceEnabled = $state(DEFAULT_SETTINGS.voiceEnabled);
   gameMode = $state<"continuous" | "manual_end">(DEFAULT_SETTINGS.gameMode);
   showContinueButton = $state(DEFAULT_SETTINGS.showContinueButton);
+  beginnerMode = $state(DEFAULT_SETTINGS.beginnerMode);
+  shufflePiecePlacement = $state(DEFAULT_SETTINGS.shufflePiecePlacement);
 
   constructor() {
-    if (typeof globalThis?.localStorage !== "undefined") {
+    if (typeof globalThis?.localStorage?.getItem === "function") {
       this.load();
     }
 
@@ -57,6 +59,13 @@ class SettingsStore {
         this.voiceEnabled = parsed.voiceEnabled ?? DEFAULT_SETTINGS.voiceEnabled;
         this.gameMode = parsed.gameMode ?? DEFAULT_SETTINGS.gameMode;
         this.showContinueButton = parsed.showContinueButton ?? DEFAULT_SETTINGS.showContinueButton;
+        this.beginnerMode = parsed.beginnerMode ?? DEFAULT_SETTINGS.beginnerMode;
+        this.shufflePiecePlacement = parsed.shufflePiecePlacement ?? DEFAULT_SETTINGS.shufflePiecePlacement;
+
+        // אכיפת הגבלת grid במצב מתחילים
+        if (this.beginnerMode && this.gridPresetIndex > BEGINNER_MAX_GRID_INDEX) {
+          this.gridPresetIndex = BEGINNER_MAX_GRID_INDEX;
+        }
       } catch (e) {
         console.error("Failed to parse settings", e);
       }
@@ -78,11 +87,13 @@ class SettingsStore {
       voiceEnabled: this.voiceEnabled,
       gameMode: this.gameMode,
       showContinueButton: this.showContinueButton,
+      beginnerMode: this.beginnerMode,
+      shufflePiecePlacement: this.shufflePiecePlacement,
     };
   }
 
   private save(): void {
-    if (typeof window?.localStorage === "undefined") return;
+    if (typeof globalThis?.localStorage?.setItem !== "function") return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.toJSON()));
   }
 
@@ -99,6 +110,19 @@ class SettingsStore {
     this.voiceEnabled = DEFAULT_SETTINGS.voiceEnabled;
     this.gameMode = DEFAULT_SETTINGS.gameMode;
     this.showContinueButton = DEFAULT_SETTINGS.showContinueButton;
+    this.beginnerMode = DEFAULT_SETTINGS.beginnerMode;
+    this.shufflePiecePlacement = DEFAULT_SETTINGS.shufflePiecePlacement;
+  }
+
+  /** הפעלת/כיבוי מצב מתחילים — כולל אכיפת הגבלת grid וכיבוי ערבוב */
+  setBeginnerMode(enabled: boolean): void {
+    this.beginnerMode = enabled;
+    if (enabled) {
+      if (this.gridPresetIndex > BEGINNER_MAX_GRID_INDEX) {
+        this.gridPresetIndex = BEGINNER_MAX_GRID_INDEX;
+      }
+      this.shufflePiecePlacement = false;
+    }
   }
 }
 

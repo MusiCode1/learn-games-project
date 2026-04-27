@@ -62,6 +62,7 @@
           columns: grid.columns,
           rows: grid.rows,
           shapeStyle: settings.shapeStyle,
+          organizedStart: !settings.shufflePiecePlacement,
           onPieceConnected: (count: number) => {
             gameState.onPieceConnected(count);
           },
@@ -78,7 +79,7 @@
           Math.min(puzzle.scalex, puzzle.scaley) * (settings.proximity / 300),
         );
 
-        interaction = new PuzzleInteraction(puzzle);
+        interaction = new PuzzleInteraction(puzzle, settings.beginnerMode);
         interaction.attach();
 
         gameState.puzzleReady();

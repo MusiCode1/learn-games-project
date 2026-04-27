@@ -1,5 +1,60 @@
 # Jigsaw Puzzle Game — יומן פיתוח
 
+## 2026-04-27 10:39
+
+### version-2 — מצב מתחילים + הגדרת ערבוב חלקים
+
+הוספת מצב מתחילים (ללא zoom/pan, הגבלת grid עד 3x3) והגדרה נפרדת לסידור חלקים במיקום קבוע על המסך.
+
+#### מה בוצע?
+
+**1. הגדרות חדשות (`types.ts`, `settings.svelte.ts`)**
+
+- `beginnerMode: boolean` — מצב מתחילים: חוסם zoom/pan/pinch, מגביל grid עד 3x3
+- `shufflePiecePlacement: boolean` — ערבוב מיקום חלקים (true=מפוזרים, false=מסודרים בשורה)
+- `BEGINNER_MAX_GRID_INDEX = 3` — הגבלת grid במצב מתחילים
+- `setBeginnerMode()` — מפעיל מצב מתחילים וגם מכבה ערבוב אוטומטית
+- מיגרציה לסכמה v3
+
+**2. לייאאוט חלקים מסודר (`puzzle.ts`)**
+
+- `computeBeginnerDimensions()` — binary search לגודל חלק מקסימלי שמכניס תמונה + tray למסך
+- `compactInitial()` — סידור חלקים ב-grid קומפקטי לפי מיקומם המקורי בתמונה
+- לייאאוט אוטומטי: פורטרייט (שורות למטה) / לנדסקייפ (עמודות משמאל)
+- `handleResize()` — שימור סידור קומפקטי אחרי שינוי גודל חלון
+- `organizedStart` מחליף את `beginnerMode` ב-Puzzle — הפרדת לוגיקת layout מ-zoom
+
+**3. חסימת zoom/pan (`puzzle-interaction.ts`)**
+
+- `beginnerMode` flag חוסם: wheel zoom, pinch zoom, pan, double-tap reset
+- גרירת חלקים + merge נשארים פעילים
+
+**4. UI הגדרות (`settings/+page.svelte`, `+page.svelte`)**
+
+- toggle "מצב מתחילים" (מובלט בצהוב) בראש דף ההגדרות
+- toggle "ערבוב חלקים" — נפרד ועצמאי
+- כפתורי grid מעל 3x3 מושבתים במצב מתחילים (בהגדרות ובדף הבית)
+
+**5. תיקון SSR (`settings.svelte.ts`)**
+
+- תוקנה בדיקת localStorage: `typeof globalThis?.localStorage?.getItem === "function"` במקום `typeof globalThis?.localStorage !== "undefined"` — פותר crash ב-Node.js SSR עם `--localstorage-file` שבור
+
+**6. Cloudflare Pages deploy**
+
+- נוצר פרויקט Pages חדש `puzzle-game` עם branch deploy ל-`dev`
+- URL: `https://dev.puzzle-game-92p.pages.dev`
+
+#### החלטות ארכיטקטורה
+
+- **הפרדת `organizedStart` מ-`beginnerMode`**: `Puzzle` משתמש ב-`organizedStart` (לייאאוט) ו-`PuzzleInteraction` משתמש ב-`beginnerMode` (zoom/pan). שתי הגדרות נפרדות: מורה יכול לכבות ערבוב בלי לחסום zoom
+- **Binary search ל-sizing**: חיפוש בינארי על גובה חלק (30 איטרציות) מוצא את הגודל המקסימלי שמכניס תמונה + tray למסך. מטפל נכון בכל aspect ratio ובכל גודל מסך
+- **Gap דינמי (60% מגודל חלק)**: מונע חפיפה ויזואלית של בליטות בין חלקים סמוכים
+
+#### מעקפים ופתרונות
+
+- **מיון column-major בלנדסקייפ**: בלנדסקייפ החלקים מסודרים בעמודות (column-major) אבל המיון המקורי היה row-major, מה שגרם לטרנספוזיציה — חלקים התחלפו. התיקון: מיון לפי `kx` ראשון בלנדסקייפ, `ky` ראשון בפורטרייט
+- **handleResize דורס compactInitial**: אירוע resize אחרי init (נפוץ במובייל) הריץ מיקום פרופורציונלי שהרס את הסידור. התיקון: `handleResize` מזהה `organizedStart` ומריץ `compactInitial()` מחדש
+
 ## 2026-03-17 10:00
 
 ### version-2 — שיפור גרירת תמונת עזר: snap לצלע + תיקון חפיפה עם header

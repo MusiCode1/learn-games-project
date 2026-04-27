@@ -44,6 +44,9 @@ export class PuzzleInteraction {
   private container: HTMLElement;
   private piecesLayer: HTMLDivElement;
 
+  /** מצב מתחילים — חוסם zoom, pan, pinch */
+  private beginnerMode: boolean;
+
   // Zoom/pan state
   private scale = 1;
   private panX = 0;
@@ -65,10 +68,11 @@ export class PuzzleInteraction {
   private boundPointerUp: (e: PointerEvent) => void;
   private boundWheel: (e: WheelEvent) => void;
 
-  constructor(puzzle: Puzzle) {
+  constructor(puzzle: Puzzle, beginnerMode = false) {
     this.puzzle = puzzle;
     this.container = puzzle.container;
     this.piecesLayer = puzzle.piecesLayer;
+    this.beginnerMode = beginnerMode;
 
     this.boundPointerDown = this.onPointerDown.bind(this);
     this.boundPointerMove = this.onPointerMove.bind(this);
@@ -228,6 +232,7 @@ export class PuzzleInteraction {
 
   private onWheel(e: WheelEvent): void {
     e.preventDefault();
+    if (this.beginnerMode) return;
     if (this.dragging) return;
 
     const br = this.container.getBoundingClientRect();
@@ -248,8 +253,10 @@ export class PuzzleInteraction {
     if (this.activePointers.length === 2) {
       this.dragging = null;
       this.panning = null;
-      this.pinchStartDist = this.pinchDistance();
-      this.pinchStartScale = this.scale;
+      if (!this.beginnerMode) {
+        this.pinchStartDist = this.pinchDistance();
+        this.pinchStartScale = this.scale;
+      }
       return;
     }
 
@@ -274,8 +281,8 @@ export class PuzzleInteraction {
         ppXInit: pp.x,
         ppYInit: pp.y,
       };
-    } else {
-      // Start panning on empty space
+    } else if (!this.beginnerMode) {
+      // Start panning on empty space (לא במצב מתחילים)
       const screen = this.toScreenCoords(e);
       this.panning = {
         anchorX: screen.x,
@@ -285,13 +292,15 @@ export class PuzzleInteraction {
       };
     }
 
-    // Double-tap detection
-    const now = Date.now();
-    if (now - this.lastTapTime < 300 && !pp) {
-      this.resetZoom();
-      this.lastTapTime = 0;
-    } else {
-      this.lastTapTime = now;
+    // Double-tap detection (לא במצב מתחילים)
+    if (!this.beginnerMode) {
+      const now = Date.now();
+      if (now - this.lastTapTime < 300 && !pp) {
+        this.resetZoom();
+        this.lastTapTime = 0;
+      } else {
+        this.lastTapTime = now;
+      }
     }
   }
 
@@ -299,8 +308,8 @@ export class PuzzleInteraction {
     this.updatePointer(e);
     e.preventDefault();
 
-    // Pinch zoom (2 fingers)
-    if (this.activePointers.length === 2) {
+    // Pinch zoom (2 fingers) — לא במצב מתחילים
+    if (this.activePointers.length === 2 && !this.beginnerMode) {
       const dist = this.pinchDistance();
       if (this.pinchStartDist > 0) {
         const newScale = this.pinchStartScale * (dist / this.pinchStartDist);
@@ -320,8 +329,8 @@ export class PuzzleInteraction {
       return;
     }
 
-    // Panning
-    if (this.panning) {
+    // Panning — לא במצב מתחילים
+    if (this.panning && !this.beginnerMode) {
       const screen = this.toScreenCoords(e);
       this.panX = this.panning.panXInit + (screen.x - this.panning.anchorX);
       this.panY = this.panning.panYInit + (screen.y - this.panning.anchorY);

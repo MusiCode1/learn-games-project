@@ -3,7 +3,7 @@
   import { gameState } from "$lib/stores/game-state.svelte";
   import { settings } from "$lib/stores/settings.svelte";
   import { ALL_IMAGE_PACKS } from "$lib/data/image-packs";
-  import { GRID_PRESETS } from "$lib/types";
+  import { GRID_PRESETS, BEGINNER_MAX_GRID_INDEX } from "$lib/types";
   import type { ShapeStyle } from "$lib/types";
 
   const SHAPE_STYLES: { value: ShapeStyle; label: string }[] = [
@@ -76,11 +76,15 @@
           </label>
           <div class="flex flex-wrap justify-center gap-2">
             {#each GRID_PRESETS as preset, i}
+              {@const disabled = settings.beginnerMode && i > BEGINNER_MAX_GRID_INDEX}
               <button
-                onclick={() => { settings.gridPresetIndex = i; }}
+                onclick={() => { if (!disabled) settings.gridPresetIndex = i; }}
+                {disabled}
                 class="rounded-lg px-3 py-2 text-base font-bold transition-all duration-200 {settings.gridPresetIndex === i
                   ? 'bg-sky-500 text-white shadow-lg scale-105'
-                  : 'bg-white/80 text-slate-700 shadow-md hover:shadow-lg hover:scale-[1.02]'}"
+                  : disabled
+                    ? 'bg-slate-50 text-slate-300 cursor-not-allowed'
+                    : 'bg-white/80 text-slate-700 shadow-md hover:shadow-lg hover:scale-[1.02]'}"
               >
                 {preset.label}
               </button>

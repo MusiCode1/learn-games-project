@@ -3,7 +3,7 @@
   import { slide } from "svelte/transition";
   import { settings } from "$lib/stores/settings.svelte";
   import { ALL_IMAGE_PACKS } from "$lib/data/image-packs";
-  import { GRID_PRESETS } from "$lib/types";
+  import { GRID_PRESETS, BEGINNER_MAX_GRID_INDEX } from "$lib/types";
   import {
     boosterService,
     type Config,
@@ -105,6 +105,25 @@
     </div>
 
     <div class="space-y-6">
+      <!-- מצב מתחילים -->
+      <div class="rounded-2xl bg-amber-50 p-5 shadow-md border-2 border-amber-200">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">מצב מתחילים</span>
+            <p class="text-sm text-slate-500">
+              ללא הגדלה/הקטנה. החלקים מסודרים במיקום קבוע על המסך.
+              מוגבל עד {GRID_PRESETS[BEGINNER_MAX_GRID_INDEX].label}.
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.beginnerMode}
+            onchange={() => settings.setBeginnerMode(!settings.beginnerMode)}
+            class="h-6 w-6 accent-amber-500"
+          />
+        </label>
+      </div>
+
       <!-- חבילת תמונות -->
       <div class="rounded-2xl bg-white/80 p-5 shadow-md">
         <label class="block text-lg font-bold text-slate-700 mb-3">
@@ -127,11 +146,15 @@
         </label>
         <div class="flex flex-wrap gap-2">
           {#each GRID_PRESETS as preset, i}
+            {@const disabled = settings.beginnerMode && i > BEGINNER_MAX_GRID_INDEX}
             <button
-              onclick={() => { settings.gridPresetIndex = i; }}
+              onclick={() => { if (!disabled) settings.gridPresetIndex = i; }}
+              {disabled}
               class="rounded-lg px-3 py-2 text-sm font-bold transition-all {settings.gridPresetIndex === i
                 ? 'bg-sky-500 text-white shadow-lg'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}"
+                : disabled
+                  ? 'bg-slate-50 text-slate-300 cursor-not-allowed'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}"
             >
               {preset.label}
             </button>
@@ -220,13 +243,30 @@
         </label>
       </div>
 
-      <!-- ערבוב -->
+      <!-- ערבוב תמונות -->
       <div class="rounded-2xl bg-white/80 p-5 shadow-md">
         <label class="flex items-center justify-between">
           <span class="text-lg font-bold text-slate-700">ערבוב תמונות</span>
           <input
             type="checkbox"
             bind:checked={settings.shuffleImages}
+            class="h-6 w-6 accent-sky-500"
+          />
+        </label>
+      </div>
+
+      <!-- ערבוב חלקים -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">ערבוב חלקים</span>
+            <p class="text-sm text-slate-500">
+              כשכבוי — החלקים מסודרים בשורה במיקום קבוע
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            bind:checked={settings.shufflePiecePlacement}
             class="h-6 w-6 accent-sky-500"
           />
         </label>

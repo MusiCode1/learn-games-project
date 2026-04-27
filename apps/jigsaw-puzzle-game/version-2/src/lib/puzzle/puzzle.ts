@@ -25,6 +25,8 @@ export interface PuzzleOptions {
   rows: number;
   shapeStyle: ShapeStyle;
   snapDistance?: number;
+  /** חלקים מסודרים בשורה קומפקטית (לא מפוזרים) */
+  organizedStart?: boolean;
   onPieceConnected?: (count: number) => void;
   onPuzzleSolved?: () => void;
 }
@@ -80,9 +82,19 @@ export class Puzzle {
   private static readonly MAX_RENDER_DPR = 4;
 
   shapeStyle: ShapeStyle;
+  /** חלקים מסודרים בשורה קומפקטית (לא מפוזרים) */
+  organizedStart: boolean;
   private onPieceConnected?: (count: number) => void;
   private onPuzzleSolved?: () => void;
   private solved = false;
+
+  // קבועי לייאאוט למצב מתחילים
+  private static readonly TRAY_INNER_GAP = 12;
+  private static readonly TRAY_PAD = 8;
+  /** gap יחסי בין חלקים ב-tray (60% מגודל חלק — מספיק להפרדה ויזואלית של בליטות) */
+  private static trayGap(pieceSize: number): number {
+    return mmax(4, pieceSize * 0.6);
+  }
 
   constructor(options: PuzzleOptions) {
     this.container = options.container;
@@ -90,6 +102,7 @@ export class Puzzle {
     this.nx = options.columns;
     this.ny = options.rows;
     this.shapeStyle = options.shapeStyle;
+    this.organizedStart = options.organizedStart ?? false;
     this.onPieceConnected = options.onPieceConnected;
     this.onPuzzleSolved = options.onPuzzleSolved;
     this.baseDpr = window.devicePixelRatio || 1;
@@ -132,8 +145,12 @@ export class Puzzle {
 
     this.evaluateZIndex();
 
-    // Scatter pieces to margins
-    this.optimInitial();
+    // פיזור חלקים — קומפקטי כשלא מעורבב, פיזור לשוליים כשמעורבב
+    if (this.organizedStart) {
+      this.compactInitial();
+    } else {
+      this.optimInitial();
+    }
   }
 
   /** Read container dimensions */
@@ -218,23 +235,27 @@ export class Puzzle {
 
   /** Compute pixel dimensions, render source image to hidden canvas */
   scale(): void {
-    // Cap piece size: each piece ≤ ~20% of container. Small grids get more margin for scattering.
-    const maxPieceFraction = 0.20;
-    const maxFactor = mmin(
-      0.95,
-      mmax(0.30, mmin(maxPieceFraction * this.nx, maxPieceFraction * this.ny)),
-    );
-    const maxWidth = maxFactor * this.contWidth;
-    const maxHeight = maxFactor * this.contHeight;
+    if (this.organizedStart) {
+      this.computeBeginnerDimensions();
+    } else {
+      // Cap piece size: each piece ≤ ~20% of container. Small grids get more margin for scattering.
+      const maxPieceFraction = 0.20;
+      const maxFactor = mmin(
+        0.95,
+        mmax(0.30, mmin(maxPieceFraction * this.nx, maxPieceFraction * this.ny)),
+      );
+      const maxWidth = maxFactor * this.contWidth;
+      const maxHeight = maxFactor * this.contHeight;
 
-    this.gameHeight = maxHeight;
-    this.gameWidth =
-      this.gameHeight * (this.srcImage.naturalWidth / this.srcImage.naturalHeight);
+      this.gameHeight = maxHeight;
+      this.gameWidth =
+        this.gameHeight * (this.srcImage.naturalWidth / this.srcImage.naturalHeight);
 
-    if (this.gameWidth > maxWidth) {
-      this.gameWidth = maxWidth;
-      this.gameHeight =
-        this.gameWidth * (this.srcImage.naturalHeight / this.srcImage.naturalWidth);
+      if (this.gameWidth > maxWidth) {
+        this.gameWidth = maxWidth;
+        this.gameHeight =
+          this.gameWidth * (this.srcImage.naturalHeight / this.srcImage.naturalWidth);
+      }
     }
 
     // gameCanvas at high resolution for zoom headroom
@@ -257,15 +278,170 @@ export class Puzzle {
       row.forEach((piece) => piece.scale(this.scalex, this.scaley));
     });
 
-    // Center offset
-    this.offsx = (this.contWidth - this.gameWidth) / 2;
-    this.offsy = (this.contHeight - this.gameHeight) / 2;
+    // במצב רגיל — מרכוז. במצב מתחילים offsx/offsy כבר הוגדרו ב-computeBeginnerDimensions
+    if (!this.organizedStart) {
+      this.offsx = (this.contWidth - this.gameWidth) / 2;
+      this.offsy = (this.contHeight - this.gameHeight) / 2;
+    }
 
     // Snap threshold
     this.dConnect = mmax(10, mmin(this.scalex, this.scaley) / 10);
 
     // Emboss thickness
     this.embossThickness = mmin(2 + (this.scalex / 200) * (5 - 2), 5);
+  }
+
+  /**
+   * חישוב מימדי תמונה ומיקום עבור מצב מתחילים.
+   * מבצע binary search לגודל חלק מקסימלי שמכניס גם את התמונה
+   * וגם את שורת/עמודת החלקים למסך.
+   */
+  private computeBeginnerDimensions(): void {
+    const imgAR = this.srcImage.naturalWidth / this.srcImage.naturalHeight;
+    const P = this.nx * this.ny;
+    const innerGap = Puzzle.TRAY_INNER_GAP;
+    const pad = Puzzle.TRAY_PAD;
+    const isLandscape = this.contWidth > this.contHeight;
+
+    // חיפוש בינארי על גובה חלק (pieceH) — המקסימום שנכנס למסך
+    let lo = 30;
+    let hi = mmin(this.contHeight / this.ny, this.contWidth / (this.ny * imgAR));
+    let bestPieceH = lo;
+
+    for (let i = 0; i < 30; i++) {
+      const pieceH = (lo + hi) / 2;
+      const gameH = pieceH * this.ny;
+      const gameW = gameH * imgAR;
+      const pieceW = gameW / this.nx;
+      // gap דינמי — 30% מגודל חלק, מינימום 4px
+      const gapX = Puzzle.trayGap(pieceW);
+      const gapY = Puzzle.trayGap(pieceH);
+
+      let fits: boolean;
+      if (isLandscape) {
+        // תמונה מימין, חלקים בעמודות משמאל
+        const ppcol = mmax(1, Math.floor((this.contHeight - 2 * pad) / (pieceH + gapY)));
+        const ncols = Math.ceil(P / ppcol);
+        const trayW = ncols * (pieceW + gapX) - gapX;
+        fits =
+          gameW + innerGap + trayW + 2 * pad <= this.contWidth &&
+          gameH + 2 * pad <= this.contHeight;
+      } else {
+        // תמונה למעלה, חלקים בשורות למטה
+        const pprow = mmax(1, Math.floor((this.contWidth - 2 * pad) / (pieceW + gapX)));
+        const nrows = Math.ceil(P / pprow);
+        const trayH = nrows * (pieceH + gapY) - gapY;
+        fits =
+          gameH + innerGap + trayH + 2 * pad <= this.contHeight &&
+          gameW + 2 * pad <= this.contWidth;
+      }
+
+      if (fits) {
+        bestPieceH = pieceH;
+        lo = pieceH;
+      } else {
+        hi = pieceH;
+      }
+    }
+
+    // הגדרת מימדי תמונה
+    this.gameHeight = bestPieceH * this.ny;
+    this.gameWidth = this.gameHeight * imgAR;
+    const pieceW = this.gameWidth / this.nx;
+    const gapX = Puzzle.trayGap(pieceW);
+    const gapY = Puzzle.trayGap(bestPieceH);
+
+    // חישוב offsets — מיקום התמונה בתוך ה-container
+    if (isLandscape) {
+      const ppcol = mmax(
+        1,
+        Math.floor((this.contHeight - 2 * pad) / (bestPieceH + gapY)),
+      );
+      const ncols = Math.ceil(P / ppcol);
+      const trayW = ncols * (pieceW + gapX) - gapX;
+      // תמונה מרוכזת בשטח שנשאר אחרי ה-tray
+      const remainingW = this.contWidth - trayW - innerGap;
+      this.offsx = trayW + innerGap + (remainingW - this.gameWidth) / 2;
+      this.offsy = (this.contHeight - this.gameHeight) / 2;
+    } else {
+      const pprow = mmax(1, Math.floor((this.contWidth - 2 * pad) / (pieceW + gapX)));
+      const nrows = Math.ceil(P / pprow);
+      const trayH = nrows * (bestPieceH + gapY) - gapY;
+      // תמונה מרוכזת בשטח שנשאר מעל ה-tray
+      const remainingH = this.contHeight - trayH - innerGap;
+      this.offsx = (this.contWidth - this.gameWidth) / 2;
+      this.offsy = (remainingH - this.gameHeight) / 2;
+    }
+  }
+
+  /**
+   * מצב מתחילים — סידור חלקים בשורה/עמודה קומפקטית ומסודרת.
+   * החלקים מסודרים לפי מיקומם המקורי בתמונה (שמאל→ימין, למעלה→למטה).
+   * מיקום קבוע ודטרמיניסטי (ללא רנדומיזציה).
+   */
+  compactInitial(): void {
+    const P = this.nx * this.ny;
+    const gapX = Puzzle.trayGap(this.scalex);
+    const gapY = Puzzle.trayGap(this.scaley);
+    const innerGap = Puzzle.TRAY_INNER_GAP;
+    const pad = Puzzle.TRAY_PAD;
+    const isLandscape = this.contWidth > this.contHeight;
+
+    // מיון לפי מיקום ברשת — מותאם לכיוון הסידור
+    const sorted = [...this.polyPieces].sort((a, b) => {
+      const pa = a.pieces[0];
+      const pb = b.pieces[0];
+      if (isLandscape) {
+        // column-major: עמודה-עמודה (kx ראשון, אחרי כן ky)
+        if (pa.kx !== pb.kx) return pa.kx - pb.kx;
+        return pa.ky - pb.ky;
+      }
+      // row-major: שורה-שורה (ky ראשון, אחרי כן kx)
+      if (pa.ky !== pb.ky) return pa.ky - pb.ky;
+      return pa.kx - pb.kx;
+    });
+
+    if (isLandscape) {
+      // חלקים בעמודות משמאל, מלמעלה למטה
+      const piecesPerCol = mmax(
+        1,
+        Math.floor((this.contHeight - 2 * pad) / (this.scaley + gapY)),
+      );
+
+      sorted.forEach((pp, i) => {
+        const col = Math.floor(i / piecesPerCol);
+        const row = i % piecesPerCol;
+        // מרכוז אנכי של כל עמודה
+        const colPieceCount = mmin(piecesPerCol, P - col * piecesPerCol);
+        const colHeight = colPieceCount * (this.scaley + gapY) - gapY;
+        const startY = (this.contHeight - colHeight) / 2;
+
+        const cellX = pad + col * (this.scalex + gapX);
+        const cellY = startY + row * (this.scaley + gapY);
+        // moveTo מקבל את פינת ה-canvas (כולל שוליים של 0.5 grid unit)
+        pp.moveTo(cellX - this.scalex * 0.5, cellY - this.scaley * 0.5);
+      });
+    } else {
+      // חלקים בשורות למטה, משמאל לימין
+      const piecesPerRow = mmax(
+        1,
+        Math.floor((this.contWidth - 2 * pad) / (this.scalex + gapX)),
+      );
+      const trayOriginY = this.offsy + this.gameHeight + innerGap;
+
+      sorted.forEach((pp, i) => {
+        const row = Math.floor(i / piecesPerRow);
+        const col = i % piecesPerRow;
+        // מרכוז אופקי של כל שורה
+        const rowPieceCount = mmin(piecesPerRow, P - row * piecesPerRow);
+        const rowWidth = rowPieceCount * (this.scalex + gapX) - gapX;
+        const startX = (this.contWidth - rowWidth) / 2;
+
+        const cellX = startX + col * (this.scalex + gapX);
+        const cellY = trayOriginY + row * (this.scaley + gapY);
+        pp.moveTo(cellX - this.scalex * 0.5, cellY - this.scaley * 0.5);
+      });
+    }
   }
 
   /**
@@ -378,7 +554,11 @@ export class Puzzle {
 
   /** Arrange all unconnected pieces around the board edges */
   arrangePieces(): void {
-    this.optimInitial();
+    if (this.organizedStart) {
+      this.compactInitial();
+    } else {
+      this.optimInitial();
+    }
     this.polyPieces.forEach((pp) => pp.drawImage());
   }
 
@@ -457,18 +637,25 @@ export class Puzzle {
     this.getContainerSize();
 
     this.scale();
-    const reScale = this.contWidth / prevWidth;
 
-    this.polyPieces.forEach((pp) => {
-      let nx = this.contWidth / 2 - (prevWidth / 2 - pp.x) * reScale;
-      let ny = this.contHeight / 2 - (prevHeight / 2 - pp.y) * reScale;
+    if (this.organizedStart) {
+      // חלקים מסודרים — חישוב לייאאוט מחדש ושמירה על סידור קומפקטי
+      this.polyPieces.forEach((pp) => pp.drawImage());
+      this.compactInitial();
+    } else {
+      const reScale = this.contWidth / prevWidth;
 
-      nx = mmin(mmax(nx, -this.scalex / 2), this.contWidth - 1.5 * this.scalex);
-      ny = mmin(mmax(ny, -this.scaley / 2), this.contHeight - 1.5 * this.scaley);
+      this.polyPieces.forEach((pp) => {
+        let nx = this.contWidth / 2 - (prevWidth / 2 - pp.x) * reScale;
+        let ny = this.contHeight / 2 - (prevHeight / 2 - pp.y) * reScale;
 
-      pp.moveTo(nx, ny);
-      pp.drawImage();
-    });
+        nx = mmin(mmax(nx, -this.scalex / 2), this.contWidth - 1.5 * this.scalex);
+        ny = mmin(mmax(ny, -this.scaley / 2), this.contHeight - 1.5 * this.scaley);
+
+        pp.moveTo(nx, ny);
+        pp.drawImage();
+      });
+    }
 
     // Reset zoom/pan transform on resize
     this.piecesLayer.style.transform = "";
