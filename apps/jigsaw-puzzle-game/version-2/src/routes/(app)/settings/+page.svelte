@@ -105,6 +105,14 @@
     </div>
 
     <div class="space-y-6">
+
+      <!-- ===== קטגוריה 1: רמת קושי והתאמה לתלמיד ===== -->
+      <div class="mt-2 mb-4">
+        <h2 class="text-xl font-bold text-slate-700 border-b-2 border-slate-200 pb-2">
+          רמת קושי והתאמה לתלמיד
+        </h2>
+      </div>
+
       <!-- מצב מתחילים -->
       <div class="rounded-2xl bg-amber-50 p-5 shadow-md border-2 border-amber-200">
         <label class="flex items-center justify-between">
@@ -141,55 +149,6 @@
         </label>
       </div>
 
-      <!-- כפתור סידור מחדש -->
-      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
-        <label class="flex items-center justify-between">
-          <div>
-            <span class="text-lg font-bold text-slate-700">כפתור סידור מחדש</span>
-            <p class="text-sm text-slate-500">
-              מציג כפתור ליד שם הפאזל שמסדר מחדש את החלקים שלא חוברו
-            </p>
-          </div>
-          <input
-            type="checkbox"
-            bind:checked={settings.showRearrangeButton}
-            class="h-6 w-6 accent-sky-500"
-          />
-        </label>
-      </div>
-
-      <!-- התאמת grid לתמונה -->
-      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
-        <label class="flex items-center justify-between">
-          <div>
-            <span class="text-lg font-bold text-slate-700">התאם grid לתמונה</span>
-            <p class="text-sm text-slate-500">
-              מתאים את כמות החלקים בכל ציר ליחס הגובה-רוחב של התמונה (תמונות לא ריבועיות יקבלו grid מותאם)
-            </p>
-          </div>
-          <input
-            type="checkbox"
-            bind:checked={settings.adaptGridToImage}
-            class="h-6 w-6 accent-sky-500"
-          />
-        </label>
-      </div>
-
-      <!-- חבילת תמונות -->
-      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
-        <label class="block text-lg font-bold text-slate-700 mb-3">
-          חבילת תמונות
-        </label>
-        <select
-          bind:value={settings.imagePackId}
-          class="w-full rounded-xl border-2 border-slate-300 p-3 text-lg"
-        >
-          {#each ALL_IMAGE_PACKS as pack}
-            <option value={pack.id}>{pack.icon} {pack.name}</option>
-          {/each}
-        </select>
-      </div>
-
       <!-- גודל רשת -->
       <div class="rounded-2xl bg-white/80 p-5 shadow-md">
         <label class="block text-lg font-bold text-slate-700 mb-3">
@@ -213,51 +172,35 @@
         </div>
       </div>
 
-      <!-- סגנון צורה -->
+      <!-- התאמת grid לתמונה -->
       <div class="rounded-2xl bg-white/80 p-5 shadow-md">
-        <label class="block text-lg font-bold text-slate-700 mb-3">
-          סגנון חלקים
-        </label>
-        <select
-          bind:value={settings.shapeStyle}
-          class="w-full rounded-xl border-2 border-slate-300 p-3 text-lg"
-        >
-          <option value="classic">קלאסי (פטרייה)</option>
-          <option value="triangle">משולש</option>
-          <option value="round">עגול</option>
-          <option value="straight">ישר (ללא חיבורים)</option>
-        </select>
-      </div>
-
-      <!-- רגישות snap -->
-      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
-        <label class="block text-lg font-bold text-slate-700 mb-3">
-          רגישות חיבור: {settings.proximity}
-        </label>
-        <input
-          type="range"
-          bind:value={settings.proximity}
-          min="20"
-          max="80"
-          step="5"
-          class="w-full accent-sky-500"
-        />
-        <div class="flex justify-between text-sm text-slate-500 mt-1">
-          <span>מדויק</span>
-          <span>מקל</span>
-        </div>
-      </div>
-
-      <!-- פירוק חלקים -->
-      <div class="rounded-2xl bg-white/80 p-5 shadow-md space-y-4">
         <label class="flex items-center justify-between">
           <div>
-            <span class="text-lg font-bold text-slate-700">אפשר פירוק חלקים</span>
-            <p class="text-sm text-slate-500">ניתן לפרק חלקים שכבר חוברו (כרגע לא פעיל)</p>
+            <span class="text-lg font-bold text-slate-700">התאם grid לתמונה</span>
+            <p class="text-sm text-slate-500">
+              מתאים את כמות החלקים בכל ציר ליחס הגובה-רוחב של התמונה (תמונות לא ריבועיות יקבלו grid מותאם)
+            </p>
           </div>
           <input
             type="checkbox"
-            bind:checked={settings.allowDisconnect}
+            bind:checked={settings.adaptGridToImage}
+            class="h-6 w-6 accent-sky-500"
+          />
+        </label>
+      </div>
+
+      <!-- ערבוב חלקים -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">ערבוב חלקים</span>
+            <p class="text-sm text-slate-500">
+              כשכבוי — החלקים מסודרים בשורה במיקום קבוע
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            bind:checked={settings.shufflePiecePlacement}
             class="h-6 w-6 accent-sky-500"
           />
         </label>
@@ -282,6 +225,78 @@
         {/if}
       </div>
 
+      <!-- רגישות snap -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="block text-lg font-bold text-slate-700 mb-3">
+          רגישות חיבור: {settings.proximity}
+        </label>
+        <input
+          type="range"
+          bind:value={settings.proximity}
+          min="20"
+          max="80"
+          step="5"
+          class="w-full accent-sky-500"
+        />
+        <div class="flex justify-between text-sm text-slate-500 mt-1">
+          <span>מדויק</span>
+          <span>מקל</span>
+        </div>
+      </div>
+
+      <!-- סגנון צורה -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="block text-lg font-bold text-slate-700 mb-3">
+          סגנון חלקים
+        </label>
+        <select
+          bind:value={settings.shapeStyle}
+          class="w-full rounded-xl border-2 border-slate-300 p-3 text-lg"
+        >
+          <option value="classic">קלאסי (פטרייה)</option>
+          <option value="triangle">משולש</option>
+          <option value="round">עגול</option>
+          <option value="straight">ישר (ללא חיבורים)</option>
+        </select>
+      </div>
+
+      <!-- פירוק חלקים -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md space-y-4">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">אפשר פירוק חלקים</span>
+            <p class="text-sm text-slate-500">ניתן לפרק חלקים שכבר חוברו (כרגע לא פעיל)</p>
+          </div>
+          <input
+            type="checkbox"
+            bind:checked={settings.allowDisconnect}
+            class="h-6 w-6 accent-sky-500"
+          />
+        </label>
+      </div>
+
+      <!-- ===== קטגוריה 2: תמונות ומהלך משחק ===== -->
+      <div class="mt-8 mb-4">
+        <h2 class="text-xl font-bold text-slate-700 border-b-2 border-slate-200 pb-2">
+          תמונות ומהלך משחק
+        </h2>
+      </div>
+
+      <!-- חבילת תמונות -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="block text-lg font-bold text-slate-700 mb-3">
+          חבילת תמונות
+        </label>
+        <select
+          bind:value={settings.imagePackId}
+          class="w-full rounded-xl border-2 border-slate-300 p-3 text-lg"
+        >
+          {#each ALL_IMAGE_PACKS as pack}
+            <option value={pack.id}>{pack.icon} {pack.name}</option>
+          {/each}
+        </select>
+      </div>
+
       <!-- תמונת עזר -->
       <div class="rounded-2xl bg-white/80 p-5 shadow-md">
         <label class="flex items-center justify-between">
@@ -301,23 +316,6 @@
           <input
             type="checkbox"
             bind:checked={settings.shuffleImages}
-            class="h-6 w-6 accent-sky-500"
-          />
-        </label>
-      </div>
-
-      <!-- ערבוב חלקים -->
-      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
-        <label class="flex items-center justify-between">
-          <div>
-            <span class="text-lg font-bold text-slate-700">ערבוב חלקים</span>
-            <p class="text-sm text-slate-500">
-              כשכבוי — החלקים מסודרים בשורה במיקום קבוע
-            </p>
-          </div>
-          <input
-            type="checkbox"
-            bind:checked={settings.shufflePiecePlacement}
             class="h-6 w-6 accent-sky-500"
           />
         </label>
@@ -365,6 +363,30 @@
             class="h-6 w-6 accent-sky-500"
           />
         </label>
+      </div>
+
+      <!-- כפתור סידור מחדש -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">כפתור סידור מחדש</span>
+            <p class="text-sm text-slate-500">
+              מציג כפתור ליד שם הפאזל שמסדר מחדש את החלקים שלא חוברו
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            bind:checked={settings.showRearrangeButton}
+            class="h-6 w-6 accent-sky-500"
+          />
+        </label>
+      </div>
+
+      <!-- ===== קטגוריה 3: חיזוקים (Gingim Booster) ===== -->
+      <div class="mt-8 mb-4">
+        <h2 class="text-xl font-bold text-slate-700 border-b-2 border-slate-200 pb-2">
+          חיזוקים (Gingim Booster)
+        </h2>
       </div>
 
       <!-- חיזוקים (Booster) -->
@@ -558,6 +580,13 @@
             </div>
           {/if}
         {/if}
+      </div>
+
+      <!-- ===== קטגוריה 4: תחזוקה ===== -->
+      <div class="mt-8 mb-4">
+        <h2 class="text-xl font-bold text-slate-700 border-b-2 border-slate-200 pb-2">
+          תחזוקה
+        </h2>
       </div>
 
       <!-- איפוס -->
