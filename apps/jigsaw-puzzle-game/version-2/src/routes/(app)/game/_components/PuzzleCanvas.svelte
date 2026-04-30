@@ -7,6 +7,7 @@
   import { gameState } from "$lib/stores/game-state.svelte";
   import { settings } from "$lib/stores/settings.svelte";
   import { Puzzle } from "$lib/puzzle/puzzle";
+  import { adaptGridToImage } from "$lib/puzzle/adaptive-grid";
   import { PuzzleInteraction } from "../_lib/puzzle-interaction";
 
   let containerEl: HTMLDivElement;
@@ -61,11 +62,21 @@
     img.onload = () => {
       try {
         const grid = gameState.currentGrid;
+        // התאמה דינמית של ה-grid לפרופורציות התמונה (כשההגדרה דלוקה)
+        let columns = grid.columns;
+        let rows = grid.rows;
+        if (settings.adaptGridToImage) {
+          const targetPieceCount = grid.columns * grid.rows;
+          const imageAspectRatio = img.naturalWidth / img.naturalHeight;
+          const adapted = adaptGridToImage({ targetPieceCount, imageAspectRatio });
+          columns = adapted.columns;
+          rows = adapted.rows;
+        }
         puzzle = new Puzzle({
           container: containerEl,
           image: img,
-          columns: grid.columns,
-          rows: grid.rows,
+          columns,
+          rows,
           shapeStyle: settings.shapeStyle,
           organizedStart: !settings.shufflePiecePlacement,
           onPieceConnected: (count: number) => {

@@ -1,5 +1,70 @@
 # Jigsaw Puzzle Game — יומן פיתוח
 
+## 2026-04-30 14:36
+
+### version-2 — Grid אדפטיבי (שלב 1 מתוך 3) — TDD
+
+נוסף פיצ'ר חדש שמתאים את ממדי ה-grid (columns × rows) לפרופורציות התמונה. זה הצעד הראשון מתוך תוכנית ה-refactor של הגדרות (Grid אדפטיבי → סידור לקטגוריות → מערכת פרופילים).
+
+הפיצ'ר פותח בגישת **TDD** באמצעות סקיל `mattpocock/skills@tdd` (Vertical Slicing — בדיקה אחת, קוד שעובר אותה, חזרה).
+
+#### מה בוצע?
+
+**1. מודול חדש `adaptive-grid.ts` עם 6 בדיקות יחידה**
+
+נוצרו במקביל לפיתוח (TDD):
+- `adaptGridToImage({ targetPieceCount, imageAspectRatio })` — פונקציה טהורה שמחזירה `{ columns, rows }`
+- האלגוריתם: חיפוש ממצה של זוגות `(cols, rows)` שמינימייז ציון משוקלל:
+  ```
+  score = |cols/rows - aspectRatio| * RATIO_WEIGHT + |cols*rows - target|
+  ```
+- `MIN_AXIS = 2` — אין שורה/עמודה בודדת
+- `RATIO_WEIGHT = 10` — היחס חשוב פי 10 ממספר חלקים מדויק
+
+**2. תרחישי הבדיקות (לפי סדר כתיבתן ב-TDD)**
+
+| # | תרחיש | תוצאה צפויה |
+|---|-------|-------------|
+| 1 | תמונה ריבועית, 4 חלקים | 2×2 |
+| 2 | תמונה רחבה (3:2), 6 חלקים | 3×2 |
+| 3 | תמונה אנכית (2:3), 6 חלקים | 2×3 |
+| 4 | תמונה רחבה מאוד (16:9), 4 חלקים | 3×2 (יחס מועדף על מספר חלקים) |
+| 5 | מינימום 2×2 גם עם targetPieceCount=2 | columns ≥ 2, rows ≥ 2 |
+| 6 | לא חורג הרבה ממספר החלקים | total בין 4 ל-8 ל-target=6 |
+
+**3. אינטגרציה (`PuzzleCanvas.svelte`)**
+
+- אחרי `img.onload`, מחושב `imageAspectRatio = img.naturalWidth / img.naturalHeight`
+- אם `settings.adaptGridToImage` דלוקה, `grid.columns/rows` מוחלפים בתוצאת `adaptGridToImage()`
+- אם ההגדרה כבויה, התנהגות זהה לקודם (תאימות לאחור)
+
+**4. הגדרה חדשה (`types.ts`, `settings.svelte.ts`)**
+
+- `adaptGridToImage: boolean` — ברירת מחדל `false` (תאימות לאחור)
+- מיגרציה לסכמה `v6`, עם טעינה/שמירה/reset
+
+**5. UI הגדרות (`settings/+page.svelte`)**
+
+- toggle חדש "התאם grid לתמונה" עם תיאור הסבר
+
+#### החלטות ארכיטקטורה
+
+- **TDD בגישת Vertical Slicing**: כל בדיקה נכתבה ראשונה (RED), אומתה שהיא נכשלת, ואז נוסף הקוד המינימלי שעובר אותה (GREEN). זה גרם לאלגוריתם להתפתח אינקרמנטלית מ"return constant" לציון משוקלל מלא
+- **פונקציה טהורה במודול נפרד**: `adaptGridToImage` היא פונקציה pure ללא צד-effects. זה מאפשר בדיקות מהירות ב-Node (server tests) בלי DOM/canvas, ואת השילוב עם הקוד הקיים ב-PuzzleCanvas
+- **חיפוש ממצה (brute force)**: עבור `targetPieceCount` עד ~36 (6×6), ה-O(n²) זניח. אין צורך באלגוריתם חכם יותר
+- **משקל יחס > מספר חלקים**: `RATIO_WEIGHT = 10` מבטיח שתמונה רחבה תקבל grid רחב גם אם המשמעות היא 2 חלקים נוספים. תלמיד לא יבחין במעבר מ-4 ל-6 חלקים, אבל יבחין מאוד בחלקים מעוותים
+
+#### בדיקות שבוצעו
+
+- 6 unit tests ב-`adaptive-grid.test.ts` עברו ✅
+- `bun run check` עבר ללא שגיאות בקבצי הפרויקט שלנו
+- `bun run build` עבר בהצלחה
+
+#### תוכנית להמשך (שלבים 2-3)
+
+- **שלב 2**: סידור הגדרות לקטגוריות (UI refactor)
+- **שלב 3**: מערכת פרופילים (`activeProfile: beginner | intermediate | advanced | custom`)
+
 ## 2026-04-30 13:54
 
 ### version-2 — כפתור סידור מחדש + תיקון Z-index בלחיצה

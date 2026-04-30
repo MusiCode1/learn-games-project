@@ -79,6 +79,8 @@ export interface TeacherSettings {
   studentLockMode: boolean;
   /** הצגת כפתור "סידור מחדש" ליד שם הפאזל — מחזיר חלקים לא מחוברים למיקום ההתחלתי */
   showRearrangeButton: boolean;
+  /** התאמת gridPresetIndex לפרופורציות התמונה — מספר החלקים נשאר קרוב למטרה אבל היחס משתנה */
+  adaptGridToImage: boolean;
 }
 
 export const DEFAULT_SETTINGS: TeacherSettings = {
@@ -98,4 +100,5 @@ export const DEFAULT_SETTINGS: TeacherSettings = {
   shufflePiecePlacement: true,
   studentLockMode: false,
   showRearrangeButton: true,
+  adaptGridToImage: false,
 };

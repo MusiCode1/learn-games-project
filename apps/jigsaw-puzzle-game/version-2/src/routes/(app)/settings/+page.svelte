@@ -158,6 +158,23 @@
         </label>
       </div>
 
+      <!-- התאמת grid לתמונה -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">התאם grid לתמונה</span>
+            <p class="text-sm text-slate-500">
+              מתאים את כמות החלקים בכל ציר ליחס הגובה-רוחב של התמונה (תמונות לא ריבועיות יקבלו grid מותאם)
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            bind:checked={settings.adaptGridToImage}
+            class="h-6 w-6 accent-sky-500"
+          />
+        </label>
+      </div>
+
       <!-- חבילת תמונות -->
       <div class="rounded-2xl bg-white/80 p-5 shadow-md">
         <label class="block text-lg font-bold text-slate-700 mb-3">

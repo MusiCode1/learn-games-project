@@ -6,7 +6,7 @@ import type { TeacherSettings, ShapeStyle, PieceFilter } from "$lib/types";
 import { DEFAULT_SETTINGS, BEGINNER_MAX_GRID_INDEX } from "$lib/types";
 
 const STORAGE_KEY = "jigsaw-puzzle-v2-settings";
-const CURRENT_VERSION = 5;
+const CURRENT_VERSION = 6;
 
 class SettingsStore {
   imagePackId = $state(DEFAULT_SETTINGS.imagePackId);
@@ -25,6 +25,7 @@ class SettingsStore {
   shufflePiecePlacement = $state(DEFAULT_SETTINGS.shufflePiecePlacement);
   studentLockMode = $state(DEFAULT_SETTINGS.studentLockMode);
   showRearrangeButton = $state(DEFAULT_SETTINGS.showRearrangeButton);
+  adaptGridToImage = $state(DEFAULT_SETTINGS.adaptGridToImage);
 
   constructor() {
     if (typeof globalThis?.localStorage?.getItem === "function") {
@@ -65,6 +66,7 @@ class SettingsStore {
         this.shufflePiecePlacement = parsed.shufflePiecePlacement ?? DEFAULT_SETTINGS.shufflePiecePlacement;
         this.studentLockMode = parsed.studentLockMode ?? DEFAULT_SETTINGS.studentLockMode;
         this.showRearrangeButton = parsed.showRearrangeButton ?? DEFAULT_SETTINGS.showRearrangeButton;
+        this.adaptGridToImage = parsed.adaptGridToImage ?? DEFAULT_SETTINGS.adaptGridToImage;
 
         // אכיפת הגבלת grid במצב מתחילים
         if (this.beginnerMode && this.gridPresetIndex > BEGINNER_MAX_GRID_INDEX) {
@@ -95,6 +97,7 @@ class SettingsStore {
       shufflePiecePlacement: this.shufflePiecePlacement,
       studentLockMode: this.studentLockMode,
       showRearrangeButton: this.showRearrangeButton,
+      adaptGridToImage: this.adaptGridToImage,
     };
   }
 
@@ -120,6 +123,7 @@ class SettingsStore {
     this.shufflePiecePlacement = DEFAULT_SETTINGS.shufflePiecePlacement;
     this.studentLockMode = DEFAULT_SETTINGS.studentLockMode;
     this.showRearrangeButton = DEFAULT_SETTINGS.showRearrangeButton;
+    this.adaptGridToImage = DEFAULT_SETTINGS.adaptGridToImage;
   }
 
   /** הפעלת/כיבוי מצב מתחילים — כולל אכיפת הגבלת grid וכיבוי ערבוב */
