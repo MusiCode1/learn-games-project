@@ -562,6 +562,113 @@ export class Puzzle {
     this.polyPieces.forEach((pp) => pp.drawImage());
   }
 
+  /**
+   * סידור מחדש של חלקים בודדים בלבד — קבוצות שכבר חוברו נשארות במקומן.
+   * משמש לכפתור "סידור מחדש" שתלמיד יכול להפעיל אם החלקים מתערבבים מדי.
+   */
+  rearrangeUnconnected(): void {
+    // PolyPieces בודדים = קבוצה של חלק אחד; קבוצות מחוברות מכילות 2+ חלקים
+    const singles = this.polyPieces.filter((pp) => pp.pieces.length === 1);
+    if (singles.length === 0) return;
+
+    if (this.organizedStart) {
+      // סידור קומפקטי — אותו אלגוריתם של compactInitial אבל רק על singles
+      this.compactSinglesOnly(singles);
+    } else {
+      // פיזור לשוליים — שימוש באלגוריתם הקיים, רק על singles
+      this.scatterSinglesToMargins(singles);
+    }
+
+    singles.forEach((pp) => pp.drawImage());
+  }
+
+  /** סידור singles בלבד ב-grid קומפקטי, משמר את האלגוריתם של compactInitial */
+  private compactSinglesOnly(singles: PolyPiece[]): void {
+    const total = singles.length;
+    const gapX = Puzzle.trayGap(this.scalex);
+    const gapY = Puzzle.trayGap(this.scaley);
+    const innerGap = Puzzle.TRAY_INNER_GAP;
+    const pad = Puzzle.TRAY_PAD;
+    const isLandscape = this.contWidth > this.contHeight;
+
+    // מיון לפי מיקום ברשת — מותאם לכיוון הסידור
+    const sorted = [...singles].sort((a, b) => {
+      const pa = a.pieces[0];
+      const pb = b.pieces[0];
+      if (isLandscape) {
+        if (pa.kx !== pb.kx) return pa.kx - pb.kx;
+        return pa.ky - pb.ky;
+      }
+      if (pa.ky !== pb.ky) return pa.ky - pb.ky;
+      return pa.kx - pb.kx;
+    });
+
+    if (isLandscape) {
+      const piecesPerCol = mmax(
+        1,
+        Math.floor((this.contHeight - 2 * pad) / (this.scaley + gapY)),
+      );
+
+      sorted.forEach((pp, i) => {
+        const col = Math.floor(i / piecesPerCol);
+        const row = i % piecesPerCol;
+        const colPieceCount = mmin(piecesPerCol, total - col * piecesPerCol);
+        const colHeight = colPieceCount * (this.scaley + gapY) - gapY;
+        const startY = (this.contHeight - colHeight) / 2;
+
+        const cellX = pad + col * (this.scalex + gapX);
+        const cellY = startY + row * (this.scaley + gapY);
+        pp.moveTo(cellX - this.scalex * 0.5, cellY - this.scaley * 0.5);
+      });
+    } else {
+      const piecesPerRow = mmax(
+        1,
+        Math.floor((this.contWidth - 2 * pad) / (this.scalex + gapX)),
+      );
+      const trayOriginY = this.offsy + this.gameHeight + innerGap;
+
+      sorted.forEach((pp, i) => {
+        const row = Math.floor(i / piecesPerRow);
+        const col = i % piecesPerRow;
+        const rowPieceCount = mmin(piecesPerRow, total - row * piecesPerRow);
+        const rowWidth = rowPieceCount * (this.scalex + gapX) - gapX;
+        const startX = (this.contWidth - rowWidth) / 2;
+
+        const cellX = startX + col * (this.scalex + gapX);
+        const cellY = trayOriginY + row * (this.scaley + gapY);
+        pp.moveTo(cellX - this.scalex * 0.5, cellY - this.scaley * 0.5);
+      });
+    }
+  }
+
+  /** פיזור singles לשוליים — מיקום אקראי באזורים פנויים מסביב לתמונה */
+  private scatterSinglesToMargins(singles: PolyPiece[]): void {
+    // שימוש פשוט: פיזור אקראי בכל השוליים של המסך, מסביב לאזור התמונה
+    const minx = -this.scalex / 2;
+    const miny = -this.scaley / 2;
+    const maxx = this.contWidth - 1.5 * this.scalex;
+    const maxy = this.contHeight - 1.5 * this.scaley;
+
+    singles.forEach((pp) => {
+      // בחירה אקראית של מיקום שלא חופף לאזור התמונה
+      let x: number;
+      let y: number;
+      let attempts = 0;
+      do {
+        x = alea(minx, maxx);
+        y = alea(miny, maxy);
+        attempts++;
+      } while (
+        attempts < 20 &&
+        x + this.scalex > this.offsx &&
+        x < this.offsx + this.gameWidth &&
+        y + this.scaley > this.offsy &&
+        y < this.offsy + this.gameHeight
+      );
+      pp.moveTo(x, y);
+    });
+  }
+
   private limitRectangle(rect: {
     x0: number;
     x1: number;

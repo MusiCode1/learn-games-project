@@ -13,6 +13,11 @@
   let puzzle: Puzzle | null = null;
   let interaction: PuzzleInteraction | null = null;
 
+  /** סידור מחדש של חלקים בודדים — משמש את כפתור הסידור מחדש */
+  export function rearrange() {
+    puzzle?.rearrangeUnconnected();
+  }
+
   function destroyCurrent() {
     interaction?.detach();
     interaction = null;

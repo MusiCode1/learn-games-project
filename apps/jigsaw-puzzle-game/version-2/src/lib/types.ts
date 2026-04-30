@@ -77,6 +77,8 @@ export interface TeacherSettings {
   shufflePiecePlacement: boolean;
   /** מצב נעילה לתלמידים — מסתיר את כפתור הבית בזמן משחק */
   studentLockMode: boolean;
+  /** הצגת כפתור "סידור מחדש" ליד שם הפאזל — מחזיר חלקים לא מחוברים למיקום ההתחלתי */
+  showRearrangeButton: boolean;
 }
 
 export const DEFAULT_SETTINGS: TeacherSettings = {
@@ -95,4 +97,5 @@ export const DEFAULT_SETTINGS: TeacherSettings = {
   beginnerMode: false,
   shufflePiecePlacement: true,
   studentLockMode: false,
+  showRearrangeButton: true,
 };

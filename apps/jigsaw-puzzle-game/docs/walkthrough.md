@@ -1,5 +1,58 @@
 # Jigsaw Puzzle Game — יומן פיתוח
 
+## 2026-04-30 13:54
+
+### version-2 — כפתור סידור מחדש + תיקון Z-index בלחיצה
+
+נוספו שני שיפורים בחוויית המשחק: כפתור "סידור מחדש" שמחזיר חלקים בודדים למיקום ההתחלתי, ותיקון התנהגות ה-z-index כך שלחיצה על חלק תעלה אותו מעל כל החלקים האחרים.
+
+#### מה בוצע?
+
+**1. תיקון Z-index בלחיצה (`puzzle-interaction.ts`)**
+
+- ב-`onPointerDown` המתבצעת על חלק: `puzzle.zIndexSup += 1` לפני שמיוחס לחלק
+- כתוצאה מכך, כל לחיצה על חלק מקפיצה אותו מעל כל לחיצה קודמת
+- לפני: `zIndexSup` היה ערך קבוע אחרי `evaluateZIndex()`, וכמה חלקים יכלו לקבל את אותו ה-z-index ולא להישאר זה מעל זה
+
+**2. מתודות סידור מחדש (`puzzle.ts`)**
+
+- `rearrangeUnconnected()` — מסדרת רק PolyPieces בודדים (קבוצה של חלק אחד) ומשאירה קבוצות שכבר חוברו במקומן
+- `compactSinglesOnly(singles)` — סידור singles ב-grid (במצב מסודר), משכפל את הלוגיקה של `compactInitial` רק על תת-קבוצה
+- `scatterSinglesToMargins(singles)` — פיזור singles לשוליים, מנסה למקם מחוץ לאזור התמונה
+
+**3. כפתור סידור מחדש בממשק (`game/+page.svelte`, `PuzzleCanvas.svelte`)**
+
+- ב-`PuzzleCanvas.svelte`: נוסף `export function rearrange()` שקורא ל-`puzzle.rearrangeUnconnected()`
+- ב-`game/+page.svelte`: נוסף כפתור עגול עם אייקון refresh ליד שם הפאזל
+- שונה ה-wrapper של הכותרת מ-`pointer-events-none` כללי לכותרת ולמונה החלקים בלבד, והכפתור עצמו `pointer-events-auto`
+
+**4. הגדרה חדשה (`types.ts`, `settings.svelte.ts`)**
+
+- נוסף `showRearrangeButton: boolean` ל-`TeacherSettings` (ברירת מחדל: `true`)
+- מיגרציה לסכמה `v5`, עם טעינה/שמירה/reset
+
+**5. UI הגדרות (`settings/+page.svelte`)**
+
+- toggle חדש "כפתור סידור מחדש" עם תיאור: "מציג כפתור ליד שם הפאזל שמסדר מחדש את החלקים שלא חוברו"
+
+**6. תיעוד פיצ'רים עתידיים (`docs/future-features.md`)**
+
+- נוצר קובץ חדש שמרכז 3 רעיונות לעתיד: חלקים מחוברים מראש, תמונה במרכז, חלק עוגן
+- כולל הצעת איחוד לכדי `startingDifficulty` אחד וסדר עבודה מומלץ
+
+#### החלטות ארכיטקטורה
+
+- **`zIndexSup` כמונה עולה במקום ערך קבוע**: גישה פשוטה ויעילה — כל לחיצה מעלה את המונה ב-1, כך שאין צורך לחשב מחדש את כל ה-z-indices. אין סכנה גם לאחר אלפי לחיצות (Number.MAX_SAFE_INTEGER גדול מספיק)
+- **API דרך `bind:this` במקום store/context**: ב-Svelte 5, חשיפת `export function rearrange()` מקומפוננטה ל-parent דרך `bind:this` היא הדרך הנקייה ביותר. הקומפוננטה שומרת על ה-state שלה, וה-parent מפעיל פקודות דרך API מוגדר
+- **`pointer-events-auto` נקודתי על הכפתור**: לא להפוך את כל ה-overlay ל-`pointer-events-auto` כדי לא לחסום אינטראקציה עם הקנבס מתחת
+
+#### בדיקות שבוצעו
+
+- בדיקה ידנית עם Playwright:
+  - לחיצה על כפתור הסידור מחדש מזיזה את החלקים למיקומים חדשים
+  - z-index של חלקים שלוחצים עליהם עולה ברצף (10→13→15→16)
+  - הכותרת ומונה החלקים נשארים `pointer-events-none` והקנבס מתחתם רגיש לאינטראקציה
+
 ## 2026-04-27 13:28
 
 ### version-2 — מצב נעילה לתלמידים והסתרת כפתור הבית

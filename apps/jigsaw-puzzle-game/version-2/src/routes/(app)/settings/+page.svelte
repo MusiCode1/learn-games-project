@@ -141,6 +141,23 @@
         </label>
       </div>
 
+      <!-- כפתור סידור מחדש -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">כפתור סידור מחדש</span>
+            <p class="text-sm text-slate-500">
+              מציג כפתור ליד שם הפאזל שמסדר מחדש את החלקים שלא חוברו
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            bind:checked={settings.showRearrangeButton}
+            class="h-6 w-6 accent-sky-500"
+          />
+        </label>
+      </div>
+
       <!-- חבילת תמונות -->
       <div class="rounded-2xl bg-white/80 p-5 shadow-md">
         <label class="block text-lg font-bold text-slate-700 mb-3">

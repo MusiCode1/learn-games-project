@@ -268,10 +268,12 @@ export class PuzzleInteraction {
     const pp = this.hitTest(pos.x, pos.y);
 
     if (pp) {
-      // Start dragging a piece
+      // Start dragging a piece — bring it to the very top
       const k = this.puzzle.polyPieces.indexOf(pp);
       this.puzzle.polyPieces.splice(k, 1);
       this.puzzle.polyPieces.push(pp);
+      // העלאה לשכבה הגבוהה ביותר — מגדיל את zIndexSup כדי שכל לחיצה תקפיץ את החלק מעל לקודם
+      this.puzzle.zIndexSup += 1;
       pp.canvas.style.zIndex = String(this.puzzle.zIndexSup);
 
       this.dragging = {
