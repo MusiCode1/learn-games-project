@@ -2,11 +2,53 @@
  * הגדרות מורה עם שמירה ב-localStorage
  */
 
-import type { TeacherSettings, ShapeStyle, PieceFilter } from "$lib/types";
+import type { TeacherSettings, ShapeStyle, PieceFilter, SettingsProfile } from "$lib/types";
 import { DEFAULT_SETTINGS, BEGINNER_MAX_GRID_INDEX } from "$lib/types";
 
 const STORAGE_KEY = "jigsaw-puzzle-v2-settings";
-const CURRENT_VERSION = 6;
+const CURRENT_VERSION = 7;
+
+/** הגדרות לפי פרופיל */
+const PROFILE_PRESETS: Record<Exclude<SettingsProfile, "custom">, Partial<TeacherSettings>> = {
+  beginner: {
+    beginnerMode: true,
+    gridPresetIndex: 1, // 2×2
+    shufflePiecePlacement: false,
+    adaptGridToImage: true,
+    studentLockMode: true,
+    proximity: 50,
+    shapeStyle: "classic",
+  },
+  intermediate: {
+    beginnerMode: false,
+    gridPresetIndex: 3, // 3×3
+    shufflePiecePlacement: true,
+    adaptGridToImage: true,
+    studentLockMode: false,
+    proximity: 35,
+    shapeStyle: "classic",
+  },
+  advanced: {
+    beginnerMode: false,
+    gridPresetIndex: 5, // 4×4
+    shufflePiecePlacement: true,
+    adaptGridToImage: false,
+    studentLockMode: false,
+    proximity: 25,
+    shapeStyle: "classic",
+  },
+};
+
+/** ההגדרות שמשפיעות על הפרופיל — שינוי בהן יעביר ל-custom */
+const PROFILE_AFFECTING_KEYS: (keyof TeacherSettings)[] = [
+  "beginnerMode",
+  "gridPresetIndex",
+  "shufflePiecePlacement",
+  "adaptGridToImage",
+  "studentLockMode",
+  "proximity",
+  "shapeStyle",
+];
 
 class SettingsStore {
   imagePackId = $state(DEFAULT_SETTINGS.imagePackId);
@@ -26,18 +68,67 @@ class SettingsStore {
   studentLockMode = $state(DEFAULT_SETTINGS.studentLockMode);
   showRearrangeButton = $state(DEFAULT_SETTINGS.showRearrangeButton);
   adaptGridToImage = $state(DEFAULT_SETTINGS.adaptGridToImage);
+  activeProfile = $state<SettingsProfile>(DEFAULT_SETTINGS.activeProfile);
+
+  /** דגל פנימי שמונע מעבר ל-custom בזמן applyProfile */
+  private _applyingProfile = false;
+  /** ערכי ההגדרות האחרונים לזיהוי שינוי ידני */
+  private _lastProfileValues: Partial<TeacherSettings> = {};
 
   constructor() {
     if (typeof globalThis?.localStorage?.getItem === "function") {
       this.load();
     }
 
+    // שמירת ערכים נוכחיים לזיהוי שינויים
+    this._snapshotProfileValues();
+
     $effect.root(() => {
       $effect(() => {
         this.toJSON();
         this.save();
       });
+
+      // זיהוי שינוי ידני בהגדרות — מעבר ל-custom
+      $effect(() => {
+        // קריאה לכל השדות הרלוונטיים כדי ליצור dependency
+        const current = {
+          beginnerMode: this.beginnerMode,
+          gridPresetIndex: this.gridPresetIndex,
+          shufflePiecePlacement: this.shufflePiecePlacement,
+          adaptGridToImage: this.adaptGridToImage,
+          studentLockMode: this.studentLockMode,
+          proximity: this.proximity,
+          shapeStyle: this.shapeStyle,
+        };
+
+        if (this._applyingProfile) return;
+
+        // בדיקה אם יש שינוי מהערכים האחרונים
+        for (const key of PROFILE_AFFECTING_KEYS) {
+          if (current[key as keyof typeof current] !== this._lastProfileValues[key]) {
+            if (this.activeProfile !== "custom") {
+              this.activeProfile = "custom";
+            }
+            break;
+          }
+        }
+
+        this._lastProfileValues = current;
+      });
     });
+  }
+
+  private _snapshotProfileValues(): void {
+    this._lastProfileValues = {
+      beginnerMode: this.beginnerMode,
+      gridPresetIndex: this.gridPresetIndex,
+      shufflePiecePlacement: this.shufflePiecePlacement,
+      adaptGridToImage: this.adaptGridToImage,
+      studentLockMode: this.studentLockMode,
+      proximity: this.proximity,
+      shapeStyle: this.shapeStyle,
+    };
   }
 
   private load(): void {
@@ -68,14 +159,25 @@ class SettingsStore {
         this.showRearrangeButton = parsed.showRearrangeButton ?? DEFAULT_SETTINGS.showRearrangeButton;
         this.adaptGridToImage = parsed.adaptGridToImage ?? DEFAULT_SETTINGS.adaptGridToImage;
 
+        // מיגרציה מ-v6 (ומטה): משתמש קיים מקבל custom
+        if (!parsed.activeProfile) {
+          this.activeProfile = "custom";
+        } else {
+          this.activeProfile = parsed.activeProfile;
+        }
+
         // אכיפת הגבלת grid במצב מתחילים
         if (this.beginnerMode && this.gridPresetIndex > BEGINNER_MAX_GRID_INDEX) {
           this.gridPresetIndex = BEGINNER_MAX_GRID_INDEX;
         }
+
+        // עדכון snapshot אחרי load
+        this._snapshotProfileValues();
       } catch (e) {
         console.error("Failed to parse settings", e);
       }
     }
+    // אם אין saved — משתמש חדש — נשאר עם ברירת המחדל (beginner)
   }
 
   toJSON(): TeacherSettings & { schemaVersion: number } {
@@ -98,6 +200,7 @@ class SettingsStore {
       studentLockMode: this.studentLockMode,
       showRearrangeButton: this.showRearrangeButton,
       adaptGridToImage: this.adaptGridToImage,
+      activeProfile: this.activeProfile,
     };
   }
 
@@ -124,6 +227,8 @@ class SettingsStore {
     this.studentLockMode = DEFAULT_SETTINGS.studentLockMode;
     this.showRearrangeButton = DEFAULT_SETTINGS.showRearrangeButton;
     this.adaptGridToImage = DEFAULT_SETTINGS.adaptGridToImage;
+    this.activeProfile = DEFAULT_SETTINGS.activeProfile;
+    this._snapshotProfileValues();
   }
 
   /** הפעלת/כיבוי מצב מתחילים — כולל אכיפת הגבלת grid וכיבוי ערבוב */
@@ -135,6 +240,35 @@ class SettingsStore {
       }
       this.shufflePiecePlacement = false;
     }
+  }
+
+  /** סימון ידני של הפרופיל כ-custom — לקריאה מ-UI כשמשתמש משנה הגדרה */
+  markAsCustom(): void {
+    if (this.activeProfile !== "custom") {
+      this.activeProfile = "custom";
+      this._snapshotProfileValues();
+    }
+  }
+
+  /** החלת פרופיל — custom לא משנה הגדרות, רק מסמן */
+  applyProfile(profile: SettingsProfile): void {
+    this._applyingProfile = true;
+
+    this.activeProfile = profile;
+
+    if (profile !== "custom") {
+      const preset = PROFILE_PRESETS[profile];
+      if (preset.beginnerMode !== undefined) this.beginnerMode = preset.beginnerMode;
+      if (preset.gridPresetIndex !== undefined) this.gridPresetIndex = preset.gridPresetIndex;
+      if (preset.shufflePiecePlacement !== undefined) this.shufflePiecePlacement = preset.shufflePiecePlacement;
+      if (preset.adaptGridToImage !== undefined) this.adaptGridToImage = preset.adaptGridToImage;
+      if (preset.studentLockMode !== undefined) this.studentLockMode = preset.studentLockMode;
+      if (preset.proximity !== undefined) this.proximity = preset.proximity;
+      if (preset.shapeStyle !== undefined) this.shapeStyle = preset.shapeStyle;
+    }
+
+    this._snapshotProfileValues();
+    this._applyingProfile = false;
   }
 }
 

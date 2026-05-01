@@ -3,7 +3,7 @@
   import { slide } from "svelte/transition";
   import { settings } from "$lib/stores/settings.svelte";
   import { ALL_IMAGE_PACKS } from "$lib/data/image-packs";
-  import { GRID_PRESETS, BEGINNER_MAX_GRID_INDEX } from "$lib/types";
+  import { GRID_PRESETS, BEGINNER_MAX_GRID_INDEX, type SettingsProfile } from "$lib/types";
   import {
     boosterService,
     type Config,
@@ -105,6 +105,42 @@
     </div>
 
     <div class="space-y-6">
+
+      <!-- ===== בוחר פרופיל ===== -->
+      <div class="rounded-2xl bg-gradient-to-r from-sky-100 to-indigo-100 p-5 shadow-md">
+        <label class="block text-lg font-bold text-slate-700 mb-3">
+          פרופיל הגדרות
+        </label>
+        <div class="flex flex-wrap gap-2">
+          {#each ["beginner", "intermediate", "advanced", "custom"] as profile}
+            {@const labels: Record<SettingsProfile, string> = {
+              beginner: "מתחילים",
+              intermediate: "בינוני",
+              advanced: "מתקדם",
+              custom: "מותאם אישית",
+            }}
+            <button
+              onclick={() => settings.applyProfile(profile as SettingsProfile)}
+              class="rounded-lg px-4 py-2 font-bold transition-all {settings.activeProfile === profile
+                ? 'bg-sky-500 text-white shadow-lg'
+                : 'bg-white text-slate-700 hover:bg-slate-100'}"
+            >
+              {labels[profile as SettingsProfile]}
+            </button>
+          {/each}
+        </div>
+        <p class="text-sm text-slate-500 mt-2">
+          {#if settings.activeProfile === "beginner"}
+            מתאים לתלמידים מתחילים — ללא zoom/pan, grid קטן, חיבור קל
+          {:else if settings.activeProfile === "intermediate"}
+            מתאים לתלמידים עם ניסיון — grid בינוני, חיבור סטנדרטי
+          {:else if settings.activeProfile === "advanced"}
+            מתאים לתלמידים מתקדמים — grid גדול, חיבור מדויק יותר
+          {:else}
+            הגדרות מותאמות אישית
+          {/if}
+        </p>
+      </div>
 
       <!-- ===== קטגוריה 1: רמת קושי והתאמה לתלמיד ===== -->
       <div class="mt-2 mb-4">

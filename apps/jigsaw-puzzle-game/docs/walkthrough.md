@@ -1,5 +1,74 @@
 # Jigsaw Puzzle Game — יומן פיתוח
 
+## 2026-05-01 10:07
+
+### version-2 — מערכת פרופילים (שלב 3 מתוך 3) — TDD
+
+נוספה מערכת פרופילים להגדרות שמאפשרת לבחור בין "מתחילים", "בינוני", "מתקדם" או "מותאם אישית". הפיצ'ר פותח בגישת TDD.
+
+#### מה בוצע?
+
+**1. טיפוסים (`types.ts`)**
+
+- נוסף `SettingsProfile = "beginner" | "intermediate" | "advanced" | "custom"`
+- נוסף שדה `activeProfile: SettingsProfile` ל-`TeacherSettings`
+- ברירת מחדל למשתמש חדש: `beginner`
+
+**2. Store (`settings.svelte.ts`)**
+
+- `CURRENT_VERSION` הועלה מ-6 ל-7
+- נוסף `PROFILE_PRESETS` — מפה של ערכי הגדרות לכל פרופיל:
+
+| הגדרה | beginner | intermediate | advanced |
+|-------|----------|--------------|----------|
+| beginnerMode | true | false | false |
+| gridPresetIndex | 1 (2×2) | 3 (3×3) | 5 (4×4) |
+| shufflePiecePlacement | false | true | true |
+| adaptGridToImage | true | true | false |
+| studentLockMode | true | false | false |
+| proximity | 50 | 35 | 25 |
+| shapeStyle | classic | classic | classic |
+
+- נוסף `applyProfile(profile)` — מחיל ערכי preset (או רק מסמן custom)
+- נוסף `markAsCustom()` — לסימון ידני של פרופיל מותאם אישית מ-UI
+- מיגרציה: משתמש קיים (v6 ומטה) מקבל `activeProfile: "custom"` כדי לא לדרוס הגדרות קיימות
+
+**3. בדיקות TDD (`settings.test.ts`) — 8 בדיקות**
+
+| # | תרחיש | תוצאה |
+|---|-------|-------|
+| 1 | applyProfile("beginner") | מגדיר ערכים נכונים |
+| 2 | applyProfile("intermediate") | מגדיר ערכים נכונים |
+| 3 | applyProfile("advanced") | מגדיר ערכים נכונים |
+| 4 | applyProfile("custom") | לא משנה הגדרות קיימות |
+| 5 | markAsCustom() | מעביר ל-custom |
+| 6 | migration מ-v6 | activeProfile=custom |
+| 7 | משתמש חדש | activeProfile=beginner |
+| 8 | toJSON כולל activeProfile | schemaVersion=7 |
+
+**4. UI בחירת פרופיל (`settings/+page.svelte`)**
+
+- נוסף בוחר פרופיל בראש דף ההגדרות עם 4 כפתורים
+- רקע gradient `from-sky-100 to-indigo-100`
+- הסבר דינמי לפי פרופיל נבחר
+
+#### החלטות ארכיטקטורה
+
+- **TDD**: בדיקות נכתבו קודם (RED), אומתו שהן נכשלות, ואז נוסף הקוד (GREEN)
+- **`markAsCustom()` במקום $effect**: במקום לזהות שינוי ידני דרך $effect (שלא רץ סינכרוני ב-vitest), נוספה מתודה ייעודית שניתן לקרוא מ-UI
+- **מיגרציה שומרת על הגדרות קיימות**: משתמש שכבר התאים הגדרות לא יאבד אותן בעדכון
+
+#### בדיקות שבוצעו
+
+- 14 unit tests עברו (6 ב-adaptive-grid, 8 ב-settings)
+- `bun run build` עבר בהצלחה
+- warnings בלבד ב-check (a11y labels, חבילות חיצוניות)
+
+#### Deploy
+- dev: `https://dev.puzzle-game-92p.pages.dev`
+
+---
+
 ## 2026-04-30 15:50
 
 ### version-2 — סידור הגדרות לקטגוריות (שלב 2 מתוך 3) — UI Refactor
