@@ -16,7 +16,7 @@ const PROFILE_PRESETS: Record<Exclude<SettingsProfile, "custom">, Partial<Teache
     shufflePiecePlacement: false,
     adaptGridToImage: true,
     studentLockMode: true,
-    proximity: 50,
+    proximity: 70,
     shapeStyle: "classic",
   },
   intermediate: {
@@ -25,7 +25,7 @@ const PROFILE_PRESETS: Record<Exclude<SettingsProfile, "custom">, Partial<Teache
     shufflePiecePlacement: true,
     adaptGridToImage: true,
     studentLockMode: false,
-    proximity: 35,
+    proximity: 50,
     shapeStyle: "classic",
   },
   advanced: {

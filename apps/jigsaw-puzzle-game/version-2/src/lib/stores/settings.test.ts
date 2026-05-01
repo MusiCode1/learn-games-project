@@ -50,7 +50,7 @@ describe("Settings Profiles", () => {
     expect(settings.shufflePiecePlacement).toBe(false);
     expect(settings.adaptGridToImage).toBe(true);
     expect(settings.studentLockMode).toBe(true);
-    expect(settings.proximity).toBe(50);
+    expect(settings.proximity).toBe(70);
     expect(settings.shapeStyle).toBe("classic");
   });
 
@@ -66,7 +66,7 @@ describe("Settings Profiles", () => {
     expect(settings.shufflePiecePlacement).toBe(true);
     expect(settings.adaptGridToImage).toBe(true);
     expect(settings.studentLockMode).toBe(false);
-    expect(settings.proximity).toBe(35);
+    expect(settings.proximity).toBe(50);
     expect(settings.shapeStyle).toBe("classic");
   });
 
