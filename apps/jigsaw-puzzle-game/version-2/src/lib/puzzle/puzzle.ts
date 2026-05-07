@@ -319,7 +319,7 @@ export class Puzzle {
 
       let fits: boolean;
       if (isLandscape) {
-        // תמונה מימין, חלקים בעמודות משמאל
+        // תמונה במרכז, חלקים בעמודות מימין
         const ppcol = mmax(1, Math.floor((this.contHeight - 2 * pad) / (pieceH + gapY)));
         const ncols = Math.ceil(P / ppcol);
         const trayW = ncols * (pieceW + gapX) - gapX;
@@ -327,7 +327,7 @@ export class Puzzle {
           gameW + innerGap + trayW + 2 * pad <= this.contWidth &&
           gameH + 2 * pad <= this.contHeight;
       } else {
-        // תמונה למעלה, חלקים בשורות למטה
+        // תמונה במרכז, חלקים בשורות למטה
         const pprow = mmax(1, Math.floor((this.contWidth - 2 * pad) / (pieceW + gapX)));
         const nrows = Math.ceil(P / pprow);
         const trayH = nrows * (pieceH + gapY) - gapY;
@@ -351,27 +351,9 @@ export class Puzzle {
     const gapX = Puzzle.trayGap(pieceW);
     const gapY = Puzzle.trayGap(bestPieceH);
 
-    // חישוב offsets — מיקום התמונה בתוך ה-container
-    if (isLandscape) {
-      const ppcol = mmax(
-        1,
-        Math.floor((this.contHeight - 2 * pad) / (bestPieceH + gapY)),
-      );
-      const ncols = Math.ceil(P / ppcol);
-      const trayW = ncols * (pieceW + gapX) - gapX;
-      // תמונה מרוכזת בשטח שנשאר אחרי ה-tray
-      const remainingW = this.contWidth - trayW - innerGap;
-      this.offsx = trayW + innerGap + (remainingW - this.gameWidth) / 2;
-      this.offsy = (this.contHeight - this.gameHeight) / 2;
-    } else {
-      const pprow = mmax(1, Math.floor((this.contWidth - 2 * pad) / (pieceW + gapX)));
-      const nrows = Math.ceil(P / pprow);
-      const trayH = nrows * (bestPieceH + gapY) - gapY;
-      // תמונה מרוכזת בשטח שנשאר מעל ה-tray
-      const remainingH = this.contHeight - trayH - innerGap;
-      this.offsx = (this.contWidth - this.gameWidth) / 2;
-      this.offsy = (remainingH - this.gameHeight) / 2;
-    }
+    // חישוב offsets — תמונה במרכז המסך
+    this.offsx = (this.contWidth - this.gameWidth) / 2;
+    this.offsy = (this.contHeight - this.gameHeight) / 2;
   }
 
   /**
@@ -402,11 +384,13 @@ export class Puzzle {
     });
 
     if (isLandscape) {
-      // חלקים בעמודות משמאל, מלמעלה למטה
+      // חלקים בעמודות מימין לתמונה הממורכזת
       const piecesPerCol = mmax(
         1,
         Math.floor((this.contHeight - 2 * pad) / (this.scaley + gapY)),
       );
+      // התחלת ה-tray מימין לתמונה
+      const trayOriginX = this.offsx + this.gameWidth + innerGap;
 
       sorted.forEach((pp, i) => {
         const col = Math.floor(i / piecesPerCol);
@@ -416,13 +400,13 @@ export class Puzzle {
         const colHeight = colPieceCount * (this.scaley + gapY) - gapY;
         const startY = (this.contHeight - colHeight) / 2;
 
-        const cellX = pad + col * (this.scalex + gapX);
+        const cellX = trayOriginX + col * (this.scalex + gapX);
         const cellY = startY + row * (this.scaley + gapY);
         // moveTo מקבל את פינת ה-canvas (כולל שוליים של 0.5 grid unit)
         pp.moveTo(cellX - this.scalex * 0.5, cellY - this.scaley * 0.5);
       });
     } else {
-      // חלקים בשורות למטה, משמאל לימין
+      // חלקים בשורות למטה מהתמונה הממורכזת
       const piecesPerRow = mmax(
         1,
         Math.floor((this.contWidth - 2 * pad) / (this.scalex + gapX)),
