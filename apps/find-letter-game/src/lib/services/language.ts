@@ -38,16 +38,19 @@ export const language = {
 	settingAvoidSimilarHint: 'לא יוצגו יחד אותיות שנשמעות או נראות דומות (למשל ס/שׂ, ב רפה/ו)',
 	settingCooldown: 'משך עונש בטעות (שניות)',
 	settingCooldownHint: 'אחרי לחיצה שגויה, הלוח ננעל למשך הזמן הזה כדי למנוע ניחוש',
+	settingQuestionsPerBoard: 'שאלות בכל לוח',
+	settingQuestionsPerBoardHint: '0 = לשאול על כל הכרטיסים בלוח. אחרת — מספר השאלות לפני שהלוח מתחלף.',
+	settingBoardsPerSet: 'לוחות בסבב',
+	settingBoardsPerSetHint: 'כמה לוחות התלמיד מסיים לפני שהוא מקבל פרס.',
+	settingsSummary: 'סך השאלות לפרס',
 
-	// קבוצות אותיות
-	groupsHeader: 'קבוצות אותיות',
-	groupsHint: 'אילו קבוצות אותיות יישלפו ללוח',
-	groupBaseLabel: 'בסיס',
-	groupBaseHint: '21 אותיות עם פתח (כולל ב/כ/פ דגושות)',
-	groupConfusingLabel: 'מבלבלות',
-	groupConfusingHint: 'שׂ (שין שמאלית), ע',
-	groupRafeLabel: 'רפות',
-	groupRafeHint: 'ב רפה, כ רפה, פ רפה — עם הקראה מקורבת לצליל הרפה',
+	// בחירת אותיות
+	letterSelectionHeader: 'אותיות להצגה',
+	letterSelectionHint: 'אילו אותיות יופיעו בלוח',
+	selectAllLabel: 'סמן הכל',
+	clearAllLabel: 'נקה הכל',
+	resetToDefaultLabel: 'ברירת מחדל',
+	minimumLettersHint: 'יש לסמן לפחות שתי אותיות',
 
 	// הגדרות TTS
 	ttsProviderLabel: 'ספק הקראה',
@@ -58,5 +61,9 @@ export const language = {
 	ttsLoadingVoices: 'טוען קולות…',
 
 	// הגדרות חיזוקים — חלקן מנוהלות ע"י booster-kit
-	boosterDisabledNote: 'כדי להגדיר חיזוקים, יש להפעיל אותם.'
+	boosterDisabledNote: 'כדי להגדיר חיזוקים, יש להפעיל אותם.',
+
+	// === Cooldown Overlay — מציג ספירה לאחור בזמן עונש על טעות ===
+	cooldownTitle: 'טעות',
+	cooldownHint: 'המתן רגע ונסה שוב'
 } as const;

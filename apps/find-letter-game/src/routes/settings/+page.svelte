@@ -16,25 +16,9 @@
 	} from '$lib/stores/tts-settings.svelte';
 	import { fetchVoices, MODELS_BY_PROVIDER, type Voice } from '$lib/utils/voices';
 	import { speak } from '$lib/utils/tts';
-	import type { LetterGroup } from '$lib/utils/letters';
+	import LetterSelectionGrid from '../_components/LetterSelectionGrid.svelte';
 
 	const sizes: GridSize[] = ['2x3', '3x3', '3x4', '4x4'];
-
-	// === toggle של קבוצות אותיות ===
-	function toggleGroup(group: LetterGroup) {
-		const has = settings.activeGroups.includes(group);
-		if (has) {
-			// אסור לכבות את הכל — חייב להישאר לפחות אחד
-			if (settings.activeGroups.length === 1) return;
-			settings.activeGroups = settings.activeGroups.filter((g) => g !== group);
-		} else {
-			settings.activeGroups = [...settings.activeGroups, group];
-		}
-	}
-
-	function isGroupActive(group: LetterGroup) {
-		return settings.activeGroups.includes(group);
-	}
 
 	// === Booster config ===
 	let config = $state<Config>();
@@ -140,6 +124,50 @@
 			</div>
 
 			<div class="field">
+				<label class="field-label" for="qpb">{language.settingQuestionsPerBoard}</label>
+				<div class="range-row">
+					<input
+						id="qpb"
+						type="range"
+						min="0"
+						max={settings.totalCellsInGrid}
+						step="1"
+						bind:value={settings.questionsPerBoard}
+					/>
+					<span class="range-value">
+						{settings.questionsPerBoard === 0
+							? `הכל (${settings.totalCellsInGrid})`
+							: settings.questionsPerBoard}
+					</span>
+				</div>
+				<span class="toggle-hint">{language.settingQuestionsPerBoardHint}</span>
+			</div>
+
+			<div class="field">
+				<label class="field-label" for="bps">{language.settingBoardsPerSet}</label>
+				<div class="range-row">
+					<input
+						id="bps"
+						type="range"
+						min="1"
+						max="10"
+						step="1"
+						bind:value={settings.boardsPerSet}
+					/>
+					<span class="range-value">{settings.boardsPerSet}</span>
+				</div>
+				<span class="toggle-hint">{language.settingBoardsPerSetHint}</span>
+			</div>
+
+			<div class="field summary">
+				<span class="summary-label">{language.settingsSummary}:</span>
+				<span class="summary-value">{settings.totalQuestionsPerSet}</span>
+				<span class="summary-detail">
+					({settings.boardsPerSet} × {settings.effectiveQuestionsPerBoard})
+				</span>
+			</div>
+
+			<div class="field">
 				<label class="toggle">
 					<input type="checkbox" bind:checked={settings.voiceEnabled} />
 					<div class="toggle-text">
@@ -196,52 +224,14 @@
 			</div>
 		</section>
 
-		<!-- Section: קבוצות אותיות -->
+		<!-- Section: בחירת אותיות -->
 		<section class="card">
-			<h2 class="card-title">{language.groupsHeader}</h2>
-			<p class="muted small">{language.groupsHint}</p>
-
-			<div class="field">
-				<label class="toggle">
-					<input
-						type="checkbox"
-						checked={isGroupActive('base')}
-						onchange={() => toggleGroup('base')}
-					/>
-					<div class="toggle-text">
-						<span class="toggle-label">{language.groupBaseLabel}</span>
-						<span class="toggle-hint">{language.groupBaseHint}</span>
-					</div>
-				</label>
-			</div>
-
-			<div class="field">
-				<label class="toggle">
-					<input
-						type="checkbox"
-						checked={isGroupActive('confusing')}
-						onchange={() => toggleGroup('confusing')}
-					/>
-					<div class="toggle-text">
-						<span class="toggle-label">{language.groupConfusingLabel}</span>
-						<span class="toggle-hint">{language.groupConfusingHint}</span>
-					</div>
-				</label>
-			</div>
-
-			<div class="field">
-				<label class="toggle">
-					<input
-						type="checkbox"
-						checked={isGroupActive('rafe')}
-						onchange={() => toggleGroup('rafe')}
-					/>
-					<div class="toggle-text">
-						<span class="toggle-label">{language.groupRafeLabel}</span>
-						<span class="toggle-hint">{language.groupRafeHint}</span>
-					</div>
-				</label>
-			</div>
+			<h2 class="card-title">{language.letterSelectionHeader}</h2>
+			<p class="muted small">{language.letterSelectionHint}</p>
+			<LetterSelectionGrid
+				selectedIds={settings.selectedLetterIds}
+				onChange={(next) => (settings.selectedLetterIds = next)}
+			/>
 		</section>
 
 		<!-- Section: הגדרות TTS -->
@@ -506,6 +496,33 @@
 		accent-color: #f97316;
 	}
 
+	.summary {
+		flex-direction: row;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.75rem 1rem;
+		background: #fef3c7;
+		border: 1px solid #fde68a;
+		border-radius: 0.5rem;
+		margin-top: 0.5rem;
+	}
+
+	.summary-label {
+		font-weight: 700;
+		color: #92400e;
+	}
+
+	.summary-value {
+		font-size: 1.5rem;
+		font-weight: 900;
+		color: #b45309;
+	}
+
+	.summary-detail {
+		color: #92400e;
+		font-size: 0.95rem;
+	}
+
 	.range-value {
 		font-weight: 800;
 		color: #0f172a;
@@ -530,5 +547,13 @@
 	.booster-wrap :global(#container) {
 		max-width: 100% !important;
 		box-shadow: none !important;
+	}
+
+	/* מסתירים את ההגדרה "כמה תורות עד למחזק" של booster-kit —
+	 * אנחנו לא משתמשים ב-turnsPerReward שלו; המשחק מנהל את הסבב
+	 * דרך boardsPerSet × questionsPerBoard המקומיים.
+	 * ה-wrapper השלם (label + input + help text) מוסתר ע"י :has. */
+	.booster-wrap :global(div:has(> #turnsPerVideo)) {
+		display: none;
 	}
 </style>

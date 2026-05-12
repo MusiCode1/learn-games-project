@@ -1,6 +1,16 @@
 /**
  * ניהול מצב המשחק "איפה האות?"
  *
+ * שני מונים שמתעדכנים בכל לחיצה נכונה:
+ *
+ *   1. `correctInCurrentSet` — מספר התשובות הנכונות בסבב הנוכחי. מתאפס
+ *      רק אחרי פרס. ProgressWidget מציג אותו מתוך
+ *      `settings.totalQuestionsPerSet` (= boardsPerSet × questionsPerBoard).
+ *
+ *   2. `questionsAnsweredInBoard` — כמה שאלות נענו בלוח הנוכחי. כשמגיע
+ *      ל-`settings.effectiveQuestionsPerBoard` — הלוח מתחלף ללוח חדש,
+ *      וגם המונה `boardsCompletedInSet` מתקדם ב-1.
+ *
  * זרימה (state machine):
  *
  *   IDLE
@@ -10,21 +20,18 @@
  *   PLAYING
  *     ├─ click נכון ─→ SUCCESS (צליל הצלחה)
  *     │     │
- *     │     ├─ נשארו עוד כרטיסים בתור ─→ PLAYING (אותו לוח, target חדש)
- *     │     ├─ הלוח התרוקן + הגיע פרס ─→ REWARD (חיזוק) ─→ PLAYING (לוח חדש)
- *     │     └─ הלוח התרוקן + לא הגיע פרס ─→ PLAYING (לוח חדש)
+ *     │     ├─ נשארו עוד שאלות בלוח ─→ PLAYING (אותו לוח, target חדש)
+ *     │     ├─ הלוח הסתיים + נשארו לוחות בסבב ─→ PLAYING (לוח חדש)
+ *     │     └─ הלוח הסתיים + הסבב הושלם ─→ REWARD (חיזוק) ─→ PLAYING (לוח חדש)
  *     │
  *     └─ click שגוי ─→ COOLDOWN (לוח נעול cooldownMs ms)
  *           │
  *           └─ סיום cooldown ─→ PLAYING (אותו לוח, אותו target)
- *
- * עיקרון: לוח חדש מוגרל רק כשכל הכרטיסים שעליו נתפסו נכון.
  */
 
-import { get } from 'svelte/store';
 import { boosterService } from 'learn-booster-kit';
 import { pickBoard, type LetterCard } from '../utils/letters';
-import { settings, gridCellCount } from './settings.svelte';
+import { settings } from './settings.svelte';
 import { speak } from '../utils/tts';
 import { playSuccess, playError, playWin } from '../utils/sound';
 
@@ -32,9 +39,6 @@ export type GameStatus = 'IDLE' | 'PLAYING' | 'SUCCESS' | 'COOLDOWN' | 'REWARD';
 
 const SUCCESS_MS = 900;
 const SHAKE_MS = 600;
-
-/** ברירת מחדל אם ה-config של ה-booster עוד לא נטען */
-const DEFAULT_TURNS_PER_REWARD = 3;
 
 /** Fisher-Yates shuffle על מערך — לבחירת סדר השאלות בלוח */
 function shuffle<T>(arr: T[]): T[] {
@@ -50,10 +54,18 @@ class GameState {
 	status = $state<GameStatus>('IDLE');
 	board = $state<LetterCard[]>([]);
 	target = $state<LetterCard | null>(null);
+	/** מונה כל הזמן (היסטורי) — מוצג ב"נכון: N" של ה-HeaderBar */
 	score = $state(0);
+	/** מונה רץ של מספר ה-target הנוכחי בכל המשחק (לדיבוג) */
 	round = $state(0);
-	/** מונה הצלחות מאז החיזוק האחרון — נכלל ב-ProgressWidget */
-	winsSinceLastReward = $state(0);
+
+	/** מונה תשובות נכונות בסבב הנוכחי (מתאפס בפרס). ProgressWidget מציג אותו. */
+	correctInCurrentSet = $state(0);
+	/** כמה לוחות הושלמו בסבב הנוכחי (מתאפס בפרס). */
+	boardsCompletedInSet = $state(0);
+	/** כמה שאלות נענו על הלוח הנוכחי (מתאפס בכל לוח חדש). */
+	questionsAnsweredInBoard = $state(0);
+
 	/** מזהה הכרטיס השגוי שנלחץ לאחרונה — להפעלת אנימציית רעידה */
 	shakingId = $state<string | null>(null);
 	/** האם בקשת חיזוק כרגע בעיבוד (למניעת לחיצות כפולות) */
@@ -74,30 +86,35 @@ class GameState {
 	// =================== ACTIONS ===================
 
 	/**
-	 * התחלת לוח חדש: מגריל אותיות ובונה תור שאלות לכל כרטיסי הלוח.
+	 * התחלת לוח חדש: מגריל אותיות ובונה תור שאלות.
+	 * אורך התור הוא לפי `settings.effectiveQuestionsPerBoard` (לא בהכרח כל
+	 * הכרטיסים על הלוח — אם questionsPerBoard מוגדר נמוך יותר).
 	 */
 	startBoard(): void {
-		const cellCount = gridCellCount(settings.gridSize);
 		this.board = pickBoard({
-			count: cellCount,
-			groups: settings.activeGroups,
+			count: settings.totalCellsInGrid,
+			selectedLetterIds: settings.selectedLetterIds,
 			avoidSimilar: settings.avoidSimilar
 		});
 
-		// תור השאלות — כל הכרטיסים שעל הלוח, בסדר אקראי
-		this.remainingTargets = shuffle(this.board);
+		// מאפסים את מונה השאלות בלוח החדש
+		this.questionsAnsweredInBoard = 0;
+
+		// תור השאלות — דגימת `effectiveQuestionsPerBoard` כרטיסים אקראיים מהלוח
+		const questionsCount = settings.effectiveQuestionsPerBoard;
+		this.remainingTargets = shuffle(this.board).slice(0, questionsCount);
 		this.advanceToNextTarget(/* isFirstOnBoard */ true);
 	}
 
 	/**
-	 * מעבר ל-target הבא בתוך אותו לוח. אם התור התרוקן — מתחיל לוח חדש
-	 * (אחרי טיפול אופציונלי בחיזוק).
+	 * מעבר ל-target הבא בתוך אותו לוח. אם התור התרוקן —
+	 * הלוח הסתיים: או לוח חדש או פרס (לפי boardsPerSet).
 	 */
 	private advanceToNextTarget(isFirstOnBoard: boolean): void {
 		const next = this.remainingTargets.shift();
 
 		if (!next) {
-			// הלוח התרוקן — בודקים אם הגיע פרס לפני שמתחילים לוח חדש
+			// הלוח הנוכחי הסתיים
 			this.handleBoardCompleted();
 			return;
 		}
@@ -109,7 +126,11 @@ class GameState {
 
 		// הדפסה לדיבוג
 		console.log(
-			`[find-letter] round ${this.round}: target = "${this.target.display}" (id=${this.target.id}, speak="${this.target.speak}", remaining=${this.remainingTargets.length}/${this.board.length})`
+			`[find-letter] round ${this.round}: target = "${this.target.display}" ` +
+				`(id=${this.target.id}, speak="${this.target.speak}", ` +
+				`board=${this.boardsCompletedInSet + 1}/${settings.boardsPerSet}, ` +
+				`q=${this.questionsAnsweredInBoard + 1}/${settings.effectiveQuestionsPerBoard}, ` +
+				`set=${this.correctInCurrentSet}/${settings.totalQuestionsPerSet})`
 		);
 
 		// הקראה אוטומטית — בלוח חדש משהים מעט יותר כדי שהגרפיקה תספיק להתעדכן
@@ -142,11 +163,18 @@ class GameState {
 	}
 
 	/**
-	 * תשובה נכונה — צליל הצלחה, מונים, מעבר ל-target הבא בלוח.
+	 * תשובה נכונה — צליל, מעלה מונים, מעבר ל-target הבא.
+	 *
+	 * `score` ו-`correctInCurrentSet` שניהם מתקדמים בכל תשובה נכונה,
+	 * אבל יש להם תפקידים שונים:
+	 *   - `score` — מונה היסטורי של כל המשחק (HeaderBar).
+	 *   - `correctInCurrentSet` — מונה רץ של הסבב הנוכחי, מתאפס בפרס
+	 *     (ProgressWidget).
 	 */
 	private handleCorrect(): void {
 		this.score += 1;
-		this.winsSinceLastReward += 1;
+		this.correctInCurrentSet += 1;
+		this.questionsAnsweredInBoard += 1;
 		this.status = 'SUCCESS';
 		playSuccess();
 
@@ -156,7 +184,7 @@ class GameState {
 	}
 
 	/**
-	 * תשובה שגויה — צליל error, רעידה, ועונש (cooldown) שבמהלכו לחיצות נחסמות.
+	 * תשובה שגויה — צליל error, רעידה, ועונש (cooldown).
 	 */
 	private handleWrong(card: LetterCard): void {
 		this.shakingId = card.id;
@@ -164,7 +192,7 @@ class GameState {
 		this.cooldownUntilTs = Date.now() + settings.cooldownMs;
 		playError();
 
-		// סיום אנימציית הרעידה (מפסיקים את ה-class על הכרטיס) — מתרחש לפני סיום העונש
+		// סיום אנימציית הרעידה
 		setTimeout(() => {
 			this.shakingId = null;
 		}, SHAKE_MS);
@@ -178,20 +206,18 @@ class GameState {
 	}
 
 	/**
-	 * הלוח התרוקן (כל הכרטיסים נשאלו ונענו נכון).
-	 * בודק אם הגיע פרס; אם כן — מפעיל reward; אחרת — מתחיל לוח חדש מיד.
+	 * הלוח הנוכחי הסתיים (כל ה-questionsPerBoard נענו).
+	 *
+	 * מקדם את `boardsCompletedInSet`. אם הסבב הסתיים (=`boardsPerSet` לוחות) —
+	 * מפעיל פרס ומאפס. אחרת — לוח חדש מיד.
 	 */
 	private handleBoardCompleted(): void {
-		// בדיקת פרס לפי ה-config של booster
-		let turnsForReward = DEFAULT_TURNS_PER_REWARD;
-		try {
-			const config = get(boosterService.config);
-			if (config?.turnsPerReward) turnsForReward = config.turnsPerReward;
-		} catch {
-			// booster עוד לא אותחל — מתעלמים
-		}
+		this.boardsCompletedInSet += 1;
 
-		if (settings.boosterEnabled && this.winsSinceLastReward >= turnsForReward) {
+		if (
+			settings.boosterEnabled &&
+			this.boardsCompletedInSet >= settings.boardsPerSet
+		) {
 			this.triggerReward();
 		} else {
 			this.startBoard();
@@ -199,7 +225,7 @@ class GameState {
 	}
 
 	/**
-	 * הפעלת חיזוק (סרטון/אנימציה) ואז המשך ללוח חדש.
+	 * הפעלת חיזוק (סרטון/אנימציה) ואז המשך ללוח חדש (סבב חדש).
 	 */
 	private async triggerReward(): Promise<void> {
 		if (this.isRewardPending) return;
@@ -212,7 +238,9 @@ class GameState {
 		} catch (e) {
 			console.error('[booster] triggerReward failed:', e);
 		} finally {
-			this.winsSinceLastReward = 0;
+			// איפוס מוני הסבב
+			this.correctInCurrentSet = 0;
+			this.boardsCompletedInSet = 0;
 			this.isRewardPending = false;
 			this.startBoard();
 		}
@@ -224,7 +252,9 @@ class GameState {
 	resetGame(): void {
 		this.score = 0;
 		this.round = 0;
-		this.winsSinceLastReward = 0;
+		this.correctInCurrentSet = 0;
+		this.boardsCompletedInSet = 0;
+		this.questionsAnsweredInBoard = 0;
 		this.cooldownUntilTs = 0;
 		this.status = 'IDLE';
 		this.board = [];

@@ -2,10 +2,159 @@
 
 תיעוד התקדמות פיתוח של משחק "איפה האות?" — תרגול זיהוי אותיות עברית בקול ובמראה.
 
-**Live URLs (פנימי):**
+**Live URLs:**
 
-- Dev: https://musicode-find-letter.nue.tuns.sh (HMR)
-- Preview: https://musicode-find-letter-preview.nue.tuns.sh (build)
+- **Production**: https://find-letter-game.pages.dev (Cloudflare Pages)
+- Dev (פנימי): https://musicode-find-letter.nue.tuns.sh (HMR, tuns.sh)
+- Preview (פנימי): https://musicode-find-letter-preview.nue.tuns.sh (build, tuns.sh)
+
+---
+
+## 2026-05-12 16:20
+
+### תשתית בדיקות, CooldownOverlay, תיקון צמדי דמיון, ובחירת אותיות פרטנית
+
+ארבעה שלבי פיתוח סדרתיים בגישת TDD (vertical slicing): הקמת vitest, חלון cooldown עם טבעת SVG, הגדרה מחדש של צמדי דמיון לצלילי-בלבד, ומעבר לבחירת אותיות פרטנית במסך ההגדרות.
+
+#### מה בוצע?
+
+**1. Phase 0 — תשתית בדיקות (vitest)**
+
+- נוסף `vitest@3` + `jsdom` + `@testing-library/svelte` + `@testing-library/jest-dom` ל-devDependencies.
+- נוצר `vitest.config.ts` עצמאי (עם `@sveltejs/vite-plugin-svelte` ישירות — לא `mergeConfig` — בגלל אי-תאימות עם ה-SvelteKit adapter בסביבת jsdom).
+- נוצר `vitest-setup.ts` עם `@testing-library/jest-dom/vitest`.
+- נוסף `"types": ["vitest/globals"]` ל-`tsconfig.json` לפתרון שגיאות TypeScript על `test`/`expect`.
+- `bun run test:run` עובד; `bun run check` ירוק (12 שגיאות pre-existing ב-`learn-booster-kit` — לא קשורות אלינו).
+
+**2. Phase 1 — CooldownOverlay עם טבעת SVG**
+
+- **הבעיה**: מנגנון ה-cooldown הציג רק pill קטן עם מספר. הלחיצות נחסמו בלוגיקה אבל ויזואלית הכרטיסים נראו עדיין לחיצים.
+- `src/lib/utils/cooldown.ts` — פונקציה טהורה `computeCooldownView(untilTs, nowTs, durationMs): CooldownView`. ניתנת לבדיקה בלי DOM. 6 בדיקות TDD (9 cases עם `.each`).
+- `src/routes/_components/CooldownOverlay.svelte` — overlay מלא-מסך (position:absolute, blur, z-50, pointer-events:auto) עם מודל לבן ב-center. טבעת SVG (r=56, CIRC≈351.86) מתרוקנת מ-100% ל-0% לאורך `cooldownMs`. `setInterval` כל 50ms לאנימציה חלקה.
+- `+page.svelte` — הוסר ה-`cooldown-pill` הישן (now/effect/derived + HTML + CSS). נוסף `<CooldownOverlay>`.
+- הערה: בדיקות רכיב Svelte 5 דורשות `mount()` שאינו זמין ב-jsdom (SSR limitation). 2 בדיקות סומנו `test.skip`. הלוגיקה הטהורה — 100% מכוסה.
+
+**3. Phase 2 — צמדי דמיון: צלילי בלבד**
+
+- **הבעיה**: `SIMILARITY_PAIRS` ערבב צמדים צליליים עם צורניים. ק+כ, א+ע+ה הופיעו יחד בלוח.
+- שינוי שם: `SIMILARITY_PAIRS` → `PHONETIC_SIMILARITY_PAIRS` (מיוצאת).
+- **5 צמדים חדשים שנוספו**: ק↔כּ (`qa`↔`ka`), א↔ה (`a`↔`ha`), ע↔ה (`aa`↔`ha`), ס↔ז (`sa`↔`za`), צ↔ט (`tza`↔`ta`).
+- **8 צמדים צורניים שהוסרו** מהלוגיקה הפעילה: בּ↔בַ, כּ↔כַ, פּ↔פַ, ד↔ר, ח↔ה, ו↔ז, ג↔נ, י↔ו.
+- `VISUAL_SIMILARITY_PAIRS_FUTURE` — קבוע חדש מיוצא עם 13 צמדים ויזואליים + JSDoc. מתועד לשימוש עתידי בפיצ'ר "זוגות מכוונים".
+- `buildSimilarityMap` משתמשת רק ב-`PHONETIC_SIMILARITY_PAIRS`.
+- 9 בדיקות TDD כולל regression סטטיסטי (100 ריצות — לא מופיע צמד צלילי באותו לוח; לא מופיע fallback בלוח נורמלי).
+- `docs/similar-letters.md` — נוסף סעיף 9 "תכונות עתידיות" עם תיעוד: צמדים ויזואליים, מצב "זוגות מכוונים", ניקוד מרובה.
+
+**4. Phase 3 — בחירת אותיות פרטנית**
+
+- **הבעיה**: המורה יכול היה רק לבחור קבוצות מאקרו (base/confusing/rafe), לא אותיות פרטניות.
+- `src/lib/utils/letters.ts`:
+  - `ALL_LETTERS_ALPHABETICAL` — 26 האותיות בסדר א-ב: א,בּ,בַ,ג,ד,ה,ו,ז,ח,ט,י,כּ,כַ,ל,מ,נ,ס,ע,פּ,פַ,צ,ק,ר,שׁ,שׂ,תּ.
+  - `DEFAULT_LETTER_IDS` — 26 מזהים (ברירת מחדל = הכל).
+  - `getLettersByIds(ids: string[]): LetterCard[]`.
+  - `PickBoardOptions`: שדה `groups` הוחלף ב-`selectedLetterIds: string[]`.
+  - `pickBoard` משתמש ב-`getLettersByIds` במקום `getLettersForGroups`.
+- `src/lib/stores/settings-migration.ts` — פונקציה טהורה `migrateSettings(raw)`. טבלת מיפוי סטטית `GROUP_TO_IDS` (דטרמיניסטי — לא תלוי בקוד `letters.ts`). תומך: v2 עם `activeGroups` → ממיר ל-`selectedLetterIds`; v3 → pass-through; שבור → אובייקט ריק. 5 בדיקות TDD.
+- `src/lib/stores/settings.svelte.ts` — `CURRENT_VERSION=3`. שדה `activeGroups` הוחלף ב-`selectedLetterIds`. `load()` קורא ל-`migrateSettings()`. ברירת מחדל = כל 26 האותיות.
+- `src/lib/stores/game-state.svelte.ts` — קריאת `pickBoard` עודכנה ל-`selectedLetterIds`.
+- `src/routes/_components/LetterSelectionGrid.svelte` — רשת CSS `auto-fill minmax(60px,1fr)` עם כפתורי בחירה לכל אות. כפתורי "סמן הכל" / "נקה הכל" / "ברירת מחדל". אכיפת מינימום 2 אותיות.
+- `src/routes/settings/+page.svelte` — הוסרו `toggleGroup`/`isGroupActive` ו-3 ה-toggles של הקבוצות. נוסף `<LetterSelectionGrid>`.
+- `src/lib/services/language.ts` — הוסרו 8 מפתחות `group*`. נוספו: `letterSelectionHeader`, `letterSelectionHint`, `selectAllLabel`, `clearAllLabel`, `resetToDefaultLabel`, `minimumLettersHint`.
+- 7 בדיקות TDD נוספות (tests 10–16 ב-`letters.test.ts`).
+
+**5. סה"כ בדיקות**
+
+- 40 בדיקות עוברות, 2 דולגות (Svelte 5 + jsdom — מגבלת סביבה).
+- קבצי בדיקה: `smoke.test.ts`, `cooldown.test.ts`, `letters.test.ts`, `settings-migration.test.ts`.
+
+#### החלטות ארכיטקטורה
+
+- **צלילי בלבד ב-avoidSimilar**: צמדים צורניים (ד↔ר, ח↔ה וכו') הועברו ל-`VISUAL_SIMILARITY_PAIRS_FUTURE` — מתועדים אך לא פעילים. ההחלטה: בלבול **צלילי** הוא המשמעותי ביותר לתלמידים שלומדים לקרוא; בלבול צורני רלוונטי לשלב מתקדם יותר (ראה `docs/similar-letters.md §9`).
+- **migration דטרמיניסטי**: `GROUP_TO_IDS` ב-`settings-migration.ts` מפורש ולא קורא ל-`getLettersForGroups`. כך המיגרציה תישאר נכונה גם אם המאגר ישתנה בעתיד.
+- **vitest config עצמאי** (לא `mergeConfig`): `@sveltejs/kit/vite` ב-vitest mode מכניס adapter שמצפה ל-Cloudflare Pages runtime. עם `@sveltejs/vite-plugin-svelte` ישירות — הbuild עובד תקין לבדיקות TS טהורות.
+- **`computeCooldownView` כ-deep module**: כל לוגיקת הטיימר (remainingMs, progress, ceil) בפונקציה טהורה ניתנת לבדיקה. ה-component עצמו "טיפש" — רק interval + render.
+
+#### מעקפים ופתרונות
+
+- **`@testing-library/svelte` + Svelte 5 + jsdom**: קריאה ל-`mount()` בסביבת jsdom נכשלת עם `lifecycle_function_unavailable`. המעקף: `test.skip` על 2 בדיקות הרכיב. הלוגיקה הטהורה מכוסה ב-100%. בדיקות e2e ויזואליות — דרך linux-gui browser (לא CI).
+- **vitest@3 במקום @2**: `vitest@2` מביא `vite@5`; `@sveltejs/vite-plugin-svelte@6` דורש `server.environments` שנוסף רק ב-`vite@6`. `vitest@3` מגיע עם `vite@6` ופותר את הבעיה.
+
+---
+
+## 2026-05-12 15:15
+
+### תיקוני TTS, מודל סבב חדש (boards/questions), ודפלוי ל-Cloudflare Pages
+
+איטרציה שנייה אחרי הגרסה הראשונית — תיקון באג סינכרון משמעותי ב-ProgressWidget, החלפת מודל ה-"turn" של booster-kit במודל מקומי דו-ממדי (לוחות × שאלות בלוח), תיקון בעיית הגייה ב-TTS, ופרסום ל-Cloudflare Pages.
+
+#### מה בוצע?
+
+**1. תיקון סינכרון ProgressWidget (איטרציה ראשונה)**
+
+- באג: `winsSinceLastReward++` רץ בכל לחיצה נכונה, אבל בדיקת הפרס רצה רק כשהלוח התרוקן. התוצאה — ProgressWidget הציג `1/1`, `2/1`, `3/1` תוך כדי משחק, בלי שהפרס מופעל.
+- תיקון ראשון: הזזה של `winsSinceLastReward++` ל-`handleBoardCompleted()` (turn = לוח שלם, תואם passcode-practice ו-lotto-game).
+
+**2. מודל סבב חדש: boards × questions (איטרציה שנייה — לבקשת המשתמש)**
+
+- הוספו שתי הגדרות חדשות ב-`settings.svelte.ts`:
+  - `questionsPerBoard` (0–12, 0 = כל הכרטיסים) — כמה שאלות לשאול בלוח לפני שהוא מתחלף.
+  - `boardsPerSet` (1–10) — כמה לוחות התלמיד צריך להשלים לפני פרס.
+- הוספו getters נגזרים:
+  - `totalCellsInGrid` — `gridSize.rows × gridSize.cols`.
+  - `effectiveQuestionsPerBoard` — אם `questionsPerBoard=0` אז `totalCellsInGrid`, אחרת `min(questionsPerBoard, totalCellsInGrid)`.
+  - `totalQuestionsPerSet` — `effectiveQuestionsPerBoard × max(1, boardsPerSet)`.
+- שכתוב כולל של `game-state.svelte.ts`:
+  - 3 מונים חדשים: `correctInCurrentSet`, `boardsCompletedInSet`, `questionsAnsweredInBoard` (במקום `winsSinceLastReward`).
+  - `startBoard()` שולף `effectiveQuestionsPerBoard` כרטיסים אקראיים מהלוח לתור.
+  - `handleCorrect()` מקדם את `correctInCurrentSet` ו-`score` יחד עם כל לחיצה נכונה.
+  - `handleBoardCompleted()` מקדם את `boardsCompletedInSet`, ומפעיל פרס כשמגיע ל-`settings.boardsPerSet`.
+- ProgressWidget מציג עכשיו `correctInCurrentSet / totalQuestionsPerSet` — מעודכן בכל לחיצה נכונה.
+
+**3. הסרת תלות ב-`turnsPerReward` של booster-kit**
+
+- ה-kit חושף `boosterService.config.turnsPerReward`, אבל אנחנו מנהלים את הסבב באופן עצמאי.
+- ב-`+page.svelte` הסרנו את הקריאה ל-`config.turnsPerReward`; `progressMax = settings.totalQuestionsPerSet`.
+- ב-settings page הסתרנו את ההגדרה `#turnsPerVideo` של ה-kit עם `:global(div:has(> #turnsPerVideo)) { display: none }` כדי שלא יבלבל את המשתמש.
+
+**4. סקציית "סך השאלות לפרס" במסך ההגדרות**
+
+- חישוב חי: `boardsPerSet × effectiveQuestionsPerBoard`.
+- תצוגה צהובה/כתומה מסכמת כדי שהמשתמש יראה את ההשפעה של ה-sliders.
+
+**5. דפלוי ל-Cloudflare Pages**
+
+- יצירת פרויקט Pages: `bun x wrangler pages project create find-letter-game --production-branch=main`.
+- הדפלוי הראשון יצא ל-branch dev (אוטומטית לפי git branch); הדפלוי השני עבר ל-branch main עם `--branch=main --commit-dirty=true`.
+- ה-URL הקבוע: **https://find-letter-game.pages.dev**.
+
+**6. תיקון הגייה ב-TTS**
+
+- באג שזיהה המשתמש: `חָה` נשמע כמו "הָ" (ח' נבלעת), `טָה` נשמע כמו "הָ" (ט' נבלעת). זה קרה ב-ElevenLabs `eleven_v3` עבור עברית.
+- תהליך אבחון:
+  - הורדנו 20 קבצי אודיו (כל ה-`speak` הקיימים) מ-CDN של הפרוקסי.
+  - שלחנו ל-Gemini CLI (`gemini-3-flash-preview`) לתמלול אובייקטיבי עם הוראה ברורה להתעלם משם הקובץ.
+  - Gemini אישר: כל ה-`speak` שמסתיים ב-`ה` בעייתי באותיות גרוניות; כל ה-`speak` שמסתיים ב-`א` (או בלי ה') תקין.
+- תיקון: החלפת `ה` בסוף ה-`speak` של כל 26 הכרטיסים ב-`א`:
+  - `בָּה` → `בָּא`, `חָה` → `חָא`, `טָה` → `טָא`, `הָה` → `הָא` וכו'.
+- אימות חוזר מול Gemini אחרי השינוי: 16/16 אותיות נקראות נכון (Gemini זיהה את העיצור הראשון נכון בכולן).
+- דפלוי ל-prod עם ה-`speak` החדש.
+
+#### החלטות ארכיטקטורה
+
+- **turn = לוח שלם ולא לחיצה בודדת**: כדי לתאום את הסמנטיקה של booster-kit (turnsPerReward) ושאר המשחקים. גם נראה הגיוני יותר מבחינת ה-flow של המשחק.
+- **המודל החדש הוא דו-ממדי**: `boardsPerSet × questionsPerBoard`. נותן למורה גמישות מקסימלית — אפשר להגדיר "3 לוחות עם 5 שאלות כל אחד" = 15 תשובות לפרס, או "1 לוח שלם" = 12 תשובות לפרס, וכו'.
+- **המשחק לא תלוי ב-`turnsPerReward` של ה-kit**: ההגדרות שלנו מנצחות כי הן מותאמות לדומיין הספציפי של המשחק (אותיות). booster-kit נשאר אחראי רק על *סוג* החיזוק (וידאו/אפליקציה/אתר), לא על *תדירותו*.
+- **הזרמת `correctInCurrentSet` ל-ProgressWidget בכל לחיצה**: מאפשר למשתמש לראות התקדמות חיה במקום שהפס "יקפוץ" רק אחרי כל לוח. חוויה הרבה יותר מתגמלת לתלמיד.
+- **שימוש ב-Gemini כ-"שופט" אובייקטיבי ל-TTS**: במקום להאזין ידנית לכל אופציה ולנחש מה נשמע נכון, שלחנו את הקבצים ל-Gemini Vision/Audio לתמלול. ניתוח אובייקטיבי שעוצב אצלי כתב את התוצאה. אומת מול הדיווחים של המשתמש.
+- **`ה` → `א` בסוף ה-speak**: שני התווים הם אם-קריאה שלא נשמעת בעברית מודרנית; ההבדל בצליל זניח. אבל `א` בסוף לא "טורף" את העיצור הראשון כפי ש-`ה` עושה במודל. ההסבר המלא נוסף כהערה ב-`letters.ts`.
+
+#### מעקפים ופתרונות
+
+- **אופטימיזציית cache R2**: כשהחלפנו את ה-`speak` (`חָה`→`חָא`), ה-hash של כל קובץ השתנה. הקאש הישן נשאר ב-R2 אבל לא נקרא יותר. בעתיד אפשר לרוץ cleanup, אבל זה לא דחוף.
+- **`bun x wrangler pages` deploys ל-branch הנוכחי**: אם ה-git branch הוא `dev`, wrangler יחשוב שזה הסביבה — לא production. הפתרון: `--branch=main` במפורש בפקודת ה-deploy, או החלפת `git checkout main` לפני.
+- **רימון על linux-gui חוסם את `*.tuns.sh`**: בזמן בדיקה, סינון האינטרנט "רימון" חסם את ה-preview URL ב-linux-gui container. הפתרון: ביצענו את הבדיקות מול **prod** (`find-letter-game.pages.dev`) שלא חסום.
+- **Svelte CSS לא תומך ב-`:global(...)` באמצע סלקטור**: ניסיון ראשון `.booster-wrap :global(#turnsPerVideo) ~ *` נכשל ב-build. הפתרון: `:has` באותו רמה — `.booster-wrap :global(div:has(> #turnsPerVideo)) { display: none }`.
+- **Gemini Pro quota exhausted**: כשניסינו עם `-m pro` (gemini-3-pro-preview) קיבלנו `QUOTA_EXHAUSTED` עם reset של 11 שעות. עברנו ל-`gemini-3-flash-preview` שהיה 100% פנוי — והוא הצליח לבצע את התמלול בצורה מספקת.
 
 ---
 

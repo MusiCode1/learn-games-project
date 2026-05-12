@@ -30,50 +30,63 @@ export interface LetterCard {
 
 // ===== קבוצה: base =====
 
+/*
+ * הערה על ה-`speak`:
+ *
+ * ה-TTS (ElevenLabs eleven_v3) נוטה "ליישר" אותיות גרוניות לעברית מודרנית.
+ * כשמסיימים מילה ב-`ה` (אם-קריאה), המודל לפעמים מבלע את העיצור הראשון
+ * ובמיוחד גורם ל-`ח` להישמע כמו `ה`, ל-`ט` להישמע כמו `ה`, וכו'.
+ *
+ * הפתרון: לסיים את ה-`speak` ב-`א` במקום `ה`. הבדל הצליל זניח (שניהם
+ * אם-קריאה שלא נשמעת), אבל זה גורם למודל לבטא נכון את העיצור הראשון.
+ *
+ * אומת מול Gemini transcription על כל 20 הקבצים — ראו docs/walkthrough.md.
+ */
+
 const BASE_LETTERS: LetterCard[] = [
-	{ id: 'a', display: 'אַ', speak: 'אָה', group: 'base' },
-	{ id: 'ba', display: 'בַּ', speak: 'בָּה', group: 'base' },
-	{ id: 'ga', display: 'גַ', speak: 'גָה', group: 'base' },
-	{ id: 'da', display: 'דַ', speak: 'דָה', group: 'base' },
-	{ id: 'ha', display: 'הַ', speak: 'הָה', group: 'base' },
-	{ id: 'va', display: 'וַ', speak: 'וָה', group: 'base' },
-	{ id: 'za', display: 'זַ', speak: 'זָה', group: 'base' },
-	{ id: 'cha', display: 'חַ', speak: 'חָה', group: 'base' },
-	{ id: 'ta', display: 'טַ', speak: 'טָה', group: 'base' },
-	{ id: 'ya', display: 'יַ', speak: 'יָה', group: 'base' },
-	{ id: 'ka', display: 'כַּ', speak: 'כָּה', group: 'base' },
-	{ id: 'la', display: 'לַ', speak: 'לָה', group: 'base' },
-	{ id: 'ma', display: 'מַ', speak: 'מָה', group: 'base' },
-	{ id: 'na', display: 'נַ', speak: 'נָה', group: 'base' },
-	{ id: 'sa', display: 'סַ', speak: 'סָה', group: 'base' },
-	{ id: 'pa', display: 'פַּ', speak: 'פָּה', group: 'base' },
-	{ id: 'tza', display: 'צַ', speak: 'צָה', group: 'base' },
-	{ id: 'qa', display: 'קַ', speak: 'קָה', group: 'base' },
-	{ id: 'ra', display: 'רַ', speak: 'רָה', group: 'base' },
-	{ id: 'sha', display: 'שַׁ', speak: 'שָׁה', group: 'base' },
-	{ id: 'tav', display: 'תַּ', speak: 'תָּה', group: 'base' }
+	{ id: 'a', display: 'אַ', speak: 'אָא', group: 'base' },
+	{ id: 'ba', display: 'בַּ', speak: 'בָּא', group: 'base' },
+	{ id: 'ga', display: 'גַ', speak: 'גָא', group: 'base' },
+	{ id: 'da', display: 'דַ', speak: 'דָא', group: 'base' },
+	{ id: 'ha', display: 'הַ', speak: 'הָא', group: 'base' },
+	{ id: 'va', display: 'וַ', speak: 'וָא', group: 'base' },
+	{ id: 'za', display: 'זַ', speak: 'זָא', group: 'base' },
+	{ id: 'cha', display: 'חַ', speak: 'חָא', group: 'base' },
+	{ id: 'ta', display: 'טַ', speak: 'טָא', group: 'base' },
+	{ id: 'ya', display: 'יַ', speak: 'יָא', group: 'base' },
+	{ id: 'ka', display: 'כַּ', speak: 'כָּא', group: 'base' },
+	{ id: 'la', display: 'לַ', speak: 'לָא', group: 'base' },
+	{ id: 'ma', display: 'מַ', speak: 'מָא', group: 'base' },
+	{ id: 'na', display: 'נַ', speak: 'נָא', group: 'base' },
+	{ id: 'sa', display: 'סַ', speak: 'סָא', group: 'base' },
+	{ id: 'pa', display: 'פַּ', speak: 'פָּא', group: 'base' },
+	{ id: 'tza', display: 'צַ', speak: 'צָא', group: 'base' },
+	{ id: 'qa', display: 'קַ', speak: 'קָא', group: 'base' },
+	{ id: 'ra', display: 'רַ', speak: 'רָא', group: 'base' },
+	{ id: 'sha', display: 'שַׁ', speak: 'שָׁא', group: 'base' },
+	{ id: 'tav', display: 'תַּ', speak: 'תָּא', group: 'base' }
 ];
 
 // ===== קבוצה: confusing =====
 
 const CONFUSING_LETTERS: LetterCard[] = [
-	{ id: 'sa_sin', display: 'שַׂ', speak: 'סָה', group: 'confusing' },
-	{ id: 'aa', display: 'עַ', speak: 'אָה', group: 'confusing' }
+	{ id: 'sa_sin', display: 'שַׂ', speak: 'סָא', group: 'confusing' },
+	{ id: 'aa', display: 'עַ', speak: 'אָא', group: 'confusing' }
 ];
 
 // ===== קבוצה: rafe =====
 
 const RAFE_LETTERS: LetterCard[] = [
-	{ id: 'va_rafe', display: 'בַ', speak: 'וָה', group: 'rafe' },
-	{ id: 'cha_rafe', display: 'כַ', speak: 'חָה', group: 'rafe' },
-	{ id: 'fa_rafe', display: 'פַ', speak: 'פָה', group: 'rafe' }
+	{ id: 'va_rafe', display: 'בַ', speak: 'וָא', group: 'rafe' },
+	{ id: 'cha_rafe', display: 'כַ', speak: 'חָא', group: 'rafe' },
+	{ id: 'fa_rafe', display: 'פַ', speak: 'פָא', group: 'rafe' }
 ];
 
 // ===== מאגר מאוחד =====
 
 export const ALL_LETTERS: LetterCard[] = [...BASE_LETTERS, ...CONFUSING_LETTERS, ...RAFE_LETTERS];
 
-const LETTERS_BY_GROUP: Record<LetterGroup, LetterCard[]> = {
+export const LETTERS_BY_GROUP: Record<LetterGroup, LetterCard[]> = {
 	base: BASE_LETTERS,
 	confusing: CONFUSING_LETTERS,
 	rafe: RAFE_LETTERS
@@ -82,6 +95,36 @@ const LETTERS_BY_GROUP: Record<LetterGroup, LetterCard[]> = {
 /** מחזיר את כל האותיות בקבוצות הפעילות. */
 export function getLettersForGroups(groups: LetterGroup[]): LetterCard[] {
 	return groups.flatMap((g) => LETTERS_BY_GROUP[g] ?? []);
+}
+
+// ===== כל האותיות לפי סדר א-ב =====
+
+/** מפה פנימית: id → LetterCard, לשימוש ב-ALL_LETTERS_ALPHABETICAL */
+const _lettersById = new Map(ALL_LETTERS.map(c => [c.id, c]));
+
+/**
+ * כל 26 האותיות לפי סדר א-ב — לתצוגה ב-UI של בחירת אותיות.
+ * הסדר: א, בּ, בַ, ג, ד, ה, ו, ז, ח, ט, י, כּ, כַ, ל, מ, נ, ס, ע, פּ, פַ, צ, ק, ר, שׁ, שׂ, ת
+ */
+export const ALL_LETTERS_ALPHABETICAL: LetterCard[] = [
+	'a', 'ba', 'va_rafe', 'ga', 'da', 'ha', 'va', 'za', 'cha', 'ta', 'ya',
+	'ka', 'cha_rafe', 'la', 'ma', 'na', 'sa', 'aa', 'pa', 'fa_rafe', 'tza',
+	'qa', 'ra', 'sha', 'sa_sin', 'tav'
+].map(id => _lettersById.get(id)!);
+
+/** מזהי כל 26 האותיות — ברירת המחדל לבחירת אותיות */
+export const DEFAULT_LETTER_IDS: string[] = ALL_LETTERS_ALPHABETICAL.map(c => c.id);
+
+/**
+ * מחזיר כרטיסי אותיות לפי רשימת מזהים.
+ * שומר על סדר הקלט. מדלג על מזהים לא-מוכרים.
+ */
+export function getLettersByIds(ids: string[]): LetterCard[] {
+	const byId = new Map(ALL_LETTERS.map(c => [c.id, c]));
+	return ids.flatMap(id => {
+		const c = byId.get(id);
+		return c ? [c] : [];
+	});
 }
 
 // ===== צמדי דמיון =====
@@ -97,40 +140,59 @@ export interface SimilarityPair {
 }
 
 /**
- * צמדים צליליים — נשמעים זהה או כמעט זהה.
- * ראו `docs/similar-letters.md` סעיף 3.
+ * צמדים צליליים — נשמעים זהה או כמעט זהה בעברית מודרנית.
+ * אלה **הצמדים היחידים** שמשפיעים על `areSimilar()` ועל מנגנון
+ * `avoidSimilar` בבחירת הלוח.
+ *
+ * ראו `docs/similar-letters.md` סעיף 3 ו-§9.1.
  */
-export const SIMILARITY_PAIRS: SimilarityPair[] = [
-	// === צמדים צליליים חזקים — שלושת המבוקשים במסמך (סעיף 3) ===
-	{ a: 'sa', b: 'sa_sin', kind: 'phonetic', strength: 'strong' }, // ס ↔ שׂ — אותו צליל בעברית מודרנית
+export const PHONETIC_SIMILARITY_PAIRS: SimilarityPair[] = [
+	// === חזקים — צליל זהה לחלוטין ===
+	{ a: 'sa', b: 'sa_sin', kind: 'phonetic', strength: 'strong' },    // ס ↔ שׂ — אותו צליל בעברית מודרנית
 	{ a: 'cha_rafe', b: 'cha', kind: 'phonetic', strength: 'strong' }, // כ רפה ↔ ח
-	{ a: 'va_rafe', b: 'va', kind: 'phonetic', strength: 'strong' }, // ב רפה ↔ ו
+	{ a: 'va_rafe', b: 'va', kind: 'phonetic', strength: 'strong' },   // ב רפה ↔ ו
+	{ a: 'ta', b: 'tav', kind: 'phonetic', strength: 'strong' },       // ט ↔ ת
+	{ a: 'a', b: 'aa', kind: 'phonetic', strength: 'strong' },         // א ↔ ע — שתיהן אלמות
+	{ a: 'qa', b: 'ka', kind: 'phonetic', strength: 'strong' },        // ק ↔ כּ — דומות מאוד בעברית מודרנית
 
-	// === צמדים צליליים חזקים נוספים (מהמסמך, סעיף 3) ===
-	{ a: 'ta', b: 'tav', kind: 'phonetic', strength: 'strong' }, // ט ↔ ת
-	{ a: 'a', b: 'aa', kind: 'phonetic', strength: 'strong' }, // א ↔ ע — שתיהן אלמות
-
-	// === אותה אות בצורה דגושה ורפה — אסור לערבב אותן באותו לוח ===
-	// (מבלבלים מאוד ויזואלית: כּ/כַ, פּ/פַ; ב'/בַ אוטומטית מכוסה ע"י va_rafe↔va)
-	{ a: 'ba', b: 'va_rafe', kind: 'visual', strength: 'strong' }, // בּ ↔ בַ (רפה)
-	{ a: 'ka', b: 'cha_rafe', kind: 'visual', strength: 'strong' }, // כּ ↔ כַ (רפה)
-	{ a: 'pa', b: 'fa_rafe', kind: 'visual', strength: 'strong' }, // פּ ↔ פַ (רפה)
-
-	// === צמדים צורניים (מהמסמך, סעיף 3) ===
-	{ a: 'da', b: 'ra', kind: 'visual', strength: 'medium' }, // ד ↔ ר
-	{ a: 'cha', b: 'ha', kind: 'visual', strength: 'medium' }, // ח ↔ ה
-	{ a: 'va', b: 'za', kind: 'visual', strength: 'medium' }, // ו ↔ ז
-	{ a: 'ga', b: 'na', kind: 'visual', strength: 'medium' }, // ג ↔ נ
-	{ a: 'ya', b: 'va', kind: 'visual', strength: 'medium' } // י ↔ ו
+	// === בינוניים — דמיון צלילי משמעותי ===
+	{ a: 'a', b: 'ha', kind: 'phonetic', strength: 'medium' },         // א ↔ ה — גרוניות שלרוב מבוטאות זהה
+	{ a: 'aa', b: 'ha', kind: 'phonetic', strength: 'medium' },        // ע ↔ ה — גרוניות שלרוב מבוטאות זהה
+	{ a: 'sa', b: 'za', kind: 'phonetic', strength: 'medium' },        // ס ↔ ז — שיניות (חסרות/קוליות)
+	{ a: 'tza', b: 'ta', kind: 'phonetic', strength: 'medium' },       // צ ↔ ט — דומות בהגייה אצל ילדים
 ];
 
 /**
- * בונה מפת חבר → קבוצת חברים דומים, מבוססת על הצמדים.
- * לדוגמה: similarMap['sa'] = ['sa_sin'].
+ * צמדי דמיון צורניים — מתועדים אך **לא** מופעלים בלוגיקת `areSimilar`.
+ *
+ * החלטה (2026-05-12): הסבב הנוכחי מטפל בדמיון צלילי בלבד.
+ * לפרטים ראו docs/similar-letters.md §9.1.
+ *
+ * כשיגיע הזמן — לאחד עם `PHONETIC_SIMILARITY_PAIRS` או להוסיף פרמטר `kind`.
+ */
+export const VISUAL_SIMILARITY_PAIRS_FUTURE: SimilarityPair[] = [
+	{ a: 'ba', b: 'va_rafe', kind: 'visual', strength: 'strong' },   // בּ ↔ בַ
+	{ a: 'ka', b: 'cha_rafe', kind: 'visual', strength: 'strong' },  // כּ ↔ כַ
+	{ a: 'pa', b: 'fa_rafe', kind: 'visual', strength: 'strong' },   // פּ ↔ פַ
+	{ a: 'da', b: 'ra', kind: 'visual', strength: 'medium' },        // ד ↔ ר
+	{ a: 'cha', b: 'ha', kind: 'visual', strength: 'medium' },       // ח ↔ ה
+	{ a: 'va', b: 'za', kind: 'visual', strength: 'medium' },        // ו ↔ ז
+	{ a: 'ga', b: 'na', kind: 'visual', strength: 'medium' },        // ג ↔ נ
+	{ a: 'ya', b: 'va', kind: 'visual', strength: 'medium' },        // י ↔ ו
+	{ a: 'sha', b: 'sa_sin', kind: 'visual', strength: 'strong' },   // שׁ ↔ שׂ
+	{ a: 'cha', b: 'tav', kind: 'visual', strength: 'strong' },      // ח ↔ ת
+	{ a: 'aa', b: 'tza', kind: 'visual', strength: 'strong' },       // ע ↔ צ
+	{ a: 'aa', b: 'ta', kind: 'visual', strength: 'medium' },        // ע ↔ ט
+	{ a: 'qa', b: 'ha', kind: 'visual', strength: 'medium' },        // ק ↔ ה
+];
+
+/**
+ * בונה מפת חבר → קבוצת חברים דומים, מבוססת על הצמדים הצליליים בלבד.
+ * לדוגמה: similarMap['sa'] = Set{'sa_sin'}.
  */
 function buildSimilarityMap(): Map<string, Set<string>> {
 	const m = new Map<string, Set<string>>();
-	for (const p of SIMILARITY_PAIRS) {
+	for (const p of PHONETIC_SIMILARITY_PAIRS) { // ← שינוי: רק צלילי
 		if (!m.has(p.a)) m.set(p.a, new Set());
 		if (!m.has(p.b)) m.set(p.b, new Set());
 		m.get(p.a)!.add(p.b);
@@ -151,15 +213,30 @@ export function areSimilar(idA: string, idB: string): boolean {
 
 /**
  * אופציות בחירה לבחירת לוח.
+ * תומך בשני מצבים:
+ *   1. selectedLetterIds (מצב חדש) — רשימת מזהי אותיות ישירות.
+ *   2. groups (מצב ישן, deprecated) — לתאימות לאחור.
  */
-export interface PickBoardOptions {
+export type PickBoardOptions = {
 	/** מספר כרטיסים בלוח (לפי גודל הגריד) */
 	count: number;
-	/** הקבוצות הפעילות (מתוכן שואבים אותיות) */
-	groups: LetterGroup[];
 	/** האם לוודא שאין שני כרטיסים "דומים" באותו לוח */
 	avoidSimilar: boolean;
-}
+} & (
+	| {
+			/** מזהי האותיות הנבחרות להצגה בלוח */
+			selectedLetterIds: string[];
+			groups?: never;
+	  }
+	| {
+			/**
+			 * @deprecated השתמש ב-selectedLetterIds במקום.
+			 * נשמר לתאימות לאחור עם קוד ישן שמשתמש בקבוצות.
+			 */
+			groups: LetterGroup[];
+			selectedLetterIds?: never;
+	  }
+);
 
 /** מספר ניסיונות מקסימלי לבניית לוח שעומד ב-avoidSimilar */
 const PICK_BOARD_MAX_ATTEMPTS = 50;
@@ -193,7 +270,10 @@ function pickBoardAttempt(pool: LetterCard[], count: number): LetterCard[] {
  * שנמצא ומשלימים אותו עם כרטיסים נוספים בלי האילוץ — שהמשחק לא ייתקע.
  */
 export function pickBoard(opts: PickBoardOptions): LetterCard[] {
-	const pool = getLettersForGroups(opts.groups);
+	// תמיכה בשני מצבי קריאה: selectedLetterIds (חדש) ו-groups (ישן — לתאימות)
+	const pool = 'selectedLetterIds' in opts && opts.selectedLetterIds !== undefined
+		? getLettersByIds(opts.selectedLetterIds)
+		: getLettersForGroups(('groups' in opts && opts.groups) ? opts.groups : []);
 	if (pool.length === 0) return [];
 
 	if (!opts.avoidSimilar) {

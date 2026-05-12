@@ -2,10 +2,11 @@
  * הגדרות משחק עם שמירה ב-localStorage
  */
 
-import type { LetterGroup } from '../utils/letters';
+import { DEFAULT_LETTER_IDS } from '../utils/letters';
+import { migrateSettings } from './settings-migration';
 
 const STORAGE_KEY = 'find-letter-game-settings';
-const CURRENT_VERSION = 2;
+const CURRENT_VERSION = 3;
 
 export type GridSize = '2x3' | '3x3' | '3x4' | '4x4';
 
@@ -15,12 +16,23 @@ export interface FindLetterSettings {
 	voiceEnabled: boolean;
 	/** האם להפעיל את מנגנון ה-Booster (חיזוקים אחרי N הצלחות) */
 	boosterEnabled: boolean;
-	/** קבוצות אותיות פעילות (מקור הכרטיסים ללוח) */
-	activeGroups: LetterGroup[];
+	/** מזהי האותיות הנבחרות להצגה בלוח */
+	selectedLetterIds: string[];
 	/** האם להימנע משני כרטיסים "דומים" באותו לוח (לפי SIMILARITY_PAIRS) */
 	avoidSimilar: boolean;
 	/** משך עונש מילישניות אחרי לחיצה שגויה — בזמן הזה הלוח נעול */
 	cooldownMs: number;
+	/**
+	 * כמה שאלות לשאול בכל לוח (לפני שמוחלף).
+	 * 0 = לשאול על כל הכרטיסים שעל הלוח (לפי gridSize).
+	 */
+	questionsPerBoard: number;
+	/**
+	 * כמה לוחות יש בסבב לפני שניתן פרס (turn = סבב).
+	 * סך התשובות הנכונות לפרס: `boardsPerSet * questionsPerBoard`
+	 * (אם questionsPerBoard=0 — sizeOfGrid במקום).
+	 */
+	boardsPerSet: number;
 }
 
 export const DEFAULT_SETTINGS: FindLetterSettings = {
@@ -28,9 +40,11 @@ export const DEFAULT_SETTINGS: FindLetterSettings = {
 	autoSpeakOnNewRound: true,
 	voiceEnabled: true,
 	boosterEnabled: true,
-	activeGroups: ['base', 'confusing', 'rafe'],
+	selectedLetterIds: [...DEFAULT_LETTER_IDS],
 	avoidSimilar: true,
-	cooldownMs: 2000
+	cooldownMs: 2000,
+	questionsPerBoard: 0, // 0 = כל הכרטיסים בלוח
+	boardsPerSet: 1
 };
 
 /**
@@ -69,9 +83,11 @@ class SettingsStore {
 	autoSpeakOnNewRound = $state(DEFAULT_SETTINGS.autoSpeakOnNewRound);
 	voiceEnabled = $state(DEFAULT_SETTINGS.voiceEnabled);
 	boosterEnabled = $state(DEFAULT_SETTINGS.boosterEnabled);
-	activeGroups = $state<LetterGroup[]>([...DEFAULT_SETTINGS.activeGroups]);
+	selectedLetterIds = $state<string[]>([...DEFAULT_SETTINGS.selectedLetterIds]);
 	avoidSimilar = $state(DEFAULT_SETTINGS.avoidSimilar);
 	cooldownMs = $state(DEFAULT_SETTINGS.cooldownMs);
+	questionsPerBoard = $state(DEFAULT_SETTINGS.questionsPerBoard);
+	boardsPerSet = $state(DEFAULT_SETTINGS.boardsPerSet);
 
 	constructor() {
 		// טעינה רק בצד הדפדפן (window אמיתי, לא ב-SSR)
@@ -92,19 +108,23 @@ class SettingsStore {
 		try {
 			const saved = window.localStorage.getItem(STORAGE_KEY);
 			if (!saved) return;
-			const parsed = JSON.parse(saved);
+			// migrateSettings מטפל גם ב-v2 (activeGroups) וגם ב-v3 (selectedLetterIds)
+			const parsed = migrateSettings(JSON.parse(saved));
 			this.gridSize = parsed.gridSize ?? DEFAULT_SETTINGS.gridSize;
 			this.autoSpeakOnNewRound =
 				parsed.autoSpeakOnNewRound ?? DEFAULT_SETTINGS.autoSpeakOnNewRound;
 			this.voiceEnabled = parsed.voiceEnabled ?? DEFAULT_SETTINGS.voiceEnabled;
 			this.boosterEnabled = parsed.boosterEnabled ?? DEFAULT_SETTINGS.boosterEnabled;
-			this.activeGroups = Array.isArray(parsed.activeGroups)
-				? parsed.activeGroups
-				: [...DEFAULT_SETTINGS.activeGroups];
+			this.selectedLetterIds = Array.isArray(parsed.selectedLetterIds)
+				? parsed.selectedLetterIds
+				: [...DEFAULT_SETTINGS.selectedLetterIds];
 			this.avoidSimilar = parsed.avoidSimilar ?? DEFAULT_SETTINGS.avoidSimilar;
 			this.cooldownMs = parsed.cooldownMs ?? DEFAULT_SETTINGS.cooldownMs;
+			this.questionsPerBoard =
+				parsed.questionsPerBoard ?? DEFAULT_SETTINGS.questionsPerBoard;
+			this.boardsPerSet = parsed.boardsPerSet ?? DEFAULT_SETTINGS.boardsPerSet;
 		} catch (e) {
-			console.error('Failed to parse find-letter-game settings', e);
+			console.error('שגיאה בטעינת הגדרות משחק', e);
 		}
 	}
 
@@ -115,9 +135,11 @@ class SettingsStore {
 			autoSpeakOnNewRound: this.autoSpeakOnNewRound,
 			voiceEnabled: this.voiceEnabled,
 			boosterEnabled: this.boosterEnabled,
-			activeGroups: [...this.activeGroups],
+			selectedLetterIds: [...this.selectedLetterIds],
 			avoidSimilar: this.avoidSimilar,
-			cooldownMs: this.cooldownMs
+			cooldownMs: this.cooldownMs,
+			questionsPerBoard: this.questionsPerBoard,
+			boardsPerSet: this.boardsPerSet
 		};
 	}
 
@@ -131,9 +153,32 @@ class SettingsStore {
 		this.autoSpeakOnNewRound = DEFAULT_SETTINGS.autoSpeakOnNewRound;
 		this.voiceEnabled = DEFAULT_SETTINGS.voiceEnabled;
 		this.boosterEnabled = DEFAULT_SETTINGS.boosterEnabled;
-		this.activeGroups = [...DEFAULT_SETTINGS.activeGroups];
+		this.selectedLetterIds = [...DEFAULT_SETTINGS.selectedLetterIds];
 		this.avoidSimilar = DEFAULT_SETTINGS.avoidSimilar;
 		this.cooldownMs = DEFAULT_SETTINGS.cooldownMs;
+		this.questionsPerBoard = DEFAULT_SETTINGS.questionsPerBoard;
+		this.boardsPerSet = DEFAULT_SETTINGS.boardsPerSet;
+	}
+
+	/** סך התאים על הלוח (לפי gridSize) — לדוגמה 3x4 = 12. */
+	get totalCellsInGrid(): number {
+		return gridCellCount(this.gridSize);
+	}
+
+	/**
+	 * מחשב את מספר השאלות בלוח הנוכחי לפי ההגדרה.
+	 * 0 = כל הכרטיסים.
+	 */
+	get effectiveQuestionsPerBoard(): number {
+		const total = this.totalCellsInGrid;
+		const requested = this.questionsPerBoard;
+		if (!requested || requested <= 0) return total;
+		return Math.min(requested, total);
+	}
+
+	/** סך התשובות הנכונות הנדרשות לסבב שלם (לפני פרס). */
+	get totalQuestionsPerSet(): number {
+		return this.effectiveQuestionsPerBoard * Math.max(1, this.boardsPerSet);
 	}
 }
 

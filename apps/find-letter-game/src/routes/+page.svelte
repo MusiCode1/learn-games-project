@@ -3,11 +3,13 @@
 	import { boosterService, ProgressWidget, type Config } from 'learn-booster-kit';
 	import HeaderBar from './_components/HeaderBar.svelte';
 	import Board from './_components/Board.svelte';
+	import CooldownOverlay from './_components/CooldownOverlay.svelte';
 	import { gameState } from '$lib/stores/game-state.svelte';
 	import { settings } from '$lib/stores/settings.svelte';
 	import { language } from '$lib/services/language';
 
-	// === Booster config (לתצוגת ProgressWidget) ===
+	// === Booster config (רק לאתחול — אנחנו לא משתמשים ב-turnsPerReward שלו;
+	// המקור לפרגרס הוא ההגדרות המקומיות שלנו: boardsPerSet × questionsPerBoard) ===
 	let boosterConfig = $state<Config>();
 	let unsubscribeConfig: (() => void) | undefined;
 
@@ -41,23 +43,9 @@
 		gameState.status === 'SUCCESS' && gameState.target ? gameState.target.id : null
 	);
 
-	const progressMax = $derived(boosterConfig?.turnsPerReward ?? 3);
-
-	// === Cooldown countdown — מציג ספירה לאחור ויזואלית בזמן עונש על טעות ===
-	let now = $state(Date.now());
-	$effect(() => {
-		if (gameState.status !== 'COOLDOWN') return;
-		const interval = setInterval(() => {
-			now = Date.now();
-		}, 100);
-		return () => clearInterval(interval);
-	});
-
-	const cooldownRemaining = $derived(
-		gameState.status === 'COOLDOWN'
-			? Math.max(0, Math.ceil((gameState.cooldownUntilTs - now) / 1000))
-			: 0
-	);
+	// ה-progress max הוא מספר התשובות הנכונות הנדרש לפרס:
+	// boardsPerSet × effectiveQuestionsPerBoard.
+	const progressMax = $derived(settings.totalQuestionsPerSet);
 </script>
 
 <HeaderBar />
@@ -67,7 +55,7 @@
 	{#if settings.boosterEnabled && boosterConfig}
 		<div class="progress-widget-pos">
 			<ProgressWidget
-				value={gameState.winsSinceLastReward}
+				value={gameState.correctInCurrentSet}
 				max={progressMax}
 				orientation="vertical"
 				label="לפרס"
@@ -88,27 +76,12 @@
 		/>
 	{/if}
 
-	<!-- מחוון cooldown — נצמד לחלק העליון של אזור המשחק במהלך עונש על טעות -->
-	{#if cooldownRemaining > 0}
-		<div class="cooldown-pill" aria-live="polite">
-			<svg
-				class="cooldown-icon"
-				xmlns="http://www.w3.org/2000/svg"
-				width="20"
-				height="20"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2.4"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				aria-hidden="true"
-			>
-				<circle cx="12" cy="12" r="10" />
-				<polyline points="12 6 12 12 16 14" />
-			</svg>
-			<span class="cooldown-num">{cooldownRemaining}</span>
-		</div>
+	<!-- overlay ספירה לאחור — מוצג מעל הלוח בזמן עונש על טעות -->
+	{#if gameState.status === 'COOLDOWN'}
+		<CooldownOverlay
+			untilTs={gameState.cooldownUntilTs}
+			durationMs={settings.cooldownMs}
+		/>
 	{/if}
 </main>
 
@@ -136,45 +109,5 @@
 		font-size: 1.5rem;
 		color: #475569;
 		text-align: center;
-	}
-
-	/* פתק "עונש בגלל טעות" — מופיע בראש אזור המשחק עם ספירה לאחור */
-	.cooldown-pill {
-		position: absolute;
-		top: 1rem;
-		right: 50%;
-		transform: translateX(50%);
-		z-index: 30;
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		background: #fef2f2;
-		color: #b91c1c;
-		font-weight: 800;
-		padding: 0.5rem 1rem;
-		border-radius: 999px;
-		border: 2px solid #fecaca;
-		box-shadow: 0 8px 24px rgba(239, 68, 68, 0.2);
-		animation: pulse 1s ease-in-out infinite;
-	}
-
-	.cooldown-icon {
-		font-size: 1.2rem;
-	}
-
-	.cooldown-num {
-		font-size: 1.4rem;
-		min-width: 1.5rem;
-		text-align: center;
-		font-variant-numeric: tabular-nums;
-	}
-
-	@keyframes pulse {
-		0%, 100% {
-			transform: translateX(50%) scale(1);
-		}
-		50% {
-			transform: translateX(50%) scale(1.05);
-		}
 	}
 </style>
