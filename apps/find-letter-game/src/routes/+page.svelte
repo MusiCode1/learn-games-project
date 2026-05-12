@@ -14,8 +14,12 @@
 	let unsubscribeConfig: (() => void) | undefined;
 
 	onMount(async () => {
-		// התחלת סיבוב ראשון רק כשנטענים בדפדפן
-		gameState.startBoard();
+		// איפוס מלא בכל כניסה למסך המשחק.
+		// סיבה: שינוי הגדרות ב-/settings (boardsPerSet, gridSize, questionsPerBoard,
+		// selectedLetterIds, avoidSimilar) לא מאפס את המונים `correctInCurrentSet`
+		// ו-`boardsCompletedInSet`, וכך אפשר להגיע למצב מבלבל של "14/12" כשמשתנה
+		// `totalQuestionsPerSet` באמצע סבב. חזרה למשחק תמיד = התחלה טרייה.
+		gameState.resetGame();
 
 		if (settings.boosterEnabled) {
 			try {

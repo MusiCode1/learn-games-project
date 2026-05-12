@@ -89,6 +89,35 @@
 
 ---
 
+## 2026-05-12 19:22
+
+### באג "14/12" — איפוס משחק בחזרה מ-`/settings`
+
+תיקון באג שבו מונה הפרס (ProgressWidget) הציג ערך גבוה מהמקסימום (לדוגמה `14/12 לפרס`) אחרי שהמורה שינה הגדרות באמצע משחק וחזר ישירות למסך המשחק.
+
+#### מה בוצע?
+
+- ב-`src/routes/+page.svelte` ה-`onMount` קורא עכשיו ל-`gameState.resetGame()` במקום `gameState.startBoard()`.
+- נוספה הערה מפורטת שמסבירה מתי הבאג מתרחש ולמה האיפוס חיוני.
+
+#### השורש של הבאג
+
+המסך `/settings` משנה את `boardsPerSet` / `gridSize` / `questionsPerBoard` / `selectedLetterIds` / `avoidSimilar` ב-`SettingsStore`, אבל **לא** מאפס את מוני הסבב ב-`GameState`. רק `HeaderBar.changeSize()` ו-`HeaderBar.newGame()` קוראים ל-`resetGame()`.
+
+תרחיש שמייצר 14/12:
+1. המורה משחק עם `boardsPerSet=3`, `gridSize=2x3` → `totalQuestionsPerSet=18`.
+2. אחרי 14 תשובות נכונות (`correctInCurrentSet=14`), המורה נכנס ל-`/settings` ומשנה `boardsPerSet` ל-2.
+3. `totalQuestionsPerSet` הופך ל-12 reactively, אבל `correctInCurrentSet` נשאר 14.
+4. ProgressWidget מציג `14/12`. הפרס לא יופעל עד שהלוח הנוכחי יסתיים.
+
+#### החלטות ארכיטקטורה
+
+- **איפוס בכל onMount של דף המשחק** (ולא effect/watch ייעודי על שינוי הגדרות): פשוט, צפוי, וקל להבנה לתלמיד/מורה — "כניסה למשחק = התחלה טרייה". `gameState` הוא singleton ב-module scope, אז `onMount` רץ גם בכניסה ראשונית וגם בחזרה מ-`/settings` (SPA navigation).
+- **score מתאפס גם הוא**: לא נחשב לבעיה, כי `gameState` ממילא מתאפס בכל רענון של הדף (state חי בזיכרון בלבד).
+- **לא נוגעים ב-`learn-booster-kit`**: ה-ProgressWidget של ה-kit לא תוחם value ל-max (יכול להציג 14/12). זה תיקון קוסמטי נפרד שדורש שינוי בחבילה משותפת — לא נחוץ אחרי שהבאג השורשי תוקן.
+
+---
+
 ## 2026-05-12 16:20
 
 ### תשתית בדיקות, CooldownOverlay, תיקון צמדי דמיון, ובחירת אותיות פרטנית
