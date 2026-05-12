@@ -4,9 +4,88 @@
 
 **Live URLs:**
 
-- **Production**: https://find-letter-game.pages.dev (Cloudflare Pages)
+- **Production**: https://find-letter-game.pages.dev (Cloudflare Pages — main branch)
+- **Dev (Cloudflare)**: https://dev.find-letter-game.pages.dev (Cloudflare Pages — dev branch)
 - Dev (פנימי): https://musicode-find-letter.nue.tuns.sh (HMR, tuns.sh)
 - Preview (פנימי): https://musicode-find-letter-preview.nue.tuns.sh (build, tuns.sh)
+
+---
+
+## 2026-05-12 17:35
+
+### מעבר ל-TTS סטטי דרך CDN (R2), אישור איכותי של 20 קבצים, ניקוי מסך הגדרות
+
+מעבר ארכיטקטוני: אין יותר סינתזת TTS בזמן ריצה. כל קובץ אודיו עובר אישור אנושי לפני שמשתמשים בו, ומאוחסן ב-R2 (`tzlev-static`). זרימת ההשמעה במשחק היא עכשיו fetch ישיר מ-CDN, עם fallback ל-Web Speech בלבד.
+
+#### מה בוצע?
+
+**1. תהליך אישור איכותי של 20 קבצי TTS**
+
+- נוצרה תיקייה `apps/find-letter-game/tts-review/` עם 20 קבצי MP3 ייחודיים (4 צמדים חולקים קובץ: א=ע, ו=ב-רפה, ס=שׂ, ח=כ-רפה; ק=כּ ו-ת=ט אוחדו בקוד).
+- `README.md` ו-`results.md` מתעדים את המיפוי של כל קובץ לאותיות שמשתמשות בו, ומשמשים לסקירה ידנית.
+- המשתמש האזין לכל קובץ ודיווח על 4 בעיות: Fa נשמע Pa, Ra עם מבטא אמריקאי, Tsa נשמע Sa, Za נשמע Zoa.
+- סבב וריאנטים: נוצרו 12 וריאנטים (3 לכל בעיה) עם speak texts שונים בעברית. Tsa ו-Za נפתרו עם `צַה`/`זַה` (פתח+ה במקום קמץ+א). Fa ו-Ra נשארו בעייתיים.
+- סבב שני ל-Fa: ניסיון English transliteration (`Fa`) — עבד! ElevenLabs מתעלם באופן עקבי מהבחנת דגש/רפה של פ' בעברית, אבל קורא תעתיק לטיני כפי שהוא נכתב.
+- סבב שלישי ל-Tsa: וריאנטים עם ElevenLabs v3 audio tags. `[Israeli accent] צַה` עבד מצוין.
+- Ra לא נפתר — `[Israeli accent] רַה` יוצא ר' לשונית במקום גרונית. נשאר עם `רָא` (American R) כפשרה.
+
+**2. שינויי `speak` ב-`letters.ts`**
+
+| אות | speak ישן | speak חדש | סיבה |
+|-----|-----------|------------|------|
+| `tza` (צ) | `צָא` | `[Israeli accent] צַה` | הצליל "ts" נשמר |
+| `za` (ז) | `זָא` | `זַה` | תיקון "Zoa" |
+| `fa_rafe` (פ רפה) | `פָא` | `Fa` | תעתיק לטיני — Sarah מתעלמת מרפה |
+| `qa` (ק) | `קָא` | `כָּא` | אוחד עם כּ |
+| `tav` (ת) | `תָּא` | `טָא` | אוחד עם ט |
+
+**3. העלאה ל-R2 (`tzlev-static`)**
+
+- כל 20 הקבצים הועלו ל-`tzlev-static/shared/tts/find-letter/` דרך `bunx wrangler r2 object put --remote`.
+- נגישים ציבורית דרך `https://static.tzlev.ovh/shared/tts/find-letter/<name>.mp3`.
+- `.gitignore` ברמת השורש כבר חוסם `*.mp3` — הקבצים לא נכנסים לגיט.
+
+**4. שכתוב `tts.ts` ל-CDN-only**
+
+- הוסר: לוגיקת POST/GET לפרוקסי AAC, חישוב hash.
+- נוסף: `getTtsFilename(text)` ב-`letters.ts` — מיפוי `speak → filename` עם נירמול NFC ו-trim.
+- חדש: `fetchStaticAudio(filename)` שולף מ-`${VITE_STATIC_BASE_URL}/shared/tts/find-letter/<file>` עם IndexedDB cache.
+- כשטקסט לא ממופה או fetch נכשל → `console.error` + Web Speech fallback (כפי שהמשתמש ביקש).
+
+**5. מבחנים חדשים (7 בדיקות ב-`letters.test.ts`)**
+
+- בדיקות 17–23: `getTtsFilename` מחזיר את הקובץ הנכון, מטפל ב-NFC ו-trim, מחזיר `null` לטקסט לא-מוכר.
+- **בדיקת כיסוי קריטית** (#22): כל ה-`speak` של `ALL_LETTERS` ממופים ב-`TTS_FILES` — מבטיח שלא תהיה אות יתומה.
+- בדיקת yatomut הפוכה (#23): כל קובץ ב-`TTS_FILES` בשימוש על-ידי לפחות אות אחת.
+- **סה"כ: 47 בדיקות ירוקות** (היו 40, נוספו 7).
+
+**6. ניקוי מסך הגדרות**
+
+- הוסרה הסקציה "הגדרות TTS" ממסך `/settings` (3 select-ים של provider/voice/model + כפתור "בדוק קול").
+- הוסרו הפונקציות `testVoice`, `loadVoicesForCurrentProvider`, `changeProvider`, `changeVoice`, `changeModel`, וה-state `voices`/`loadingVoices`/`currentModels`.
+- הוסרו ה-imports של `ttsSettings`, `fetchVoices`, `MODELS_BY_PROVIDER`, `speak`.
+- הוסרו CSS classes `.select` ו-`.test-btn` שהפכו unused.
+- **לא נמחקו** (לפי בקשת המשתמש): `src/lib/stores/tts-settings.svelte.ts`, `src/lib/utils/voices.ts`, מפתחות `tts*` ב-`language.ts`. אלה יוסרו בסבב נפרד בעתיד.
+
+**7. דפלוי ל-Cloudflare Pages dev**
+
+- `bun run build && bun x wrangler pages deploy .svelte-kit/cloudflare --project-name find-letter-game --branch=dev --commit-dirty=true`.
+- כתובת קבועה חדשה: `https://dev.find-letter-game.pages.dev`.
+
+#### החלטות ארכיטקטורה
+
+- **CDN-only במקום dynamic synthesis**: כל קובץ TTS בייצור עובר אישור אנושי. אין יותר סיכון של חוסר עקביות בין סשנים (אם ElevenLabs שינה משהו) או צירוף לא-מאומת שמושמע לתלמיד.
+- **המיפוי לפי `speak text`, לא לפי letter ID**: אותה מחרוזת `speak` יכולה לשמש כמה כרטיסים (א/ע משתמשים שניהם ב-`אָא`). מיפוי לפי `speak` נותן de-duplication טבעי. אם בעתיד נרצה ID-based, השינוי קל.
+- **TTS tags (`[Israeli accent]`) כחלק מה-`speak`**: לא הופרדו לשדה נפרד. הסיבה: ה-tag הוא חלק אינטגרלי מהוראת ההגייה למודל, וצריך להישמר ב-hash הסטטי. הפרדה תוסיף מורכבות בלי תועלת.
+- **שימוש מעורב עברית + אנגלית ב-`speak`**: 19 ערכים בעברית + 1 באנגלית (`Fa`). הסיבה: Sarah/eleven_v3 מתעלם באופן עקבי מהבחנת דגש/רפה של פ' בעברית — אין דרך להפיק "fa" עם קלט עברי. תעתיק לטיני עוקף את הבעיה. נשמר כחריג אחד עם הערה מפורשת ב-JSDoc.
+- **לא מוחקים את הקוד הישן בבת אחת**: `tts-settings.svelte.ts`, `voices.ts`, ומפתחות `tts*` ב-language.ts נשארים כ-dead code זמני. הסיבה: בקשת המשתמש לחכות — אולי נחזור אליהם בעתיד.
+
+#### מעקפים ופתרונות
+
+- **`[Israeli accent]` עבד ל-Tsa אבל לא ל-Ra**: ניסינו את אותו tag עם רֵישׁ/רַעַשׁ/רַע — תוצאות סלאביות/לשוניות, לא גרוניות. כנראה Sarah-eleven_v3 לא מכירה ר' אובולרית. נשאר עם `רָא` (American R) כפשרה.
+- **`פִיל` (מילה אמיתית) יוצא "pil" ולא "fil"**: זה הוכיח שהבעיה לא בטקסט אלא במודל — Sarah ממש לא יודעת לבטא פ רפה בעברית. אבל `אַף` כן יצא עם "f" (כי ף סופית **חייבת** להיות רפה — אין דגש בסופית). זה אישר שהצליל קיים במודל אבל לא נטרגב. הפתרון: לעקוף עם תעתיק לטיני.
+- **Cloudflare Pages דרש `--commit-message` מפורש**: הניסיון הראשון נכשל עם "Invalid commit message, it must be a valid UTF-8 string". סיבה לא ידועה (אולי git tree dirty + תווי עברית בקומיט אחרון?). הוספת `--commit-message="..."` פתרה.
+- **שני שמות שלא יודעים מה מיפוי**: `[Israeli accent] צַה` מכיל את כל המחרוזת כולל ה-tag כ-key במיפוי. נשמר NFC normalize ב-`getTtsFilename` כדי שהשוואה תהיה דטרמיניסטית.
 
 ---
 

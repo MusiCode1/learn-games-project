@@ -1,4 +1,4 @@
-import { areSimilar, PHONETIC_SIMILARITY_PAIRS, VISUAL_SIMILARITY_PAIRS_FUTURE, pickBoard, ALL_LETTERS, ALL_LETTERS_ALPHABETICAL, DEFAULT_LETTER_IDS, getLettersByIds } from './letters';
+import { areSimilar, PHONETIC_SIMILARITY_PAIRS, VISUAL_SIMILARITY_PAIRS_FUTURE, pickBoard, ALL_LETTERS, ALL_LETTERS_ALPHABETICAL, DEFAULT_LETTER_IDS, getLettersByIds, getTtsFilename, TTS_FILES } from './letters';
 import { vi } from 'vitest';
 
 // בדיקה 1: regression — ס ↔ שׂ כבר צריכות לעבור לפני כל שינוי
@@ -117,4 +117,49 @@ test('pickBoard מחזיר הכל כש-count גדול מה-pool', () => {
 test('pickBoard עם selectedLetterIds ריק מחזיר []', () => {
 	const board = pickBoard({ count: 5, selectedLetterIds: [], avoidSimilar: false });
 	expect(board).toEqual([]);
+});
+
+// === בדיקות מיפוי TTS ===
+
+// בדיקה 17: getTtsFilename מחזיר את הקובץ הנכון לטקסט ידוע
+test('getTtsFilename מחזיר את הקובץ הנכון לטקסט עברי', () => {
+	expect(getTtsFilename('בָּא')).toBe('Ba.mp3');
+	expect(getTtsFilename('שָׁא')).toBe('Sha.mp3');
+});
+
+// בדיקה 18: getTtsFilename מחזיר Fa.mp3 לטקסט הלטיני "Fa"
+test('getTtsFilename מחזיר Fa.mp3 לטקסט "Fa"', () => {
+	expect(getTtsFilename('Fa')).toBe('Fa.mp3');
+});
+
+// בדיקה 19: getTtsFilename מטפל ב-tag accent של Tsa
+test('getTtsFilename מחזיר Tsa.mp3 ל-"[Israeli accent] צַה"', () => {
+	expect(getTtsFilename('[Israeli accent] צַה')).toBe('Tsa.mp3');
+});
+
+// בדיקה 20: getTtsFilename מחזיר null לטקסט לא-ממופה
+test('getTtsFilename מחזיר null לטקסט לא-מוכר', () => {
+	expect(getTtsFilename('xyz123')).toBeNull();
+	expect(getTtsFilename('')).toBeNull();
+});
+
+// בדיקה 21: getTtsFilename מנרמל NFC ו-trim
+test('getTtsFilename מנרמל trim ו-NFC', () => {
+	expect(getTtsFilename('  בָּא  ')).toBe('Ba.mp3');
+});
+
+// בדיקה 22: כל ה-speak של ALL_LETTERS ממופה ב-TTS_FILES (כיסוי מלא)
+test('כל ה-speak של ALL_LETTERS ממופה ב-TTS_FILES', () => {
+	for (const card of ALL_LETTERS) {
+		const filename = getTtsFilename(card.speak);
+		expect(filename, `חסר מיפוי TTS עבור speak="${card.speak}" (id=${card.id})`).not.toBeNull();
+	}
+});
+
+// בדיקה 23: כל קובץ ב-TTS_FILES בשימוש על-ידי לפחות אות אחת (אין יתום)
+test('כל קובץ ב-TTS_FILES בשימוש על-ידי לפחות אות אחת', () => {
+	const usedFiles = new Set(ALL_LETTERS.map(c => getTtsFilename(c.speak)));
+	for (const filename of Object.values(TTS_FILES)) {
+		expect(usedFiles.has(filename), `הקובץ ${filename} ב-TTS_FILES לא בשימוש על-ידי שום אות`).toBe(true);
+	}
 });

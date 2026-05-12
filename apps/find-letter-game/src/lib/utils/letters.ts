@@ -36,11 +36,13 @@ export interface LetterCard {
  * ה-TTS (ElevenLabs eleven_v3) נוטה "ליישר" אותיות גרוניות לעברית מודרנית.
  * כשמסיימים מילה ב-`ה` (אם-קריאה), המודל לפעמים מבלע את העיצור הראשון
  * ובמיוחד גורם ל-`ח` להישמע כמו `ה`, ל-`ט` להישמע כמו `ה`, וכו'.
+ * הפתרון: לסיים את ה-`speak` ב-`א` במקום `ה`.
  *
- * הפתרון: לסיים את ה-`speak` ב-`א` במקום `ה`. הבדל הצליל זניח (שניהם
- * אם-קריאה שלא נשמעת), אבל זה גורם למודל לבטא נכון את העיצור הראשון.
+ * חריג: `fa_rafe` משתמש בתעתיק לטיני (`Fa`) כי Sarah/eleven_v3 מתעלם באופן
+ * עקבי מהבחנת דגש/רפה של פ' בעברית — כל וריאנט עברי יצא Pa במקום Fa.
+ * בתעתיק לטיני המודל קורא את ההברה כמו שהיא נכתבת.
  *
- * אומת מול Gemini transcription על כל 20 הקבצים — ראו docs/walkthrough.md.
+ * אומת מול Gemini transcription על כל הקבצים — ראו docs/walkthrough.md.
  */
 
 const BASE_LETTERS: LetterCard[] = [
@@ -50,21 +52,21 @@ const BASE_LETTERS: LetterCard[] = [
 	{ id: 'da', display: 'דַ', speak: 'דָא', group: 'base' },
 	{ id: 'ha', display: 'הַ', speak: 'הָא', group: 'base' },
 	{ id: 'va', display: 'וַ', speak: 'וָא', group: 'base' },
-	{ id: 'za', display: 'זַ', speak: 'זָא', group: 'base' },
+	{ id: 'za', display: 'זַ', speak: 'זַה', group: 'base' },
 	{ id: 'cha', display: 'חַ', speak: 'חָא', group: 'base' },
-	{ id: 'ta', display: 'טַ', speak: 'טָא', group: 'base' },
+	{ id: 'ta', display: 'טַ', speak: 'טָא', group: 'base' }, // ט = ת — אותו קובץ TTS
 	{ id: 'ya', display: 'יַ', speak: 'יָא', group: 'base' },
-	{ id: 'ka', display: 'כַּ', speak: 'כָּא', group: 'base' },
+	{ id: 'ka', display: 'כַּ', speak: 'כָּא', group: 'base' }, // כּ = ק — אותו קובץ TTS
 	{ id: 'la', display: 'לַ', speak: 'לָא', group: 'base' },
 	{ id: 'ma', display: 'מַ', speak: 'מָא', group: 'base' },
 	{ id: 'na', display: 'נַ', speak: 'נָא', group: 'base' },
 	{ id: 'sa', display: 'סַ', speak: 'סָא', group: 'base' },
 	{ id: 'pa', display: 'פַּ', speak: 'פָּא', group: 'base' },
-	{ id: 'tza', display: 'צַ', speak: 'צָא', group: 'base' },
-	{ id: 'qa', display: 'קַ', speak: 'קָא', group: 'base' },
+	{ id: 'tza', display: 'צַ', speak: '[Israeli accent] צַה', group: 'base' },
+	{ id: 'qa', display: 'קַ', speak: 'כָּא', group: 'base' }, // ק = כּ — אותו קובץ TTS
 	{ id: 'ra', display: 'רַ', speak: 'רָא', group: 'base' },
 	{ id: 'sha', display: 'שַׁ', speak: 'שָׁא', group: 'base' },
-	{ id: 'tav', display: 'תַּ', speak: 'תָּא', group: 'base' }
+	{ id: 'tav', display: 'תַּ', speak: 'טָא', group: 'base' } // ת = ט — אותו קובץ TTS
 ];
 
 // ===== קבוצה: confusing =====
@@ -79,8 +81,52 @@ const CONFUSING_LETTERS: LetterCard[] = [
 const RAFE_LETTERS: LetterCard[] = [
 	{ id: 'va_rafe', display: 'בַ', speak: 'וָא', group: 'rafe' },
 	{ id: 'cha_rafe', display: 'כַ', speak: 'חָא', group: 'rafe' },
-	{ id: 'fa_rafe', display: 'פַ', speak: 'פָא', group: 'rafe' }
+	{ id: 'fa_rafe', display: 'פַ', speak: 'Fa', group: 'rafe' } // תעתיק לטיני — ראה הערה למעלה
 ];
+
+// ===== מיפוי קבצי TTS סטטיים =====
+
+/**
+ * מיפוי טקסטי הקראה (`speak`) → שמות קבצי MP3 ב-CDN הסטטי.
+ *
+ * הקבצים אוחסנו ב-R2 (`tzlev-static`) תחת
+ * `${VITE_STATIC_BASE_URL}/shared/tts/find-letter/<filename>`,
+ * נוצרו דרך ElevenLabs (Sarah/eleven_v3) ואושרו ידנית.
+ *
+ * כל ערך כאן חייב להתאים ל-`speak` של כרטיס אחד או יותר ב-`ALL_LETTERS`.
+ * אם מוסיפים אות עם `speak` חדש — צריך גם להעלות קובץ ל-R2 ולהוסיף שורה כאן.
+ */
+export const TTS_FILES: Record<string, string> = {
+	אָא: 'A.mp3',
+	בָּא: 'Ba.mp3',
+	גָא: 'Ga.mp3',
+	דָא: 'Da.mp3',
+	הָא: 'Ha.mp3',
+	וָא: 'Va.mp3',
+	זַה: 'Za.mp3',
+	חָא: 'Cha.mp3',
+	טָא: 'Ta.mp3',
+	יָא: 'Ya.mp3',
+	כָּא: 'Ka.mp3',
+	לָא: 'La.mp3',
+	מָא: 'Ma.mp3',
+	נָא: 'Na.mp3',
+	סָא: 'Sa.mp3',
+	פָּא: 'Pa.mp3',
+	'[Israeli accent] צַה': 'Tsa.mp3',
+	רָא: 'Ra.mp3',
+	שָׁא: 'Sha.mp3',
+	Fa: 'Fa.mp3'
+};
+
+/**
+ * מחזיר את שם קובץ ה-TTS הסטטי עבור טקסט נתון, או `null` אם לא ממופה.
+ * הטקסט מנורמל (`trim` + NFC) לפני החיפוש.
+ */
+export function getTtsFilename(text: string): string | null {
+	const key = text.trim().normalize('NFC');
+	return TTS_FILES[key] ?? null;
+}
 
 // ===== מאגר מאוחד =====
 

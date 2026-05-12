@@ -9,13 +9,6 @@
 	} from 'learn-booster-kit';
 	import { language } from '$lib/services/language';
 	import { settings, type GridSize } from '$lib/stores/settings.svelte';
-	import {
-		ttsSettings,
-		PROVIDER_DEFAULTS,
-		type TtsProviderId
-	} from '$lib/stores/tts-settings.svelte';
-	import { fetchVoices, MODELS_BY_PROVIDER, type Voice } from '$lib/utils/voices';
-	import { speak } from '$lib/utils/tts';
 	import LetterSelectionGrid from '../_components/LetterSelectionGrid.svelte';
 
 	const sizes: GridSize[] = ['2x3', '3x3', '3x4', '4x4'];
@@ -23,10 +16,6 @@
 	// === Booster config ===
 	let config = $state<Config>();
 	let unsubscribeConfig: (() => void) | undefined;
-
-	// === Voices ===
-	let voices = $state<Voice[]>([]);
-	let loadingVoices = $state(false);
 
 	onMount(async () => {
 		// אתחול booster רק אם מופעל
@@ -40,36 +29,9 @@
 				console.error('[settings] booster init failed:', e);
 			}
 		}
-		await loadVoicesForCurrentProvider();
 	});
 
 	onDestroy(() => unsubscribeConfig?.());
-
-	async function loadVoicesForCurrentProvider() {
-		loadingVoices = true;
-		try {
-			voices = await fetchVoices(ttsSettings.provider);
-		} finally {
-			loadingVoices = false;
-		}
-	}
-
-	function changeProvider(provider: TtsProviderId) {
-		ttsSettings.setProvider(provider);
-		loadVoicesForCurrentProvider();
-	}
-
-	function changeVoice(voiceId: string) {
-		ttsSettings.voiceId = voiceId;
-	}
-
-	function changeModel(modelId: string) {
-		ttsSettings.modelId = modelId;
-	}
-
-	async function testVoice() {
-		await speak(language.ttsTestText);
-	}
 
 	// === Booster: handlers שדרושים ל-<Settings> של ה-kit ===
 	async function updateConfig(newConfig: Config) {
@@ -85,8 +47,6 @@
 		// ה-kit קורא לזה כדי לבדוק וידאו — אנחנו רק מפעילים reward
 		boosterService.triggerReward();
 	}
-
-	const currentModels = $derived(MODELS_BY_PROVIDER[ttsSettings.provider] ?? []);
 </script>
 
 <svelte:head>
@@ -234,65 +194,6 @@
 			/>
 		</section>
 
-		<!-- Section: הגדרות TTS -->
-		<section class="card">
-			<h2 class="card-title">{language.ttsSettingsHeader}</h2>
-
-			<div class="field">
-				<label class="field-label" for="tts-provider">{language.ttsProviderLabel}</label>
-				<select
-					id="tts-provider"
-					class="select"
-					value={ttsSettings.provider}
-					onchange={(e) => changeProvider((e.currentTarget as HTMLSelectElement).value as TtsProviderId)}
-				>
-					<option value="elevenlabs">ElevenLabs</option>
-					<option value="gemini">Gemini</option>
-				</select>
-			</div>
-
-			<div class="field">
-				<label class="field-label" for="tts-voice">{language.ttsVoiceLabel}</label>
-				{#if loadingVoices}
-					<div class="loading">{language.ttsLoadingVoices}</div>
-				{:else}
-					<select
-						id="tts-voice"
-						class="select"
-						value={ttsSettings.voiceId}
-						onchange={(e) => changeVoice((e.currentTarget as HTMLSelectElement).value)}
-					>
-						{#if voices.length === 0}
-							<option value={ttsSettings.voiceId}>{ttsSettings.voiceId}</option>
-						{:else}
-							{#each voices as v}
-								<option value={v.id}>{v.name}</option>
-							{/each}
-						{/if}
-					</select>
-				{/if}
-			</div>
-
-			<div class="field">
-				<label class="field-label" for="tts-model">{language.ttsModelLabel}</label>
-				<select
-					id="tts-model"
-					class="select"
-					value={ttsSettings.modelId}
-					onchange={(e) => changeModel((e.currentTarget as HTMLSelectElement).value)}
-				>
-					{#each currentModels as m}
-						<option value={m.id}>{m.label}</option>
-					{/each}
-					{#if !currentModels.find((m) => m.id === ttsSettings.modelId)}
-						<option value={ttsSettings.modelId}>{ttsSettings.modelId}</option>
-					{/if}
-				</select>
-			</div>
-
-			<button class="test-btn" onclick={testVoice}>🔊 {language.ttsTestLabel}</button>
-		</section>
-
 		<!-- Section: הגדרות חיזוקים -->
 		<section class="card">
 			<h2 class="card-title">{language.boosterSettingsHeader}</h2>
@@ -389,16 +290,6 @@
 		font-size: 0.95rem;
 	}
 
-	.select {
-		padding: 0.6rem 0.9rem;
-		border: 1px solid #cbd5e1;
-		border-radius: 0.6rem;
-		background: white;
-		font-size: 1rem;
-		font-family: inherit;
-		color: #0f172a;
-	}
-
 	.size-picker {
 		display: inline-flex;
 		gap: 0.25rem;
@@ -458,20 +349,6 @@
 	.toggle-hint {
 		font-size: 0.85rem;
 		color: #64748b;
-	}
-
-	.test-btn {
-		margin-top: 0.5rem;
-		background: linear-gradient(135deg, #f97316, #ea580c);
-		color: white;
-		font-weight: 800;
-		padding: 0.7rem 1.3rem;
-		border-radius: 999px;
-		box-shadow: 0 6px 16px rgba(249, 115, 22, 0.3);
-	}
-
-	.test-btn:hover {
-		filter: brightness(1.05);
 	}
 
 	.muted {

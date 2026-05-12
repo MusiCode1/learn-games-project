@@ -1,32 +1,23 @@
 /**
- * שירות TTS — מתחבר ל-aac-proxy (Gemini) עם cache ב-IndexedDB,
- * ועם fallback ל-Web Speech API במקרה של כישלון.
+ * שירות TTS — שולף קבצי MP3 מ-CDN סטטי (R2) במקום סינתזה חיה.
  *
- * ה-proxy: https://aac-proxy.aybritman.workers.dev
- *   POST /v1/tts        — בקשת סינתזה, מחזיר { hash, mimeType, cached }
- *   GET  /v1/tts/:hash  — הורדת ה-blob
+ * זרימה:
+ *   1. `speak(text)` → חיפוש ב-`TTS_FILES` (ב-`letters.ts`) → שם קובץ.
+ *   2. אם נמצא: fetch מ-`${VITE_STATIC_BASE_URL}/shared/tts/find-letter/<file>`,
+ *      cache ב-IndexedDB, ניגון.
+ *   3. אם לא נמצא או fetch נכשל: console.error + fallback ל-Web Speech.
  *
- * הפלואו זהה לזה של AAC Board: hash דטרמיניסטי על
- * provider|voiceId|modelId|text.trim().normalize('NFC') (16 hex).
+ * הקבצים אוחסנו ידנית ב-R2 אחרי אישור איכותי של כל אות.
+ * אין יותר סינתזה אוטומטית — אם כרטיס חדש מציג טקסט שלא במיפוי,
+ * צריך להעלות לו קובץ ידנית ולהוסיף ערך ל-`TTS_FILES`.
  */
 
 import { get, set, createStore } from 'idb-keyval';
-import { ttsSettings } from '../stores/tts-settings.svelte';
+import { getTtsFilename } from './letters';
 
-// ===== הגדרות קבועות =====
-
-// ה-provider/voice/model נשלפים מה-store (ניתנים לשינוי דרך מסך ההגדרות).
-// ערכי ברירת מחדל: elevenlabs / Sarah / eleven_v3.
 const LANG = 'he-IL';
 const CACHE_PREFIX = 'audio:';
-
-interface TtsRequest {
-	text: string;
-	provider: 'elevenlabs' | 'gemini';
-	voiceId: string;
-	modelId: string;
-	lang?: string;
-}
+const STATIC_PATH = '/shared/tts/find-letter';
 
 // ===== Cache (IndexedDB) =====
 
@@ -36,60 +27,29 @@ function getStore() {
 	return _store;
 }
 
-function getProxyUrl(): string {
-	return import.meta.env?.VITE_PROXY_URL || '';
+function getStaticBaseUrl(): string {
+	return import.meta.env?.VITE_STATIC_BASE_URL || '';
 }
 
-// ===== Hash דטרמיניסטי (זהה ל-aac-board) =====
+// ===== שליפת אודיו מ-CDN =====
 
-async function ttsHash(req: TtsRequest): Promise<string> {
-	const normalized = [
-		req.provider,
-		req.voiceId,
-		req.modelId,
-		req.text.trim().normalize('NFC')
-	].join('|');
-	const buf = new TextEncoder().encode(normalized);
-	const digest = await crypto.subtle.digest('SHA-256', buf);
-	return Array.from(new Uint8Array(digest))
-		.slice(0, 8)
-		.map((b) => b.toString(16).padStart(2, '0'))
-		.join('');
-}
-
-// ===== שליפת/יצירת אודיו דרך ה-proxy =====
-
-async function getOrCreateAudio(req: TtsRequest): Promise<Blob> {
-	const proxyUrl = getProxyUrl();
-	if (!proxyUrl) throw new Error('VITE_PROXY_URL is not configured');
-
+async function fetchStaticAudio(filename: string): Promise<Blob> {
 	const store = getStore();
-	const hash = await ttsHash(req);
-	const cacheKey = CACHE_PREFIX + hash;
+	const cacheKey = CACHE_PREFIX + filename;
 
 	// L1 hit מתוך IndexedDB
 	const cached = await get<Blob>(cacheKey, store);
 	if (cached) return cached;
 
-	// L1 miss — בקשת סינתזה מהפרוקסי
-	const postRes = await fetch(`${proxyUrl}/v1/tts`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(req)
-	});
-	if (!postRes.ok) {
-		const text = await postRes.text().catch(() => '');
-		throw new Error(`Proxy POST failed ${postRes.status}: ${text}`);
-	}
-	await postRes.json();
+	const baseUrl = getStaticBaseUrl();
+	if (!baseUrl) throw new Error('VITE_STATIC_BASE_URL is not configured');
 
-	// הורדת ה-blob
-	const getRes = await fetch(`${proxyUrl}/v1/tts/${hash}`);
-	if (!getRes.ok) {
-		const text = await getRes.text().catch(() => '');
-		throw new Error(`Proxy GET ${hash} failed ${getRes.status}: ${text}`);
+	const url = `${baseUrl}${STATIC_PATH}/${filename}`;
+	const res = await fetch(url);
+	if (!res.ok) {
+		throw new Error(`Static TTS fetch failed ${res.status}: ${url}`);
 	}
-	const blob = await getRes.blob();
+	const blob = await res.blob();
 
 	// שמירה ב-cache לפעמים הבאות
 	await set(cacheKey, blob, store);
@@ -133,7 +93,6 @@ async function playAudioBlob(blob: Blob): Promise<void> {
  * Fully Kiosk חושף `window.fully.textToSpeech` — מסוג מוגדר ע"י החבילה
  * `fully-kiosk-js` (transitive dep של learn-booster-kit). אין צורך להצהיר כאן.
  */
-
 function speakWebSpeech(text: string): void {
 	// Fully Kiosk מקבל עדיפות
 	if (typeof window !== 'undefined' && (window as { fully?: { textToSpeech: (t: string) => void } }).fully) {
@@ -152,7 +111,7 @@ function speakWebSpeech(text: string): void {
 // ===== API ציבורי =====
 
 /**
- * השמעת טקסט בעברית: מנסה את ה-provider שנבחר דרך ה-proxy, ובכישלון נופל
+ * השמעת טקסט בעברית: מחפש קובץ סטטי מתאים ב-CDN, ובכישלון נופל
  * ל-Web Speech API של הדפדפן.
  */
 export async function speak(text: string): Promise<void> {
@@ -161,25 +120,26 @@ export async function speak(text: string): Promise<void> {
 	const trimmed = text.trim();
 	if (!trimmed) return;
 
+	const filename = getTtsFilename(trimmed);
+	if (!filename) {
+		console.error(`[tts] אין קובץ סטטי ממופה לטקסט: "${trimmed}". נופל ל-Web Speech.`);
+		speakWebSpeech(trimmed);
+		return;
+	}
+
 	try {
-		const blob = await getOrCreateAudio({
-			text: trimmed,
-			provider: ttsSettings.provider,
-			voiceId: ttsSettings.voiceId,
-			modelId: ttsSettings.modelId,
-			lang: LANG
-		});
+		const blob = await fetchStaticAudio(filename);
 		await playAudioBlob(blob);
 	} catch (e) {
-		console.warn('[tts] proxy failed — falling back to Web Speech', e);
+		console.error(`[tts] שליפה מ-CDN נכשלה ל-${filename}:`, e);
 		speakWebSpeech(trimmed);
 	}
 }
 
 /**
- * האם TTS נתמך בכלל (יש או proxy או Web Speech)
+ * האם TTS נתמך בכלל (יש או base URL סטטי או Web Speech)
  */
 export function ttsSupported(): boolean {
 	if (typeof window === 'undefined') return false;
-	return Boolean(getProxyUrl()) || 'speechSynthesis' in window;
+	return Boolean(getStaticBaseUrl()) || 'speechSynthesis' in window;
 }
