@@ -56,6 +56,11 @@ export interface ImagePack {
 /** אינדקס מקסימלי ב-GRID_PRESETS שמותר במצב מתחילים (3x3 = אינדקס 3) */
 export const BEGINNER_MAX_GRID_INDEX = 3;
 
+// === חלקים מחוברים מראש ===
+
+/** איזה חלק יישאר לא-מחובר כשמצב "חלקים מחוברים מראש" פעיל */
+export type LoosePieceSelection = "top-left" | "random";
+
 // === פרופילים ===
 
 export type SettingsProfile = "beginner" | "intermediate" | "advanced" | "custom";
@@ -85,6 +90,14 @@ export interface TeacherSettings {
   showRearrangeButton: boolean;
   /** התאמת gridPresetIndex לפרופורציות התמונה — מספר החלקים נשאר קרוב למטרה אבל היחס משתנה */
   adaptGridToImage: boolean;
+  /** רווח בין חלקים במצב מסודר (0-100, אחוז מגודל החלק) */
+  organizedGap: number;
+  /** השארת חלקים לא-מחוברים; השאר ממוזגים מראש לקבוצה אחת בעמדת הפתרון */
+  prePlacedPieces: boolean;
+  /** בחירת החלקים שיישארו לא-מחוברים (כש-prePlacedPieces=true) */
+  loosePieceSelection: LoosePieceSelection;
+  /** כמות חלקים שהתלמיד יצטרך לחבר (1 = פאזל כמעט שלם, N-1 = רוב החלקים) */
+  loosePiecesCount: number;
   /** פרופיל הגדרות פעיל */
   activeProfile: SettingsProfile;
 }
@@ -107,5 +120,9 @@ export const DEFAULT_SETTINGS: TeacherSettings = {
   studentLockMode: false,
   showRearrangeButton: true,
   adaptGridToImage: false,
+  organizedGap: 20,
+  prePlacedPieces: false,
+  loosePieceSelection: "top-left",
+  loosePiecesCount: 1,
   activeProfile: "beginner",
 };

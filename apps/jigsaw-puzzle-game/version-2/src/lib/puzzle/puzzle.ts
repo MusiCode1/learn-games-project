@@ -10,7 +10,8 @@ import { Piece } from "./piece";
 import { PolyPiece } from "./polypiece";
 import type { TwistFunction } from "./twists";
 import { getTwistByStyle } from "./twists";
-import type { ShapeStyle } from "$lib/types";
+import type { ShapeStyle, LoosePieceSelection } from "$lib/types";
+import { computeMergePlan } from "./pre-merge";
 
 const mmax = Math.max;
 const mmin = Math.min;
@@ -27,6 +28,14 @@ export interface PuzzleOptions {
   snapDistance?: number;
   /** חלקים מסודרים בשורה קומפקטית (לא מפוזרים) */
   organizedStart?: boolean;
+  /** רווח בין חלקים במצב מסודר (אחוז מגודל החלק, 0-100) */
+  organizedGap?: number;
+  /** השארת חלקים לא-מחוברים; השאר ממוזגים מראש */
+  prePlacedPieces?: boolean;
+  /** בחירת החלקים שיישארו לא-מחוברים */
+  loosePieceSelection?: LoosePieceSelection;
+  /** כמה חלקים יישארו לא-מחוברים (1..N-1). ברירת מחדל: 1 */
+  loosePiecesCount?: number;
   onPieceConnected?: (count: number) => void;
   onPuzzleSolved?: () => void;
 }
@@ -84,6 +93,14 @@ export class Puzzle {
   shapeStyle: ShapeStyle;
   /** חלקים מסודרים בשורה קומפקטית (לא מפוזרים) */
   organizedStart: boolean;
+  /** רווח בין חלקים במצב מסודר (אחוז מגודל החלק, 0-100) */
+  organizedGap: number;
+  /** השארת חלקים לא-מחוברים; השאר ממוזגים מראש */
+  prePlacedPieces: boolean;
+  /** בחירת החלקים שיישארו לא-מחוברים */
+  loosePieceSelection: LoosePieceSelection;
+  /** כמה חלקים יישארו לא-מחוברים (1..N-1) */
+  loosePiecesCount: number;
   private onPieceConnected?: (count: number) => void;
   private onPuzzleSolved?: () => void;
   private solved = false;
@@ -103,6 +120,10 @@ export class Puzzle {
     this.ny = options.rows;
     this.shapeStyle = options.shapeStyle;
     this.organizedStart = options.organizedStart ?? false;
+    this.organizedGap = options.organizedGap ?? 20;
+    this.prePlacedPieces = options.prePlacedPieces ?? false;
+    this.loosePieceSelection = options.loosePieceSelection ?? "top-left";
+    this.loosePiecesCount = options.loosePiecesCount ?? 1;
     this.onPieceConnected = options.onPieceConnected;
     this.onPuzzleSolved = options.onPuzzleSolved;
     this.baseDpr = window.devicePixelRatio || 1;
@@ -151,6 +172,44 @@ export class Puzzle {
     } else {
       this.optimInitial();
     }
+
+    // מיזוג מקדים — מדמה את התלמיד שכבר חיבר 3 חלקים יחד.
+    // חייב לרוץ אחרי הלייאאוט: ה-anchor נשאר במיקום שהלייאאוט הציב אותו,
+    // והחלקים האחרים "נצמדים" אליו (בדיוק כמו merge ידני של תלמיד).
+    if (this.prePlacedPieces && this.polyPieces.length > 1) {
+      this.applyPrePlacedMerge();
+    }
+  }
+
+  /**
+   * מיזוג מקדים: בוחר חלק אחד להישאר חופשי, וממזג את כל השאר ל-PolyPiece אחת.
+   * משתמש ב-`computeMergePlan` (פונקציה טהורה, מבודקת ב-`pre-merge.test.ts`).
+   */
+  private applyPrePlacedMerge(): void {
+    const plan = computeMergePlan({
+      nx: this.nx,
+      ny: this.ny,
+      mode: this.loosePieceSelection,
+      count: this.loosePiecesCount,
+    });
+
+    // אם יש פחות מ-2 חלקים ב-mergeOrder, אין מה למזג
+    if (plan.mergeOrder.length < 2) return;
+
+    const anchor = this.findSinglePolyPieceAt(plan.mergeOrder[0].kx, plan.mergeOrder[0].ky);
+    if (!anchor) return;
+
+    for (let i = 1; i < plan.mergeOrder.length; i++) {
+      const coord = plan.mergeOrder[i];
+      const other = this.findSinglePolyPieceAt(coord.kx, coord.ky);
+      if (other) anchor.merge(other);
+    }
+  }
+
+  private findSinglePolyPieceAt(kx: number, ky: number): PolyPiece | undefined {
+    return this.polyPieces.find(
+      (pp) => pp.pieces.length === 1 && pp.pieces[0].kx === kx && pp.pieces[0].ky === ky,
+    );
   }
 
   /** Read container dimensions */
@@ -357,74 +416,28 @@ export class Puzzle {
   }
 
   /**
-   * מצב מתחילים — סידור חלקים בשורה/עמודה קומפקטית ומסודרת.
-   * החלקים מסודרים לפי מיקומם המקורי בתמונה (שמאל→ימין, למעלה→למטה).
-   * מיקום קבוע ודטרמיניסטי (ללא רנדומיזציה).
+   * מצב מתחילים — סידור חלקים במיקום הפתרון שלהם עם רווחים (במרכז המסך).
+   * כל חלק מוצב במקום שבו הוא צריך להיות בפאזל המחובר, עם gap בין החלקים.
    */
   compactInitial(): void {
-    const P = this.nx * this.ny;
-    const gapX = Puzzle.trayGap(this.scalex);
-    const gapY = Puzzle.trayGap(this.scaley);
-    const innerGap = Puzzle.TRAY_INNER_GAP;
-    const pad = Puzzle.TRAY_PAD;
-    const isLandscape = this.contWidth > this.contHeight;
+    // חישוב הרווח בפיקסלים (אחוז מגודל החלק הממוצע)
+    const avgPieceSize = (this.scalex + this.scaley) / 2;
+    const gapPx = avgPieceSize * (this.organizedGap / 100);
 
-    // מיון לפי מיקום ברשת — מותאם לכיוון הסידור
-    const sorted = [...this.polyPieces].sort((a, b) => {
-      const pa = a.pieces[0];
-      const pb = b.pieces[0];
-      if (isLandscape) {
-        // column-major: עמודה-עמודה (kx ראשון, אחרי כן ky)
-        if (pa.kx !== pb.kx) return pa.kx - pb.kx;
-        return pa.ky - pb.ky;
-      }
-      // row-major: שורה-שורה (ky ראשון, אחרי כן kx)
-      if (pa.ky !== pb.ky) return pa.ky - pb.ky;
-      return pa.kx - pb.kx;
-    });
+    // חישוב הגודל הכולל של הפאזל עם רווחים
+    const totalWidth = this.nx * this.scalex + (this.nx - 1) * gapPx;
+    const totalHeight = this.ny * this.scaley + (this.ny - 1) * gapPx;
 
-    if (isLandscape) {
-      // חלקים בעמודות מימין לתמונה הממורכזת
-      const piecesPerCol = mmax(
-        1,
-        Math.floor((this.contHeight - 2 * pad) / (this.scaley + gapY)),
-      );
-      // התחלת ה-tray מימין לתמונה
-      const trayOriginX = this.offsx + this.gameWidth + innerGap;
+    // מרכוז הפאזל במסך
+    const startX = (this.contWidth - totalWidth) / 2;
+    const startY = (this.contHeight - totalHeight) / 2;
 
-      sorted.forEach((pp, i) => {
-        const col = Math.floor(i / piecesPerCol);
-        const row = i % piecesPerCol;
-        // מרכוז אנכי של כל עמודה
-        const colPieceCount = mmin(piecesPerCol, P - col * piecesPerCol);
-        const colHeight = colPieceCount * (this.scaley + gapY) - gapY;
-        const startY = (this.contHeight - colHeight) / 2;
-
-        const cellX = trayOriginX + col * (this.scalex + gapX);
-        const cellY = startY + row * (this.scaley + gapY);
-        // moveTo מקבל את פינת ה-canvas (כולל שוליים של 0.5 grid unit)
-        pp.moveTo(cellX - this.scalex * 0.5, cellY - this.scaley * 0.5);
-      });
-    } else {
-      // חלקים בשורות למטה מהתמונה הממורכזת
-      const piecesPerRow = mmax(
-        1,
-        Math.floor((this.contWidth - 2 * pad) / (this.scalex + gapX)),
-      );
-      const trayOriginY = this.offsy + this.gameHeight + innerGap;
-
-      sorted.forEach((pp, i) => {
-        const row = Math.floor(i / piecesPerRow);
-        const col = i % piecesPerRow;
-        // מרכוז אופקי של כל שורה
-        const rowPieceCount = mmin(piecesPerRow, P - row * piecesPerRow);
-        const rowWidth = rowPieceCount * (this.scalex + gapX) - gapX;
-        const startX = (this.contWidth - rowWidth) / 2;
-
-        const cellX = startX + col * (this.scalex + gapX);
-        const cellY = trayOriginY + row * (this.scaley + gapY);
-        pp.moveTo(cellX - this.scalex * 0.5, cellY - this.scaley * 0.5);
-      });
+    // מיקום כל חלק עם הרווח
+    for (const pp of this.polyPieces) {
+      const piece = pp.pieces[0];
+      const x = startX + piece.kx * (this.scalex + gapPx) - this.scalex * 0.5;
+      const y = startY + piece.ky * (this.scaley + gapPx) - this.scaley * 0.5;
+      pp.moveTo(x, y);
     }
   }
 
