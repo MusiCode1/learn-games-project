@@ -3,7 +3,7 @@
   import { slide } from "svelte/transition";
   import { settings } from "$lib/stores/settings.svelte";
   import { ALL_IMAGE_PACKS } from "$lib/data/image-packs";
-  import { GRID_PRESETS } from "$lib/types";
+  import { GRID_PRESETS, BEGINNER_MAX_GRID_INDEX, type SettingsProfile } from "$lib/types";
   import {
     boosterService,
     type Config,
@@ -105,19 +105,84 @@
     </div>
 
     <div class="space-y-6">
-      <!-- חבילת תמונות -->
-      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+
+      <!-- ===== בוחר פרופיל ===== -->
+      <div class="rounded-2xl bg-gradient-to-r from-sky-100 to-indigo-100 p-5 shadow-md">
         <label class="block text-lg font-bold text-slate-700 mb-3">
-          חבילת תמונות
+          פרופיל הגדרות
         </label>
-        <select
-          bind:value={settings.imagePackId}
-          class="w-full rounded-xl border-2 border-slate-300 p-3 text-lg"
-        >
-          {#each ALL_IMAGE_PACKS as pack}
-            <option value={pack.id}>{pack.icon} {pack.name}</option>
+        <div class="flex flex-wrap gap-2">
+          {#each ["beginner", "intermediate", "advanced", "custom"] as profile}
+            {@const labels: Record<SettingsProfile, string> = {
+              beginner: "מתחילים",
+              intermediate: "בינוני",
+              advanced: "מתקדם",
+              custom: "מותאם אישית",
+            }}
+            <button
+              onclick={() => settings.applyProfile(profile as SettingsProfile)}
+              class="rounded-lg px-4 py-2 font-bold transition-all {settings.activeProfile === profile
+                ? 'bg-sky-500 text-white shadow-lg'
+                : 'bg-white text-slate-700 hover:bg-slate-100'}"
+            >
+              {labels[profile as SettingsProfile]}
+            </button>
           {/each}
-        </select>
+        </div>
+        <p class="text-sm text-slate-500 mt-2">
+          {#if settings.activeProfile === "beginner"}
+            מתאים לתלמידים מתחילים — ללא zoom/pan, grid קטן, חיבור קל
+          {:else if settings.activeProfile === "intermediate"}
+            מתאים לתלמידים עם ניסיון — grid בינוני, חיבור סטנדרטי
+          {:else if settings.activeProfile === "advanced"}
+            מתאים לתלמידים מתקדמים — grid גדול, חיבור מדויק יותר
+          {:else}
+            הגדרות מותאמות אישית
+          {/if}
+        </p>
+      </div>
+
+      <!-- ===== קטגוריה 1: רמת קושי והתאמה לתלמיד ===== -->
+      <div class="mt-2 mb-4">
+        <h2 class="text-xl font-bold text-slate-700 border-b-2 border-slate-200 pb-2">
+          רמת קושי והתאמה לתלמיד
+        </h2>
+      </div>
+
+      <!-- מצב מתחילים -->
+      <div class="rounded-2xl bg-amber-50 p-5 shadow-md border-2 border-amber-200">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">מצב מתחילים</span>
+            <p class="text-sm text-slate-500">
+              ללא הגדלה/הקטנה. החלקים מסודרים במיקום קבוע על המסך.
+              מוגבל עד {GRID_PRESETS[BEGINNER_MAX_GRID_INDEX].label}.
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            checked={settings.beginnerMode}
+            onchange={() => settings.setBeginnerMode(!settings.beginnerMode)}
+            class="h-6 w-6 accent-amber-500"
+          />
+        </label>
+      </div>
+
+      <!-- מצב נעילה לתלמידים -->
+      <div class="rounded-2xl bg-rose-50 p-5 shadow-md border-2 border-rose-200">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">מצב נעילה לתלמידים</span>
+            <p class="text-sm text-slate-500">
+              מסתיר את כפתור הבית העליון בזמן המשחק
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            bind:checked={settings.studentLockMode}
+            class="h-6 w-6 accent-rose-500"
+          />
+        </label>
       </div>
 
       <!-- גודל רשת -->
@@ -127,11 +192,15 @@
         </label>
         <div class="flex flex-wrap gap-2">
           {#each GRID_PRESETS as preset, i}
+            {@const disabled = settings.beginnerMode && i > BEGINNER_MAX_GRID_INDEX}
             <button
-              onclick={() => { settings.gridPresetIndex = i; }}
+              onclick={() => { if (!disabled) settings.gridPresetIndex = i; }}
+              {disabled}
               class="rounded-lg px-3 py-2 text-sm font-bold transition-all {settings.gridPresetIndex === i
                 ? 'bg-sky-500 text-white shadow-lg'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}"
+                : disabled
+                  ? 'bg-slate-50 text-slate-300 cursor-not-allowed'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}"
             >
               {preset.label}
             </button>
@@ -139,51 +208,35 @@
         </div>
       </div>
 
-      <!-- סגנון צורה -->
+      <!-- התאמת grid לתמונה -->
       <div class="rounded-2xl bg-white/80 p-5 shadow-md">
-        <label class="block text-lg font-bold text-slate-700 mb-3">
-          סגנון חלקים
-        </label>
-        <select
-          bind:value={settings.shapeStyle}
-          class="w-full rounded-xl border-2 border-slate-300 p-3 text-lg"
-        >
-          <option value="classic">קלאסי (פטרייה)</option>
-          <option value="triangle">משולש</option>
-          <option value="round">עגול</option>
-          <option value="straight">ישר (ללא חיבורים)</option>
-        </select>
-      </div>
-
-      <!-- רגישות snap -->
-      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
-        <label class="block text-lg font-bold text-slate-700 mb-3">
-          רגישות חיבור: {settings.proximity}
-        </label>
-        <input
-          type="range"
-          bind:value={settings.proximity}
-          min="20"
-          max="80"
-          step="5"
-          class="w-full accent-sky-500"
-        />
-        <div class="flex justify-between text-sm text-slate-500 mt-1">
-          <span>מדויק</span>
-          <span>מקל</span>
-        </div>
-      </div>
-
-      <!-- פירוק חלקים -->
-      <div class="rounded-2xl bg-white/80 p-5 shadow-md space-y-4">
         <label class="flex items-center justify-between">
           <div>
-            <span class="text-lg font-bold text-slate-700">אפשר פירוק חלקים</span>
-            <p class="text-sm text-slate-500">ניתן לפרק חלקים שכבר חוברו (כרגע לא פעיל)</p>
+            <span class="text-lg font-bold text-slate-700">התאם grid לתמונה</span>
+            <p class="text-sm text-slate-500">
+              מתאים את כמות החלקים בכל ציר ליחס הגובה-רוחב של התמונה (תמונות לא ריבועיות יקבלו grid מותאם)
+            </p>
           </div>
           <input
             type="checkbox"
-            bind:checked={settings.allowDisconnect}
+            bind:checked={settings.adaptGridToImage}
+            class="h-6 w-6 accent-sky-500"
+          />
+        </label>
+      </div>
+
+      <!-- ערבוב חלקים -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">ערבוב חלקים</span>
+            <p class="text-sm text-slate-500">
+              כשכבוי — החלקים מסודרים בשורה במיקום קבוע
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            bind:checked={settings.shufflePiecePlacement}
             class="h-6 w-6 accent-sky-500"
           />
         </label>
@@ -208,6 +261,78 @@
         {/if}
       </div>
 
+      <!-- רגישות snap -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="block text-lg font-bold text-slate-700 mb-3">
+          רגישות חיבור: {settings.proximity}
+        </label>
+        <input
+          type="range"
+          bind:value={settings.proximity}
+          min="20"
+          max="80"
+          step="5"
+          class="w-full accent-sky-500"
+        />
+        <div class="flex justify-between text-sm text-slate-500 mt-1">
+          <span>מדויק</span>
+          <span>מקל</span>
+        </div>
+      </div>
+
+      <!-- סגנון צורה -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="block text-lg font-bold text-slate-700 mb-3">
+          סגנון חלקים
+        </label>
+        <select
+          bind:value={settings.shapeStyle}
+          class="w-full rounded-xl border-2 border-slate-300 p-3 text-lg"
+        >
+          <option value="classic">קלאסי (פטרייה)</option>
+          <option value="triangle">משולש</option>
+          <option value="round">עגול</option>
+          <option value="straight">ישר (ללא חיבורים)</option>
+        </select>
+      </div>
+
+      <!-- פירוק חלקים -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md space-y-4">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">אפשר פירוק חלקים</span>
+            <p class="text-sm text-slate-500">ניתן לפרק חלקים שכבר חוברו (כרגע לא פעיל)</p>
+          </div>
+          <input
+            type="checkbox"
+            bind:checked={settings.allowDisconnect}
+            class="h-6 w-6 accent-sky-500"
+          />
+        </label>
+      </div>
+
+      <!-- ===== קטגוריה 2: תמונות ומהלך משחק ===== -->
+      <div class="mt-8 mb-4">
+        <h2 class="text-xl font-bold text-slate-700 border-b-2 border-slate-200 pb-2">
+          תמונות ומהלך משחק
+        </h2>
+      </div>
+
+      <!-- חבילת תמונות -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="block text-lg font-bold text-slate-700 mb-3">
+          חבילת תמונות
+        </label>
+        <select
+          bind:value={settings.imagePackId}
+          class="w-full rounded-xl border-2 border-slate-300 p-3 text-lg"
+        >
+          {#each ALL_IMAGE_PACKS as pack}
+            <option value={pack.id}>{pack.icon} {pack.name}</option>
+          {/each}
+        </select>
+      </div>
+
       <!-- תמונת עזר -->
       <div class="rounded-2xl bg-white/80 p-5 shadow-md">
         <label class="flex items-center justify-between">
@@ -220,7 +345,7 @@
         </label>
       </div>
 
-      <!-- ערבוב -->
+      <!-- ערבוב תמונות -->
       <div class="rounded-2xl bg-white/80 p-5 shadow-md">
         <label class="flex items-center justify-between">
           <span class="text-lg font-bold text-slate-700">ערבוב תמונות</span>
@@ -274,6 +399,30 @@
             class="h-6 w-6 accent-sky-500"
           />
         </label>
+      </div>
+
+      <!-- כפתור סידור מחדש -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">כפתור סידור מחדש</span>
+            <p class="text-sm text-slate-500">
+              מציג כפתור ליד שם הפאזל שמסדר מחדש את החלקים שלא חוברו
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            bind:checked={settings.showRearrangeButton}
+            class="h-6 w-6 accent-sky-500"
+          />
+        </label>
+      </div>
+
+      <!-- ===== קטגוריה 3: חיזוקים (Gingim Booster) ===== -->
+      <div class="mt-8 mb-4">
+        <h2 class="text-xl font-bold text-slate-700 border-b-2 border-slate-200 pb-2">
+          חיזוקים (Gingim Booster)
+        </h2>
       </div>
 
       <!-- חיזוקים (Booster) -->
@@ -467,6 +616,13 @@
             </div>
           {/if}
         {/if}
+      </div>
+
+      <!-- ===== קטגוריה 4: תחזוקה ===== -->
+      <div class="mt-8 mb-4">
+        <h2 class="text-xl font-bold text-slate-700 border-b-2 border-slate-200 pb-2">
+          תחזוקה
+        </h2>
       </div>
 
       <!-- איפוס -->

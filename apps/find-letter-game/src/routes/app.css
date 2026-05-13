@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@source "../../../../packages/learn-booster-kit";
+
+:root {
+  --color-correct: #22c55e;
+  --color-wrong: #ef4444;
+  --color-frame: #ff6a3d;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* אנימציית רעידה לכרטיס שגוי */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-7px); }
+  80% { transform: translateX(7px); }
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* הבזק הצלחה */
+@keyframes pop-success {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.pop-success {
+  animation: pop-success 0.6s ease-out;
+}

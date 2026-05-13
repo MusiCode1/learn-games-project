@@ -14,6 +14,11 @@
 
   let config = $state<Config>();
   let unsubscribeConfig: (() => void) | undefined;
+  let puzzleCanvas: { rearrange: () => void } | undefined = $state();
+
+  function handleRearrange() {
+    puzzleCanvas?.rearrange();
+  }
 
   onMount(async () => {
     await boosterService.init();
@@ -49,13 +54,30 @@
     </div>
   {/if}
 
-  <!-- כותרת התמונה -->
+  <!-- כותרת התמונה + כפתור סידור מחדש -->
   {#if gameState.currentImage && (gameState.phase === "PLAYING" || gameState.phase === "PIECE_FEEDBACK")}
-    <div class="absolute top-0 left-0 right-0 animate-slide-up text-center py-3 pointer-events-none z-20">
-      <h2 class="text-2xl md:text-3xl font-black text-slate-700 drop-shadow-sm">
-        {gameState.currentImage.name}
-      </h2>
-      <p class="text-sm text-slate-500 mt-1">
+    <div class="absolute top-0 left-0 right-0 animate-slide-up py-3 z-20">
+      <div class="flex items-center justify-center gap-3 pointer-events-none">
+        <h2 class="text-2xl md:text-3xl font-black text-slate-700 drop-shadow-sm">
+          {gameState.currentImage.name}
+        </h2>
+        {#if settings.showRearrangeButton}
+          <button
+            onclick={handleRearrange}
+            class="pointer-events-auto rounded-full bg-sky-500/90 hover:bg-sky-600 text-white p-2 shadow-md transition-colors active:scale-95"
+            aria-label="סידור מחדש"
+            title="סידור מחדש של החלקים"
+          >
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+              <path d="M21 3v5h-5"/>
+              <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
+              <path d="M3 21v-5h5"/>
+            </svg>
+          </button>
+        {/if}
+      </div>
+      <p class="text-sm text-slate-500 mt-1 text-center pointer-events-none">
         {gameState.connectedPieces} / {gameState.totalPieces} חלקים
       </p>
     </div>
@@ -64,7 +86,7 @@
   <!-- אזור הפאזל — full-screen canvas, תופס את כל השטח -->
   {#if gameState.phase === "LOADING" || gameState.phase === "PLAYING" || gameState.phase === "PIECE_FEEDBACK" || gameState.phase === "PUZZLE_COMPLETE"}
     <div class="absolute inset-0">
-      <PuzzleCanvas />
+      <PuzzleCanvas bind:this={puzzleCanvas} />
     </div>
   {/if}
 

@@ -1,5 +1,307 @@
 # Jigsaw Puzzle Game — יומן פיתוח
 
+## 2026-05-01 10:07
+
+### version-2 — מערכת פרופילים (שלב 3 מתוך 3) — TDD
+
+נוספה מערכת פרופילים להגדרות שמאפשרת לבחור בין "מתחילים", "בינוני", "מתקדם" או "מותאם אישית". הפיצ'ר פותח בגישת TDD.
+
+#### מה בוצע?
+
+**1. טיפוסים (`types.ts`)**
+
+- נוסף `SettingsProfile = "beginner" | "intermediate" | "advanced" | "custom"`
+- נוסף שדה `activeProfile: SettingsProfile` ל-`TeacherSettings`
+- ברירת מחדל למשתמש חדש: `beginner`
+
+**2. Store (`settings.svelte.ts`)**
+
+- `CURRENT_VERSION` הועלה מ-6 ל-7
+- נוסף `PROFILE_PRESETS` — מפה של ערכי הגדרות לכל פרופיל:
+
+| הגדרה | beginner | intermediate | advanced |
+|-------|----------|--------------|----------|
+| beginnerMode | true | false | false |
+| gridPresetIndex | 1 (2×2) | 3 (3×3) | 5 (4×4) |
+| shufflePiecePlacement | false | true | true |
+| adaptGridToImage | true | true | false |
+| studentLockMode | true | false | false |
+| proximity | 50 | 35 | 25 |
+| shapeStyle | classic | classic | classic |
+
+- נוסף `applyProfile(profile)` — מחיל ערכי preset (או רק מסמן custom)
+- נוסף `markAsCustom()` — לסימון ידני של פרופיל מותאם אישית מ-UI
+- מיגרציה: משתמש קיים (v6 ומטה) מקבל `activeProfile: "custom"` כדי לא לדרוס הגדרות קיימות
+
+**3. בדיקות TDD (`settings.test.ts`) — 8 בדיקות**
+
+| # | תרחיש | תוצאה |
+|---|-------|-------|
+| 1 | applyProfile("beginner") | מגדיר ערכים נכונים |
+| 2 | applyProfile("intermediate") | מגדיר ערכים נכונים |
+| 3 | applyProfile("advanced") | מגדיר ערכים נכונים |
+| 4 | applyProfile("custom") | לא משנה הגדרות קיימות |
+| 5 | markAsCustom() | מעביר ל-custom |
+| 6 | migration מ-v6 | activeProfile=custom |
+| 7 | משתמש חדש | activeProfile=beginner |
+| 8 | toJSON כולל activeProfile | schemaVersion=7 |
+
+**4. UI בחירת פרופיל (`settings/+page.svelte`)**
+
+- נוסף בוחר פרופיל בראש דף ההגדרות עם 4 כפתורים
+- רקע gradient `from-sky-100 to-indigo-100`
+- הסבר דינמי לפי פרופיל נבחר
+
+#### החלטות ארכיטקטורה
+
+- **TDD**: בדיקות נכתבו קודם (RED), אומתו שהן נכשלות, ואז נוסף הקוד (GREEN)
+- **`markAsCustom()` במקום $effect**: במקום לזהות שינוי ידני דרך $effect (שלא רץ סינכרוני ב-vitest), נוספה מתודה ייעודית שניתן לקרוא מ-UI
+- **מיגרציה שומרת על הגדרות קיימות**: משתמש שכבר התאים הגדרות לא יאבד אותן בעדכון
+
+#### בדיקות שבוצעו
+
+- 14 unit tests עברו (6 ב-adaptive-grid, 8 ב-settings)
+- `bun run build` עבר בהצלחה
+- warnings בלבד ב-check (a11y labels, חבילות חיצוניות)
+
+#### Deploy
+- dev: `https://dev.puzzle-game-92p.pages.dev`
+
+---
+
+## 2026-04-30 15:50
+
+### version-2 — סידור הגדרות לקטגוריות (שלב 2 מתוך 3) — UI Refactor
+
+UI refactor בלבד בדף ההגדרות — ללא שינוי behavior, store, או bindings.
+
+#### מה בוצע?
+
+**קובץ:** `src/routes/(app)/settings/+page.svelte`
+
+ארגון מחדש של ההגדרות לארבע קטגוריות עם כותרות ברורות:
+
+1. **רמת קושי והתאמה לתלמיד** — מצב מתחילים, מצב נעילה, גודל פאזל, התאם grid לתמונה, ערבוב חלקים, הצגת חלקים, רגישות חיבור, סגנון חלקים, אפשר פירוק חלקים
+2. **תמונות ומהלך משחק** — חבילת תמונות, תמונת עזר, ערבוב תמונות, מצב משחק, כפתור "המשך" לצד פרס, הקראת משוב, כפתור סידור מחדש
+3. **חיזוקים (Gingim Booster)** — הבלוק הקיים ללא שינוי
+4. **תחזוקה** — איפוס להגדרות ברירת מחדל
+
+עיצוב כותרת קטגוריה: `<h2>` עם `border-b-2 border-slate-200`.
+
+#### Deploy
+- dev: `https://dev.puzzle-game-92p.pages.dev`
+
+---
+
+## 2026-04-30 14:36
+
+### version-2 — Grid אדפטיבי (שלב 1 מתוך 3) — TDD
+
+נוסף פיצ'ר חדש שמתאים את ממדי ה-grid (columns × rows) לפרופורציות התמונה. זה הצעד הראשון מתוך תוכנית ה-refactor של הגדרות (Grid אדפטיבי → סידור לקטגוריות → מערכת פרופילים).
+
+הפיצ'ר פותח בגישת **TDD** באמצעות סקיל `mattpocock/skills@tdd` (Vertical Slicing — בדיקה אחת, קוד שעובר אותה, חזרה).
+
+#### מה בוצע?
+
+**1. מודול חדש `adaptive-grid.ts` עם 6 בדיקות יחידה**
+
+נוצרו במקביל לפיתוח (TDD):
+- `adaptGridToImage({ targetPieceCount, imageAspectRatio })` — פונקציה טהורה שמחזירה `{ columns, rows }`
+- האלגוריתם: חיפוש ממצה של זוגות `(cols, rows)` שמינימייז ציון משוקלל:
+  ```
+  score = |cols/rows - aspectRatio| * RATIO_WEIGHT + |cols*rows - target|
+  ```
+- `MIN_AXIS = 2` — אין שורה/עמודה בודדת
+- `RATIO_WEIGHT = 10` — היחס חשוב פי 10 ממספר חלקים מדויק
+
+**2. תרחישי הבדיקות (לפי סדר כתיבתן ב-TDD)**
+
+| # | תרחיש | תוצאה צפויה |
+|---|-------|-------------|
+| 1 | תמונה ריבועית, 4 חלקים | 2×2 |
+| 2 | תמונה רחבה (3:2), 6 חלקים | 3×2 |
+| 3 | תמונה אנכית (2:3), 6 חלקים | 2×3 |
+| 4 | תמונה רחבה מאוד (16:9), 4 חלקים | 3×2 (יחס מועדף על מספר חלקים) |
+| 5 | מינימום 2×2 גם עם targetPieceCount=2 | columns ≥ 2, rows ≥ 2 |
+| 6 | לא חורג הרבה ממספר החלקים | total בין 4 ל-8 ל-target=6 |
+
+**3. אינטגרציה (`PuzzleCanvas.svelte`)**
+
+- אחרי `img.onload`, מחושב `imageAspectRatio = img.naturalWidth / img.naturalHeight`
+- אם `settings.adaptGridToImage` דלוקה, `grid.columns/rows` מוחלפים בתוצאת `adaptGridToImage()`
+- אם ההגדרה כבויה, התנהגות זהה לקודם (תאימות לאחור)
+
+**4. הגדרה חדשה (`types.ts`, `settings.svelte.ts`)**
+
+- `adaptGridToImage: boolean` — ברירת מחדל `false` (תאימות לאחור)
+- מיגרציה לסכמה `v6`, עם טעינה/שמירה/reset
+
+**5. UI הגדרות (`settings/+page.svelte`)**
+
+- toggle חדש "התאם grid לתמונה" עם תיאור הסבר
+
+#### החלטות ארכיטקטורה
+
+- **TDD בגישת Vertical Slicing**: כל בדיקה נכתבה ראשונה (RED), אומתה שהיא נכשלת, ואז נוסף הקוד המינימלי שעובר אותה (GREEN). זה גרם לאלגוריתם להתפתח אינקרמנטלית מ"return constant" לציון משוקלל מלא
+- **פונקציה טהורה במודול נפרד**: `adaptGridToImage` היא פונקציה pure ללא צד-effects. זה מאפשר בדיקות מהירות ב-Node (server tests) בלי DOM/canvas, ואת השילוב עם הקוד הקיים ב-PuzzleCanvas
+- **חיפוש ממצה (brute force)**: עבור `targetPieceCount` עד ~36 (6×6), ה-O(n²) זניח. אין צורך באלגוריתם חכם יותר
+- **משקל יחס > מספר חלקים**: `RATIO_WEIGHT = 10` מבטיח שתמונה רחבה תקבל grid רחב גם אם המשמעות היא 2 חלקים נוספים. תלמיד לא יבחין במעבר מ-4 ל-6 חלקים, אבל יבחין מאוד בחלקים מעוותים
+
+#### בדיקות שבוצעו
+
+- 6 unit tests ב-`adaptive-grid.test.ts` עברו ✅
+- `bun run check` עבר ללא שגיאות בקבצי הפרויקט שלנו
+- `bun run build` עבר בהצלחה
+
+#### תוכנית להמשך (שלבים 2-3)
+
+- **שלב 2**: סידור הגדרות לקטגוריות (UI refactor)
+- **שלב 3**: מערכת פרופילים (`activeProfile: beginner | intermediate | advanced | custom`)
+
+## 2026-04-30 13:54
+
+### version-2 — כפתור סידור מחדש + תיקון Z-index בלחיצה
+
+נוספו שני שיפורים בחוויית המשחק: כפתור "סידור מחדש" שמחזיר חלקים בודדים למיקום ההתחלתי, ותיקון התנהגות ה-z-index כך שלחיצה על חלק תעלה אותו מעל כל החלקים האחרים.
+
+#### מה בוצע?
+
+**1. תיקון Z-index בלחיצה (`puzzle-interaction.ts`)**
+
+- ב-`onPointerDown` המתבצעת על חלק: `puzzle.zIndexSup += 1` לפני שמיוחס לחלק
+- כתוצאה מכך, כל לחיצה על חלק מקפיצה אותו מעל כל לחיצה קודמת
+- לפני: `zIndexSup` היה ערך קבוע אחרי `evaluateZIndex()`, וכמה חלקים יכלו לקבל את אותו ה-z-index ולא להישאר זה מעל זה
+
+**2. מתודות סידור מחדש (`puzzle.ts`)**
+
+- `rearrangeUnconnected()` — מסדרת רק PolyPieces בודדים (קבוצה של חלק אחד) ומשאירה קבוצות שכבר חוברו במקומן
+- `compactSinglesOnly(singles)` — סידור singles ב-grid (במצב מסודר), משכפל את הלוגיקה של `compactInitial` רק על תת-קבוצה
+- `scatterSinglesToMargins(singles)` — פיזור singles לשוליים, מנסה למקם מחוץ לאזור התמונה
+
+**3. כפתור סידור מחדש בממשק (`game/+page.svelte`, `PuzzleCanvas.svelte`)**
+
+- ב-`PuzzleCanvas.svelte`: נוסף `export function rearrange()` שקורא ל-`puzzle.rearrangeUnconnected()`
+- ב-`game/+page.svelte`: נוסף כפתור עגול עם אייקון refresh ליד שם הפאזל
+- שונה ה-wrapper של הכותרת מ-`pointer-events-none` כללי לכותרת ולמונה החלקים בלבד, והכפתור עצמו `pointer-events-auto`
+
+**4. הגדרה חדשה (`types.ts`, `settings.svelte.ts`)**
+
+- נוסף `showRearrangeButton: boolean` ל-`TeacherSettings` (ברירת מחדל: `true`)
+- מיגרציה לסכמה `v5`, עם טעינה/שמירה/reset
+
+**5. UI הגדרות (`settings/+page.svelte`)**
+
+- toggle חדש "כפתור סידור מחדש" עם תיאור: "מציג כפתור ליד שם הפאזל שמסדר מחדש את החלקים שלא חוברו"
+
+**6. תיעוד פיצ'רים עתידיים (`docs/future-features.md`)**
+
+- נוצר קובץ חדש שמרכז 3 רעיונות לעתיד: חלקים מחוברים מראש, תמונה במרכז, חלק עוגן
+- כולל הצעת איחוד לכדי `startingDifficulty` אחד וסדר עבודה מומלץ
+
+#### החלטות ארכיטקטורה
+
+- **`zIndexSup` כמונה עולה במקום ערך קבוע**: גישה פשוטה ויעילה — כל לחיצה מעלה את המונה ב-1, כך שאין צורך לחשב מחדש את כל ה-z-indices. אין סכנה גם לאחר אלפי לחיצות (Number.MAX_SAFE_INTEGER גדול מספיק)
+- **API דרך `bind:this` במקום store/context**: ב-Svelte 5, חשיפת `export function rearrange()` מקומפוננטה ל-parent דרך `bind:this` היא הדרך הנקייה ביותר. הקומפוננטה שומרת על ה-state שלה, וה-parent מפעיל פקודות דרך API מוגדר
+- **`pointer-events-auto` נקודתי על הכפתור**: לא להפוך את כל ה-overlay ל-`pointer-events-auto` כדי לא לחסום אינטראקציה עם הקנבס מתחת
+
+#### בדיקות שבוצעו
+
+- בדיקה ידנית עם Playwright:
+  - לחיצה על כפתור הסידור מחדש מזיזה את החלקים למיקומים חדשים
+  - z-index של חלקים שלוחצים עליהם עולה ברצף (10→13→15→16)
+  - הכותרת ומונה החלקים נשארים `pointer-events-none` והקנבס מתחתם רגיש לאינטראקציה
+
+## 2026-04-27 13:28
+
+### version-2 — מצב נעילה לתלמידים והסתרת כפתור הבית
+
+נוסף מצב נעילה פשוט לתלמידים שמסתיר את כפתור הבית בזמן משחק, כדי למנוע יציאה לא מכוונת מהפאזל.
+
+#### מה בוצע?
+
+**1. הגדרה חדשה (`types.ts`, `settings.svelte.ts`)**
+
+- נוסף `studentLockMode: boolean` ל-`TeacherSettings`
+- ברירת המחדל הוגדרה ל-`false`
+- ה-store עודכן עם טעינה, שמירה, `reset()` ומיגרציה לסכמה `v4`
+
+**2. ממשק הגדרות (`settings/+page.svelte`)**
+
+- נוסף toggle חדש: `מצב נעילה לתלמידים`
+- התיאור שנוסף: `מסתיר את כפתור הבית העליון בזמן המשחק`
+- ה-toggle מוקם ליד מצב מתחילים כי שניהם נוגעים להתאמת הממשק לתלמידים
+
+**3. בר עליון (`HeaderBar.svelte`)**
+
+- נוסף שימוש ב-`settings.studentLockMode`
+- כפתור הבית מוסתר בזמן משחק כשהנעילה פעילה
+- במסך הבית הכפתור נשאר רגיל
+- נוסף spacer קבוע במקום הכפתור כדי לשמור על היישור של האינדיקציה במרכז
+
+#### החלטות ארכיטקטורה
+
+- **הסתרה במקום `disabled`**: נבחר להסתיר את כפתור הבית במקום להשאיר אותו מנוטרל, כדי לא להזמין לחיצות מיותרות מתלמידים שלוחצים על כל כפתור זמין
+- **שם כללי `studentLockMode`**: נבחר שם כללי ולא `disableHomeButton`, כדי לאפשר בעתיד להרחיב את מצב הנעילה גם לעוד רכיבי ממשק בלי לשנות שוב את מודל ההגדרות
+
+#### מעקפים ופתרונות
+
+- **Spacer במקום כפתור**: במקום להסיר את האלמנט בלי תחליף, נוסף placeholder בגודל הכפתור כדי למנוע תזוזה של מונה החלקים והפאזלים במרכז ה-header
+
+## 2026-04-27 10:39
+
+### version-2 — מצב מתחילים + הגדרת ערבוב חלקים
+
+הוספת מצב מתחילים (ללא zoom/pan, הגבלת grid עד 3x3) והגדרה נפרדת לסידור חלקים במיקום קבוע על המסך.
+
+#### מה בוצע?
+
+**1. הגדרות חדשות (`types.ts`, `settings.svelte.ts`)**
+
+- `beginnerMode: boolean` — מצב מתחילים: חוסם zoom/pan/pinch, מגביל grid עד 3x3
+- `shufflePiecePlacement: boolean` — ערבוב מיקום חלקים (true=מפוזרים, false=מסודרים בשורה)
+- `BEGINNER_MAX_GRID_INDEX = 3` — הגבלת grid במצב מתחילים
+- `setBeginnerMode()` — מפעיל מצב מתחילים וגם מכבה ערבוב אוטומטית
+- מיגרציה לסכמה v3
+
+**2. לייאאוט חלקים מסודר (`puzzle.ts`)**
+
+- `computeBeginnerDimensions()` — binary search לגודל חלק מקסימלי שמכניס תמונה + tray למסך
+- `compactInitial()` — סידור חלקים ב-grid קומפקטי לפי מיקומם המקורי בתמונה
+- לייאאוט אוטומטי: פורטרייט (שורות למטה) / לנדסקייפ (עמודות משמאל)
+- `handleResize()` — שימור סידור קומפקטי אחרי שינוי גודל חלון
+- `organizedStart` מחליף את `beginnerMode` ב-Puzzle — הפרדת לוגיקת layout מ-zoom
+
+**3. חסימת zoom/pan (`puzzle-interaction.ts`)**
+
+- `beginnerMode` flag חוסם: wheel zoom, pinch zoom, pan, double-tap reset
+- גרירת חלקים + merge נשארים פעילים
+
+**4. UI הגדרות (`settings/+page.svelte`, `+page.svelte`)**
+
+- toggle "מצב מתחילים" (מובלט בצהוב) בראש דף ההגדרות
+- toggle "ערבוב חלקים" — נפרד ועצמאי
+- כפתורי grid מעל 3x3 מושבתים במצב מתחילים (בהגדרות ובדף הבית)
+
+**5. תיקון SSR (`settings.svelte.ts`)**
+
+- תוקנה בדיקת localStorage: `typeof globalThis?.localStorage?.getItem === "function"` במקום `typeof globalThis?.localStorage !== "undefined"` — פותר crash ב-Node.js SSR עם `--localstorage-file` שבור
+
+**6. Cloudflare Pages deploy**
+
+- נוצר פרויקט Pages חדש `puzzle-game` עם branch deploy ל-`dev`
+- URL: `https://dev.puzzle-game-92p.pages.dev`
+
+#### החלטות ארכיטקטורה
+
+- **הפרדת `organizedStart` מ-`beginnerMode`**: `Puzzle` משתמש ב-`organizedStart` (לייאאוט) ו-`PuzzleInteraction` משתמש ב-`beginnerMode` (zoom/pan). שתי הגדרות נפרדות: מורה יכול לכבות ערבוב בלי לחסום zoom
+- **Binary search ל-sizing**: חיפוש בינארי על גובה חלק (30 איטרציות) מוצא את הגודל המקסימלי שמכניס תמונה + tray למסך. מטפל נכון בכל aspect ratio ובכל גודל מסך
+- **Gap דינמי (60% מגודל חלק)**: מונע חפיפה ויזואלית של בליטות בין חלקים סמוכים
+
+#### מעקפים ופתרונות
+
+- **מיון column-major בלנדסקייפ**: בלנדסקייפ החלקים מסודרים בעמודות (column-major) אבל המיון המקורי היה row-major, מה שגרם לטרנספוזיציה — חלקים התחלפו. התיקון: מיון לפי `kx` ראשון בלנדסקייפ, `ky` ראשון בפורטרייט
+- **handleResize דורס compactInitial**: אירוע resize אחרי init (נפוץ במובייל) הריץ מיקום פרופורציונלי שהרס את הסידור. התיקון: `handleResize` מזהה `organizedStart` ומריץ `compactInitial()` מחדש
+
 ## 2026-03-17 10:00
 
 ### version-2 — שיפור גרירת תמונת עזר: snap לצלע + תיקון חפיפה עם header

@@ -51,6 +51,15 @@ export interface ImagePack {
   images: PuzzleImage[];
 }
 
+// === מצב מתחילים ===
+
+/** אינדקס מקסימלי ב-GRID_PRESETS שמותר במצב מתחילים (3x3 = אינדקס 3) */
+export const BEGINNER_MAX_GRID_INDEX = 3;
+
+// === פרופילים ===
+
+export type SettingsProfile = "beginner" | "intermediate" | "advanced" | "custom";
+
 // === הגדרות מורה ===
 
 export interface TeacherSettings {
@@ -66,6 +75,18 @@ export interface TeacherSettings {
   voiceEnabled: boolean;
   gameMode: "continuous" | "manual_end";
   showContinueButton: boolean;
+  /** מצב מתחילים — ללא zoom/pan, הגבלת grid */
+  beginnerMode: boolean;
+  /** ערבוב מיקום חלקים — true=מפוזרים, false=מסודרים בשורה */
+  shufflePiecePlacement: boolean;
+  /** מצב נעילה לתלמידים — מסתיר את כפתור הבית בזמן משחק */
+  studentLockMode: boolean;
+  /** הצגת כפתור "סידור מחדש" ליד שם הפאזל — מחזיר חלקים לא מחוברים למיקום ההתחלתי */
+  showRearrangeButton: boolean;
+  /** התאמת gridPresetIndex לפרופורציות התמונה — מספר החלקים נשאר קרוב למטרה אבל היחס משתנה */
+  adaptGridToImage: boolean;
+  /** פרופיל הגדרות פעיל */
+  activeProfile: SettingsProfile;
 }
 
 export const DEFAULT_SETTINGS: TeacherSettings = {
@@ -81,4 +102,10 @@ export const DEFAULT_SETTINGS: TeacherSettings = {
   voiceEnabled: false,
   gameMode: "manual_end",
   showContinueButton: false,
+  beginnerMode: false,
+  shufflePiecePlacement: true,
+  studentLockMode: false,
+  showRearrangeButton: true,
+  adaptGridToImage: false,
+  activeProfile: "beginner",
 };

@@ -4,6 +4,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { gameState } from "$lib/stores/game-state.svelte";
+  import { settings } from "$lib/stores/settings.svelte";
   import homeIcon from "$lib/assets/home.svg";
   import settingsIcon from "$lib/assets/settings.svg";
   import { AdminGate } from "learn-booster-kit";
@@ -22,13 +23,17 @@
   class="flex items-center justify-between z-10 bg-slate-800 px-4 py-3 text-white shadow-md"
 >
   <!-- כפתור בית -->
-  <button
-    onclick={handleHome}
-    class="rounded-full bg-slate-700 p-2 transition-colors hover:bg-slate-600"
-    aria-label="חזרה לתפריט"
-  >
-    <img src={homeIcon} alt="בית" class="h-6 w-6 invert" />
-  </button>
+  {#if settings.studentLockMode && gameState.phase !== "INIT"}
+    <div class="h-10 w-10 shrink-0" aria-hidden="true"></div>
+  {:else}
+    <button
+      onclick={handleHome}
+      class="rounded-full bg-slate-700 p-2 transition-colors hover:bg-slate-600"
+      aria-label="חזרה לתפריט"
+    >
+      <img src={homeIcon} alt="בית" class="h-6 w-6 invert" />
+    </button>
+  {/if}
 
   <!-- אינדיקציית חלקים -->
   <div class="flex items-center gap-4 text-lg">
