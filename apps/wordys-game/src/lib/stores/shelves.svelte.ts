@@ -1,6 +1,7 @@
 import { browser } from '$app/environment';
 import type { Shelf, Box, Card } from '$lib/types';
 import { defaultShelves } from '$lib/data/words';
+import { cardImageStore } from '$lib/services/card-images.svelte';
 
 class ShelvesStore {
 	shelves = $state<Shelf[]>([]);
@@ -62,6 +63,15 @@ class ShelvesStore {
 	}
 
 	deleteShelf(id: string) {
+		const shelf = this.shelves.find((s) => s.id === id);
+		// ניקוי תמונות מותאמות מ-IDB עבור כל הכרטיסים בכל הקופסאות במדף
+		if (shelf) {
+			for (const box of shelf.boxes) {
+				for (const card of box.cards) {
+					cardImageStore.remove(card.id).catch((e) => console.error(e));
+				}
+			}
+		}
 		this.shelves = this.shelves.filter((s) => s.id !== id);
 		this.save();
 	}
@@ -96,24 +106,30 @@ class ShelvesStore {
 	deleteBox(shelfId: string, boxId: string) {
 		const shelf = this.shelves.find((s) => s.id === shelfId);
 		if (shelf) {
+			const box = shelf.boxes.find((b) => b.id === boxId);
+			// ניקוי תמונות מותאמות מ-IDB עבור כל הכרטיסים בקופסה
+			if (box) {
+				for (const card of box.cards) {
+					cardImageStore.remove(card.id).catch((e) => console.error(e));
+				}
+			}
 			shelf.boxes = shelf.boxes.filter((b) => b.id !== boxId);
 			this.save();
 		}
 	}
 
 	// --- Card Actions ---
-	addCard(shelfId: string, boxId: string, cardData: { word: string }) {
+	/** מוסיף כרטיס חדש ומחזיר את ה-id שנוצר (או מחרוזת ריקה אם נכשל). */
+	addCard(shelfId: string, boxId: string, cardData: { word: string }): string {
 		const shelf = this.shelves.find((s) => s.id === shelfId);
-		if (shelf) {
-			const box = shelf.boxes.find((b) => b.id === boxId);
-			if (box) {
-				box.cards.push({
-					id: crypto.randomUUID(),
-					...cardData
-				});
-				this.save();
-			}
-		}
+		if (!shelf) return '';
+		const box = shelf.boxes.find((b) => b.id === boxId);
+		if (!box) return '';
+
+		const id = crypto.randomUUID();
+		box.cards.push({ id, ...cardData });
+		this.save();
+		return id;
 	}
 
 	updateCard(shelfId: string, boxId: string, cardId: string, data: { word: string }) {
@@ -137,6 +153,8 @@ class ShelvesStore {
 			if (box) {
 				box.cards = box.cards.filter((c) => c.id !== cardId);
 				this.save();
+				// ניקוי התמונה המותאמת מ-IDB (אם קיימת)
+				cardImageStore.remove(cardId).catch((e) => console.error(e));
 			}
 		}
 	}

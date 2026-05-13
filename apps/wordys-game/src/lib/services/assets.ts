@@ -1,4 +1,6 @@
 import manifest from '$lib/data/available-assets.json';
+import { cardImageStore } from '$lib/services/card-images.svelte';
+import type { Card } from '$lib/types';
 
 // קונפיגורציה שניתן לשנות בעתיד בקלות
 const STORAGE_CONFIG = {
@@ -31,7 +33,8 @@ function isAssetAvailable(path: string): boolean {
  */
 export function getAssetUrl(path: string): string {
 	if (!path) return '';
-	if (path.startsWith('http')) return path;
+	// תמונות לוקאליות (blob:/data:) ותמונות חיצוניות (http(s):) — להחזיר כמו שהן.
+	if (/^(https?|blob|data):/.test(path)) return path;
 
 	const cleanPath = path.startsWith('/') ? path.slice(1) : path;
 
@@ -43,7 +46,9 @@ export function getAssetUrl(path: string): string {
 
 /**
  * מחזיר URL לתמונת כרטיס לפי מזהה הכרטיס.
- * בודק האם התמונה קיימת, ואם לא - מחזיר תמונת ברירת מחדל.
+ * בודק האם התמונה קיימת ב-manifest של ה-CDN, ואם לא - מחזיר תמונת ברירת מחדל.
+ *
+ * הערה: לא בודק תמונות מותאמות מ-IndexedDB. לשם כך השתמש ב-`getCardImage(card)`.
  */
 export function getCardImageUrl(cardId: string): string {
 	const fileName = `${cardId}.png`;
@@ -54,6 +59,18 @@ export function getCardImageUrl(cardId: string): string {
 	}
 
 	return `${STORAGE_CONFIG.baseUrl}/cards/placeholder_temp.png`;
+}
+
+/**
+ * מחזיר URL לתמונת כרטיס — מעדיף תמונה מותאמת מ-IndexedDB, אחרת נופל ל-CDN.
+ *
+ * **תגובתי**: אם התמונה המותאמת עוד לא נטענה מ-IDB, יוחזר ה-URL מה-CDN באופן זמני.
+ * כשהטעינה תסתיים, ה-cache יתעדכן וכל קומפוננטה שקראה לפונקציה תרונדר מחדש עם blob: URL.
+ */
+export function getCardImage(card: Pick<Card, 'id'>): string {
+	const customUrl = cardImageStore.get(card.id);
+	if (customUrl) return customUrl;
+	return getCardImageUrl(card.id);
 }
 
 /**

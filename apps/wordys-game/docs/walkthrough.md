@@ -1,5 +1,68 @@
 # יומן פיתוח - Wordy's
 
+## 2026-05-13 20:05
+
+### תמונות מותאמות לכרטיסים — אחסון ב-IndexedDB
+
+עד כה, ה-UI ב-admin לקבלת תמונה לכרטיס היה דקורטיבי בלבד: הקובץ נקרא, הוצגה תצוגה מקדימה, אבל בלחיצה על "הוסף" הוא הושמט בשקט (הערה בקוד: "imageUrl is removed from Card type. For now, ignoring manual image URL setting as it's auto-derived from ID"). הכרטיס נשמר רק עם `id` ו-`word`, והתמונה נטענה מ-CDN לפי `{id}.png` — מנגנון שמצפה שמישהו יעלה ידנית קובץ ל-Cloudflare R2 עם השם המתאים. בפועל — חוסר תאימות בין ה-UI לארכיטקטורה.
+
+#### מה בוצע?
+
+**1. שירות חדש: `card-images.svelte.ts`**
+
+- שכבת IndexedDB דקה: DB `wordys-game-images`, object store `cards`, key=cardId, value=`{id, blob, savedAt}`.
+- Cache תגובתי מבוסס `SvelteMap`/`SvelteSet` (מ-`svelte/reactivity`) — מפתח=cardId, ערך=`blob:` URL או null.
+- API ציבורי:
+  - `cardImageStore.get(cardId)` — **תגובתי**. מחזיר URL מיידי אם בקאש; אחרת מתחיל טעינה אסינכרונית ומחזיר null. כשהטעינה מסתיימת, ה-Map מתעדכן ו-Svelte מבצע re-render אוטומטית בכל קומפוננטה שהשתמשה בערך.
+  - `.save(cardId, blob)` — שמירה ל-IDB + עדכון קאש (יוצר `blob:` URL חדש, משחרר ישן).
+  - `.remove(cardId)` — מחיקה מה-IDB + `URL.revokeObjectURL` + עדכון קאש.
+- מטפל ב-SSR: אם `typeof indexedDB === 'undefined'` — מחזיר null ולא ניגש ל-IDB.
+
+**2. `assets.ts` — פונקציה חדשה `getCardImage(card)`**
+
+- מעדיפה תמונה מותאמת מ-IDB (`cardImageStore.get(card.id)`), אחרת נופלת ל-`getCardImageUrl(card.id)` (CDN).
+- `getAssetUrl()` תוקנה לכבד גם `blob:` ו-`data:` URLs (לא להוסיף להם prefix של ה-CDN).
+
+**3. `image-helpers.ts`, `GameContainer.svelte`, `admin/shelves/[shelfId]/[boxId]/+page.svelte`, `select/[shelfId]/[boxId]/+page.svelte`**
+
+- כולם הוסבו מ-`getCardImageUrl(card.id)` ל-`getCardImage(card)` — כך שתמונות מותאמות מ-IDB יוצגו בכל מקום (משחק, בחירת כרטיסים, ממשק ניהול, תצוגות מקדימות).
+
+**4. `shelvesStore` — ניקוי בעת מחיקה**
+
+- `addCard` עכשיו מחזיר את ה-id החדש (כדי שנוכל לשמור את התמונה מיד לאחר היצירה).
+- `deleteCard`, `deleteBox`, `deleteShelf` קוראים ל-`cardImageStore.remove(...)` רקורסיבית — מונע נכסים יתומים ב-IDB.
+
+**5. `admin/shelves/[shelfId]/[boxId]/+page.svelte` — תיקון טופס הוספה/עריכה**
+
+- שמירה של `File` כ-state (במקום data URL מסורבל).
+- תצוגה מקדימה דרך `URL.createObjectURL` (מהיר, ללא overhead של base64).
+- `URL.revokeObjectURL` בכל reset/replace למניעת memory leaks.
+- במצב עריכה: אם התלמיד לא מחליף תמונה, התמונה הקיימת נשמרת.
+- `previewUrl` (derived): קובץ חדש > תמונה קיימת מ-IDB > כלום.
+
+#### החלטות ארכיטקטורה
+
+- **IndexedDB ולא localStorage**: localStorage מוגבל ל-5–10MB, מאחסן רק strings (=base64 עם 33% overhead), וסינכרוני (חוסם UI). IndexedDB תומך ב-Blob native, אסינכרוני, ויכול להגיע ל-gigabytes.
+- **`Pick<Card, 'id'>` ב-`getCardImage`**: הפונקציה לא צריכה את כל ה-Card — רק את ה-id. שימוש ב-`Pick` מקל על call sites שיש להם רק חלק מהאובייקט.
+- **לא הוספנו `hasCustomImage?: boolean` ל-`Card`**: הקאש משמש כ-cache + הצהרה. בדיקה אחת מול IDB ברינדור הראשון של כל כרטיס מספיקה; אחרי זה הקאש מטפל.
+
+#### מעקפים ופתרונות
+
+- **`$state(new Map())` *לא* תגובתי**: זו הייתה הטעות הראשונית — חשבתי ש-`$state` הופך כל Map לתגובתי. בפועל, Svelte 5 לא עוטף Map/Set/Date ב-Proxy (built-ins מוגנים), וצריך `SvelteMap`/`SvelteSet` מ-`svelte/reactivity`. הסימפטום: התמונה נטענה מ-IDB, הקאש התעדכן, אבל הקומפוננטה לא רינדרה מחדש. **ESLint עם `svelte/prefer-svelte-reactivity` תופס את הגרסה הגלויה (`new Set()`), אך לא את `$state(new Map())` — כלומר אין הגנה אוטומטית מלאה. צריך לזכור ידנית.**
+- **שגיאות SSR**: בקריאה ראשונה ב-SSR ל-`cardImageStore.get`, ה-IDB לא זמין. נוסף קצר-מסלול: `if (typeof indexedDB === 'undefined') return null;` — מונע מילוי הקונסול בשגיאות.
+
+#### קבצים ששונו
+
+- `src/lib/services/card-images.svelte.ts` (חדש)
+- `src/lib/services/assets.ts`
+- `src/lib/utils/image-helpers.ts`
+- `src/lib/stores/shelves.svelte.ts`
+- `src/routes/(no-settings)/game/[shelfId]/[boxId]/_components/GameContainer.svelte`
+- `src/routes/(no-settings)/select/[shelfId]/[boxId]/+page.svelte`
+- `src/routes/admin/shelves/[shelfId]/[boxId]/+page.svelte`
+
+---
+
 ## 2026-05-13 18:54
 
 ### ריפקטור `WordDisplay` — תיקון גלישת קוביות אותיות מחוץ לפריים
