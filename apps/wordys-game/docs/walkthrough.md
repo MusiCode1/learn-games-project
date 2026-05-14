@@ -1,5 +1,76 @@
 # יומן פיתוח - Wordy's
 
+## 2026-05-14 10:01
+
+### תיקון `state_unsafe_mutation` ב-`cardImageStore` + תשתית E2E
+
+מהפריסה הקודמת ל-dev התגלה ש-Svelte זרק `state_unsafe_mutation` בכל מסך admin שמרנדר רשימת כרטיסים/קופסאות/מדפים. נבנתה תשתית טסטים מינימלית שתפסה את הבאג כ-tracer bullet, ואז תוקן עם שינוי קטן ומדויק. בסיום הלולאה נוספו 4 טסטי E2E שמכסים את הזרימה המרכזית של תמונות מותאמות.
+
+#### מה בוצע?
+
+**1. תשתית טסטים (`e2e/_helpers/`)**
+
+- `console.ts` — `trackErrors(page)` מאזין ל-`console.error` ול-`pageerror`, מסנן noise מוכר (`VITE_GOOGLE_DRIVE_*`, `learn-booster` API key, favicon 404).
+- `fixtures.ts` — מרחיב את `test` של Playwright עם fixture `errorTracker` שמספק אוטומטית `consoleErrors` ו-`pageErrors` לכל טסט.
+- `admin.ts` — helpers משותפים: `TINY_PNG` (Buffer), `addCardWithImage(page, word)`, `getIDBCardImages(page)` (שולף ישירות מ-IndexedDB דרך `page.evaluate`), `getCardImageLocator(page, word)`.
+
+**2. Tracer bullet — `admin-shelves-renders-clean.test.ts`**
+
+- ניווט יחיד ל-`/admin/shelves` + ציפייה ש-`pageErrors` ו-`consoleErrors` ריקים. עוצר את `state_unsafe_mutation` בלי שום אינטראקציה.
+- ירוץ אדום *לפני* התיקון. שימש כ-spec לתיקון.
+
+**3. תיקון `card-images.svelte.ts`**
+
+עטיפת כל ה-logic האסינכרוני של `cardImageStore.get(cardId)` ב-`queueMicrotask(...)`:
+
+```ts
+get(cardId: string): string | null {
+  if (cache.has(cardId)) return cache.get(cardId)!;
+  if (typeof indexedDB === 'undefined') return null;
+  if (inFlight.has(cardId)) return null;
+
+  // get() נקראת לעיתים קרובות מתוך render. מוטציה של SvelteSet/SvelteMap
+  // בזמן render אסורה (state_unsafe_mutation). לכן דוחים את כל המוטציות.
+  queueMicrotask(() => {
+    if (cache.has(cardId)) return;
+    inFlight.add(cardId);
+    dbGet(cardId)
+      .then(blob => cache.set(cardId, blob ? URL.createObjectURL(blob) : null))
+      .catch(e => { console.error(...); cache.set(cardId, null); })
+      .finally(() => inFlight.delete(cardId));
+  });
+
+  return null;
+}
+```
+
+**4. ארבעה טסטים נוספים שמכסים את ה-flow המרכזי**
+
+- `admin-add-card-with-image.test.ts` — מילוי טופס + העלאת קובץ + לחיצה על "הוסף" → הכרטיס מופיע ברשימה עם `blob:` URL.
+- `admin-card-image-persists-after-reload.test.ts` — אחרי `page.reload()` הכרטיס עדיין שם, וה-`src` חוזר ל-`blob:` תוך timeout של Playwright (=מאשר תגובתיות של הקאש אחרי טעינה מ-IDB).
+- `admin-card-image-visible-in-game-flow.test.ts` — מוסיפים ב-admin, מנווטים ל-`/select/...` (תמונה blob:), בוחרים, מתחילים משחק, ב-`/game/...` התמונה עדיין `blob:`.
+- `admin-delete-card-cleans-idb.test.ts` — שאילתת IDB ישירה לפני ואחרי מחיקה, מאמת ירידה ב-entry אחד + הכרטיס נעלם מה-DOM.
+
+#### החלטות ארכיטקטורה
+
+- **`queueMicrotask` ולא `setTimeout(0)`**: microtask רץ מיד אחרי ה-render הנוכחי (לפני ש-browser מצייר), כך שהמשתמשת לא רואה הבהוב מ-CDN ל-blob:.
+- **`expect(errorTracker.pageErrors).toEqual([])`** כפעולה אחרונה בכל טסט: רשת ביטחון אוניברסלית. כל regression שמכניס שגיאה כלשהי לקונסול יתפס מיידית, גם בלי טסט ספציפי לו.
+- **`KNOWN_NOISE` כ-allow-list ולא deny-list**: רק שגיאות שאומתו ידנית כלא-באגים מסוננות. דורש fix-it-forward לכל שגיאה חדשה — אבל זה מה שאנחנו רוצים.
+
+#### מעקפים ופתרונות
+
+- **`state_unsafe_mutation`** — ראה למעלה.
+- **`setInputFiles` לא מטריגר `change` ב-CDP attach** (נצפה ב-walk-through ידני ב-linux-gui). ב-Playwright "אמיתי" (`@playwright/test`) זה כן עובד, אז הטסטים עוברים.
+
+#### קבצים ששונו
+
+- `src/lib/services/card-images.svelte.ts` — תיקון הבאג.
+- `e2e/_helpers/{console,fixtures,admin}.ts` — חדש.
+- `e2e/admin-*.test.ts` — חמישה טסטי E2E חדשים.
+- `docs/test-plan.md` — תוכנית בדיקות כללית (נכתבה כמפת חום של עדיפויות, לא TODO).
+
+---
+
 ## 2026-05-13 20:05
 
 ### תמונות מותאמות לכרטיסים — אחסון ב-IndexedDB

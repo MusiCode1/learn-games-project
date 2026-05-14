@@ -103,22 +103,29 @@ export const cardImageStore = {
 
 		// מציין שטעינה התחילה (כדי לא לטעון פעמיים) ומחזיר null זמני.
 		if (inFlight.has(cardId)) return null;
-		inFlight.add(cardId);
 
-		dbGet(cardId)
-			.then((blob) => {
-				if (blob) {
-					cache.set(cardId, URL.createObjectURL(blob));
-				} else {
-					// סימון שאין תמונה — מונע ניסיונות חוזרים
+		// חשוב: get() נקראת לעיתים קרובות מתוך render של Svelte. מוטציה של state
+		// תגובתי (SvelteSet/SvelteMap) בזמן render אסורה ומפילה state_unsafe_mutation.
+		// לכן דוחים את כל המוטציות ל-microtask הבא — ה-render יסיים קודם.
+		queueMicrotask(() => {
+			if (cache.has(cardId)) return; // קרה תוך כדי — לא לטעון שוב
+			inFlight.add(cardId);
+
+			dbGet(cardId)
+				.then((blob) => {
+					if (blob) {
+						cache.set(cardId, URL.createObjectURL(blob));
+					} else {
+						// סימון שאין תמונה — מונע ניסיונות חוזרים
+						cache.set(cardId, null);
+					}
+				})
+				.catch((e) => {
+					console.error(`Failed to load custom image for card ${cardId}`, e);
 					cache.set(cardId, null);
-				}
-			})
-			.catch((e) => {
-				console.error(`Failed to load custom image for card ${cardId}`, e);
-				cache.set(cardId, null);
-			})
-			.finally(() => inFlight.delete(cardId));
+				})
+				.finally(() => inFlight.delete(cardId));
+		});
 
 		return null;
 	},
