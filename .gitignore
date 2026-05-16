@@ -49,3 +49,9 @@ apps/train-addition-game/static/assets/
 *.7z
 .playwright-cli
 .playwright-cli/**
+
+# Agent local state (per-machine)
+.claude/settings.local.json
+.agents/
+.codenomad/
+.specstory/
