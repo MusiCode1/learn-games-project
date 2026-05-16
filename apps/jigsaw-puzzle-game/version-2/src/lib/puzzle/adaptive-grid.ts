@@ -16,8 +16,8 @@ export interface AdaptGridResult {
   rows: number;
 }
 
-/** מינימום חלקים בכל ציר — לא לאפשר 1×N או N×1 */
-const MIN_AXIS = 2;
+/** מינימום חלקים בכל ציר — מאפשר 1×N או N×1 לפאזלים קטנים */
+const MIN_AXIS = 1;
 
 /**
  * משקל ההפרש ביחס cols/rows מול יחס התמונה.
@@ -36,15 +36,29 @@ const RATIO_WEIGHT = 10;
 export function adaptGridToImage(input: AdaptGridInput): AdaptGridResult {
   const { targetPieceCount, imageAspectRatio } = input;
 
+  // מקרה מיוחד: 2 חלקים תמיד אנכי (2×1) — אחד ליד השני
+  if (targetPieceCount === 2) {
+    return { columns: 2, rows: 1 };
+  }
+
   let best: AdaptGridResult = { columns: MIN_AXIS, rows: MIN_AXIS };
   let bestScore = Infinity;
 
   // טווח חיפוש: עד targetPieceCount בכל ציר (אין סיבה ללכת רחוק יותר)
   const maxAxis = Math.max(MIN_AXIS, targetPieceCount);
+  // מינימום חלקים כולל — לפחות 2 חלקים (לא 1×1)
+  const minTotalPieces = Math.max(2, targetPieceCount);
+  // מקסימום חלקים — לא יותר מ-50% מעל המטרה (כדי לא לקפוץ מ-2 ל-4)
+  const maxTotalPieces = Math.ceil(targetPieceCount * 1.5);
+  
   for (let cols = MIN_AXIS; cols <= maxAxis; cols++) {
     for (let rows = MIN_AXIS; rows <= maxAxis; rows++) {
+      const total = cols * rows;
+      // דילוג על grids עם מספר חלקים מחוץ לטווח
+      if (total < minTotalPieces || total > maxTotalPieces) continue;
+      
       const ratioDiff = Math.abs(cols / rows - imageAspectRatio);
-      const countDiff = Math.abs(cols * rows - targetPieceCount);
+      const countDiff = Math.abs(total - targetPieceCount);
       const score = ratioDiff * RATIO_WEIGHT + countDiff;
       if (score < bestScore) {
         bestScore = score;
