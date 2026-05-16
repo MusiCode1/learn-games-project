@@ -1,5 +1,53 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-16 16:40
+
+### `neverthrow` כסטנדרט פלטפורמה ל-Result + `updateGameSettings` מחזיר Result
+
+יישום ראשון של עקרון התכנות הפונקציונלי שהוסכם ב-`docs/functional-programming.md`: שגיאות נצפות ב-types-level דרך `Result<T, E>`, לא ב-`try/catch`. הקיט מאמץ את **`neverthrow`** כסטנדרט הפלטפורמה ומייצא אותה מחדש, כך שמשחקים לא צריכים להתקין אותה בעצמם.
+
+#### מה בוצע?
+
+**1. `neverthrow@^8.2.0` נוסף כ-dependency ב-`packages/learn-booster-kit/package.json`**
+
+**2. `src/lib/result.ts` (חדש)** — re-export של neverthrow + `ValidationError`
+
+- `export { ok, err, okAsync, errAsync, Result, ResultAsync, Ok, Err, fromThrowable, fromPromise, fromSafePromise, fromAsyncThrowable, safeTry } from "neverthrow"`
+- `export interface ValidationError { kind: "validation"; summary: string }` — שגיאה משותפת לכל הפלטפורמה
+- בלי טסטים (neverthrow כבר נבדק טוב ע"י המתחזקים)
+
+**3. `updateGameSettings` — מעבר ל-Result**
+
+- חתימה: `Promise<Config>` (זורק) → `Promise<Result<Config, ValidationError>>`
+- במקום `throw new Error(...)` → `return err<ValidationError>({ kind: 'validation', summary })`
+- בסוף → `return ok(appConfig)`
+- 3 טסטים חדשים ב-`test/game-settings.spec.ts` — `isOk()`/`isErr()` narrowing + `.match()` בסגנון FP
+
+**4. `src/index.ts` — חשיפת ה-API**
+
+- `export * from "./lib/result"` — כל ה-API של neverthrow + `ValidationError`
+- צרכנים מייבאים מ-`learn-booster-kit`, לא מ-`neverthrow` ישירות
+
+#### החלטות ארכיטקטורה
+
+- **`neverthrow` ולא native discriminated union**: לאחר דיון, נבחר `neverthrow` כסטנדרט פלטפורמה. הסיבות:
+  - **סטנדרט תעשייתי** — סוכני AI ותורמים עתידיים מזהים את ה-API מיד (`.isOk()`, `.match()`, `.andThen()`)
+  - **עקביות עם voice-acp** — אם הוא משתמש ב-`neverthrow`, learn-games-project לא צריך mental model שני
+  - **`ResultAsync` ל-chaining async** — pattern עתידי כשנגיע ל-flows מסובכים
+  - **`eslint-plugin-neverthrow`** — אפשר להוסיף בעתיד להכרחת טיפול ב-results
+- **Cost מוערך כסביר**: ~12KB bundle, learning curve מתון, class-based serialization לא רלוונטי לקיט שלנו.
+- **Re-export דרך הקיט (אופציה א)**: משחקים לא מתקינים `neverthrow` בעצמם — הקיט מספק. אם משחק צריך משהו שלא מיוצא, הוא יכול להתקין `neverthrow` לבד.
+- **`ValidationError` משותף ב-`result.ts` ולא בכל מודול**: כל הפלטפורמה משתמשת באותו shape של שגיאת validation. ספציפיים יכולים להרחיב עם discriminated union (למשל `kind: 'storage' | 'network'` בעתיד).
+- **read-faster לא הוגר עדיין**: יש לו native implementation ב-`apps/read-faster/src/lib/utils/result.ts`. ההגירה אופציונאלית — אם נגיע לעבוד שם, נגר. נכון לעכשיו הוא legacy ב-FP terms.
+
+#### תוצאה
+
+- בדיקות: 162 → 165 passed (16 קבצי spec, 3 חדשים ב-`game-settings.spec.ts`)
+- `bun run --filter learn-booster-kit check`: 0 errors / 0 warnings
+- צרכני `updateGameSettings`: עדיין אפס (ה-API נוצר ב-`d7abe95`) — אין breaking change בפועל
+
+---
+
 ## 2026-05-16 03:50
 
 ### `gameSettings` — תמיכה בהגדרות-משחק בפרופיל + תיקון 3 טסטים שבורים

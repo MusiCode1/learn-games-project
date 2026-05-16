@@ -122,19 +122,21 @@ class SettingsStore {
 export async function updateSettings(data: unknown): Promise<Config> {
   const result = ConfigSchema(data);
   if (result instanceof type.errors) {
-    throw new Error(result.summary);  // ← זה גורם ל-call-site to wrap ב-try/catch
+    throw new Error(result.summary);  // ← גורם ל-call-site לעטוף ב-try/catch
   }
   // ...
 }
 
 // ✅ נכון — Result מפורש
-export async function updateSettings(data: unknown): Promise<Result<Config, ValidationError>> {
+export async function updateSettings(
+  data: unknown,
+): Promise<Result<Config, ValidationError>> {
   const validated = ConfigSchema(data);
   if (validated instanceof type.errors) {
-    return failure({ kind: 'validation', summary: validated.summary });
+    return err({ kind: 'validation', summary: validated.summary });
   }
   // ...
-  return success(saved);
+  return ok(saved);
 }
 ```
 
@@ -144,54 +146,84 @@ export async function updateSettings(data: unknown): Promise<Result<Config, Vali
 - **Svelte effects / lifecycle hooks** — אם זורק שם, ה-framework מטפל.
 - **Pure helpers שמקבלים input מוגדר היטב** — אם ה-input חתום ע"י TypeScript, לא צריך Result.
 
-### 4.3 ה-type עצמו
+### 4.3 הספרייה: `neverthrow` (סטנדרט הפלטפורמה)
 
-ה-Result type מוגדר ב-`packages/learn-booster-kit/src/lib/result.ts` (לכשייוצר):
+ה-Result type מסופק על-ידי [`neverthrow`](https://github.com/supermacro/neverthrow), הספרייה הסטנדרטית ל-Result ב-TypeScript. הקיט (`learn-booster-kit`) מייצא אותה מחדש דרך `src/lib/result.ts`, כך שהמשחקים **לא צריכים להתקין `neverthrow` בעצמם** — מקבלים את ה-API דרך הקיט.
 
 ```ts
-export type Result<T, E> =
-  | { success: true; value: T }
-  | { success: false; error: E };
-
-export function success<T, E = never>(value: T): Result<T, E> {
-  return { success: true, value };
-}
-
-export function failure<E, T = never>(error: E): Result<T, E> {
-  return { success: false, error };
-}
-
-export function match<T, E, R>(
-  result: Result<T, E>,
-  onSuccess: (value: T) => R,
-  onFailure: (error: E) => R,
-): R {
-  return result.success ? onSuccess(result.value) : onFailure(result.error);
-}
+import {
+  ok,             // constructor להצלחה
+  err,            // constructor לכישלון
+  okAsync,        // async wrapper של ok
+  errAsync,       // async wrapper של err
+  Result,         // type / class
+  ResultAsync,    // async chaining
+  fromPromise,    // ממיר Promise ל-ResultAsync
+  fromThrowable,  // עוטף פונקציה שזורקת ל-Result
+  safeTry,        // generator-based syntax
+  type ValidationError,  // שגיאה משותפת לפלטפורמה
+} from 'learn-booster-kit';
 ```
 
-**בלי תלות חיצונית** (לא `neverthrow`) — type union פשוט. תואם ל-pattern שמיושם כבר ב-`apps/read-faster/src/lib/utils/result.ts`.
+**למה neverthrow:**
+- סטנדרט תעשייתי — סוכני AI ותורמים עתידיים מזהים מיד.
+- API עשיר ל-chaining (`.map`, `.andThen`, `.mapErr`, `.match`).
+- תמיכה native ב-async (`ResultAsync`).
+- `eslint-plugin-neverthrow` יכריח טיפול ב-Result בעתיד.
+
+**ההחלטה תועדה ב-`packages/learn-booster-kit/docs/walkthrough.md`** (תאריך 2026-05-16).
 
 ### 4.4 שימוש בצרכן
 
+**אופציה א — בדיקה ידנית עם `.isOk()` / `.isErr()`:**
+
 ```ts
-import { updateGameSettings, match } from 'learn-booster-kit';
+import { updateGameSettings } from 'learn-booster-kit';
 
 const result = await updateGameSettings('find-letter-game', newSettings);
 
-// אופציה א — explicit check
-if (!result.success) {
+if (result.isErr()) {
   showError(result.error.summary);
   return;
 }
-const config = result.value;
+const config = result.value;  // TypeScript מצמצם ל-Ok<Config, ValidationError>
+```
 
-// אופציה ב — pattern matching
-match(result,
-  (config) => showSuccess(),
-  (err) => showError(err.summary),
+**אופציה ב — Pattern matching דרך `.match()`:**
+
+```ts
+const message = result.match(
+  (config) => `נשמר: ${gameId}`,
+  (error) => `שגיאה: ${error.summary}`,
 );
 ```
+
+**אופציה ג — Chaining (כש-flow מסובך):**
+
+```ts
+import { ok, err, ResultAsync } from 'learn-booster-kit';
+
+await loadSettings(gameId)         // returns ResultAsync<Raw, IOError>
+  .andThen((raw) => validate(raw)) // returns Result<Valid, ValidationError>
+  .andThen((valid) => applyMigration(valid, currentVersion))
+  .map((migrated) => applyToStore(migrated))
+  .mapErr((err) => showError(err));
+```
+
+ה-chaining שווה את עצמו רק כשיש 3+ פעולות רצופות שיכולות לכשול. ב-simple cases — `if (result.isErr())` קריא יותר.
+
+### 4.5 `ValidationError` — שגיאה משותפת
+
+כש-validation של schema נכשלת (ArkType / Zod / וכו'), הקונבנציה היא להחזיר:
+
+```ts
+interface ValidationError {
+  kind: 'validation';
+  summary: string;
+}
+```
+
+הוא מיוצא מהקיט כ-`import type { ValidationError } from 'learn-booster-kit'`. מטרות עתידיות יכולות להוסיף שדות (למשל `errors: ArkErrors`) או להגדיר types נוספים (`kind: 'storage' | 'network' | 'migration'`).
 
 ---
 
@@ -286,4 +318,5 @@ class FindLetterSettings extends BaseSettingsStore<...> { /* ... */ }
 - [`coding-conventions.md`](./coding-conventions.md) — כללי קוד כלליים
 - [`game-design-rules.md`](./game-design-rules.md) — game design (לא קוד)
 - [`platform-plan.md`](./platform-plan.md) — roadmap לפלטפורמיזציה
-- [`apps/read-faster/src/lib/utils/result.ts`](../apps/read-faster/src/lib/utils/result.ts) — Result type implementation עם match
+- [neverthrow docs](https://github.com/supermacro/neverthrow) — תיעוד רשמי של הספרייה
+- [`apps/read-faster/src/lib/utils/result.ts`](../apps/read-faster/src/lib/utils/result.ts) — מימוש native ישן (legacy, להגר ל-neverthrow בעתיד)

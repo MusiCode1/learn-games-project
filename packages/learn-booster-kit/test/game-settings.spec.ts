@@ -94,6 +94,35 @@ describe('Game Settings API', () => {
       expect(profiles).toContain('contentProviderId');
       expect(profiles).toContain('shapes');
     });
+
+    it('מחזיר Result של ok עם ה-Config המעודכן', async () => {
+      const result = await updateGameSettings('lotto-game', { contentProviderId: 'shapes' });
+      expect(result.isOk()).toBe(true);
+      if (result.isOk()) {
+        expect(result.value.gameSettings?.['lotto-game']).toEqual({ contentProviderId: 'shapes' });
+      }
+    });
+
+    it('Result ok מאפשר type narrowing דרך result.isOk()', async () => {
+      const result = await updateGameSettings('find-letter-game', { cooldownMs: 4000 });
+      if (result.isOk()) {
+        // TypeScript מצמצם ל-Ok<Config, ValidationError>
+        expect(result.value.rewardType).toBeDefined();
+        expect(result.value.gameSettings).toBeDefined();
+      } else {
+        // לא אמור לקרות במצב תקין — אם קרה, נכשיל את הטסט
+        throw new Error(`Expected ok but got: ${result.error.summary}`);
+      }
+    });
+
+    it('Result תומך ב-match בסגנון FP', async () => {
+      const result = await updateGameSettings('lotto-game', { contentProviderId: 'letters' });
+      const message = result.match(
+        (config) => `נשמר: ${Object.keys(config.gameSettings ?? {}).length} משחק(ים)`,
+        (error) => `שגיאה: ${error.summary}`,
+      );
+      expect(message).toMatch(/^נשמר:/);
+    });
   });
 
   describe('subscribeGameSettings', () => {

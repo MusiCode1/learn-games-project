@@ -10,6 +10,7 @@ import { loadVideoUrls } from "../video/video-loader";
 import { CONFIG_SCHEMA_REGISTRY, CONFIG_SCHEMA_VERSION, ConfigSchema, OldConfigSchema } from "../../schemas";
 import { type } from "arktype";
 import { env } from "./env";
+import { ok, err, type Result, type ValidationError } from "../result";
 
 import type { Config, OldConfig } from "../../types";
 
@@ -255,11 +256,24 @@ export function getGameSettings<T = unknown>(gameId: string): T | undefined {
  * שמפתחות ישנים שלא נמצאים ב-`settings` החדשות נמחקים. שאר ההגדרות של
  * שאר המשחקים נשמרות כמובן. עובר validation מלא של ה-`ConfigSchema`,
  * נשמר ל-`localStorage`, ומסונכרן לפרופיל הפעיל.
+ *
+ * מחזיר `Result<Config, ValidationError>` — לא זורק. ראה כללי הקוד
+ * ב-`docs/functional-programming.md`.
+ *
+ * @example
+ * ```ts
+ * const result = await updateGameSettings('find-letter-game', { cooldownMs: 3000 });
+ * if (!result.success) {
+ *   console.error(result.error.summary);
+ *   return;
+ * }
+ * // result.value הוא Config מעודכן
+ * ```
  */
 export async function updateGameSettings<T = unknown>(
   gameId: string,
   settings: T,
-): Promise<Config> {
+): Promise<Result<Config, ValidationError>> {
   const newGameSettings: Record<string, unknown> = {
     ...(appConfig.gameSettings ?? {}),
     [gameId]: settings,
@@ -270,17 +284,20 @@ export async function updateGameSettings<T = unknown>(
     gameSettings: newGameSettings,
   };
 
-  const result = ConfigSchema(candidate);
-  if (result instanceof type.errors) {
-    console.error("updateGameSettings: config לא תקין, לא נשמר:", result.summary);
-    throw new Error(`Invalid game settings: ${result.summary}`);
+  const validated = ConfigSchema(candidate);
+  if (validated instanceof type.errors) {
+    console.error("updateGameSettings: config לא תקין, לא נשמר:", validated.summary);
+    return err<ValidationError>({
+      kind: "validation",
+      summary: validated.summary,
+    });
   }
 
-  appConfig = result;
+  appConfig = validated;
   saveConfigToStorage();
   syncActiveProfileSnapshot();
   notifyConfigListeners();
-  return appConfig;
+  return ok(appConfig);
 }
 
 /**
