@@ -65,6 +65,11 @@ export const ConfigSchemaV1 = type({
     disableGameCodeInjection: "boolean",
   },
   envVals: EnvValsSchema,
+  // === game-specific settings ===
+  // map: gameId → תוכן שמשחק שומר. הקיט לא מאמת את התוכן (unknown)
+  // — כל משחק אחראי על schema של עצמו. אופציונאלי לתאימות לאחור:
+  // פרופילים ישנים שנשמרו לפני שהשדה נוסף לא יישברו ב-validation.
+  "gameSettings?": type({ "[string]": "unknown" }),
 });
 export type ConfigV1 = typeof ConfigSchemaV1.infer;
 

@@ -21,6 +21,22 @@ let state: ProfilesState = createEmptyState();
 let isInitialized = false;
 const listeners: ProfilesListener[] = [];
 
+/**
+ * **TEST-ONLY** — מאפס את ה-module-level state כדי שכל test יקבל מנהל-פרופילים נקי.
+ *
+ * הסיבה: `state`, `isInitialized` ו-`listeners` הם משתני module שנשמרים בין
+ * קריאות. בלי איפוס, `initializeProfiles` ב-test הבא ימצא `isInitialized=true`
+ * וידלג על האתחול → ה-test יראה state מ-test קודם.
+ *
+ * הסכין הזו לא חייבת להיות חלק מה-API הציבורי, אבל היא חיונית לעבודה
+ * תקינה של ה-test suite (ל-production-code יש singleton lifecycle אחד בלבד).
+ */
+export function _resetProfilesStateForTesting(): void {
+    state = createEmptyState();
+    isInitialized = false;
+    listeners.length = 0;
+}
+
 export async function initializeProfiles(initialConfig: Config): Promise<ProfilesState> {
     if (isInitialized) {
         return getProfilesState();
@@ -415,12 +431,23 @@ function buildProfile(options: {
 }
 
 function cloneProfile(profile: Profile): Profile {
-    return {
-        ...profile,
-        tags: profile.tags ? [...profile.tags] : undefined,
+    // חשוב: לא להציב undefined בשדות אופציונליים (color, tags) — ArkType
+    // מפרש `"color?": "string"` כ"השדה לא חייב להופיע, אבל אם מופיע חייב
+    // להיות string". `color: undefined` נדחה ב-validation, לכן מצרפים רק
+    // את השדות שמוגדרים בפועל.
+    const cloned: Profile = {
+        id: profile.id,
+        name: profile.name,
         config: cloneConfig(profile.config),
         meta: { ...profile.meta },
     };
+    if (profile.color !== undefined) {
+        cloned.color = profile.color;
+    }
+    if (profile.tags !== undefined) {
+        cloned.tags = [...profile.tags];
+    }
+    return cloned;
 }
 
 function cloneConfig(config: Config): Config {

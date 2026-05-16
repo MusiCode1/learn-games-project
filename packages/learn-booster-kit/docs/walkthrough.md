@@ -1,5 +1,61 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-16 03:50
+
+### `gameSettings` — תמיכה בהגדרות-משחק בפרופיל + תיקון 3 טסטים שבורים
+
+הרחבת מערכת הפרופילים כך שפרופיל ייתפוס גם הגדרות ספציפיות-למשחק (לא רק הגדרות-קיט כמו `booster` ו-`video`). זוהי תשתית לחיבור `SettingsStore` של כל משחק למערכת הפרופילים — תוכנית הצעד הבא בפלטפורמיזציה.
+
+#### מה בוצע?
+
+**1. הרחבת `ConfigSchemaV1` — שדה `gameSettings`**
+
+- הוספת `"gameSettings?": type({ "[string]": "unknown" })` ב-`schemas.ts`
+- שדה אופציונאלי (`?`) → תאימות לאחור: פרופילים ישנים שנשמרו לפני התוספת לא יישברו ב-validation
+- ערך-ברירת-מחדל ריק (`gameSettings: {}`) ב-`default-config.ts`
+- הקיט לא מאמת את התוכן (`unknown`). כל משחק אחראי על schema של עצמו
+
+**2. API חדש ב-`config-manager.ts`**
+
+| פונקציה | חתימה | תיאור |
+|---------|--------|--------|
+| `getGameSettings<T>` | `(gameId: string) => T \| undefined` | קריאה מ-`appConfig.gameSettings[gameId]` |
+| `updateGameSettings<T>` | `(gameId: string, settings: T) => Promise<Config>` | **החלפה מלאה** (לא deep-merge) של הגדרות-משחק. שאר המשחקים נשמרים |
+| `subscribeGameSettings<T>` | `(gameId: string, cb) => () => void` | רישום לשינויים. callback ראשון נקרא עם הערך הנוכחי |
+
+**3. תיקון 3 טסטים שבורים**
+
+- `profile-manager.ts:cloneProfile` — לא מציב יותר `tags: undefined` ו-`color: undefined` שהיו נדחים ב-ArkType validation. רק שדות שמוגדרים בפועל נכללים → export/import עם פרופילים partial עובד.
+- `get-app-list.spec.ts` — ה-mock objects שולחים את כל 5 השדות של `AppListItemSchema` (`icon/label/package/version/versionCode`), ולא רק `packageName, label` שגוי.
+
+**4. `_resetProfilesStateForTesting`**
+
+- הוספת פונקציה (test-only, `_` prefix) שמאפסת module-level state ב-`profile-manager` (`state`, `isInitialized`, `listeners`)
+- בלי זה, test הבא רואה את הפרופיל מה-test הקודם ונכשל (ה-state הוא singleton ב-module)
+
+**5. 17 טסטים חדשים ב-`test/game-settings.spec.ts`**
+
+- `getGameSettings`: `undefined`, set/get, generic type
+- `updateGameSettings`: שמירה, אי-דריסה בין משחקים, החלפה מלאה (לא merge), persistence
+- `subscribeGameSettings`: initial value, change, no-emit לשינויי משחקים אחרים, unsubscribe
+- integration: ההגדרות נשמרות בפרופיל ולא במפתח `localStorage` נפרד
+
+#### החלטות ארכיטקטורה
+
+- **`gameSettings` ב-Config (לא API נפרד)**: שמרנו את ההגדרות-משחק כחלק מ-`Config` כדי שיתסנכרנו אוטומטית עם הפרופיל הפעיל (`saveActiveProfileConfig`). החלפת פרופיל = החלפת **כל** ההגדרות (kit + game) יחד. זה ה-mental model הנכון של "פרופיל = הגדרות מלאות לתלמיד".
+
+- **החלפה מלאה ולא deep-merge**: ה-`updateGameSettings` עוקף את ה-`deepMerge` של `updateConfig`. הסיבה: אם משחק משנה את ה-schema שלו (מסיר שדה ישן), `deepMerge` ישאיר את השדה הישן. החלפה מלאה תפעיל את ה-schema-migration של המשחק כפי שהמשחק עצמו מצפה.
+
+- **`unknown` ולא generic-typed schema**: הקיט לא יודע על שום משחק ספציפי, אז הוא לא יכול לאמת את התוכן. כל משחק מאמת אצלו (ArkType / Zod / וכו'). ה-cost של "אובדן typing" מבוטל ע"י ה-generic `<T>` של ה-helpers.
+
+#### תוצאה
+
+- בדיקות: 148 → 162 passed (16 קבצי spec, 17 חדשים עוברים)
+- `bun run --filter learn-booster-kit check`: 0/0
+- ה-API מוכן לשלב הבא — חילוץ `BaseSettingsStore` שישתמש ב-`getGameSettings`/`updateGameSettings`/`subscribeGameSettings`
+
+---
+
 ## 2026-05-16 02:30
 
 ### תיקון type-safety של הקיט — global window + import של schema types

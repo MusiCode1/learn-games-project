@@ -228,6 +228,85 @@ export function getAllConfig(): Readonly<Config> {
   return Object.freeze(structuredClone(appConfig));
 }
 
+// === Game Settings API ===
+//
+// helpers נוחים לקריאה ושמירה של הגדרות-משחק תחת `config.gameSettings`.
+// כל משחק מקבל namespace משלו לפי `gameId`, והקיט שומר את התוכן כ-`unknown`.
+// המשחק עצמו אחראי על schema/validation של ההגדרות שלו.
+//
+// הסיבה שב-`updateGameSettings` אין שימוש ב-`updateConfig`/`deepMerge`:
+// ה-`deepMerge` ימזג רקורסיבית את ה-`gameSettings[gameId]` הישן עם החדש,
+// כך שמפתחות שהוסרו מ-schema של המשחק יישארו. במקום זה אנו עושים
+// **החלפה מלאה** של גוש ההגדרות-משחק ותוך כדי שומרים על ההגדרות של
+// שאר המשחקים.
+
+/**
+ * מחזיר את ההגדרות של משחק מסוים מתוך ה-config הפעיל,
+ * או `undefined` אם אין הגדרות שמורות עבור `gameId` זה (פרופיל חדש או משחק חדש).
+ */
+export function getGameSettings<T = unknown>(gameId: string): T | undefined {
+  const all = appConfig.gameSettings;
+  if (!all) return undefined;
+  return all[gameId] as T | undefined;
+}
+
+/**
+ * שומר הגדרות-משחק תחת `gameId`. החלפה מלאה (לא merge עומק) — כך
+ * שמפתחות ישנים שלא נמצאים ב-`settings` החדשות נמחקים. שאר ההגדרות של
+ * שאר המשחקים נשמרות כמובן. עובר validation מלא של ה-`ConfigSchema`,
+ * נשמר ל-`localStorage`, ומסונכרן לפרופיל הפעיל.
+ */
+export async function updateGameSettings<T = unknown>(
+  gameId: string,
+  settings: T,
+): Promise<Config> {
+  const newGameSettings: Record<string, unknown> = {
+    ...(appConfig.gameSettings ?? {}),
+    [gameId]: settings,
+  };
+
+  const candidate: Config = {
+    ...appConfig,
+    gameSettings: newGameSettings,
+  };
+
+  const result = ConfigSchema(candidate);
+  if (result instanceof type.errors) {
+    console.error("updateGameSettings: config לא תקין, לא נשמר:", result.summary);
+    throw new Error(`Invalid game settings: ${result.summary}`);
+  }
+
+  appConfig = result;
+  saveConfigToStorage();
+  syncActiveProfileSnapshot();
+  notifyConfigListeners();
+  return appConfig;
+}
+
+/**
+ * נרשם לשינויים בהגדרות-משחק ספציפי. מחזיר callback unsubscribe.
+ * ה-callback נקרא מיד עם הערך הנוכחי, ובכל פעם שהוא משתנה (כולל החלפת פרופיל).
+ * השינוי מזוהה ב-reference comparison; משחקים שרוצים לתפוס שינוי בעומק
+ * צריכים לעבור structure-aware comparison בצד שלהם.
+ */
+export function subscribeGameSettings<T = unknown>(
+  gameId: string,
+  callback: (settings: T | undefined) => void,
+): () => void {
+  let last: T | undefined = getGameSettings<T>(gameId);
+  callback(last);
+
+  const unsub = addConfigListener((config) => {
+    const current = config.gameSettings?.[gameId] as T | undefined;
+    if (current !== last) {
+      last = current;
+      callback(current);
+    }
+  });
+
+  return unsub;
+}
+
 export function deepMerge<T extends Record<string, unknown>>(
   target: T,
   source: Partial<T>,
