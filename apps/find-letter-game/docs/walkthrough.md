@@ -11,6 +11,49 @@
 
 ---
 
+## 2026-05-16 01:35
+
+### הפרדת מסך פתיחה ממסך משחק — `/` ↔ `/play` לעקיפת autoplay policy
+
+עד עכשיו ה-route `/` היה גם מסך הפתיחה וגם מסך המשחק. הבעיה: התלמיד מגיע ל-`/`, ה-game state מתאתחל ב-`onMount`, ו-`Audio.play()` של ה-TTS נחסם ע"י הדפדפן כי אין user gesture חי (במיוחד ב-iOS Safari). הפתרון: פיצול ל-`/` (פתיחה עם CTA) ו-`/play` (משחק), כך שה-`resetGame` רץ בתוך `onclick` של הכפתור — gesture חי, האודיו עובד.
+
+#### מה בוצע?
+
+**1. `routes/+page.svelte` — שכתוב מלא למסך פתיחה**
+
+- מסך נחיתה ייעודי עם hero, אות-לוגו `בַּ`, כותרת, subtitle, CTA "להתחלת המשחק"
+- אייקון הגדרות בפינה (גלגל SVG) עטוף ב-`AdminGate` — מורה יכול לקפוץ ל-`/settings` בלי להיכנס למשחק
+- ה-`handleStart()` עושה `gameState.resetGame()` ואז `goto('/play')` — שניהם בתוך call-stack של ה-click → ה-`Audio.play()` ב-`startBoard()` עובר את autoplay policy
+- מסיר את כל הלוגיקה של הלוח, `ProgressWidget` ו-`COOLDOWN` (עברה ל-`/play`)
+
+**2. `routes/play/+page.svelte` (חדש) — מסך המשחק**
+
+- מכיל את הלוח, `HeaderBar`, `ProgressWidget`, ו-`CooldownOverlay`
+- ה-`onMount` בודק `gameState.status === 'IDLE'` — אם נכנסו ישירות ל-`/play` (refresh/URL), מחזיר ל-`/` (אין gesture). כניסה תקינה היא רק דרך מסך הפתיחה
+- מאתחל `boosterService` רק אם `settings.boosterEnabled`
+
+**3. `routes/settings/+page.svelte` — "חזרה למשחק" מאפס + הולך ל-`/play`**
+
+- כפתור החזרה היה `goto('/')` — עכשיו `gameState.resetGame() + goto('/play')` בתוך אותו click
+- מאפס את ה-state כדי שהגדרות חדשות יחולו (`gridSize`, `boardsPerSet`, וכו') ולא ייווצרו מצבי "14/12" כש-`totalQuestionsPerSet` משתנה באמצע סבב
+- bonus: `cooldownMs` max עלה מ-5000 ל-10000ms
+
+**4. `services/language.ts` — 3 מחרוזות חדשות**
+
+- `startScreenSubtitle: "משחק זיהוי אותיות בעברית"`
+- `startButtonLabel: "להתחלת המשחק"`
+- `startScreenTip: "הקשיבו ולחצו על האות הנכונה"`
+
+#### מעקפים ופתרונות
+
+- **autoplay policy של דפדפנים**: הדפדפן (בעיקר Safari) חוסם `Audio.play()` אם הוא לא בתוך call-stack של event-handler חי. ה-`startBoard()` עושה `setTimeout(250)` ובו `repeatTarget()` עם `Audio.play()` — ה-`setTimeout` שובר את ה-gesture chain. התיקון פה הוא ארכיטקטוני: לוודא שה-`resetGame` קורה תחת click, ושה-`/play` בעצמו לא מאתחל game state אם הוא מצא `IDLE` — מחזיר ל-`/`.
+
+#### החלטות ארכיטקטורה
+
+- **שני routes במקום state machine ב-`/`**: יכולנו להישאר ב-route אחד ולהוסיף `{#if showStartScreen}`. בחרנו ב-routes כי: (א) מאפשר deep-link ל-`/settings` בלי לעבור דרך הלוגיקה של המשחק, (ב) מוודא שה-game state נטען בעצלן רק כשנכנסים ל-`/play`, (ג) מסיר תלות בין hero ו-game logic.
+
+---
+
 ## 2026-05-12 17:35
 
 ### מעבר ל-TTS סטטי דרך CDN (R2), אישור איכותי של 20 קבצים, ניקוי מסך הגדרות

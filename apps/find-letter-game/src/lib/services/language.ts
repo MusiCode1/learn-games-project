@@ -65,5 +65,10 @@ export const language = {
 
 	// === Cooldown Overlay — מציג ספירה לאחור בזמן עונש על טעות ===
 	cooldownTitle: 'טעות',
-	cooldownHint: 'המתן רגע ונסה שוב'
+	cooldownHint: 'המתן רגע ונסה שוב',
+
+	// === מסך פתיחה ===
+	startScreenSubtitle: 'משחק זיהוי אותיות בעברית',
+	startButtonLabel: 'להתחלת המשחק',
+	startScreenTip: 'הקשיבו ולחצו על האות הנכונה'
 } as const;
