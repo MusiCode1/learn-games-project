@@ -6,6 +6,69 @@
 
 ---
 
+## 2026-05-16 16:30
+
+### כללי קוד מאוחדים — `AGENTS.md` + `coding-conventions.md` + `functional-programming.md`
+
+איחוד כללי הקוד למסמכים מרכזיים בעקבות זיהוי פיזור: היו כללים ב-`GEMINI.md` של ה-root, ב-`AGENTS.md` של חלק מה-apps (wordys-game היחיד מפורט, השאר רק Svelte MCP), וב-`apps/read-faster/ללא כותרת.md` (שכלל את החלק המפורט ביותר על FP ו-Result type).
+
+#### מה בוצע?
+
+**1. `AGENTS.md` בשורש (חדש)** — entry point רזה
+
+- תקציר של הכללים הקריטיים (שפה, stack, FP, תהליך עבודה, files)
+- 7 "חוקי זהב" חיוביים (החזר Result, השתמש ב-language.ts, וכו')
+- הפניות ל-5 מסמכי תיעוד עיקריים
+- מבנה הפרויקט בקיצור
+
+**2. `docs/coding-conventions.md` (חדש)** — 11 פרקים על קוד
+
+- שפה ותקשורת (עברית למשתמש, אנגלית לשמות)
+- Stack (SvelteKit 5, Tailwind 4, Bun, ArkType)
+- TypeScript + Svelte 5 (runes, snippets, onclick, $bindable)
+- שמות קבצים (PascalCase / kebab-case / `.svelte.ts`)
+- מבנה תיקיות עם co-location
+- **תיעוד פר-app** — מסומן כ"בתהליך" (~5/12 apps מכילים `AGENTS.md` עדיין)
+- תהליך עבודה עם **3 מודלי אישור לקומיטים**:
+  - מודל א — Per-commit (ברירת מחדל)
+  - מודל ב — Batch approval (כמה קומיטים יחד עם אישור גלובלי)
+  - מודל ג — Session-level autonomous (לסשנים ללא השגחה, ברשות מפורשת)
+- בדיקות (עברית מומלץ, אנגלית מקובל, עקביות בקובץ)
+
+**3. `docs/functional-programming.md` (חדש)** — כללי FP
+
+- "Functional Core, Imperative Shell" כעיקרון מנחה
+- מה כן: pure functions בלוגיקה (migrate, validate, shuffle, score)
+- מה לא: FP אגרסיבי ב-UI / על Svelte runes
+- `Result<T, E>` במקום `throw` ב-public API
+- ❌ לא Effect.ts / fp-ts / monads
+- Composition over inheritance
+- Checklist לפני כל פונקציה חדשה
+- מצב הפרויקט נכון לעכשיו + יעדי המרה
+
+**4. מחיקת `GEMINI.md` בשורש**
+
+- הוסר. הוא הכיל "Project Rules for Wordy's Game" שעלו עכשיו כפילות עם `AGENTS.md` החדש.
+- Gemini CLI יקרא `AGENTS.md` אם `GEMINI.md` לא קיים.
+
+#### החלטות ארכיטקטורה
+
+- **מבנה היברידי: AGENTS.md רזה + מסמכים מפורטים**: בחירה בין מסמך-יחיד גדול לבין AGENTS.md + מסמכים מודולריים. בחרנו במודולרי כי כל מסמך מתחזק את עצמו בקצב משלו (game-design-rules ו-functional-programming השונים בעולמם), וה-AGENTS.md משמש כ-index.
+
+- **FP חכם ולא קנאי**: לא Effect.ts/fp-ts. בעיקר Result type ו-pure helpers. Svelte 5 runes נשארים native (mutable). ה-tradeoff: לא port-able ל-Go (לא יעד פה), אבל גם לא נלחמים ב-framework.
+
+- **ArkType ולא Zod**: הקיט כבר משתמש ב-ArkType. read-faster המליץ Zod, אבל הוא חריג. במונוריפו — ArkType סטנדרט.
+
+- **אסור `&&` באופן מלא**: סתירה בין `GEMINI.md` הישן (התיר `&&`) לבין סקיל `commit` (אסר). הכרענו ל"אסור" כי הוא מאפשר בדיקת פלט בין פקודות.
+
+- **3 מודלי אישור**: per-commit לעבודה בליווי, batch לעבודה רציפה, autonomous לריצות לילה. המודלים נבחרים לפי הסכמה גלובלית בתחילת הסשן, לא פר-קומיט.
+
+#### מעקפים ופתרונות
+
+- **שמות טסטים מעורבים**: סקרנו את כל קבצי הטסט וגילינו שלא כל הטסטים בעברית. במקום לכפות אחידות מלאה, הכלל הוא "עברית מומלצת + עקביות בתוך הקובץ".
+
+---
+
 ## 2026-05-16 01:22
 
 ### תיעוד פלטפורמיזציה — קביעת תוכנית ארוכת-טווח לאיחוד 12 המשחקים
