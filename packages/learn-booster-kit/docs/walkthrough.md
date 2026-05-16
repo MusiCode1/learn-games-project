@@ -1,5 +1,54 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-16 02:30
+
+### תיקון type-safety של הקיט — global window + import של schema types
+
+תיקון 12 שגיאות `svelte-check` שצצו כשמשחק (find-letter-game) הריץ check על קבצי הקיט בהקשר tsconfig מחמיר (`strict` + `isolatedModules` + `verbatimModuleSyntax`). הקיט עצמו עבר check כי ה-tsconfig שלו פחות מחמיר, אבל הצרכנים שלו לא.
+
+#### מה בוצע?
+
+**1. `types.ts` — import + export של schema types**
+
+- היה: `export type { Config, VideoItem, ... } from "./schemas"` — מייצא, אבל לא יוצר binding מקומי
+- `types.ts` עצמו השתמש ב-`Config` ו-`VideoItem` ב-`VideoDialogProps`, `VideoConfig`, `AppConfig`, `ConfigOverrides`, `VideoList` → 5 שגיאות "Cannot find name"
+- תיקון: `import type { ... } from "./schemas"` + `export type { ... }` בנפרד
+
+**2. `types.ts` — `declare global` ל-Window**
+
+- הוספת `declare global { interface Window { ... } }` עם:
+  - `config?: unknown` — legacy gingim config שה-`config-manager` קורא לזיהוי `OldConfig`
+  - `GingimBoosterTools?` — debug hooks שה-`booster-service` רושם לחלון
+- ההצהרה ב-`types.ts` ולא ב-`vite-env.d.ts` כי `types.ts` מיובא ע"י כל צרכן (דרך re-exports מ-`index.ts`), ואילו `vite-env.d.ts` הוא ambient-only שלא בהכרח נכלל ב-tsconfig של הצרכן
+
+**3. `booster-service.ts` — type annotation ל-options**
+
+- היה: `(options) => this.rewardWatchdog.watchStateUntilReturn(options)` — `implicitly any`
+- תיקון: `(options?: WatchStateWatchOptions) => ...` + `import type { WatchStateWatchOptions } from './watchdog/reward-watchdog'`
+
+**4. `types.ts` — `getRemainingSeconds: () => number | null`**
+
+- ההצהרה בקיט הייתה `() => number`, אבל המימוש ב-`reward-watchdog.ts` מחזיר `number | null`. תוקן ל-`number | null`.
+
+#### החלטות ארכיטקטורה
+
+- **`declare global` ב-`types.ts` ולא ב-`global.d.ts` נפרד**: צרכני הקיט (8 משחקים) לא תמיד כוללים את ה-`*.d.ts` של הקיט ב-tsconfig שלהם. `types.ts` הוא מודול שמיובא בכל מקום (דרך `index.ts`), ולכן ה-`declare global` שבו חל אוטומטית. שיטה זו מועדפת בקיטים שמשרתים צרכנים עם tsconfig שונים.
+
+- **לא תוקנו שגיאות `FullyKiosk` באותו קומיט**: המשחקים `passcode`, `sort-cards`, `train-addition`, `jigsaw-v2` עדיין מקבלים 5-7 שגיאות מ-`fully-kiosk-js` — methods חסרים (`getBooleanSetting`, `getFileList`, `getStringRawSetting`, `readFile`) ו-`Subsequent property declarations must have the same type`. אלו בעיות בחבילה אחרת ובאקראיים פנימיים, לא קשור לקיט. ייפתר בקומיט נפרד אם נחליט.
+
+#### תוצאה
+
+| משחק | לפני | אחרי |
+|------|------|------|
+| `learn-booster-kit` (עצמו) | 0/0 | 0/0 |
+| `find-letter-game` | 12 errors | 0 errors, 10 warnings |
+| `lotto-game` | 0 errors | 0 errors |
+| `wordys-game` | 0 errors | 0 errors |
+| `kit-test-screen` | 0 errors | 0 errors |
+| `passcode/sort-cards/train-addition/jigsaw-v2` | 6-7 errors | 6-7 errors (לא תוקן — `FullyKiosk`) |
+
+---
+
 ## 2026-03-18 16:30
 
 ### הטמעת ArkType — runtime validation לכל נקודות כניסת הנתונים
