@@ -18,5 +18,6 @@
   },
   "dependencies": {
     "playwright": "^1.58.2"
-  }
+  },
+  "packageManager": "bun@1.3.13"
 }

@@ -5,7 +5,8 @@ export const language = {
 	heroDescription:
 		'בחר משחק והמשך ישר לתרגול. הרשימה מציגה את המשחקים שזמינים עכשיו בפרויקט ונבדקו כיעדי פתיחה חיים.',
 	gamesCountLabel: 'משחקים זמינים',
-	openGameLabel: 'פתח משחק',
+	openGameLabel: 'פרודקשן',
+	openDevLabel: 'גרסת פיתוח',
 	appPathLabel: 'תיקיית פרויקט',
 	newTabLabel: 'נפתח בלשונית חדשה',
 	statusLabel: 'סטטוס',
@@ -28,7 +29,7 @@ export const language = {
 			description: 'תרגול הקלדת מילים וקריאה גלובלית עם מדפים, קופסאות וכרטיסים מותאמים.'
 		},
 		readFaster: {
-			title: 'קוראים מהר',
+			title: 'האצת קריאה',
 			description: 'תרגול זיהוי מילים וקריאה מהירה בשלבים קצרים וברורים.'
 		},
 		sortCards: {
