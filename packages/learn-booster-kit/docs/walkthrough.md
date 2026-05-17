@@ -1,5 +1,21 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 00:23
+
+### Card variants חדשים — framed + ribbon
+
+#### מה בוצע?
+
+**`Card.svelte`** — הרחבת Variant type + prop חדש:
+
+- `variant='framed'`: `border-4 border-accent-frame rounded-lg` — מסגרת עבה (כתומה ב-find-letter, שקופה בשאר)
+- `variant='ribbon'`: `overflow-hidden relative` + `<span class="card-ribbon-bar">` pseudo-bar 4px בתחתית
+- prop `ribbonColor?: string` — מעביר `--ribbon-color` כ-CSS custom property
+- `data-card-variant` attribute לbrowser testing
+- `<style>` scoped עם `.card-ribbon-bar`: position:absolute bottom:0, background: `var(--ribbon-color, var(--theme-brand-secondary))`
+
+**2 טסטים חדשים** + showcase framed/ribbon demo
+
 ## 2026-05-17 00:22
 
 ### שדרוג themes לפי השוואה למשחקים אמיתיים — surface-header token

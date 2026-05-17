@@ -152,6 +152,15 @@
 			<Card interactive onclick={() => alert('clicked!')}>
 				<p>Interactive (click me)</p>
 			</Card>
+			<Card variant="framed">
+				<p>Framed (אם theme=find-letter — מסגרת כתומה)</p>
+			</Card>
+			<Card variant="ribbon">
+				<p>Ribbon (secondary color)</p>
+			</Card>
+			<Card variant="ribbon" ribbonColor="#3b82f6">
+				<p>Ribbon (custom blue)</p>
+			</Card>
 		</div>
 	</section>
 

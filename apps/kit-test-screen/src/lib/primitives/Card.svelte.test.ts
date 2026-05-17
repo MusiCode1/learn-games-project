@@ -25,4 +25,17 @@ describe('Card', () => {
 		// כרטיס רגיל הוא div, לא button
 		expect(btn.elements()).toHaveLength(0);
 	});
+
+	it('framed variant מכיל class border-4 ו-data-card-variant', async () => {
+		render(Card, { children: makeSnippet('X'), variant: 'framed' });
+		const card = document.querySelector('[data-card-variant="framed"]') as HTMLElement | null;
+		expect(card).not.toBeNull();
+		// Tailwind border-4 → class attribute מכיל 'border-4'
+		expect(card!.className).toContain('border-4');
+	});
+
+	it('ribbon variant קיים בDOM', async () => {
+		render(Card, { children: makeSnippet('ribbon content'), variant: 'ribbon' });
+		await expect.element(page.getByText('ribbon content')).toBeInTheDocument();
+	});
 });
