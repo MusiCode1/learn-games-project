@@ -1,5 +1,29 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 00:20
+
+### prop color="secondary" ל-Button + IconButton
+
+#### מה בוצע?
+
+**1. `Button.svelte`** — prop `color?: 'primary' | 'secondary'` (default: 'primary')
+
+- `variant='primary' color='secondary'`: `bg-brand-secondary hover:bg-brand-secondary-hover`
+- `variant='ghost' color='secondary'`: `text-brand-secondary`
+- `variant='secondary'` / `'danger'`: color prop מתעלם
+- `$derived.by` לחישוב reactive, `data-color` attribute לטסטים
+
+**2. `IconButton.svelte`** — אותו pattern
+
+- `variant='solid'`: מוסיף `shadow-elevated` (theme-aware glow)
+- `variant='solid' color='secondary'`: `bg-brand-secondary`
+
+**3. 2 טסטים חדשים** + showcase "Color secondary" section
+
+#### החלטות ארכיטקטורה
+
+- **`$derived.by`**: לוגיקה multi-branch — מחזיר ערך ולא פונקציה, reactive עם tracking נכון
+
 ## 2026-05-17 00:10
 
 ### 5 themes נוספים מבוססי עיצוב משחקים קיימים

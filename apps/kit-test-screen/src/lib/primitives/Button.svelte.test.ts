@@ -43,4 +43,20 @@ describe('Button', () => {
 		const btn = page.getByRole('button', { name: 'danger' }).element() as HTMLElement;
 		expect(btn.getAttribute('data-variant')).toBe('danger');
 	});
+
+	it('משתמש בצבע secondary כש-color="secondary"', async () => {
+		render(Button, { children: makeSnippet('X'), color: 'secondary' });
+		const btns = page.getByRole('button').all();
+		const last = btns[btns.length - 1].element() as HTMLElement;
+		// בדיקה שה-class מכיל brand-secondary ולא brand-primary
+		expect(last.className).toContain('brand-secondary');
+		expect(last.className).not.toContain('brand-primary');
+	});
+
+	it('color="secondary" מגדיר data-color="secondary"', async () => {
+		render(Button, { children: makeSnippet('X'), color: 'secondary' });
+		const btns = page.getByRole('button').all();
+		const last = btns[btns.length - 1].element() as HTMLElement;
+		expect(last.getAttribute('data-color')).toBe('secondary');
+	});
 });

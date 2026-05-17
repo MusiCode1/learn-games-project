@@ -3,10 +3,12 @@
 
 	type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 	type Size = 'sm' | 'md' | 'lg';
+	type Color = 'primary' | 'secondary';
 
 	interface Props {
 		variant?: Variant;
 		size?: Size;
+		color?: Color;
 		disabled?: boolean;
 		type?: 'button' | 'submit' | 'reset';
 		onclick?: (e: MouseEvent) => void;
@@ -18,6 +20,7 @@
 	let {
 		variant = 'primary',
 		size = 'md',
+		color = 'primary',
 		disabled = false,
 		type = 'button',
 		onclick,
@@ -26,13 +29,25 @@
 		class: className = ''
 	}: Props = $props();
 
-	const variantClasses: Record<Variant, string> = {
-		primary: 'bg-brand-primary text-text-on-brand hover:bg-brand-primary-hover',
-		secondary:
-			'bg-surface-sunken text-text-primary border border-border-subtle hover:bg-border-subtle',
-		ghost: 'bg-transparent text-text-primary hover:bg-surface-sunken',
-		danger: 'bg-feedback-error text-text-on-feedback hover:opacity-90'
-	};
+	// variant + color combo — reactive via $derived.by
+	const variantClass = $derived.by(() => {
+		if (variant === 'primary') {
+			return color === 'secondary'
+				? 'bg-brand-secondary text-text-on-brand hover:bg-brand-secondary-hover'
+				: 'bg-brand-primary text-text-on-brand hover:bg-brand-primary-hover';
+		}
+		if (variant === 'ghost') {
+			return color === 'secondary'
+				? 'bg-transparent text-brand-secondary hover:bg-surface-sunken'
+				: 'bg-transparent text-text-primary hover:bg-surface-sunken';
+		}
+		if (variant === 'secondary') {
+			// neutral surface — color prop ignored
+			return 'bg-surface-sunken text-text-primary border border-border-subtle hover:bg-border-subtle';
+		}
+		// danger — always red, color prop ignored
+		return 'bg-feedback-error text-text-on-feedback hover:opacity-90';
+	});
 
 	const sizeClasses: Record<Size, string> = {
 		sm: 'px-3 py-1.5 text-sm min-h-[44px]',
@@ -51,7 +66,8 @@
 	aria-label={ariaLabel}
 	aria-disabled={disabled}
 	data-variant={variant}
-	class="{baseClasses} {variantClasses[variant]} {sizeClasses[size]} {disabled
+	data-color={color}
+	class="{baseClasses} {variantClass} {sizeClasses[size]} {disabled
 		? disabledClasses
 		: ''} {className}"
 	{onclick}

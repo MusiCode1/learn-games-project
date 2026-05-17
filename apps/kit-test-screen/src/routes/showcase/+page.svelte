@@ -76,6 +76,14 @@
 			<Button size="md">Medium</Button>
 			<Button size="lg">Large</Button>
 		</div>
+		<h3>Color secondary</h3>
+		<div class="row">
+			<Button color="secondary">Primary + Secondary</Button>
+			<Button variant="ghost" color="secondary">Ghost + Secondary</Button>
+			<IconButton label="השמע שוב" variant="solid" color="secondary" showLabel onclick={() => {}}>
+				{#snippet icon()}<SpeakerIcon />{/snippet}
+			</IconButton>
+		</div>
 	</section>
 
 	<!-- Section: IconButton -->

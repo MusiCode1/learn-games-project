@@ -3,12 +3,14 @@
 
 	type Variant = 'solid' | 'subtle' | 'ghost';
 	type Size = 'sm' | 'md' | 'lg';
+	type Color = 'primary' | 'secondary';
 
 	interface Props {
 		icon?: Snippet;
 		label: string;
 		variant?: Variant;
 		size?: Size;
+		color?: Color;
 		disabled?: boolean;
 		onclick?: (e: MouseEvent) => void;
 		showLabel?: boolean;
@@ -20,19 +22,31 @@
 		label,
 		variant = 'subtle',
 		size = 'md',
+		color = 'primary',
 		disabled = false,
 		onclick,
 		showLabel = false,
 		class: className = ''
 	}: Props = $props();
 
-	const variantClasses: Record<Variant, string> = {
-		solid: 'bg-brand-primary text-text-on-brand',
-		subtle: 'bg-surface-sunken text-text-secondary hover:text-text-primary',
-		ghost: 'bg-transparent text-text-secondary hover:bg-surface-sunken'
-	};
+	// variant + color combo — reactive via $derived.by
+	const variantClass = $derived.by(() => {
+		if (variant === 'solid') {
+			// solid + shadow-elevated (theme-aware glow)
+			return color === 'secondary'
+				? 'bg-brand-secondary text-text-on-brand shadow-elevated'
+				: 'bg-brand-primary text-text-on-brand shadow-elevated';
+		}
+		if (variant === 'ghost') {
+			return color === 'secondary'
+				? 'bg-transparent text-brand-secondary hover:bg-surface-sunken'
+				: 'bg-transparent text-text-secondary hover:bg-surface-sunken';
+		}
+		// subtle — color prop ignored
+		return 'bg-surface-sunken text-text-secondary hover:text-text-primary';
+	});
 
-	// Reactive: sizeClasses depends on showLabel which is a prop
+	// Reactive: sizeClass depends on showLabel
 	const sizeClass = $derived(
 		showLabel
 			? size === 'sm'
@@ -55,8 +69,9 @@
 	type="button"
 	aria-label={label}
 	data-variant={variant}
+	data-color={color}
 	{onclick}
-	class="{baseClasses} {variantClasses[variant]} {sizeClass} {className}"
+	class="{baseClasses} {variantClass} {sizeClass} {className}"
 >
 	{#if icon}
 		{@render icon()}
