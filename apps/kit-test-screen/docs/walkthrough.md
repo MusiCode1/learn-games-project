@@ -1,5 +1,18 @@
 # יומן פיתוח - kit-test-screen
 
+## 2026-05-17 00:08
+
+### תיקון: layout.css — @import עם .css extension מפורש
+
+#### מה בוצע?
+
+- `layout.css`: שינוי `@import 'learn-booster-kit/styles'` → `@import 'learn-booster-kit/styles.css'`
+
+#### מעקפים ופתרונות
+
+- **Tailwind 4 loadStylesheet**: Tailwind לא מוסיף `.css` extension אוטומטית ב-@import paths — הוא פותח את הpath כמו שהוא. Vite alias מחזיר `src/styles` (ללא extension) וTailwind נכשל ב-ENOENT. הפיתרון: הוספת `.css` מפורש לimport.
+- הבעיה הייתה pre-existing (קיימת לפני הפרויקט הזה) — ה-SSR dev server לא עבד כלל בלי התיקון הזה.
+
 ## 2026-05-17 00:07
 
 ### Showcase page — הצגת כל קומפוננטות ה-component system + theme switcher
