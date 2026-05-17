@@ -1,5 +1,13 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 — חשיפת `configManager` כ-namespace (additive)
+
+הוספת שורה אחת ל-`src/index.ts`:
+`export * as configManager from "./lib/config/config-manager"`
+
+מאפשר לצרכנים לייבא `configManager.getGameSettings()` וכו' במקום named imports בודדים.
+ה-flat exports הקיימים (`export * from "./lib/config"`) נשמרים ל-tree-shaking — שינוי additive בלבד.
+
 ## 2026-05-17 — קומיט 19: Pack B — בידול צבעים
 
 ### מה בוצע?
