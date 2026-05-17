@@ -5,7 +5,17 @@ import { DEFAULT_LETTER_IDS } from '../utils/letters';
 import { migrateSettings } from './settings-migration';
 
 const LEGACY_KEY = 'find-letter-game-settings';
+const PROFILES_KEY = 'learn-booster-profiles:v1';
 const GAME_ID = 'find-letter-game';
+
+// Detailed tracing — להפעיל ידנית בעת דיבוג
+const TRACE = false;
+const log = (msg: string, data?: unknown) => {
+	if (!TRACE) return;
+	const ts = new Date().toISOString().slice(11, 23);
+	if (data !== undefined) console.log(`%c[settings ${ts}] ${msg}`, 'color:#0891b2', data);
+	else console.log(`%c[settings ${ts}] ${msg}`, 'color:#0891b2');
+};
 
 export type GridSize = '2x3' | '3x3' | '3x4' | '4x4';
 
@@ -48,7 +58,11 @@ export function gridRows(size: GridSize) {
 }
 
 // =============================================================
-// The reactive store — data + reactive derivations + toJSON filter
+// The reactive store — data + reactive derivations (NO toJSON method!)
+// toJSON על $state object literal לא נקלט נכון ב-$state.snapshot —
+// גורם ל-state_snapshot_uncloneable וה-snap המוחזר עם הfunction פנימה
+// גורם ל-DataCloneError ב-cloneConfig של הקיט (structuredClone). במקום
+// זאת — helper dataSnapshot() למטה.
 // =============================================================
 export const settings = $state({
 	...makeDefaults(),
@@ -65,14 +79,27 @@ export const settings = $state({
 	get totalQuestionsPerSet(): number {
 		return this.effectiveQuestionsPerBoard * Math.max(1, this.boardsPerSet);
 	},
-
-	// Filters snapshot — getters excluded, only data fields
-	toJSON(): FindLetterSettings {
-		const out = {} as FindLetterSettings;
-		for (const k of DATA_KEYS) (out as Record<string, unknown>)[k] = this[k];
-		return out;
-	},
 });
+
+/**
+ * בונה plain object מ-DATA_KEYS — בלי proxies, בלי getters, בלי methods.
+ * בטוח להעבר ל-structuredClone (שמשמש את הקיט ב-cloneConfig).
+ * הקריאה ל-settings[k] מסומנת כתלות ב-$effect — לכן השימוש בתוך $effect
+ * עוקב נכון אחר שינויים בכל השדות.
+ *
+ * חשוף `export` כדי לאפשר טסט רגרסיה — אסור שיחזור tojson method על
+ * ה-$state object או להשתמש ב-$state.snapshot (שני אלה דרכים מוכרות
+ * לשבור את structuredClone ב-cloneConfig).
+ */
+export function dataSnapshot(): FindLetterSettings {
+	const out: Record<string, unknown> = {};
+	for (const k of DATA_KEYS) {
+		const v = settings[k];
+		// Deep-copy arrays כדי לפרק את ה-$state proxy
+		out[k] = Array.isArray(v) ? [...v] : v;
+	}
+	return out as FindLetterSettings;
+}
 
 export function resetSettings(): void {
 	Object.assign(settings, makeDefaults());
@@ -81,47 +108,150 @@ export function resetSettings(): void {
 // Backwards-compat — קוד legacy אולי מייבא את זה
 export const DEFAULT_SETTINGS = makeDefaults();
 
+/**
+ * Fast-path: קריאה ישירה מ-localStorage של הפרופיל הפעיל בלי לחכות
+ * ל-`boosterService.init()` (איטי בגלל טעינת videos מ-Google Drive).
+ *
+ * ⚠️ Coupling: יודע את ה-storage format של profile-manager
+ * (`learn-booster-profiles:v1`). אם הקיט יחליף format, צריך לעדכן.
+ * זה pragmatic — fallback בטוח לקריאה איטית דרך configManager.
+ */
+function readActiveProfileGameSettings(): FindLetterSettings | undefined {
+	if (typeof window === 'undefined') {
+		log('fast-path: SSR (no window) — skip');
+		return undefined;
+	}
+	try {
+		const raw = window.localStorage.getItem(PROFILES_KEY);
+		if (!raw) {
+			log(`fast-path: no '${PROFILES_KEY}' key in localStorage`);
+			return undefined;
+		}
+		const data = JSON.parse(raw) as {
+			activeProfileId?: string;
+			profiles?: Record<string, { config?: { gameSettings?: Record<string, unknown> } }>;
+		};
+		const activeId = data?.activeProfileId;
+		if (!activeId) {
+			log('fast-path: no activeProfileId in profiles data', data);
+			return undefined;
+		}
+		const profile = data?.profiles?.[activeId];
+		if (!profile) {
+			log(`fast-path: profile '${activeId}' not found`, data);
+			return undefined;
+		}
+		const gameSettings = profile?.config?.gameSettings?.[GAME_ID] as
+			| FindLetterSettings
+			| undefined;
+		if (!gameSettings) {
+			log(`fast-path: profile '${activeId}' has no gameSettings.${GAME_ID}`, {
+				profileKeys: Object.keys(profile?.config ?? {}),
+				gameSettingsKeys: Object.keys(profile?.config?.gameSettings ?? {}),
+			});
+			return undefined;
+		}
+		log(`fast-path: loaded gameSettings from profile '${activeId}'`, gameSettings);
+		return gameSettings;
+	} catch (e) {
+		console.warn('[find-letter] fast-path profile load failed', e);
+		return undefined;
+	}
+}
+
 // =============================================================
 // Sync with configManager (browser-only)
 // =============================================================
 if (typeof window !== 'undefined') {
+	log('module init — running browser side-effects');
 	let lastSyncedJson = '';
 
 	// 1. Legacy migration (one-time)
 	try {
 		const legacy = window.localStorage.getItem(LEGACY_KEY);
 		if (legacy) {
+			log(`legacy: found '${LEGACY_KEY}' — migrating`, JSON.parse(legacy));
 			Object.assign(settings, migrateSettings(JSON.parse(legacy)));
 			window.localStorage.removeItem(LEGACY_KEY);
+			log('legacy: applied + removed legacy key');
+		} else {
+			log(`legacy: no '${LEGACY_KEY}' — skipping migration`);
 		}
 	} catch (e) {
 		console.error('[find-letter] legacy migration failed', e);
 	}
 
-	// 2. Initial load from active profile
-	const saved = configManager.getGameSettings<FindLetterSettings>(GAME_ID);
+	// 2. Fast-path: קריאה ישירה מ-localStorage לפני boosterService.init
+	const saved = readActiveProfileGameSettings();
 	if (saved) {
 		Object.assign(settings, saved);
 		lastSyncedJson = JSON.stringify(saved);
+		log('fast-path: applied to $state', { gridSize: settings.gridSize, lastSyncedJson });
+	} else {
+		log('fast-path: no saved settings, settings = defaults', {
+			gridSize: settings.gridSize,
+		});
 	}
 
 	$effect.root(() => {
+		log('$effect.root: starting');
+
 		// 3. local change → configManager
 		$effect(() => {
-			const snap = $state.snapshot(settings); // uses toJSON internally
+			const snap = dataSnapshot();
 			const json = JSON.stringify(snap);
-			if (json === lastSyncedJson) return;
+			if (json === lastSyncedJson) {
+				log('$effect: skip (json matches lastSyncedJson)');
+				return;
+			}
+			log('$effect: writing to configManager', { snap, prev: lastSyncedJson.slice(0, 60) });
 			lastSyncedJson = json;
 			void configManager.updateGameSettings(GAME_ID, snap);
 		});
 
 		// 4. configManager → local (profile switch / late init)
+		// ה-kit מודיע מספר פעמים במהלך init:
+		// (א) sync initial — s=undefined לפני init
+		// (ב) loadConfigFromStorage — s מ-`learn-booster-config` (cache, עלול להיות STALE)
+		// (ג) appConfig=activeProfile.config — s מהפרופיל (source of truth)
+		//
+		// אנחנו רוצים רק את (ג). הקריטריון: רק להחיל ערך שתואם את
+		// `learn-booster-profiles:v1` באותו רגע. הקאש (learn-booster-config)
+		// יכול להיות stale (מכתיבות $effect שרצו לפני שהקיט אותחל
+		// בריצות קודמות) — נתעלם ממנו.
+		log('subscribe: registering callback (will fire synchronously now)');
 		return configManager.subscribeGameSettings<FindLetterSettings>(GAME_ID, (s) => {
-			if (!s) return;
-			const json = JSON.stringify(s);
-			if (json === lastSyncedJson) return;
-			lastSyncedJson = json;
-			Object.assign(settings, s);
+			if (s) {
+				const json = JSON.stringify(s);
+				if (json === lastSyncedJson) {
+					log('subscribe: skip (matches lastSyncedJson)', { gridSize: s.gridSize });
+					return;
+				}
+
+				// אם מה שיש לנו כבר תואם לפרופיל — והערך הנכנס לא תואם —
+				// סביר ש-s הוא stale מ-learn-booster-config. התעלם.
+				const profileNow = readActiveProfileGameSettings();
+				const profileJson = profileNow ? JSON.stringify(profileNow) : '';
+				if (lastSyncedJson === profileJson && json !== profileJson) {
+					log('subscribe: IGNORE intermediate (we have profile, kit sent stale)', {
+						kitValue_questionsPerBoard: s.questionsPerBoard,
+						profile_questionsPerBoard: profileNow?.questionsPerBoard,
+					});
+					return;
+				}
+
+				log('subscribe: applying to $state', {
+					new_questionsPerBoard: s.questionsPerBoard,
+					prev_questionsPerBoard: settings.questionsPerBoard,
+				});
+				Object.assign(settings, s);
+				lastSyncedJson = json;
+			} else if (lastSyncedJson === '') {
+				lastSyncedJson = JSON.stringify(dataSnapshot());
+				log('subscribe: callback s=undefined, init baseline lastSyncedJson');
+			} else {
+				log('subscribe: callback s=undefined — no-op (baseline already set)');
+			}
 		});
 	});
 }

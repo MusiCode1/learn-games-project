@@ -1,5 +1,73 @@
 # יומן פיתוח — איפה האות?
 
+## 2026-05-17 12:22
+
+### תיקוני באגים במיגרציה — toJSON + fast-path + intermediate filter
+
+המיגרציה הראשונית (קומיט הקודם) הופיעה ב-Devtools עם 2 באגים שזוהו
+בבדיקה ידנית: warnings ב-snapshot ו-DataCloneError שגרם להגדרות לא
+להישמר לפרופיל. בנוסף — חוויית טעינה איטית של ההגדרות בריענון
+(המתינו ל-boosterService.init שטוען Google Drive).
+
+#### באג 1: `state_snapshot_uncloneable` + DataCloneError
+
+הגדרת `toJSON()` בתוך ה-`$state({...})` object literal **לא נקלטה
+נכון** ע"י `$state.snapshot`. ה-snapshot ניסה לעשות `structuredClone`
+על האובייקט (כולל המתודה), נכשל ב-warning, וה-snap המוחזר עוד
+הכיל את ה-`toJSON` כפרופ. כש-snap עבר ל-`updateGameSettings` →
+`cloneConfig` של הקיט (שמשתמש ב-`structuredClone`), הוא נכשל ב-
+`DataCloneError` והפרופיל **לא הסתנכרן**. למרות שהמשתמש שינה הגדרות,
+הם נשארו רק ב-`learn-booster-config` ולא ב-`learn-booster-profiles:v1`,
+ובריענון הם אבדו (כי הפרופיל היה ה-source of truth).
+
+**תיקון:** הסרת `toJSON` מתוך ה-`$state` literal. במקום זה — פונקציה
+exported `dataSnapshot()` שבונה plain object ידנית מ-DATA_KEYS, כולל
+deep-copy של arrays כדי לפרק את ה-$state proxy. ה-snap בטוח להעבר
+ל-`structuredClone`.
+
+#### באג 2: settings טוענות באיטיות (חכייה ל-Google Drive)
+
+`configManager.getGameSettings()` חוזר עם `undefined` עד שה-init של
+ה-Kit מסיים — כולל טעינת videos מ-Google Drive (איטי). זה גרם ל-
+settings UI להציג defaults בהתחלה ואז "לקפוץ" לערכי המשתמש.
+
+**תיקון:** Fast-path — קריאה ישירה מ-`learn-booster-profiles:v1`
+ב-localStorage **לפני** ה-Kit init. ה-settings מופיעות מיד עם הערכים
+הנכונים מהפרופיל. ה-Kit init ממשיך ברקע ולא חוסם.
+
+#### באג 3: Stale `learn-booster-config` יוצר flicker
+
+ה-Kit שומר 2 העתקים של ה-config: `learn-booster-profiles:v1` (source
+of truth) ו-`learn-booster-config` (cache). אחרי שבאג 1 הופצע, ה-cache
+היה מסונכרן עם ערכים ישנים בעוד שהפרופיל היה מאוחר. בעת init, הקיט
+טוען מה-cache ומודיע ל-listeners. ה-`subscribe` callback שלנו היה
+מעדכן את settings לערכי ה-cache הישן (overwrite של fast-path הנכון),
+ואחר כך כשהקיט סיים לטעון את הפרופיל — חוזר לערכים הנכונים. תוצאה:
+flicker זמני של defaults.
+
+**תיקון:** ב-`subscribe` callback, מתעלמים מ-`s` אם הוא לא תואם את
+מה ש-`learn-booster-profiles:v1` מכיל באותו רגע. הקאש יכול להיות
+stale; הפרופיל הוא ה-source of truth.
+
+#### Regression tests
+
+נוסף `settings.regression.test.ts` (6 בדיקות):
+
+- ה-`$state` object לא חושף `toJSON` (regression guard לבאג 1)
+- `dataSnapshot()` מחזיר plain object עם DATA_KEYS בלבד
+- `dataSnapshot()` עובר `structuredClone` בלי לזרוק
+- `selectedLetterIds` מקבל deep-copy (לא proxy)
+- `dataSnapshot()` עוקב אחר שינויי $state
+- `JSON.stringify(dataSnapshot())` תקין ו-roundtrip-able
+
+#### Logging
+
+נוסף flag `TRACE` בקובץ + פונקציה `log()`. ברירת מחדל: `false`.
+להפעלה ידנית בעת דיבוג עתידי, מציג כל פעולה (fast-path, $effect,
+subscribe) עם timestamps.
+
+---
+
 ## 2026-05-17 10:43
 
 ### מיגרציה: SettingsStore → configManager (POC)
