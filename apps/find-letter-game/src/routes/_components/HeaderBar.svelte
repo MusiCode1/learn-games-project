@@ -3,14 +3,6 @@
 	import { AdminGate } from 'learn-booster-kit';
 	import { language } from '$lib/services/language';
 	import { gameState } from '$lib/stores/game-state.svelte';
-	import { settings, type GridSize } from '$lib/stores/settings.svelte';
-
-	const sizes: GridSize[] = ['2x3', '3x3', '3x4', '4x4'];
-
-	function changeSize(size: GridSize) {
-		settings.gridSize = size;
-		gameState.resetGame();
-	}
 </script>
 
 <header class="header">
@@ -46,17 +38,6 @@
 	</div>
 
 	<div class="right">
-		<div class="size-picker" role="group" aria-label="גודל לוח">
-			{#each sizes as size}
-				<button
-					class="size-btn"
-					class:active={settings.gridSize === size}
-					onclick={() => changeSize(size)}
-				>
-					{size}
-				</button>
-			{/each}
-		</div>
 		<div class="score">
 			<span class="score-label">{language.scoreLabel}:</span>
 			<span class="score-value">{gameState.score}</span>
@@ -162,28 +143,6 @@
 
 	.new-game-btn:hover {
 		background: #e2e8f0;
-	}
-
-	.size-picker {
-		display: inline-flex;
-		gap: 0.25rem;
-		padding: 0.25rem;
-		background: #f1f5f9;
-		border-radius: 999px;
-	}
-
-	.size-btn {
-		font-weight: 700;
-		padding: 0.35rem 0.75rem;
-		border-radius: 999px;
-		font-size: 0.85rem;
-		color: #475569;
-	}
-
-	.size-btn.active {
-		background: white;
-		color: #0f172a;
-		box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
 	}
 
 	.score {
