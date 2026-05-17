@@ -22,3 +22,10 @@ export { default as OverlayTimerSettings } from "./ui/components/OverlayTimerSet
 // === Animations (helpers) ===
 export { useShake } from "./ui/animations/use-shake.svelte";
 export { usePop } from "./ui/animations/use-pop.svelte";
+
+// === Icons ===
+export { default as SpeakerIcon } from "./ui/primitives/icons/SpeakerIcon.svelte";
+export { default as RefreshIcon } from "./ui/primitives/icons/RefreshIcon.svelte";
+export { default as SettingsIcon } from "./ui/primitives/icons/SettingsIcon.svelte";
+export { default as CheckIcon } from "./ui/primitives/icons/CheckIcon.svelte";
+export { default as XIcon } from "./ui/primitives/icons/XIcon.svelte";

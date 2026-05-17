@@ -1,5 +1,22 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 00:02
+
+### Icons primitives — 5 אייקוני Lucide-style
+
+#### מה בוצע?
+
+**5 קבצי Svelte ב-`src/ui/primitives/icons/`**: SpeakerIcon, RefreshIcon, SettingsIcon, CheckIcon, XIcon
+
+- SVG paths בסגנון Lucide עם props: `size` ו-`class`
+- `aria-hidden="true"` לנגישות (נגיש דרך `aria-label` של הצרכן)
+- `export` ב-`src/index.ts`
+
+#### החלטות ארכיטקטורה
+
+- **ללא תלות חיצונית**: SVG paths ידניים מ-Lucide — אין צורך ב-`lucide-svelte` כחבילה
+- **`currentColor`**: הצבע מגיע מ-CSS context, לא hardcoded
+
 ## 2026-05-17 00:01
 
 ### Animation helpers — useShake ו-usePop עם TDD
