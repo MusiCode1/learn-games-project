@@ -1,5 +1,25 @@
 # יומן פיתוח - kit-test-screen
 
+## 2026-05-17 00:12
+
+### מסך משחק אינטראקטיבי לבחינת themes
+
+#### מה בוצע?
+
+**`src/routes/showcase/game/+page.svelte`** — פסאודו-משחק "מצא את האות"
+
+- `GameShell` + `HeaderBar` מלא: SpeakerIcon+label, כפתור משחק חדש, SegmentedControl גודל לוח, ScoreBadge ×2, SettingsIcon
+- גריד כרטיסים בCSSgrid: 2×3 / 3×3 / 3×4 לפי בחירה
+- `lbk-anim-shake` על תשובה שגויה, `lbk-anim-pop` על תשובה נכונה
+- `CooldownOverlay` 2.5s אחרי טעות
+- `generateRound`: 1 target + distractors מ-LETTERS, Fisher-Yates shuffle
+- `$effect` יחיד לinit + מעקב אחרי gridSize דרך `gridCount(gridSize)`
+- nav link "Game" ב-layout
+
+#### מעקפים ופתרונות
+
+- **infinite loop בסיכון**: `$effect` מריץ `generateRound` שמשמש `targetLetter` → tracking. פתרון: מחיקת השורה `const available = LETTERS.filter(l => l !== targetLetter)` שלא הייתה נחוצה, ומחיקת `$effect` כפול
+
 ## 2026-05-17 00:11
 
 ### מסך ברוכים הבאים לבחינת themes
