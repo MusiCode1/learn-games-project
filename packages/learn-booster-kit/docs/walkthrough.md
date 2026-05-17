@@ -1,5 +1,19 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 00:21
+
+### הוספת fonts — Rubik + Frank Ruhl Libre
+
+#### מה בוצע?
+
+- `package.json`: `@fontsource/rubik@5.2.8` + `@fontsource/frank-ruhl-libre@5.2.8`
+- `styles.css`: @imports של כל weights לפני theme imports
+
+#### החלטות ארכיטקטורה
+
+- weights נבחרו לפי שימוש בthemes: regular (400), medium (500), bold (700/800/900)
+- ה-fonts כעת נטענים מה-bundle, לא מ-CDN — עובד offline ו-Cloudflare Pages
+
 ## 2026-05-17 00:20
 
 ### prop color="secondary" ל-Button + IconButton

@@ -440,7 +440,9 @@
       "name": "learn-booster-kit",
       "version": "0.0.1",
       "dependencies": {
+        "@fontsource/frank-ruhl-libre": "^5.2.8",
         "@fontsource/heebo": "^5.1.0",
+        "@fontsource/rubik": "^5.2.8",
         "@playwright/test": "^1.51.1",
         "@tailwindcss/postcss": "^4.1.17",
         "@tailwindcss/vite": "^4.1.17",
@@ -643,7 +645,11 @@
 
     "@fontsource/fira-mono": ["@fontsource/fira-mono@5.2.7", "", {}, "sha512-wYrAn6i3nH6luqQBZxtWUpl4UTUvs9AEbEeZxksPMwIqyjRRaxHTNW3c2VfM50gabS2IS7pT8lVWS2USB4ukYA=="],
 
+    "@fontsource/frank-ruhl-libre": ["@fontsource/frank-ruhl-libre@5.2.8", "", {}, "sha512-6ISorITeqsIsJ92KUgvShp0/KyGGzex6yEGYkzfVuVLntwfj9OdxsZavsaoNwx+IyVUI5Hz8m39vktt+TjIi/w=="],
+
     "@fontsource/heebo": ["@fontsource/heebo@5.2.8", "", {}, "sha512-K5aMLH2Yy/CmmjuM9lpToyIEwSdPKwW6KzZOGCFnj7XFrgatIpnesu6FDgmQl3bkyP/YCT62rzLRqRM9s/OzLw=="],
+
+    "@fontsource/rubik": ["@fontsource/rubik@5.2.8", "", {}, "sha512-PIc8QR7FqWPcYhbdRiGff56vQlKqg/ytES1YqecSq1GkgxiH4TBshrFvDEOZ9JonUF9m1qQ+qXxJj7wD5zgXEw=="],
 
     "@humanfs/core": ["@humanfs/core@0.19.1", "", {}, "sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA=="],
 

@@ -47,7 +47,9 @@
     "vitest": "^4.0.15"
   },
   "dependencies": {
+    "@fontsource/frank-ruhl-libre": "^5.2.8",
     "@fontsource/heebo": "^5.1.0",
+    "@fontsource/rubik": "^5.2.8",
     "@playwright/test": "^1.51.1",
     "@tailwindcss/postcss": "^4.1.17",
     "@tailwindcss/vite": "^4.1.17",
