@@ -26,6 +26,8 @@
 	let shakeIndex = $state<number | null>(null);
 	let popIndex = $state<number | null>(null);
 
+	const progressPct = $derived(((score % 12) / 12) * 100);
+
 	function gridCount(g: GridSize): number {
 		if (g === '2x3') return 6;
 		if (g === '3x4') return 12;
@@ -96,6 +98,7 @@
 					label="השמע שוב"
 					showLabel
 					variant="solid"
+					color="secondary"
 					onclick={() => alert(`מצא את האות ${targetLetter}`)}
 				>
 					{#snippet icon()}<SpeakerIcon />{/snippet}
@@ -103,7 +106,10 @@
 				<Button variant="secondary" size="sm" onclick={resetGame}>משחק חדש</Button>
 			{/snippet}
 			{#snippet centerInfo()}
-				<h2 class="title">מצא את האות {targetLetter}</h2>
+				<div class="title-wrap">
+					<h2 class="title">מצא את האות {targetLetter}</h2>
+					<p class="subtitle">הקשיבו וגעו באות הנכונה</p>
+				</div>
 			{/snippet}
 			{#snippet rightActions()}
 				<SegmentedControl
@@ -128,24 +134,37 @@
 		</HeaderBar>
 	{/snippet}
 
-	<div class="game-area">
-		<div class="prompt">
-			<p class="prompt-label">מצא את האות</p>
-			<div class="big-letter">{targetLetter}</div>
-		</div>
+	<div class="game-area-wrap">
+		<!-- ProgressWidget mock -->
+		<aside class="progress-mock" aria-label="התקדמות לפרס">
+			<div class="track">
+				<div class="fill" style="height: {progressPct}%"></div>
+			</div>
+			<span class="counter">{score % 12}/12</span>
+			<span class="label">לפרס</span>
+		</aside>
 
-		<div class="grid" data-grid={gridSize}>
-			{#each grid as letter, i (i)}
-				<Card interactive onclick={() => onCardClick(letter, i)}>
-					<div
-						class="letter-card"
-						class:lbk-anim-shake={shakeIndex === i}
-						class:lbk-anim-pop={popIndex === i}
-					>
-						{letter}
-					</div>
-				</Card>
-			{/each}
+		<div class="game-area">
+			<div class="prompt">
+				<p class="prompt-label">מצא את האות</p>
+				<div class="big-letter">{targetLetter}</div>
+			</div>
+
+			<Card variant="framed" padding="lg" class="grid-frame">
+				<div class="grid" data-grid={gridSize}>
+					{#each grid as letter, i (i)}
+						<Card interactive onclick={() => onCardClick(letter, i)}>
+							<div
+								class="letter-card"
+								class:lbk-anim-shake={shakeIndex === i}
+								class:lbk-anim-pop={popIndex === i}
+							>
+								{letter}
+							</div>
+						</Card>
+					{/each}
+				</div>
+			</Card>
 		</div>
 	</div>
 
@@ -153,20 +172,72 @@
 </GameShell>
 
 <style>
+	.title-wrap {
+		text-align: center;
+	}
 	.title {
 		margin: 0;
 		font-family: var(--theme-font-display);
 		font-size: var(--theme-font-size-lg);
+		color: var(--theme-text-on-header, var(--theme-text-primary));
+	}
+	.subtitle {
+		margin: 0;
+		font-size: var(--theme-font-size-sm);
+		color: var(--theme-text-on-header, var(--theme-text-secondary));
+		opacity: 0.8;
+		text-align: center;
+	}
+	.game-area-wrap {
+		display: flex;
+		gap: 1rem;
+		height: 100%;
+		padding: 1rem;
+	}
+	.progress-mock {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 1rem 0.5rem;
+		background: var(--theme-surface-elevated);
+		border-radius: var(--theme-radius-md);
+		box-shadow: var(--theme-shadow-card);
+		min-width: 60px;
+	}
+	.track {
+		width: 12px;
+		height: 200px;
+		background: var(--theme-surface-sunken);
+		border-radius: var(--theme-radius-pill);
+		position: relative;
+		overflow: hidden;
+	}
+	.fill {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: var(--theme-feedback-success);
+		border-radius: var(--theme-radius-pill);
+		transition: height 300ms ease;
+	}
+	.counter {
+		font-weight: var(--theme-font-weight-bold);
 		color: var(--theme-text-primary);
+		font-size: var(--theme-font-size-sm);
+	}
+	.label {
+		font-size: var(--theme-font-size-xs);
+		color: var(--theme-text-tertiary);
 	}
 	.game-area {
+		flex: 1;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		gap: 2rem;
-		padding: 2rem;
-		height: 100%;
 	}
 	.prompt {
 		text-align: center;
@@ -182,6 +253,10 @@
 		font-weight: var(--theme-font-weight-bold);
 		color: var(--theme-brand-primary);
 		line-height: 1;
+	}
+	:global(.grid-frame) {
+		width: 100%;
+		max-width: 600px;
 	}
 	.grid {
 		display: grid;

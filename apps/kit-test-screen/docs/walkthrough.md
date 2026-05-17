@@ -1,5 +1,20 @@
 # יומן פיתוח - kit-test-screen
 
+## 2026-05-17 00:25
+
+### שיפור מסך game להתאמה למקור
+
+#### מה בוצע?
+
+**`showcase/game/+page.svelte`** — 4 שיפורים:
+
+1. **color="secondary"** ל-SpeakerIcon IconButton — כתום ב-find-letter, צהוב ב-wordys, rose ב-portal
+2. **subtitle בHeaderBar** — "הקשיבו וגעו באות הנכונה" (`.title-wrap` + `.subtitle`)
+3. **ProgressWidget mock** — `<aside class="progress-mock">` עם track/fill ו-`progressPct = $derived((score%12)/12*100)`
+4. **Grid עטוף ב-`Card variant="framed"`** — מסגרת כתומה ב-find-letter, ניטרלי בשאר
+
+**`Card.svelte`** — תיקון: `ribbonStyle` הפך ל-`$derived` (מנע Svelte warning)
+
 ## 2026-05-17 00:12
 
 ### מסך משחק אינטראקטיבי לבחינת themes

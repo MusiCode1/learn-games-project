@@ -41,7 +41,7 @@
 
 	const isButton = $derived(onclick !== undefined);
 
-	const ribbonStyle = ribbonColor ? `--ribbon-color: ${ribbonColor}` : '';
+	const ribbonStyle = $derived(ribbonColor ? `--ribbon-color: ${ribbonColor}` : undefined);
 </script>
 
 {#if isButton}
@@ -49,7 +49,7 @@
 		type="button"
 		data-card-variant={variant}
 		{onclick}
-		style={ribbonStyle || undefined}
+		style={ribbonStyle}
 		class="{variantClasses[variant]} {paddingClasses[padding]} {interactive
 			? 'cursor-pointer transition-transform hover:-translate-y-0.5 hover:shadow-elevated'
 			: ''} {className} w-full text-start"
@@ -62,7 +62,7 @@
 {:else}
 	<div
 		data-card-variant={variant}
-		style={ribbonStyle || undefined}
+		style={ribbonStyle}
 		class="{variantClasses[variant]} {paddingClasses[padding]} {interactive
 			? 'cursor-pointer transition-transform hover:-translate-y-0.5 hover:shadow-elevated'
 			: ''} {className}"
