@@ -1,5 +1,24 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 — קומיט 18: Pack A — ניגודיות וגבולות בthemes
+
+### מה בוצע?
+
+**`HeaderBar.svelte`** — הוספת `class="lbk-header-bar"` על ה-`<header>` כדי לאפשר scoped CSS overrides לפי theme.
+
+**`slate.css`** — בלוק חדש `[data-theme='slate'] header.lbk-header-bar` עם override של token-ים:
+- Surfaces: שקוף-לבן-על-כהה (`rgba(255,255,255,0.08/0.12)`)
+- Text: לבן מלא / עם שקיפות
+- Feedback bgs: tinted-transparent
+- Borders: white-tinted
+- תוצאה: Button, IconButton, ScoreBadge בתוך ה-HeaderBar הכהה מקבלים ניגודיות נכונה אוטומטית
+
+**`wordys.css`** — תיקון `shadow-elevated`:
+- לפני: `0 12px 32px rgba(34, 197, 94, 0.3)` (ירוק — glitch effect)
+- אחרי: `0 8px 22px rgba(234, 88, 12, 0.2)` (כתום עדין — תואם ה-theme)
+
+**הערה**: Pack A.2 (גבול ל-Card elevated ב-minimal) — כבר קיים מקומיט קודם (`border border-border-subtle/50`). דולג.
+
 ## 2026-05-17 00:23
 
 ### Card variants חדשים — framed + ribbon

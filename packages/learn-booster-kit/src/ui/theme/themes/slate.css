@@ -62,3 +62,24 @@
 	--theme-font-weight-regular: 400;
 	--theme-font-weight-bold: 700;
 }
+
+/* Header dark — scoped token overrides */
+[data-theme='slate'] header.lbk-header-bar {
+	/* Surfaces become semi-transparent white over dark header */
+	--theme-surface-sunken: rgba(255, 255, 255, 0.12);
+	--theme-surface-elevated: rgba(255, 255, 255, 0.08);
+
+	/* Text becomes white-on-dark */
+	--theme-text-primary: #ffffff;
+	--theme-text-secondary: rgba(255, 255, 255, 0.75);
+	--theme-text-tertiary: rgba(255, 255, 255, 0.55);
+
+	/* Feedback bgs become tinted-transparent (work over dark) */
+	--theme-feedback-success-bg: rgba(74, 222, 128, 0.2);
+	--theme-feedback-warning-bg: rgba(250, 204, 21, 0.2);
+	--theme-feedback-error-bg: rgba(248, 113, 113, 0.2);
+
+	/* Borders white-tinted */
+	--theme-border-subtle: rgba(255, 255, 255, 0.18);
+	--theme-border-strong: rgba(255, 255, 255, 0.35);
+}
