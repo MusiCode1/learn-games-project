@@ -38,3 +38,8 @@ export { default as ScoreBadge } from "./ui/primitives/ScoreBadge.svelte";
 export { default as Card } from "./ui/primitives/Card.svelte";
 export { default as CooldownOverlay } from "./ui/primitives/CooldownOverlay.svelte";
 export { cooldownProgress } from "./ui/primitives/cooldown-math";
+
+// === Shell ===
+export { default as HeaderBar } from "./ui/shell/HeaderBar.svelte";
+export { default as GameShell } from "./ui/shell/GameShell.svelte";
+export { default as StartScreen } from "./ui/shell/StartScreen.svelte";

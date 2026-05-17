@@ -1,5 +1,32 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 00:06
+
+### Shell components — HeaderBar, GameShell, StartScreen
+
+#### מה בוצע?
+
+**1. `src/ui/shell/HeaderBar.svelte`**
+
+- `<header role="banner">` עם 3 slots: leftActions, centerInfo, rightActions
+- `data-variant` לdefault/compact
+- bg-surface-elevated, border-b, shadow-card
+
+**2. `src/ui/shell/GameShell.svelte`**
+
+- flex column, min-height: 100dvh
+- header/footer shrink-0, `<main>` flex-1 overflow-hidden
+- background: base/sunken
+
+**3. `src/ui/shell/StartScreen.svelte`**
+
+- מסך ממורכז עם title, subtitle, Button primary size=lg
+- heroIllustration + secondaryActions slots אופציונליים
+
+**4. 3 browser tests** ל-HeaderBar (TDD)
+
+**5. exports** ב-src/index.ts
+
 ## 2026-05-17 00:05
 
 ### CooldownOverlay primitive + cooldown-math — TDD
