@@ -1,5 +1,26 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 00:10
+
+### 5 themes נוספים מבוססי עיצוב משחקים קיימים
+
+#### מה בוצע?
+
+**5 קבצי CSS חדשים ב-`src/ui/theme/themes/`**:
+
+- `find-letter.css` — navy #1e3a8a + כתום #f97316, Heebo, rounding 6/12/20px
+- `wordys.css` — כתום-זהב #ea580c + yellow, Rubik, רדיוסים גדולים 12/20/32px, font-weight-bold 800
+- `slate.css` — slate-900 + ירוק נאון #4ade80, system-ui, minimal shadows
+- `read-faster.css` — oklch כחול-טורקיז + Frank Ruhl Libre/Rubik, 4/8/12px radius
+- `portal.css` — navy #0f172a + rose-700, Heebo, קרם #f7f2e8, font-size-xl 3rem
+
+**`src/styles.css`** — הוספת 5 @imports לפני tokens.css
+
+#### החלטות ארכיטקטורה
+
+- כל theme מכיל את **כל** ה-tokens לפי הרשימה המלאה מ-default/kids/minimal — ללא fallback שבור
+- oklch ב-read-faster: browser support מלא בכרומיום/ספארי/פיירפוקס מודרניים
+
 ## 2026-05-17 00:06
 
 ### Shell components — HeaderBar, GameShell, StartScreen

@@ -1,5 +1,18 @@
 # יומן פיתוח - kit-test-screen
 
+## 2026-05-17 00:10
+
+### הרחבת theme switcher — 8 themes
+
+#### מה בוצע?
+
+- `+layout.svelte`: הרחבת Theme type + 5 options חדשות (Find Letter, Wordy's, Slate Dark, Read Faster, Portal)
+- שחזור השינויים הידניים שנמחקו בטעות בקומיט e28d32c (theme switcher בשלמותו)
+
+#### מעקפים ופתרונות
+
+- הקובץ היה ב-working tree (uncommitted) עם השינויים הידניים — נשמרו ועודכנו במקום לדרוס
+
 ## 2026-05-17 00:08
 
 ### תיקון: layout.css — @import עם .css extension מפורש

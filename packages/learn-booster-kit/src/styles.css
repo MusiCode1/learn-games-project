@@ -4,5 +4,10 @@
 @import './ui/theme/themes/default.css';
 @import './ui/theme/themes/kids.css';
 @import './ui/theme/themes/minimal.css';
+@import './ui/theme/themes/find-letter.css';
+@import './ui/theme/themes/wordys.css';
+@import './ui/theme/themes/slate.css';
+@import './ui/theme/themes/read-faster.css';
+@import './ui/theme/themes/portal.css';
 @import './ui/theme/tokens.css';
 @import './ui/theme/animations.css';
