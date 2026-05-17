@@ -1,5 +1,45 @@
 # יומן פיתוח — איפה האות?
 
+## 2026-05-17 10:43
+
+### מיגרציה: SettingsStore → configManager (POC)
+
+החלפת ה-storage backend של ה-settings מ-localStorage ישיר למערכת
+הפרופילים של הקיט (`learn-booster-kit/configManager`).
+
+#### מה השתנה?
+
+- `class SettingsStore` הוסר → `export const settings = $state({...})`
+- מקור-אמת יחיד: `makeDefaults()` + `type FindLetterSettings = ReturnType<typeof makeDefaults>`
+- derivations (`totalCellsInGrid` וכו') נשארות על `settings` כ-reactive getters
+- echo cancellation עם JSON.stringify compare (לא flag)
+- מיגרציה חד-פעמית מהמפתח legacy `find-letter-game-settings`
+
+#### השלכות חיוביות
+
+- settings נשמרות תחת הפרופיל הפעיל
+- החלפת פרופיל מחליפה אוטומטית את כל ה-settings
+- בעתיד: אם יהיה backend sync, find-letter יקבל אותו "חינם"
+
+#### מה לא השתנה?
+
+- ה-API של `settings` לצרכנים (אפס שינויים בקומפוננטות)
+- ה-migration logic מ-v1/v2/v3 (`migrateSettings` נשאר)
+- שמות שדות, defaults, derivations
+
+#### בדיקות
+
+- כל הטסטים הקיימים עוברים (`bun run --filter find-letter-game test`)
+- `bun run check` עובר
+- ניסוי בעבודה ידנית של המפעיל לפני merge
+
+#### הערות מימוש
+
+- `configManager` namespace נוסף לקיט (commit 1 על אותו branch) כ-`export * as configManager from "./lib/config/config-manager"` — additive, ללא breaking changes
+- תוך כדי, תוקן pre-existing TypeScript bug בקיט (`err<ValidationError>` → `err({ kind: "validation" as const, ... })`) שנחשף בגלל ה-namespace import
+
+---
+
 תיעוד התקדמות פיתוח של משחק "איפה האות?" — תרגול זיהוי אותיות עברית בקול ובמראה.
 
 **Live URLs:**

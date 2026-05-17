@@ -287,8 +287,8 @@ export async function updateGameSettings<T = unknown>(
   const validated = ConfigSchema(candidate);
   if (validated instanceof type.errors) {
     console.error("updateGameSettings: config לא תקין, לא נשמר:", validated.summary);
-    return err<ValidationError>({
-      kind: "validation",
+    return err({
+      kind: "validation" as const,
       summary: validated.summary,
     });
   }
