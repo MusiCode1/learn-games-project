@@ -1,5 +1,16 @@
 # יומן פיתוח - kit-test-screen
 
+## 2026-05-17 — קומיט 20: SVG hero ב-Welcome במקום emoji
+
+### מה בוצע?
+
+**`showcase/welcome/+page.svelte`** — החלפת `🎮` emoji ב-SVG פנימי:
+- snippet `heroIllustration`: `<span class="emoji">🎮</span>` → `<svg>` של מחוון משחק מינימליסטי (D-pad + 2 כפתורים, stroke-based)
+- `aria-hidden="true"` על `.hero` (אלמנט דקורטיבי)
+- `.hero` style: הוספת `color: var(--theme-text-on-brand)` לצביעת SVG דרך `currentColor`
+- הסרת `.emoji` rule לחלוטין
+- סיבה: `🎮` מופיע כ-□ (tofu) בלינוקס headless ובחלק מהדפדפנים
+
 ## 2026-05-17 — קומיט 17: תיקון ProgressWidget גובה
 
 ### מה בוצע?

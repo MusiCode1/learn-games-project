@@ -10,8 +10,24 @@
 		primaryAction={{ label: 'התחל לשחק', onclick: () => goto('/showcase/game') }}
 	>
 		{#snippet heroIllustration()}
-			<div class="hero">
-				<span class="emoji">🎮</span>
+			<div class="hero" aria-hidden="true">
+				<svg
+					width="120"
+					height="120"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<!-- SVG של מחוון משחק מינימליסטי (D-pad + 2 כפתורים) -->
+					<rect x="2" y="8" width="20" height="10" rx="3" />
+					<circle cx="7" cy="13" r="1.5" />
+					<circle cx="17" cy="13" r="1.5" />
+					<line x1="5" y1="11" x2="5" y2="15" />
+					<line x1="3" y1="13" x2="7" y2="13" />
+				</svg>
 			</div>
 		{/snippet}
 		{#snippet secondaryActions()}
@@ -35,10 +51,7 @@
 		border-radius: var(--theme-radius-lg);
 		background: linear-gradient(135deg, var(--theme-brand-primary), var(--theme-brand-secondary));
 		box-shadow: var(--theme-shadow-elevated);
-	}
-	.emoji {
-		font-size: 6rem;
-		filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+		color: var(--theme-text-on-brand);
 	}
 	.secondary {
 		display: flex;
