@@ -1,5 +1,21 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 — קומיט 19: Pack B — בידול צבעים
+
+### מה בוצע?
+
+**`wordys.css`** — הפרדת 3 צבעים חמים ל-היררכיה ברורה:
+- `brand-secondary`: `#facc15` → `#fbbf24` (amber-400 — גוון שונה מ-yellow)
+- `brand-secondary-hover`: `#eab308` → `#f59e0b` (amber-500)
+- `feedback-warning`: `#f97316` → `#b45309` (amber-700 כהה — לא מתחרה עם brand-primary כתום)
+- `feedback-warning-bg`: `#fed7aa` → `#fef3c7` (amber-100)
+
+**`read-faster.css`** — brand-secondary מכחול-טורקיז לכתום-אדמדם:
+- `brand-secondary`: `oklch(.75 .12 190)` → `oklch(.7 .15 50)` (ניגוד מקסימלי ל-primary כחול)
+- `brand-secondary-hover`: `oklch(.65 .14 190)` → `oklch(.6 .17 50)`
+
+**הערה**: 27.3 (portal Card border) — דולג כי Card elevated כבר יש לו `border border-border-subtle/50` מקוד קיים.
+
 ## 2026-05-17 — קומיט 18: Pack A — ניגודיות וגבולות בthemes
 
 ### מה בוצע?

@@ -18,8 +18,8 @@
 	/* Brand */
 	--theme-brand-primary: oklch(0.55 0.18 250);
 	--theme-brand-primary-hover: oklch(0.45 0.2 250);
-	--theme-brand-secondary: oklch(0.75 0.12 190);
-	--theme-brand-secondary-hover: oklch(0.65 0.14 190);
+	--theme-brand-secondary: oklch(0.7 0.15 50);
+	--theme-brand-secondary-hover: oklch(0.6 0.17 50);
 
 	/* Text */
 	--theme-text-primary: oklch(0.2 0 0);
