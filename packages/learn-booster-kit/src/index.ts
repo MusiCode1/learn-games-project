@@ -18,3 +18,7 @@ export { isFullyKiosk } from "./lib/fully-kiosk";
 export * as gingim from "./lib/gingim";
 export { default as OverlayTimerPage } from "./ui/OverlayTimerPage.svelte";
 export { default as OverlayTimerSettings } from "./ui/components/OverlayTimerSettings.svelte";
+
+// === Animations (helpers) ===
+export { useShake } from "./ui/animations/use-shake.svelte";
+export { usePop } from "./ui/animations/use-pop.svelte";

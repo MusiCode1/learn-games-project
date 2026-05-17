@@ -1,5 +1,37 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 00:01
+
+### Animation helpers — useShake ו-usePop עם TDD
+
+שני hooks שמאפשרים trigger-based animations בקומפוננטות Svelte 5 ללא ניהול ידני של setTimeout.
+
+#### מה בוצע?
+
+**1. `src/ui/animations/use-shake.svelte.ts`** — useShake hook
+
+- מחזיר `{ active, trigger() }` — `active` הופך true ל-durationMs (ברירת מחדל: 500ms) ואז false
+- `queueMicrotask` מאפס את האנימציה גם ב-retriggering (אפקט reflow)
+
+**2. `src/ui/animations/use-pop.svelte.ts`** — usePop hook
+
+- זהה ל-useShake, ברירת מחדל durationMs=600
+
+**3. `test/ui/animations/use-shake.spec.ts`** — 4 טסטים
+
+- starts inactive, becomes active after microtask, returns to inactive after durationMs, re-triggering resets timer
+
+**4. `test/ui/animations/use-pop.spec.ts`** — 4 טסטים
+
+- כולל בדיקת ברירת המחדל 600ms
+
+**5. `src/index.ts`** — export של useShake ו-usePop
+
+#### החלטות ארכיטקטורה
+
+- **`.svelte.ts` extension**: הכרחי ל-$state מחוץ לקומפוננטה — ה-Svelte plugin מזהה ומחדיר runes
+- **queueMicrotask לא fake**: vi.useFakeTimers() לא משפיע על queueMicrotask, לכן הטסטים משתמשים ב-`await Promise.resolve()` לflush
+
 ## 2026-05-17 00:00
 
 ### הוספת theme system — tokens, 3 ערכות נושא, animations
