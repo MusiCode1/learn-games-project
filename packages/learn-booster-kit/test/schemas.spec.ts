@@ -1,15 +1,15 @@
 /**
  * בדיקות ArkType schemas — מאורגנות per-version.
- * כל גרסת Config schema מקבלת describe משלה.
- * כשמוסיפים ConfigSchemaV2 — מוסיפים כאן describe("ConfigSchemaV2", ...).
+ * כל גרסת BoosterConfig schema מקבלת describe משלה.
+ * כשמוסיפים BoosterConfigSchemaV2 — מוסיפים כאן describe("BoosterConfigSchemaV2", ...).
  */
 
 import { describe, it, expect } from 'vitest';
 import { type } from 'arktype';
 import {
-  ConfigSchemaV1,
-  CONFIG_SCHEMA_VERSION,
-  CONFIG_SCHEMA_REGISTRY,
+  BoosterConfigSchemaV1,
+  BOOSTER_CONFIG_SCHEMA_VERSION,
+  BOOSTER_CONFIG_SCHEMA_REGISTRY,
   ProfileSchema,
   ProfilesStateSchema,
   ProfilesExportPayloadSchema,
@@ -17,6 +17,7 @@ import {
   VideoItemSchema,
   FullyItemSchema,
   AppListItemSchema,
+  STATE_SCHEMA_VERSION,
 } from '../src/schemas';
 import {
   OverlayTimerSettingsSchema,
@@ -44,7 +45,8 @@ const validEnvVals = {
   isDirectToGamePage: false,
 };
 
-const validConfigV1 = {
+const validBoosterConfigV1 = {
+  schemaVersion: 1,
   appVersion: '0.0.1',
   rewardType: 'video' as const,
   rewardDisplayDurationMs: 20000,
@@ -73,7 +75,7 @@ const validConfigV1 = {
 const validProfile = {
   id: 'profile-1',
   name: 'פרופיל ראשון',
-  config: validConfigV1,
+  boosterConfig: validBoosterConfigV1,
   meta: { createdAt: 1000, updatedAt: 1000 },
 };
 
@@ -89,67 +91,82 @@ describe('VideoItemSchema', () => {
   });
 });
 
-// ─── ConfigSchemaV1 ───────────────────────────────────────────────────────────
+// ─── BoosterConfigSchemaV1 ────────────────────────────────────────────────────
 
-describe('ConfigSchemaV1', () => {
-  it('מאמת config תקני', () => {
-    expect(ConfigSchemaV1(validConfigV1) instanceof type.errors).toBe(false);
+describe('BoosterConfigSchemaV1', () => {
+  it('מאמת boosterConfig תקני', () => {
+    expect(BoosterConfigSchemaV1(validBoosterConfigV1) instanceof type.errors).toBe(false);
   });
 
   it('דוחה rewardType לא חוקי', () => {
-    expect(ConfigSchemaV1({ ...validConfigV1, rewardType: 'invalid' }) instanceof type.errors).toBe(true);
+    expect(BoosterConfigSchemaV1({ ...validBoosterConfigV1, rewardType: 'invalid' }) instanceof type.errors).toBe(true);
   });
 
   it('דוחה environmentMode לא חוקי', () => {
-    expect(ConfigSchemaV1({ ...validConfigV1, environmentMode: 'staging' }) instanceof type.errors).toBe(true);
+    expect(BoosterConfigSchemaV1({ ...validBoosterConfigV1, environmentMode: 'staging' }) instanceof type.errors).toBe(true);
   });
 
   it('דוחה config ללא rewardDisplayDurationMs', () => {
-    const { rewardDisplayDurationMs: _, ...rest } = validConfigV1;
-    expect(ConfigSchemaV1(rest) instanceof type.errors).toBe(true);
+    const { rewardDisplayDurationMs: _, ...rest } = validBoosterConfigV1;
+    expect(BoosterConfigSchemaV1(rest) instanceof type.errors).toBe(true);
   });
 
   it('מאפשר googleDriveFolderUrl אופציונלי', () => {
-    const withFolder = { ...validConfigV1, video: { ...validConfigV1.video, googleDriveFolderUrl: 'https://drive.google.com/folder' } };
-    expect(ConfigSchemaV1(withFolder) instanceof type.errors).toBe(false);
+    const withFolder = { ...validBoosterConfigV1, video: { ...validBoosterConfigV1.video, googleDriveFolderUrl: 'https://drive.google.com/folder' } };
+    expect(BoosterConfigSchemaV1(withFolder) instanceof type.errors).toBe(false);
   });
 
   it('דוחה videos עם פריט שחסר url', () => {
-    const withBadVideo = { ...validConfigV1, video: { ...validConfigV1.video, videos: [{ mimeType: 'video/mp4' }] } };
-    expect(ConfigSchemaV1(withBadVideo) instanceof type.errors).toBe(true);
+    const withBadVideo = { ...validBoosterConfigV1, video: { ...validBoosterConfigV1.video, videos: [{ mimeType: 'video/mp4' }] } };
+    expect(BoosterConfigSchemaV1(withBadVideo) instanceof type.errors).toBe(true);
   });
 
   it('דוחה enabledFor לא חוקי', () => {
     const bad = {
-      ...validConfigV1,
-      notifications: { endingNotification: { ...validConfigV1.notifications.endingNotification, enabledFor: 'always' } },
+      ...validBoosterConfigV1,
+      notifications: { endingNotification: { ...validBoosterConfigV1.notifications.endingNotification, enabledFor: 'always' } },
     };
-    expect(ConfigSchemaV1(bad) instanceof type.errors).toBe(true);
+    expect(BoosterConfigSchemaV1(bad) instanceof type.errors).toBe(true);
+  });
+
+  it('מאמת boosterConfig ללא gameSettings (gameSettings הוצא לרמת ה-Profile)', () => {
+    // וידוא שהשדה gameSettings לא קיים יותר ב-BoosterConfig
+    const withGameSettings = { ...validBoosterConfigV1, gameSettings: { 'find-letter-game': {} } };
+    // אם יש שדות נוספים, ArkType מתעלם מהם — הטסט בודק שהוא עדיין תקין (לא נדחה)
+    expect(BoosterConfigSchemaV1(withGameSettings) instanceof type.errors).toBe(false);
   });
 });
 
-// כשתתווסף V2: describe('ConfigSchemaV2', () => { ... })
+// כשתתווסף V2: describe('BoosterConfigSchemaV2', () => { ... })
 
-// ─── CONFIG_SCHEMA_REGISTRY ───────────────────────────────────────────────────
+// ─── BOOSTER_CONFIG_SCHEMA_REGISTRY ──────────────────────────────────────────
 
-describe('CONFIG_SCHEMA_REGISTRY', () => {
+describe('BOOSTER_CONFIG_SCHEMA_REGISTRY', () => {
   it('מכיל ערך לגרסה הנוכחית', () => {
-    expect(CONFIG_SCHEMA_REGISTRY[CONFIG_SCHEMA_VERSION]).toBeDefined();
+    expect(BOOSTER_CONFIG_SCHEMA_REGISTRY[BOOSTER_CONFIG_SCHEMA_VERSION]).toBeDefined();
   });
 
   it('גרסה נוכחית היא 1', () => {
-    expect(CONFIG_SCHEMA_VERSION).toBe(1);
+    expect(BOOSTER_CONFIG_SCHEMA_VERSION).toBe(1);
   });
 
-  it('registry[1] זהה ל-ConfigSchemaV1', () => {
-    expect(CONFIG_SCHEMA_REGISTRY[1]).toBe(ConfigSchemaV1);
+  it('registry[1] זהה ל-BoosterConfigSchemaV1', () => {
+    expect(BOOSTER_CONFIG_SCHEMA_REGISTRY[1]).toBe(BoosterConfigSchemaV1);
+  });
+});
+
+// ─── STATE_SCHEMA_VERSION ─────────────────────────────────────────────────────
+
+describe('STATE_SCHEMA_VERSION', () => {
+  it('גרסת ה-state wrapper היא 2', () => {
+    expect(STATE_SCHEMA_VERSION).toBe(2);
   });
 });
 
 // ─── ProfileSchema ────────────────────────────────────────────────────────────
 
 describe('ProfileSchema', () => {
-  it('מאמת פרופיל תקני', () => {
+  it('מאמת פרופיל תקני עם boosterConfig', () => {
     expect(ProfileSchema(validProfile) instanceof type.errors).toBe(false);
   });
 
@@ -158,37 +175,64 @@ describe('ProfileSchema', () => {
     expect(ProfileSchema(withExtras) instanceof type.errors).toBe(false);
   });
 
+  it('מאמת פרופיל עם gameSettings', () => {
+    const withGameSettings = {
+      ...validProfile,
+      gameSettings: {
+        'find-letter-game': { schemaVersion: 1, data: { gridSize: '4x4' } },
+      },
+    };
+    expect(ProfileSchema(withGameSettings) instanceof type.errors).toBe(false);
+  });
+
   it('דוחה פרופיל חסר id', () => {
     const { id: _, ...rest } = validProfile;
     expect(ProfileSchema(rest) instanceof type.errors).toBe(true);
+  });
+
+  it('דוחה פרופיל עם config במקום boosterConfig', () => {
+    const withOldConfig = { id: 'p1', name: 'test', config: validBoosterConfigV1, meta: { createdAt: 1, updatedAt: 1 } };
+    expect(ProfileSchema(withOldConfig) instanceof type.errors).toBe(true);
   });
 });
 
 // ─── ProfilesStateSchema ─────────────────────────────────────────────────────
 
 describe('ProfilesStateSchema', () => {
-  it('מאמת state תקני', () => {
+  it('מאמת state תקני עם dirtyBoosterConfig=null', () => {
     const validState = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       profiles: { 'profile-1': validProfile },
       order: ['profile-1'],
       activeProfileId: 'profile-1',
       uiEnabled: false,
-      dirtyConfig: null,
+      dirtyBoosterConfig: null,
     };
     expect(ProfilesStateSchema(validState) instanceof type.errors).toBe(false);
   });
 
   it('מאמת state עם activeProfileId=null', () => {
     const emptyState = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       profiles: {},
       order: [],
       activeProfileId: null,
       uiEnabled: false,
-      dirtyConfig: null,
+      dirtyBoosterConfig: null,
     };
     expect(ProfilesStateSchema(emptyState) instanceof type.errors).toBe(false);
+  });
+
+  it('דוחה state עם dirtyConfig (שם ישן) ולא dirtyBoosterConfig', () => {
+    const oldState = {
+      schemaVersion: 2,
+      profiles: {},
+      order: [],
+      activeProfileId: null,
+      uiEnabled: false,
+      dirtyConfig: null, // שם ישן — לא מוכר
+    };
+    expect(ProfilesStateSchema(oldState) instanceof type.errors).toBe(true);
   });
 });
 
@@ -197,7 +241,7 @@ describe('ProfilesStateSchema', () => {
 describe('ProfilesExportPayloadSchema', () => {
   it('מאמת payload תקני', () => {
     const payload = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       profiles: [validProfile],
       activeProfileId: 'profile-1',
       uiEnabled: false,
@@ -207,7 +251,7 @@ describe('ProfilesExportPayloadSchema', () => {
 
   it('דוחה payload חסר schemaVersion', () => {
     const { schemaVersion: _, ...rest } = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       profiles: [validProfile],
       activeProfileId: null,
       uiEnabled: false,

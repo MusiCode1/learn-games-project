@@ -1,5 +1,43 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 14:31 — Phase 1: Schemas + Types — BoosterConfig + Profile עם gameSettings ברמת root
+
+### מה בוצע?
+
+**חלק מ-Migration System refactor (3 שכבות: State, BoosterConfig, Per-game).**
+
+**1. שינויי שמות ב-`src/schemas.ts`**
+
+- `ConfigSchemaV1` → `BoosterConfigSchemaV1` (+ הוסף שדה `schemaVersion: "number"`)
+- `ConfigSchema` → `BoosterConfigSchema`
+- `Config` (type) → `BoosterConfig`
+- `CONFIG_SCHEMA_VERSION` → `BOOSTER_CONFIG_SCHEMA_VERSION`
+- `CONFIG_SCHEMA_REGISTRY` → `BOOSTER_CONFIG_SCHEMA_REGISTRY`
+- הוסר `gameSettings?` מתוך `BoosterConfigSchemaV1` (עבר לרמת Profile)
+
+**2. תוספות חדשות ב-`src/schemas.ts`**
+
+- `GameSettingsEntrySchema = type({ schemaVersion: "number", data: "unknown" })` — wrapper לכל הגדרות-משחק
+- `STATE_SCHEMA_VERSION = 2 as const` — גרסת ה-wrapper החדשה
+- `ProfileSchema` עודכן: `config` → `boosterConfig`, + `"gameSettings?": type({ "[string]": GameSettingsEntrySchema })`
+- `ProfilesStateSchema`: `dirtyConfig` → `dirtyBoosterConfig`
+
+**3. `src/types.ts`**
+
+- הוסף `export type { BoosterConfig, GameSettingsEntry }`
+- נשמר `Config` כ-alias ל-`BoosterConfig` (תאימות לאחור — יוסר ב-Phase 4)
+- עדכון `VideoDialogProps`, `VideoConfig`, `AppConfig`, `ConfigOverrides` לשימוש ב-`BoosterConfig`
+
+**4. `test/schemas.spec.ts`**
+
+- עדכון כל ה-fixtures ו-imports לשמות החדשים
+- הוסף טסטים: `STATE_SCHEMA_VERSION`, `dirtyBoosterConfig`, `gameSettings` ברמת Profile
+
+#### החלטות ארכיטקטורה
+
+- **שמירת alias `Config = BoosterConfig`**: Phase 1 לא נוגע ב-config-manager/profile-manager. ה-alias מונע errors ב-30+ קבצים שעדיין משתמשים ב-`Config`. Phase 4 יסיים את ה-rename.
+- **`schemaVersion` ב-BoosterConfigSchemaV1**: שדה לגיטימי ב-schema (לא prefix underscore), מאפשר migration עתידי.
+
 ## 2026-05-17 — חשיפת `configManager` כ-namespace (additive)
 
 הוספת שורה אחת ל-`src/index.ts`:

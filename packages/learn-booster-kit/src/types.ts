@@ -37,7 +37,8 @@ declare global {
 // (לשימוש בקובץ זה: VideoDialogProps, VideoConfig, AppConfig, ConfigOverrides, VideoList)
 // וגם מיוצאים החוצה לתאימות לאחור
 import type {
-  Config,
+  BoosterConfig,
+  GameSettingsEntry,
   VideoItem,
   Profile,
   ProfilesState,
@@ -46,7 +47,8 @@ import type {
   AppListItem,
 } from "./schemas";
 export type {
-  Config,
+  BoosterConfig,
+  GameSettingsEntry,
   VideoItem,
   Profile,
   ProfilesState,
@@ -54,6 +56,10 @@ export type {
   OldConfig,
   AppListItem,
 };
+
+// alias לתאימות לאחור — Config הוא BoosterConfig
+// Phase 4 ימחק alias זה כשכל ה-callers יועברו ל-BoosterConfig
+export type Config = BoosterConfig;
 
 /**
  * Game Configuration passing to triggerReward
@@ -76,7 +82,7 @@ export interface VideoController {
  * Props for the VideoDialog component
  */
 export interface VideoDialogProps {
-  config: Config;
+  config: BoosterConfig;
   visible: boolean;
   videoUrl: string;
   type: string;
@@ -125,8 +131,8 @@ export interface SiteBoosterControls {
 
 // Config מוגדר ב-src/schemas.ts ומיוצא למעלה
 
-export type VideoConfig = Config & { rewardType: "video" };
-export type AppConfig = Config & { rewardType: "app" };
+export type VideoConfig = BoosterConfig & { rewardType: "video" };
+export type AppConfig = BoosterConfig & { rewardType: "app" };
 
 type DeepPartial<T> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -137,7 +143,7 @@ type DeepPartial<T> = {
       : T[P];
 };
 
-export type ConfigOverrides = DeepPartial<Config>;
+export type ConfigOverrides = DeepPartial<BoosterConfig>;
 
 // Profile, ProfilesState, ProfilesExportPayload מוגדרים ב-src/schemas.ts ומיוצאים למעלה
 
