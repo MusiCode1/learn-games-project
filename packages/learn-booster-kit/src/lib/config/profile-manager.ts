@@ -1,18 +1,23 @@
-import { getDefaultConfig } from "./default-config";
+import { getDefaultBoosterConfig } from "./default-config";
 import {
     ProfilesStateSchema,
     ProfilesExportPayloadSchema,
+    STATE_SCHEMA_VERSION,
 } from '../../schemas';
+import {
+    runStateMigrations,
+    runBoosterConfigMigrations,
+    runGameSettingsMigrations,
+} from './migrations';
 import { type } from "arktype";
 
 import type {
-    Config, Profile,
+    BoosterConfig, Profile,
     ProfilesExportPayload, ProfilesState
 } from '../../types';
 
 const OLD_STORAGE_KEY = 'gingim-booster-profiles:v1';
 const STORAGE_KEY = 'learn-booster-profiles:v1';
-const SCHEMA_VERSION = 1;
 const DEFAULT_PROFILE_NAME = 'Default Profile';
 
 type ProfilesListener = (state: ProfilesState) => void;
@@ -23,13 +28,6 @@ const listeners: ProfilesListener[] = [];
 
 /**
  * **TEST-ONLY** — מאפס את ה-module-level state כדי שכל test יקבל מנהל-פרופילים נקי.
- *
- * הסיבה: `state`, `isInitialized` ו-`listeners` הם משתני module שנשמרים בין
- * קריאות. בלי איפוס, `initializeProfiles` ב-test הבא ימצא `isInitialized=true`
- * וידלג על האתחול → ה-test יראה state מ-test קודם.
- *
- * הסכין הזו לא חייבת להיות חלק מה-API הציבורי, אבל היא חיונית לעבודה
- * תקינה של ה-test suite (ל-production-code יש singleton lifecycle אחד בלבד).
  */
 export function _resetProfilesStateForTesting(): void {
     state = createEmptyState();
@@ -37,7 +35,7 @@ export function _resetProfilesStateForTesting(): void {
     listeners.length = 0;
 }
 
-export async function initializeProfiles(initialConfig: Config): Promise<ProfilesState> {
+export async function initializeProfiles(initialConfig: BoosterConfig): Promise<ProfilesState> {
     if (isInitialized) {
         return getProfilesState();
     }
@@ -47,7 +45,7 @@ export async function initializeProfiles(initialConfig: Config): Promise<Profile
     if (state.order.length === 0) {
         const defaultProfile = buildProfile({
             name: DEFAULT_PROFILE_NAME,
-            config: initialConfig,
+            boosterConfig: initialConfig,
         });
 
         state.profiles[defaultProfile.id] = defaultProfile;
@@ -90,7 +88,7 @@ export function setActiveProfile(profileId: string): Profile {
     }
 
     state.activeProfileId = profileId;
-    state.dirtyConfig = null;
+    state.dirtyBoosterConfig = null;
     persistState();
     notifyListeners();
     return cloneProfile(profile);
@@ -98,12 +96,15 @@ export function setActiveProfile(profileId: string): Profile {
 
 export function createProfile(options: {
     name: string;
-    config: Config;
+    boosterConfig?: BoosterConfig;
+    /** @deprecated use boosterConfig */
+    config?: BoosterConfig;
     color?: string;
     tags?: string[];
 }): Profile {
     assertInitialized();
-    const profile = buildProfile(options);
+    const boosterConfig = options.boosterConfig ?? options.config ?? getDefaultBoosterConfig();
+    const profile = buildProfile({ name: options.name, boosterConfig, color: options.color, tags: options.tags });
     state.profiles[profile.id] = profile;
     state.order.push(profile.id);
     if (!state.activeProfileId) {
@@ -114,7 +115,14 @@ export function createProfile(options: {
     return cloneProfile(profile);
 }
 
-export function updateProfile(profileId: string, updates: Partial<Omit<Profile, 'id' | 'config' | 'meta'>> & { config?: Config }): Profile {
+export function updateProfile(
+    profileId: string,
+    updates: Partial<Omit<Profile, 'id' | 'boosterConfig' | 'meta'>> & {
+        boosterConfig?: BoosterConfig;
+        /** @deprecated use boosterConfig */
+        config?: BoosterConfig;
+    }
+): Profile {
     assertInitialized();
     const profile = state.profiles[profileId];
     if (!profile) {
@@ -133,8 +141,9 @@ export function updateProfile(profileId: string, updates: Partial<Omit<Profile, 
         profile.tags = updates.tags ? [...updates.tags] : undefined;
     }
 
-    if (updates.config) {
-        profile.config = cloneConfig(updates.config);
+    const newBoosterConfig = updates.boosterConfig ?? updates.config;
+    if (newBoosterConfig) {
+        profile.boosterConfig = cloneBoosterConfig(newBoosterConfig);
     }
 
     profile.meta.updatedAt = Date.now();
@@ -182,20 +191,26 @@ export function setProfilesUiEnabled(enabled: boolean): void {
     notifyListeners();
 }
 
-export function markDirtyConfig(config: Config): void {
+export function markDirtyBoosterConfig(config: BoosterConfig): void {
     assertInitialized();
-    state.dirtyConfig = cloneConfig(config);
+    state.dirtyBoosterConfig = cloneBoosterConfig(config);
     notifyListeners();
 }
 
-export function clearDirtyConfig(): void {
+/** @deprecated use markDirtyBoosterConfig */
+export const markDirtyConfig = markDirtyBoosterConfig;
+
+export function clearDirtyBoosterConfig(): void {
     assertInitialized();
-    if (!state.dirtyConfig) return;
-    state.dirtyConfig = null;
+    if (!state.dirtyBoosterConfig) return;
+    state.dirtyBoosterConfig = null;
     notifyListeners();
 }
 
-export function saveActiveProfileConfig(config: Config): Profile {
+/** @deprecated use clearDirtyBoosterConfig */
+export const clearDirtyConfig = clearDirtyBoosterConfig;
+
+export function saveActiveProfileBoosterConfig(config: BoosterConfig): Profile {
     assertInitialized();
     if (!state.activeProfileId) {
         throw new Error('No active profile to update.');
@@ -206,9 +221,51 @@ export function saveActiveProfileConfig(config: Config): Profile {
         throw new Error('Active profile is missing.');
     }
 
-    profile.config = cloneConfig(config);
+    profile.boosterConfig = cloneBoosterConfig(config);
     profile.meta.updatedAt = Date.now();
-    state.dirtyConfig = null;
+    state.dirtyBoosterConfig = null;
+    persistState();
+    notifyListeners();
+    return cloneProfile(profile);
+}
+
+/** @deprecated use saveActiveProfileBoosterConfig */
+export const saveActiveProfileConfig = saveActiveProfileBoosterConfig;
+
+/**
+ * מחזיר את הגדרות-משחק (wrapped) של הפרופיל הפעיל לפי gameId.
+ */
+export function getActiveProfileGameSettings(
+    gameId: string,
+): { schemaVersion: number; data: unknown } | undefined {
+    if (!state.activeProfileId) return undefined;
+    const profile = state.profiles[state.activeProfileId];
+    if (!profile) return undefined;
+    return profile.gameSettings?.[gameId];
+}
+
+/**
+ * שומר הגדרות-משחק (wrapped) בפרופיל הפעיל. מחזיר את ה-Profile המעודכן.
+ */
+export function setActiveProfileGameSettings(
+    gameId: string,
+    wrapped: { schemaVersion: number; data: unknown },
+): Profile {
+    assertInitialized();
+    if (!state.activeProfileId) {
+        throw new Error('No active profile to update game settings for.');
+    }
+
+    const profile = state.profiles[state.activeProfileId];
+    if (!profile) {
+        throw new Error('Active profile is missing.');
+    }
+
+    if (!profile.gameSettings) {
+        profile.gameSettings = {};
+    }
+    profile.gameSettings[gameId] = wrapped;
+    profile.meta.updatedAt = Date.now();
     persistState();
     notifyListeners();
     return cloneProfile(profile);
@@ -222,7 +279,7 @@ export function exportProfiles(): ProfilesExportPayload {
         .map(profile => cloneProfile(profile));
 
     return {
-        schemaVersion: SCHEMA_VERSION,
+        schemaVersion: STATE_SCHEMA_VERSION,
         profiles,
         activeProfileId: state.activeProfileId,
         uiEnabled: state.uiEnabled,
@@ -238,7 +295,7 @@ export function importProfiles(payload: unknown, options: { replace?: boolean } 
     }
     const validPayload: ProfilesExportPayload = result;
 
-    if (validPayload.schemaVersion !== SCHEMA_VERSION) {
+    if (validPayload.schemaVersion !== STATE_SCHEMA_VERSION) {
         throw new Error(`Unsupported profiles schema version: ${validPayload.schemaVersion}`);
     }
 
@@ -259,7 +316,8 @@ export function importProfiles(payload: unknown, options: { replace?: boolean } 
             name: profile.name,
             color: profile.color,
             tags: profile.tags,
-            config: profile.config,
+            boosterConfig: profile.boosterConfig,
+            gameSettings: profile.gameSettings,
             createdAt: profile.meta?.createdAt,
             updatedAt: profile.meta?.updatedAt,
         });
@@ -284,7 +342,7 @@ export function importProfiles(payload: unknown, options: { replace?: boolean } 
         ? validPayload.activeProfileId
         : nextState.order[0] ?? null;
 
-    nextState.dirtyConfig = null;
+    nextState.dirtyBoosterConfig = null;
 
     state = normalizeState(nextState);
     persistState();
@@ -331,11 +389,28 @@ function loadFromStorage(): void {
         if (!raw) return;
         const parsed: unknown = JSON.parse(raw);
         if (!parsed) return;
-        const result = ProfilesStateSchema(parsed);
+
+        // === MIGRATION CHAIN ===
+        // 1. State migration (wrapper) — v1 → v2
+        const stateMigrated = runStateMigrations(parsed);
+
+        // 2. Per-profile: booster-config migration + per-game migration
+        for (const profile of Object.values(stateMigrated.profiles ?? {}) as any[]) {
+            if (profile.boosterConfig) {
+                profile.boosterConfig = runBoosterConfigMigrations(profile.boosterConfig);
+            }
+            if (profile.gameSettings) {
+                for (const [gameId, wrapped] of Object.entries(profile.gameSettings) as [string, any][]) {
+                    profile.gameSettings[gameId] = runGameSettingsMigrations(gameId, wrapped);
+                }
+            }
+        }
+
+        // 3. Schema validation (after all migrations)
+        const result = ProfilesStateSchema(stateMigrated);
         if (result instanceof type.errors) {
-            // storage חלקי/פגום — normalizeState עדיין תנסה לשחזר את מה שאפשר
-            console.warn('Profiles storage has validation issues, normalizing:', result.summary);
-            state = normalizeState(parsed as Partial<ProfilesState>);
+            console.warn('Profiles storage has validation issues after migration:', result.summary);
+            state = normalizeState(stateMigrated as Partial<ProfilesState>);
         } else {
             state = normalizeState(result);
         }
@@ -347,12 +422,12 @@ function loadFromStorage(): void {
 
 function normalizeState(value: Partial<ProfilesState>): ProfilesState {
     const normalized: ProfilesState = {
-        schemaVersion: SCHEMA_VERSION,
+        schemaVersion: STATE_SCHEMA_VERSION,
         profiles: {},
         order: [],
         activeProfileId: null,
         uiEnabled: Boolean(value.uiEnabled),
-        dirtyConfig: null,
+        dirtyBoosterConfig: null,
     };
 
     if (value.profiles && typeof value.profiles === 'object') {
@@ -363,7 +438,8 @@ function normalizeState(value: Partial<ProfilesState>): ProfilesState {
                 name: profile.name ?? DEFAULT_PROFILE_NAME,
                 color: profile.color,
                 tags: profile.tags,
-                config: profile.config ?? value.dirtyConfig ?? buildFallbackConfig(),
+                boosterConfig: profile.boosterConfig ?? (value.dirtyBoosterConfig ?? buildFallbackBoosterConfig()),
+                gameSettings: profile.gameSettings,
                 createdAt: profile.meta?.createdAt,
                 updatedAt: profile.meta?.updatedAt,
             });
@@ -401,14 +477,15 @@ function cloneState(value: ProfilesState): ProfilesState {
         order: [...value.order],
         activeProfileId: value.activeProfileId,
         uiEnabled: value.uiEnabled,
-        dirtyConfig: value.dirtyConfig ? cloneConfig(value.dirtyConfig) : null,
+        dirtyBoosterConfig: value.dirtyBoosterConfig ? cloneBoosterConfig(value.dirtyBoosterConfig) : null,
     };
 }
 
 function buildProfile(options: {
     id?: string;
     name: string;
-    config: Config;
+    boosterConfig: BoosterConfig;
+    gameSettings?: Record<string, { schemaVersion: number; data: unknown }>;
     color?: string;
     tags?: string[];
     createdAt?: number;
@@ -417,28 +494,36 @@ function buildProfile(options: {
     const createdAt = options.createdAt ?? Date.now();
     const updatedAt = options.updatedAt ?? createdAt;
 
-    return {
+    const profile: Profile = {
         id: options.id ?? createProfileId(),
         name: options.name || DEFAULT_PROFILE_NAME,
-        color: options.color,
-        tags: options.tags ? [...options.tags] : undefined,
-        config: cloneConfig(options.config),
+        boosterConfig: cloneBoosterConfig(options.boosterConfig),
         meta: {
             createdAt,
             updatedAt,
         },
     };
+
+    if (options.color !== undefined) {
+        profile.color = options.color;
+    }
+    if (options.tags !== undefined) {
+        profile.tags = [...options.tags];
+    }
+    if (options.gameSettings && Object.keys(options.gameSettings).length > 0) {
+        profile.gameSettings = structuredCloneGameSettings(options.gameSettings);
+    }
+
+    return profile;
 }
 
 function cloneProfile(profile: Profile): Profile {
-    // חשוב: לא להציב undefined בשדות אופציונליים (color, tags) — ArkType
-    // מפרש `"color?": "string"` כ"השדה לא חייב להופיע, אבל אם מופיע חייב
-    // להיות string". `color: undefined` נדחה ב-validation, לכן מצרפים רק
-    // את השדות שמוגדרים בפועל.
+    // חשוב: לא להציב undefined בשדות אופציונליים (color, tags, gameSettings) — ArkType
+    // מפרש שדות אופציונליים כ"לא חייב להופיע, אבל אם מופיע חייב להיות type נכון".
     const cloned: Profile = {
         id: profile.id,
         name: profile.name,
-        config: cloneConfig(profile.config),
+        boosterConfig: cloneBoosterConfig(profile.boosterConfig),
         meta: { ...profile.meta },
     };
     if (profile.color !== undefined) {
@@ -447,17 +532,28 @@ function cloneProfile(profile: Profile): Profile {
     if (profile.tags !== undefined) {
         cloned.tags = [...profile.tags];
     }
+    if (profile.gameSettings !== undefined) {
+        cloned.gameSettings = structuredCloneGameSettings(profile.gameSettings);
+    }
     return cloned;
 }
 
-function cloneConfig(config: Config): Config {
+function structuredCloneGameSettings(
+    gs: Record<string, { schemaVersion: number; data: unknown }>,
+): Record<string, { schemaVersion: number; data: unknown }> {
+    return typeof structuredClone === 'function'
+        ? structuredClone(gs)
+        : JSON.parse(JSON.stringify(gs));
+}
+
+function cloneBoosterConfig(config: BoosterConfig): BoosterConfig {
     return typeof structuredClone === 'function'
         ? structuredClone(config)
         : JSON.parse(JSON.stringify(config));
 }
 
-function buildFallbackConfig(): Config {
-    return getDefaultConfig();
+function buildFallbackBoosterConfig(): BoosterConfig {
+    return getDefaultBoosterConfig();
 }
 
 function assertInitialized(): void {
@@ -476,12 +572,12 @@ function isStorageAvailable(): boolean {
 
 function createEmptyState(): ProfilesState {
     return {
-        schemaVersion: SCHEMA_VERSION,
+        schemaVersion: STATE_SCHEMA_VERSION,
         profiles: {},
         order: [],
         activeProfileId: null,
         uiEnabled: false,
-        dirtyConfig: null,
+        dirtyBoosterConfig: null,
     };
 }
 

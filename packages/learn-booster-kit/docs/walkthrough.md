@@ -1,5 +1,61 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 14:46 — Phase 4: חיבור migrations ל-profile-manager + config-manager
+
+### מה בוצע?
+
+**Phase הקריטי — חיבור שלוש שכבות ה-migration ל-runtime.**
+
+**1. `src/lib/config/default-config.ts`**
+
+- `getDefaultConfig` → `getDefaultBoosterConfig` (alias נשמר לתאימות)
+- הוסף `schemaVersion: BOOSTER_CONFIG_SCHEMA_VERSION`
+- מחק `gameSettings: {}` (הוצא לרמת profile)
+- טיפוס: `Config` → `BoosterConfig`
+
+**2. `src/lib/config/profile-manager.ts`**
+
+- `SCHEMA_VERSION` → `STATE_SCHEMA_VERSION` (מיובא מ-schemas)
+- `loadFromStorage`: migration chain מלא — state → boosterConfig → per-game
+- `normalizeState`: `boosterConfig` במקום `config`, `dirtyBoosterConfig` במקום `dirtyConfig`
+- `buildProfile`, `cloneProfile`: תומכים ב-`boosterConfig` + `gameSettings` (אופציונלי)
+- `saveActiveProfileConfig` → `saveActiveProfileBoosterConfig` (alias נשמר)
+- `markDirtyConfig` → `markDirtyBoosterConfig`, `clearDirtyConfig` → `clearDirtyBoosterConfig` (aliases)
+- חדש: `getActiveProfileGameSettings(gameId)`, `setActiveProfileGameSettings(gameId, wrapped)`
+- `createProfile`, `updateProfile`: קבלת `boosterConfig` ו-`config` (alias)
+- `exportProfiles`: schemaVersion = `STATE_SCHEMA_VERSION` (2)
+- `importProfiles`: validation נגד הגרסה החדשה
+
+**3. `src/lib/config/config-manager.ts`**
+
+- מחק קריאה ל-`_configSchemaVersion` (131-133) — מוחלף ב-`schemaVersion`
+- מחק כתיבת `_configSchemaVersion` (160) — `saveConfigToStorage` שומר את `appConfig` ישירות
+- `getGameSettings`: קורא ל-`getActiveProfileGameSettings(gameId)?.data`
+- `updateGameSettings`: `setActiveProfileGameSettings` + `notifyConfigListeners`
+- `subscribeGameSettings`: מאזין ל-`addProfilesListener` (profile changes) במקום `addConfigListener`
+- טיפוסים: `Config` → `BoosterConfig` בכל מקום
+- `syncActiveProfileSnapshot` → `saveActiveProfileBoosterConfig`
+
+**4. `src/lib/config/index.ts` + `src/index.ts`**
+
+- `registerGameSchema` מ-migrations חשוף ב-index
+- `BOOSTER_CONFIG_SCHEMA_VERSION`, `STATE_SCHEMA_VERSION` חשופים
+
+**5. `src/ui/components/SettingsForm.svelte`**
+
+- `dirtyConfig` → `dirtyBoosterConfig` (5 מקומות)
+- `clearDirtyConfig` → `clearDirtyBoosterConfig`, `markDirtyConfig` → `markDirtyBoosterConfig`
+- `profile.config` → `profile.boosterConfig` (2 מקומות)
+
+**6. טסטים מעודכנים**
+
+- `game-settings.spec.ts`: `getAllConfig().gameSettings` → `getGameSettings()`, `result.value.gameSettings` → `getGameSettings()`
+- `profile-manager.spec.ts`: `updated.config` → `updated.boosterConfig`
+
+#### Breaking change מתועד
+
+`Result<Config, ...>` ב-`updateGameSettings` הפך ל-`Result<BoosterConfig, ...>`. `find-letter-game/settings.svelte.ts` לא נפגע כי הוא בודק רק `result.success`, לא את ה-value.
+
 ## 2026-05-17 14:37 — Phase 3: Fixtures + Integration Tests למיגרציות state
 
 ### מה בוצע?

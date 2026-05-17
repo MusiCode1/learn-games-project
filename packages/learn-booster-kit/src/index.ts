@@ -11,7 +11,12 @@ export type { BoosterServiceInitialized } from "./lib/booster-service";
 export * from "./types";
 export * from "./lib/config";
 export * as configManager from "./lib/config/config-manager";
+export { registerGameSchema } from "./lib/config/migrations";
 export * from "./lib/result";
+
+// Re-export key constants/types from schemas for consumers
+export type { BoosterConfig, GameSettingsEntry } from "./schemas";
+export { BOOSTER_CONFIG_SCHEMA_VERSION, STATE_SCHEMA_VERSION } from "./schemas";
 export { getAppsList } from "./lib/fully-kiosk";
 export { default as ProgressWidget } from "./ui/ProgressWidget.svelte";
 export { default as AdminGate } from "./ui/AdminGate.svelte";

@@ -82,10 +82,11 @@ describe('Game Settings API', () => {
       expect(current).not.toHaveProperty('legacyField');
     });
 
-    it('נשמר ל-config.gameSettings וניתן לאחזור דרך getAllConfig', async () => {
+    it('נשמר ל-profile.gameSettings וניתן לאחזור דרך getGameSettings', async () => {
       await updateGameSettings('lotto-game', { contentProviderId: 'letters' });
-      const config = getAllConfig();
-      expect(config.gameSettings).toEqual({ 'lotto-game': { contentProviderId: 'letters' } });
+      // gameSettings עבר לרמת profile — לא ב-getAllConfig() (BoosterConfig)
+      const settings = getGameSettings('lotto-game');
+      expect(settings).toEqual({ contentProviderId: 'letters' });
     });
 
     it('מתסנכרן ל-localStorage דרך הפרופיל הפעיל', async () => {
@@ -95,20 +96,24 @@ describe('Game Settings API', () => {
       expect(profiles).toContain('shapes');
     });
 
-    it('מחזיר Result של ok עם ה-Config המעודכן', async () => {
+    it('מחזיר Result של ok עם ה-BoosterConfig המעודכן', async () => {
       const result = await updateGameSettings('lotto-game', { contentProviderId: 'shapes' });
       expect(result.isOk()).toBe(true);
       if (result.isOk()) {
-        expect(result.value.gameSettings?.['lotto-game']).toEqual({ contentProviderId: 'shapes' });
+        // result.value הוא BoosterConfig — gameSettings עבר לרמת profile
+        expect(result.value.rewardType).toBeDefined();
+        // הגדרות המשחק עדיין נגישות דרך getGameSettings
+        expect(getGameSettings('lotto-game')).toEqual({ contentProviderId: 'shapes' });
       }
     });
 
     it('Result ok מאפשר type narrowing דרך result.isOk()', async () => {
       const result = await updateGameSettings('find-letter-game', { cooldownMs: 4000 });
       if (result.isOk()) {
-        // TypeScript מצמצם ל-Ok<Config, ValidationError>
+        // TypeScript מצמצם ל-Ok<BoosterConfig, ValidationError>
         expect(result.value.rewardType).toBeDefined();
-        expect(result.value.gameSettings).toBeDefined();
+        // gameSettings אינו חלק מ-BoosterConfig — גישה דרך getGameSettings
+        expect(getGameSettings('find-letter-game')).toEqual({ cooldownMs: 4000 });
       } else {
         // לא אמור לקרות במצב תקין — אם קרה, נכשיל את הטסט
         throw new Error(`Expected ok but got: ${result.error.summary}`);
@@ -118,7 +123,7 @@ describe('Game Settings API', () => {
     it('Result תומך ב-match בסגנון FP', async () => {
       const result = await updateGameSettings('lotto-game', { contentProviderId: 'letters' });
       const message = result.match(
-        (config) => `נשמר: ${Object.keys(config.gameSettings ?? {}).length} משחק(ים)`,
+        (config) => `נשמר: ${config.rewardType}`,
         (error) => `שגיאה: ${error.summary}`,
       );
       expect(message).toMatch(/^נשמר:/);

@@ -85,11 +85,11 @@ describe('updateProfile', () => {
     expect(updated.name).toBe('New Name');
   });
 
-  it('מעדכן config של פרופיל', () => {
+  it('מעדכן boosterConfig של פרופיל', () => {
     const p = pm.createProfile({ name: 'P', config: baseConfig });
     const newConfig = { ...baseConfig, turnsPerReward: 99 };
     const updated = pm.updateProfile(p.id, { config: newConfig });
-    expect(updated.config.turnsPerReward).toBe(99);
+    expect(updated.boosterConfig.turnsPerReward).toBe(99);
   });
 });
 

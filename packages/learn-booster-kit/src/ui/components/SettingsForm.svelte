@@ -14,11 +14,11 @@
     import { getAppsList as getAppsListFromFully } from "../../lib/fully-kiosk/get-app-list";
     import {
         addProfilesListener,
-        clearDirtyConfig,
+        clearDirtyBoosterConfig,
         createProfile,
         deleteProfile as deleteStoredProfile,
         getProfilesState,
-        markDirtyConfig,
+        markDirtyBoosterConfig,
         setActiveProfile,
         setProfilesUiEnabled,
     } from "../../lib/config/profile-manager";
@@ -73,7 +73,7 @@
     const isProfilesUiEnabled = $derived(profilesState.uiEnabled);
     const hasUnsavedProfileChanges = $derived.by(() => {
         if (!profilesState.uiEnabled) return false;
-        const dirty = profilesState.dirtyConfig;
+        const dirty = profilesState.dirtyBoosterConfig;
         if (!dirty) return false;
         return !configsEqual(dirty, $state.snapshot(newConfig));
     });
@@ -176,8 +176,8 @@
 
     $effect(() => {
         if (!profilesState.uiEnabled) {
-            if (profilesState.dirtyConfig) {
-                clearDirtyConfig();
+            if (profilesState.dirtyBoosterConfig) {
+                clearDirtyBoosterConfig();
             }
             return;
         }
@@ -189,18 +189,18 @@
         if (!activeProfile) return;
 
         const configSnapshot = structuredClone($state.snapshot(newConfig));
-        const isSame = configsEqual(configSnapshot, activeProfile.config);
+        const isSame = configsEqual(configSnapshot, activeProfile.boosterConfig);
 
         if (isSame) {
-            if (profilesState.dirtyConfig) {
-                clearDirtyConfig();
+            if (profilesState.dirtyBoosterConfig) {
+                clearDirtyBoosterConfig();
             }
             return;
         }
 
-        const existingDirty = profilesState.dirtyConfig;
+        const existingDirty = profilesState.dirtyBoosterConfig;
         if (!existingDirty || !configsEqual(existingDirty, configSnapshot)) {
-            markDirtyConfig(configSnapshot);
+            markDirtyBoosterConfig(configSnapshot);
         }
     });
 
@@ -249,7 +249,7 @@
 
     const saveProfileWithoutClosing = async () => {
         await persistConfig(false);
-        clearDirtyConfig();
+        clearDirtyBoosterConfig();
     };
 
     function configsEqual(a?: Config | null, b?: Config | null): boolean {
@@ -262,7 +262,7 @@
     }
 
     function confirmProfileSwitch(): boolean {
-        if (!profilesState.dirtyConfig) return true;
+        if (!profilesState.dirtyBoosterConfig) return true;
         if (typeof window === "undefined") return true;
         return window.confirm(
             "בוצעו שינויים בפרופיל הפעיל שטרם נשמרו. להמשיך בכל זאת?",
@@ -287,7 +287,7 @@
             const profile = setActiveProfile(profileId);
             config = normalizeBoosterConfig(
                 await configManager.updateConfig(
-                    structuredClone(profile.config),
+                    structuredClone(profile.boosterConfig),
                 ),
             );
             newConfig = normalizeBoosterConfig(structuredClone(config));

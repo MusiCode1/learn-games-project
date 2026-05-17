@@ -3,16 +3,24 @@ import pkg from "../../../package.json" with { type: "json" };
 import {
   getActiveProfile,
   initializeProfiles,
-  saveActiveProfileConfig,
+  saveActiveProfileBoosterConfig,
+  getActiveProfileGameSettings,
+  setActiveProfileGameSettings,
+  addProfilesListener,
 } from "./profile-manager";
-import { getDefaultConfig } from "./default-config";
+import { getDefaultBoosterConfig } from "./default-config";
 import { loadVideoUrls } from "../video/video-loader";
-import { CONFIG_SCHEMA_REGISTRY, CONFIG_SCHEMA_VERSION, ConfigSchema, OldConfigSchema } from "../../schemas";
+import {
+  BOOSTER_CONFIG_SCHEMA_REGISTRY,
+  BOOSTER_CONFIG_SCHEMA_VERSION,
+  BoosterConfigSchema,
+  OldConfigSchema,
+} from "../../schemas";
 import { type } from "arktype";
 import { env } from "./env";
 import { ok, err, type Result, type ValidationError } from "../result";
 
-import type { Config, OldConfig } from "../../types";
+import type { BoosterConfig, OldConfig } from "../../types";
 
 const OLD_LOCAL_STORAGE_KEY = "gingim-booster-config";
 const LOCAL_STORAGE_KEY = "learn-booster-config";
@@ -21,16 +29,16 @@ const GOOGLE_DRIVE_DEFAULT_FOLDER = env.VITE_GOOGLE_DRIVE_DEFAULT_FOLDER ?? "";
 
 const SITE_DEFAULT_URL = env.VITE_SITE_DEFAULT_UTL ?? "";
 
-type ConfigChangeListener = (config: Config) => void;
+type ConfigChangeListener = (config: BoosterConfig) => void;
 const listeners: ConfigChangeListener[] = [];
 
-export const defaultConfig = getDefaultConfig();
+export const defaultConfig = getDefaultBoosterConfig();
 import { writable } from 'svelte/store';
-export const configStore = writable<Config>({ ...defaultConfig });
+export const configStore = writable<BoosterConfig>({ ...defaultConfig });
 
 let isConfigInitialized = false;
 
-let appConfig: Config = { ...defaultConfig };
+let appConfig: BoosterConfig = { ...defaultConfig };
 
 export function addConfigListener(callback: ConfigChangeListener): () => void {
   listeners.push(callback);
@@ -48,7 +56,7 @@ function notifyConfigListeners(): void {
   configStore.set(newConfig);
 }
 
-export async function updateConfig(updates: Partial<Config>): Promise<Config> {
+export async function updateConfig(updates: Partial<BoosterConfig>): Promise<BoosterConfig> {
   if (updates.video) {
     if (updates.video.googleDriveFolderUrl === "") {
       updates.video.googleDriveFolderUrl = GOOGLE_DRIVE_DEFAULT_FOLDER;
@@ -58,7 +66,7 @@ export async function updateConfig(updates: Partial<Config>): Promise<Config> {
   const candidate = deepMerge({ ...appConfig }, updates);
 
   // validation לפני שמירה — חוסם נתונים לא תקינים מהטופס או מקוד חיצוני
-  const result = ConfigSchema(candidate);
+  const result = BoosterConfigSchema(candidate);
   if (result instanceof type.errors) {
     console.error("updateConfig: config לא תקין, לא נשמר:", result.summary);
     throw new Error(`Invalid config: ${result.summary}`);
@@ -77,7 +85,7 @@ export async function updateConfig(updates: Partial<Config>): Promise<Config> {
   return appConfig;
 }
 
-export async function tempConfig(updates: Partial<Config>) {
+export async function tempConfig(updates: Partial<BoosterConfig>) {
   if (updates.video) {
     if (updates.video.googleDriveFolderUrl === "") {
       updates.video.googleDriveFolderUrl = GOOGLE_DRIVE_DEFAULT_FOLDER;
@@ -90,16 +98,16 @@ export async function tempConfig(updates: Partial<Config>) {
     }
   }
 
-  const tempConfig = deepMerge({ ...appConfig }, updates);
+  const tempCfg = deepMerge({ ...appConfig }, updates);
 
   if (appConfig.rewardType === "video") {
     await setVideosUrls(appConfig);
   }
 
-  return tempConfig;
+  return tempCfg;
 }
 
-async function setVideosUrls(systemConfig: Config) {
+async function setVideosUrls(systemConfig: BoosterConfig) {
   const videos = await loadVideoUrls(systemConfig);
   appConfig.video.videos = videos;
 }
@@ -127,12 +135,12 @@ export function loadConfigFromStorage(): boolean {
     const parsed = JSON.parse(storedConfig) as Record<string, unknown>;
     if (typeof parsed !== "object" || parsed === null) return false;
 
-    // קריאת גרסת schema — ברירת מחדל 1 לנתונים ישנים שאין להם שדה זה
-    const version = typeof parsed._configSchemaVersion === "number"
-      ? parsed._configSchemaVersion
-      : 1;
+    // קריאת גרסת schema — ב-BoosterConfig הוא שדה `schemaVersion` (ולא `_configSchemaVersion`)
+    const version = typeof parsed.schemaVersion === "number"
+      ? parsed.schemaVersion
+      : BOOSTER_CONFIG_SCHEMA_VERSION;
 
-    const schema = CONFIG_SCHEMA_REGISTRY[version as keyof typeof CONFIG_SCHEMA_REGISTRY];
+    const schema = BOOSTER_CONFIG_SCHEMA_REGISTRY[version as keyof typeof BOOSTER_CONFIG_SCHEMA_REGISTRY];
     if (!schema) {
       console.warn(`Config: גרסת schema לא מוכרת: ${version}, מתעלם מהנתונים השמורים`);
       return false;
@@ -156,10 +164,8 @@ export function loadConfigFromStorage(): boolean {
 
 export function saveConfigToStorage(): boolean {
   try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
-      _configSchemaVersion: CONFIG_SCHEMA_VERSION,
-      ...appConfig,
-    }));
+    // appConfig כבר מכיל schemaVersion — פשוט שמור אותו
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appConfig));
     return true;
   } catch (error) {
     console.error("שגיאה בשמירת הגדרות ל-localStorage:", error);
@@ -172,7 +178,7 @@ export function resetConfig(): void {
   notifyConfigListeners();
 }
 
-export async function initializeConfig(): Promise<Config> {
+export async function initializeConfig(): Promise<BoosterConfig> {
   resetConfig();
   loadConfigFromStorage();
 
@@ -188,7 +194,7 @@ export async function initializeConfig(): Promise<Config> {
   await initializeProfiles(appConfig);
   const activeProfile = getActiveProfile();
   if (activeProfile) {
-    appConfig = cloneConfig(activeProfile.config);
+    appConfig = cloneBoosterConfig(activeProfile.boosterConfig);
   }
 
   if (appConfig.rewardType === "video") {
@@ -219,7 +225,7 @@ export function getRandomVideo():
   return videos[randomIndex];
 }
 
-export function getAllConfig(): Readonly<Config> {
+export function getAllConfig(): Readonly<BoosterConfig> {
   if (!isConfigInitialized) {
     throw new Error(
       "מערכת ההגדרות לא אותחלה. יש לקרוא ל-initializeConfig לפני השימוש ב-getAllConfig",
@@ -231,34 +237,29 @@ export function getAllConfig(): Readonly<Config> {
 
 // === Game Settings API ===
 //
-// helpers נוחים לקריאה ושמירה של הגדרות-משחק תחת `config.gameSettings`.
+// helpers נוחים לקריאה ושמירה של הגדרות-משחק תחת `profile.gameSettings`.
 // כל משחק מקבל namespace משלו לפי `gameId`, והקיט שומר את התוכן כ-`unknown`.
 // המשחק עצמו אחראי על schema/validation של ההגדרות שלו.
 //
 // הסיבה שב-`updateGameSettings` אין שימוש ב-`updateConfig`/`deepMerge`:
-// ה-`deepMerge` ימזג רקורסיבית את ה-`gameSettings[gameId]` הישן עם החדש,
-// כך שמפתחות שהוסרו מ-schema של המשחק יישארו. במקום זה אנו עושים
-// **החלפה מלאה** של גוש ההגדרות-משחק ותוך כדי שומרים על ההגדרות של
-// שאר המשחקים.
+// ה-`deepMerge` ימזג רקורסיבית. במקום זה אנו עושים **החלפה מלאה** של גוש
+// ההגדרות-משחק תוך שמירה על ה-schemaVersion הנוכחי מהרישום.
 
 /**
- * מחזיר את ההגדרות של משחק מסוים מתוך ה-config הפעיל,
+ * מחזיר את ההגדרות של משחק מסוים מתוך הפרופיל הפעיל,
  * או `undefined` אם אין הגדרות שמורות עבור `gameId` זה (פרופיל חדש או משחק חדש).
  */
 export function getGameSettings<T = unknown>(gameId: string): T | undefined {
-  const all = appConfig.gameSettings;
-  if (!all) return undefined;
-  return all[gameId] as T | undefined;
+  const wrapped = getActiveProfileGameSettings(gameId);
+  return wrapped?.data as T | undefined;
 }
 
 /**
  * שומר הגדרות-משחק תחת `gameId`. החלפה מלאה (לא merge עומק) — כך
  * שמפתחות ישנים שלא נמצאים ב-`settings` החדשות נמחקים. שאר ההגדרות של
- * שאר המשחקים נשמרות כמובן. עובר validation מלא של ה-`ConfigSchema`,
- * נשמר ל-`localStorage`, ומסונכרן לפרופיל הפעיל.
+ * שאר המשחקים נשמרות כמובן.
  *
- * מחזיר `Result<Config, ValidationError>` — לא זורק. ראה כללי הקוד
- * ב-`docs/functional-programming.md`.
+ * מחזיר `Result<BoosterConfig, ValidationError>` — לא זורק.
  *
  * @example
  * ```ts
@@ -267,44 +268,28 @@ export function getGameSettings<T = unknown>(gameId: string): T | undefined {
  *   console.error(result.error.summary);
  *   return;
  * }
- * // result.value הוא Config מעודכן
+ * // result.value הוא BoosterConfig מעודכן
  * ```
  */
 export async function updateGameSettings<T = unknown>(
   gameId: string,
   settings: T,
-): Promise<Result<Config, ValidationError>> {
-  const newGameSettings: Record<string, unknown> = {
-    ...(appConfig.gameSettings ?? {}),
-    [gameId]: settings,
-  };
+): Promise<Result<BoosterConfig, ValidationError>> {
+  // קובע את ה-schemaVersion הנוכחי — מ-registry אם רשום, 1 כברירת מחדל
+  const existing = getActiveProfileGameSettings(gameId);
+  const schemaVersion = existing?.schemaVersion ?? 1;
 
-  const candidate: Config = {
-    ...appConfig,
-    gameSettings: newGameSettings,
-  };
+  const wrapped = { schemaVersion, data: settings };
 
-  const validated = ConfigSchema(candidate);
-  if (validated instanceof type.errors) {
-    console.error("updateGameSettings: config לא תקין, לא נשמר:", validated.summary);
-    return err({
-      kind: "validation" as const,
-      summary: validated.summary,
-    });
-  }
-
-  appConfig = validated;
-  saveConfigToStorage();
-  syncActiveProfileSnapshot();
+  setActiveProfileGameSettings(gameId, wrapped);
   notifyConfigListeners();
+
   return ok(appConfig);
 }
 
 /**
  * נרשם לשינויים בהגדרות-משחק ספציפי. מחזיר callback unsubscribe.
  * ה-callback נקרא מיד עם הערך הנוכחי, ובכל פעם שהוא משתנה (כולל החלפת פרופיל).
- * השינוי מזוהה ב-reference comparison; משחקים שרוצים לתפוס שינוי בעומק
- * צריכים לעבור structure-aware comparison בצד שלהם.
  */
 export function subscribeGameSettings<T = unknown>(
   gameId: string,
@@ -313,8 +298,9 @@ export function subscribeGameSettings<T = unknown>(
   let last: T | undefined = getGameSettings<T>(gameId);
   callback(last);
 
-  const unsub = addConfigListener((config) => {
-    const current = config.gameSettings?.[gameId] as T | undefined;
+  // Listen to profile-manager changes (profile switch, game settings update)
+  const unsub = addProfilesListener(() => {
+    const current = getGameSettings<T>(gameId);
     if (current !== last) {
       last = current;
       callback(current);
@@ -350,7 +336,7 @@ export function deepMerge<T extends Record<string, unknown>>(
   return target;
 }
 
-function cloneConfig(config: Config): Config {
+function cloneBoosterConfig(config: BoosterConfig): BoosterConfig {
   return typeof structuredClone === "function"
     ? structuredClone(config)
     : JSON.parse(JSON.stringify(config));
@@ -358,7 +344,7 @@ function cloneConfig(config: Config): Config {
 
 function syncActiveProfileSnapshot(): void {
   try {
-    saveActiveProfileConfig(appConfig);
+    saveActiveProfileBoosterConfig(appConfig);
   } catch (error) {
     console.warn("Unable to sync active profile config:", error);
   }
@@ -393,7 +379,7 @@ function getEnvVals() {
   };
 }
 
-function migrateOldConfig(old: OldConfig): Partial<Config> {
+function migrateOldConfig(old: OldConfig): Partial<BoosterConfig> {
   return {
     rewardType: old.mode === "app" ? "app" : "video",
     rewardDisplayDurationMs: old.videoDisplayTimeInMS,

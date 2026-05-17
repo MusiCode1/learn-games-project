@@ -1,15 +1,14 @@
-import type { Config } from "../../types";
+import type { BoosterConfig } from "../../types";
+import { BOOSTER_CONFIG_SCHEMA_VERSION } from "../../schemas";
 import { env } from "./env";
 
 const GOOGLE_DRIVE_DEFAULT_FOLDER = env.VITE_GOOGLE_DRIVE_DEFAULT_FOLDER;
 const SITE_DEFAULT_URL = env.VITE_SITE_DEFAULT_UTL ?? "";
 
-const fallbackVideo =
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
-
 const DEFAULT_APP_PACKAGE = env.VITE_DEFAULT_APP_PACKAGE;
 
-const defaultConfig: Config = {
+const defaultBoosterConfig: BoosterConfig = {
+  schemaVersion: BOOSTER_CONFIG_SCHEMA_VERSION,
   appVersion: "0.0.1",
   rewardType: "video",
   rewardDisplayDurationMs: 20 * 1000,
@@ -59,12 +58,11 @@ const defaultConfig: Config = {
     enableHideModalButton: true,
     disableGameCodeInjection: false,
   },
-
-  // game-specific settings — מפה ריקה כברירת מחדל.
-  // המשחקים יזריקו את שלהם דרך updateGameSettings(gameId, ...).
-  gameSettings: {},
 };
 
-export function getDefaultConfig(): Config {
-  return { ...defaultConfig };
+export function getDefaultBoosterConfig(): BoosterConfig {
+  return { ...defaultBoosterConfig };
 }
+
+// alias לתאימות לאחור — יוסר כשכל callers יועברו ל-getDefaultBoosterConfig
+export const getDefaultConfig = getDefaultBoosterConfig;
