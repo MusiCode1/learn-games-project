@@ -1,5 +1,81 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 14:55 — Migration System — רפקטור 3 שכבות Schema
+
+### סיכום הרפקטור (5 phases, 5 commits)
+
+#### למה
+
+ה-state המקורי סבל מ-3 בעיות:
+1. **`gameSettings` חי בתוך `config`** — migration ל-config יכפה migration גם על game settings
+2. **`_configSchemaVersion` רק ב-localStorage**, לא ב-profile — פרופילים ישנים חסרי גרסה
+3. **שם `config` גנרי מדי** — בפועל הוא הגדרות המחזק בלבד
+4. **אין schema-version per-game** — המשחקים לא יכולים לאמת/לנגר את ה-settings שלהם
+
+#### מה השתנה
+
+**3 שכבות migration נפרדות:**
+
+| שכבה | Const | Value | Migration |
+|------|-------|--------|-----------|
+| State wrapper | `STATE_SCHEMA_VERSION` | `2` | v1→v2 (rename + move) |
+| BoosterConfig | `BOOSTER_CONFIG_SCHEMA_VERSION` | `1` | passthrough (v1=latest) |
+| Per-game | register per-game | `1` (find-letter) | passthrough (no migrations yet) |
+
+**שינויי שמות:**
+
+| ישן (v1) | חדש (v2) |
+|----------|----------|
+| `profile.config` | `profile.boosterConfig` |
+| `profile.config.gameSettings` | `profile.gameSettings[id] = { schemaVersion, data }` |
+| `state.dirtyConfig` | `state.dirtyBoosterConfig` |
+| `profile.config._configSchemaVersion` | `profile.boosterConfig.schemaVersion` |
+| `CONFIG_SCHEMA_VERSION` | `BOOSTER_CONFIG_SCHEMA_VERSION` |
+| `ConfigSchema/Config` | `BoosterConfigSchema/BoosterConfig` |
+| `saveActiveProfileConfig` | `saveActiveProfileBoosterConfig` |
+| `markDirtyConfig` | `markDirtyBoosterConfig` |
+| `getDefaultConfig` | `getDefaultBoosterConfig` |
+
+**Migration אוטומטי:**
+- `loadFromStorage` קורא ל-`runStateMigrations` → מריץ booster + per-game migrations
+- כשמשתמש ישן פותח את האפליקציה — ה-state ב-localStorage עובר migration אוטומטי ל-v2
+
+**API חיצוני שלא השתנה:**
+- `getGameSettings(gameId)`, `updateGameSettings(gameId, data)`, `subscribeGameSettings(gameId, cb)` — אותן חתימות. `find-letter-game` לא נגעו בו.
+- Breaking change מינורי: `updateGameSettings` מחזיר `Result<BoosterConfig, ...>` במקום `Result<Config, ...>` — callers שבודקים רק `result.success` לא נפגעו.
+
+**קבצים חדשים:**
+- `src/lib/config/migrations.ts` — 3 migration engines + registry
+- `test/migrations.spec.ts` — 24 unit tests
+- `test/state-migration.spec.ts` — integration test (fixture)
+- `test/state-migration.live.spec.ts` — live baseline test (it.skip ב-CI)
+- `test/fixtures/profiles-state/v01.json` — fixture baseline v1
+- `test/fixtures/profiles-state/v01.expected.json` — fixture expected v2
+
+#### מה לא השתנה
+
+- אפליקציות אחרות לא עודכנו (non-goal)
+- `find-letter-game` — check עובר, code לא נגעו
+- BoosterConfig schema: v1=latest, אין migrations עדיין
+- Per-game: אין migrations עדיין (find-letter schema v1 = ראשוני)
+
+## 2026-05-17 14:55 — Phase 5: Cleanup + Walkthrough + Verification
+
+### Audit results
+
+**greps ירוקים:**
+- `grep -r "_configSchemaVersion" src/` — רק ב-migrations.ts (שם הוא **חייב** להיות, קורא מה-old config)
+- `grep -r "config.gameSettings" src/` — רק בהערות ב-migrations.ts
+- `grep -rn "profile.config|.config:" src/lib/config/` — רק ב-migrations.ts
+- `grep -rn "state.dirtyConfig|.dirtyConfig" src/` — רק ב-migrations.ts
+
+**JSON shape audit (bun -e):**
+- Live baseline: `schemaVersion: 2`, `boosterConfig` קיים, `config` לא קיים, `gameSettings` עם wrapper, `dirtyBoosterConfig: null` ✅
+
+**verifier-phase אחרי Phase 4:** 0 bugs, בטוח להמשיך ✅
+
+---
+
 ## 2026-05-17 14:46 — Phase 4: חיבור migrations ל-profile-manager + config-manager
 
 ### מה בוצע?
