@@ -11,6 +11,8 @@
 	import { settings, type GridSize } from '$lib/stores/settings.svelte';
 	import { gameState } from '$lib/stores/game-state.svelte';
 	import LetterSelectionGrid from '../_components/LetterSelectionGrid.svelte';
+	import VowelSelectionGrid from '../_components/VowelSelectionGrid.svelte';
+	import type { VowelCode } from '$lib/data/vowels';
 
 	const sizes: GridSize[] = ['2x3', '3x3', '3x4', '4x4'];
 
@@ -202,6 +204,16 @@
 			<LetterSelectionGrid
 				selectedIds={settings.selectedLetterIds}
 				onChange={(next) => (settings.selectedLetterIds = next)}
+			/>
+		</section>
+
+		<!-- Section: בחירת ניקוד -->
+		<section class="card">
+			<h2 class="card-title">{language.vowelSelectionHeader}</h2>
+			<p class="muted small">{language.vowelSelectionHint}</p>
+			<VowelSelectionGrid
+				selectedCodes={settings.selectedVowels}
+				onChange={(next: VowelCode[]) => (settings.selectedVowels = next)}
 			/>
 		</section>
 

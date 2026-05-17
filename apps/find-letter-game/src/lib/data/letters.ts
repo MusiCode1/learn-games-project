@@ -49,6 +49,13 @@ export interface Letter {
 	 * (לדוגמה: ba='בַּ' מכיל גם פתח וגם דגש ב-displayChar).
 	 */
 	legacyDisplayPatah: string;
+	/**
+	 * האות לשימוש ב-speak כשהיא שונה מ-`char`.
+	 * קיים רק עבור האותיות הרפות: va_rafe → 'ו', cha_rafe → 'ח'.
+	 * עבור fa_rafe — speak נקבע על ידי TTS_FILES ישירות (תעתיק לטיני).
+	 * אם לא קיים, makePair ישתמש ב-`char`.
+	 */
+	speakChar?: string;
 }
 
 // ===== קבוצה: base =====
@@ -352,7 +359,8 @@ const RAFE_LETTERS_DATA: Letter[] = [
 		group: 'rafe',
 		legacyCardId: 'va_rafe',
 		legacySpeakPatah: 'וָא', // חריג: ב רפה נשמעת כ-ו
-		legacyDisplayPatah: 'בַ'
+		legacyDisplayPatah: 'בַ',
+		speakChar: 'ו' // לעיצור: 'ו' + שווא = 'וְ' (כמו va/ו)
 	},
 	{
 		id: 'ch_rafe',
@@ -364,7 +372,8 @@ const RAFE_LETTERS_DATA: Letter[] = [
 		group: 'rafe',
 		legacyCardId: 'cha_rafe',
 		legacySpeakPatah: 'חָא', // חריג: כ רפה נשמעת כ-ח
-		legacyDisplayPatah: 'כַ'
+		legacyDisplayPatah: 'כַ',
+		speakChar: 'ח' // לעיצור: 'ח' + שווא = 'חְ' (כמו ch/ח)
 	},
 	{
 		id: 'f_rafe',
@@ -376,7 +385,9 @@ const RAFE_LETTERS_DATA: Letter[] = [
 		group: 'rafe',
 		legacyCardId: 'fa_rafe',
 		legacySpeakPatah: 'Fa', // חריג: תעתיק לטיני — ראה הערה ב-letters.ts הישן
-		legacyDisplayPatah: 'פַ'
+		legacyDisplayPatah: 'פַ',
+		speakChar: 'F' // לעיצור: 'F' + שווא = 'Fְ' — מופה ל-F.mp3 (נפרד מ-P.mp3!)
+		              // מבטיח הבחנה מ-p (פּ דגושה) שגם char='פ' וייצר 'פְ' → P.mp3
 	}
 ];
 

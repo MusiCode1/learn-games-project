@@ -45,16 +45,18 @@ describe('makePair', () => {
 		expect(pair.speak).toBe('בָּא');
 	});
 
-	it('pair <b, none>.speak מכיל ב + שווא (displayChar+speakSuffix)', () => {
+	it('pair <b, none>.speak === char + שווא (speakChar??char + speakSuffix)', () => {
 		const pair = makePair(bLetter, none);
-		// displayChar='בּ' (U+05D1 U+05BC), speakSuffix='ְ' (U+05B0)
-		// הסדר הנורמלי: ב + דגש + שווא = U+05D1 U+05BC U+05B0
-		// מנרמל ל-NFC לפני השוואה (unicode combining marks)
-		expect(pair.speak.normalize('NFC')).toBe(('בּ' + '\u05B0').normalize('NFC'));
-		// וגם מוודאים שמכיל שווא
+		// Phase 2: speakBase = speakChar ?? char = undefined ?? 'ב' = 'ב' (ללא דגש)
+		// speak = 'ב' (U+05D1) + 'ְ' (U+05B0 שווא נח) = 'בְ'
+		// שים לב: char='ב' (ללא דגש), לא displayChar='בּ' (עם דגש)
+		// מנרמל ל-NFC לפני השוואה
+		expect(pair.speak.normalize('NFC')).toBe(('ב' + '\u05B0').normalize('NFC'));
+		// מכיל שווא
 		expect([...pair.speak].some(c => c.codePointAt(0) === 0x05B0)).toBe(true);
-		// ומכיל ב (U+05D1)
+		// מתחיל ב-ב (U+05D1) ללא דגש
 		expect(pair.speak.startsWith('ב')).toBe(true);
+		expect(pair.speak.length).toBe(2); // ב + שווא בלבד — אין דגש
 	});
 
 	it('pair <g, patah>.speak === "גָא" (זהה ל-LetterCard הישן)', () => {

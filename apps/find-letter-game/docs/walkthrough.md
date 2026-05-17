@@ -619,3 +619,82 @@ subscribe) עם timestamps.
 - **Background processes**: 4 רצים בו-זמנית (vite dev, vite preview, ssh dev tunnel, ssh preview tunnel).
 - **רישום במשחקי הלמידה**: `apps/main/src/lib/defaults.ts` ו-`language.ts` תחת `reading`/rose/`בַּ`.
 - **בדיקות**: באמצעות `playwright-cli` ב-linux-gui container — צילומי מסך + console logs לוודא שהזרימה תקינה.
+
+---
+
+## 2026-05-17
+
+### פאזה 2 — תמיכה בעיצור (none vowel) + UI בחירת ניקוד
+
+#### מה בוצע?
+
+**1. תשתית טיפוסים — `Letter.speakChar` + עדכון `makePair`**
+
+- הוסף שדה `speakChar?: string` ל-`Letter` interface ב-`data/letters.ts`.
+  שלוש הרפות בלבד קיבלו ערך: `va_rafe.speakChar='ו'`, `cha_rafe.speakChar='ח'`, `fa_rafe.speakChar='F'`.
+- `makePair` עודכן: `speakBase = letter.speakChar ?? letter.char`. עבור none vowel: `speak = speakBase + 'ְ'`.
+  - `va_rafe__none.speak = 'וְ'` → שיתוף עם V.mp3 (ו)
+  - `cha_rafe__none.speak = 'חְ'` → שיתוף עם Ch.mp3 (ח)
+  - `fa_rafe__none.speak = 'Fְ'` → F.mp3 חדש (Latin F — נפרד מ-P.mp3!)
+
+**2. ייצור MP3 — 19 קבצים ייחודיים לעיצור**
+
+- 19 קבצי MP3 נוצרו דרך ElevenLabs API (Sarah/eleven_v3) — דרך הפרוקסי AAC ודרך OneCLI ישיר.
+- הועלו ל-R2 (`tzlev-static/shared/tts/find-letter/`): B, G, D, H, V, Z, Ch, T, Y, K, L, M, N, S, P, Tz, R, Sh, F.
+- **שיתופי קבצים**: q→K.mp3 (ק=כּ), tav→T.mp3 (ת=ט), va_rafe→V.mp3, cha_rafe→Ch.mp3, sin→Sh.mp3.
+- `TTS_FILES` ב-`utils/letters.ts` עודכן עם 21 entries חדשים לעיצור.
+
+**TTS — איכות לא מספקת (follow-up נדרש)**
+
+כל 19 קבצי העיצור מנגנים הברה עם תנועה (`be`, `ge`, `de`) במקום עיצור טהור (`b`, `g`, `d`).
+זו בעיה מבנית של eleven_v3/Sarah — ניסויים עם תעתיק לטיני, audio tags של ElevenLabs v3,
+ו-Hebrew shva (דרך proxy AAC ודרך OneCLI ישיר) לא הצליחו להפיק עיצור עירום.
+
+- **19 קבצים הועלו ל-R2 כפי שהם** — פונקציונלי אך לא איכותי (`be`-style).
+- **גרוניות (א, ע) לא הועלו** — 11 variants ב-`tts-review/variants/` לעיון עתידי.
+  `pair<a/aa, none>` יפלו ל-Web Speech fallback. מקובל בינתיים.
+- **Follow-up**: לחקור טכניקות חדשות — קול אחר, מודל אחר, edit ידני של MP3 לחתוך תנועה, ייצור ממקור אחר.
+
+**3. שמות ניקוד ב-language.ts**
+
+נוספו: `vowelSelectionHeader`, `vowelSelectionHint`, `minimumVowelsHint`, `vowelNamePatah`, `vowelNameNone`.
+
+**4. VowelSelectionGrid.svelte — component חדש**
+
+- `src/routes/_components/VowelSelectionGrid.svelte` — API דומה ל-`LetterSelectionGrid`.
+- Props: `selectedCodes: VowelCode[]`, `onChange: (next: VowelCode[]) => void`.
+- כפתורים: סמן הכל / נקה הכל / ברירת מחדל (פתח).
+- ולידציה: מינימום 1 ניקוד — מציג `minimumVowelsHint` אם 0 נבחרו.
+
+**5. שילוב ב-settings/+page.svelte**
+
+Section חדש "ניקוד להצגה" אחרי "אותיות להצגה" ולפני "הגדרות חיזוקים".
+
+**6. בדיקות**
+
+- טסט #22 חדש: `כל speak של עיצור (none) לאותיות לא-גרוניות ממופה ב-TTS_FILES`.
+- גרוניות (a, aa) מסוננות בכוונה עם TODO comment.
+- עודכן טסט pair.test.ts: `b__none.speak = 'בְ'` (char, לא displayChar).
+- **73 tests ירוקים** בקבצי logic (letters.test.ts + pair.test.ts).
+
+**7. Screenshots (Sub-phase 2.6)**
+
+- `/tmp/find-letter-phase-2/settings-vowel2.png` — section "ניקוד להצגה" עם פתח + עיצור
+- `/tmp/find-letter-phase-2/game-consonant.png` — לוח עיצור מובייל (390×844)
+- `/tmp/find-letter-phase-2/game-consonant-desktop.png` — לוח עיצור דסקטופ (1280×800)
+- `/tmp/find-letter-phase-2/game-mixed.png` — לוח מעורב פתח+עיצור
+
+#### החלטות ארכיטקטורה
+
+- **`speakBase = letter.speakChar ?? letter.char`**: הדרך הנקייה להפריד "מה מוצג" מ"מה נשמע" עבור הרפות. רק 3 אותיות קיבלו `speakChar`; לשאר `char` מספיק.
+- **שיתוף קבצי TTS בין ניקודים**: ק שיתף עם כּ, ת שיתף עם ט — עקביות עם סיבוב 1. ס+שׂ שיתפו עם S.mp3 (patah), אבל שׁ+שׂ עיצור שיתפו Sh.mp3 (כי char='ש' לשניהם — ידוע limitation).
+- **גרוניות + עיצור → Web Speech fallback**: במקום לחסום את הצירוף לגמרי, ה-TTS ייפול ל-Web Speech. UI מציג את הכרטיסים תקין — הצליל בלבד חסר. סביר עבור phase 2.
+- **OneCLI ישיר למול proxy AAC**: כאשר ה-proxy AAC מחזיר 0 bytes (ElevenLabs דוחה את ה-speak text), קריאה ישירה דרך OneCLI `voice-acp` agent עבדה עבור חלק מהאותיות (ג, מ, ט, ס, ז, שׁ, כּ, קּ).
+
+#### מעקפים ופתרונות
+
+- **ElevenLabs מחזיר 0 bytes לשווא נח** (`גְ`, `זְ`, `כְּ`, `קְ`, `שְׁ`, `מְ`, `סְ`, `טְ`): בעיה ידועה — ה-API דוחה מחרוזות עם שווא נח בלי תנועה. מעקף: הוספת `[Israeli accent]` tag או תעתיק לטיני.
+- **Gemini CLI 400 "invalid argument" אחרי קריאות רבות**: ניתוח קובצי audio דרך `gemini -p "..." @file.mp3` נכשל אחרי מספר קריאות ברצף. מעקף: המשתמש האזין בעצמו דרך HTML player שנוצר ב-`/tmp/find-letter-consonants.html`.
+- **`$state.snapshot` על fa_rafe.speakChar**: הוספת `speakChar: 'F'` ל-`$state` object ב-letters.ts נמנעה — speakChar הוא שדה רגיל ב-interface, לא ב-reactive state. אין בעיה.
+
+#### תשתית

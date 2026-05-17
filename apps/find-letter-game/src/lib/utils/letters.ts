@@ -81,6 +81,7 @@ const RAFE_LETTERS: LetterVowelPair[] = ALL_LETTERS_DATA
  * אם מוסיפים אות עם `speak` חדש — צריך גם להעלות קובץ ל-R2 ולהוסיף שורה כאן.
  */
 export const TTS_FILES: Record<string, string> = {
+	// ===== פתח — פאזה 1 =====
 	אָא: 'A.mp3',
 	בָּא: 'Ba.mp3',
 	גָא: 'Ga.mp3',
@@ -100,7 +101,39 @@ export const TTS_FILES: Record<string, string> = {
 	'[Israeli accent] צַה': 'Tsa.mp3',
 	רָא: 'Ra.mp3',
 	שָׁא: 'Sha.mp3',
-	Fa: 'Fa.mp3'
+	Fa: 'Fa.mp3',
+
+	// ===== עיצור (none) — פאזה 2 =====
+	// ב: char='ב' → 'בְ'. גם va_rafe עם speakChar='ו' מייצר 'וְ' → V.mp3
+	'בְ': 'B.mp3',
+	'גְ': 'G.mp3',    // [Israeli accent] גְ
+	'דְ': 'D.mp3',
+	'הְ': 'H.mp3',
+	'וְ': 'V.mp3',    // v (ו) + va_rafe (speakChar='ו')
+	'זְ': 'Z.mp3',    // [Israeli accent] זְ
+	'חְ': 'Ch.mp3',   // ch (ח) + cha_rafe (speakChar='ח')
+	'טְ': 'T.mp3',    // [Israeli accent] טְ
+	'יְ': 'Y.mp3',    // [Israeli accent] יְ
+	'כְ': 'K.mp3',    // [Israeli accent] כְּ
+	'לְ': 'L.mp3',
+	'מְ': 'M.mp3',    // [Israeli accent] מְ
+	'נְ': 'N.mp3',
+	'סְ': 'S.mp3',    // [Israeli accent] סְ
+	'פְ': 'P.mp3',    // p (פּ דגושה, char='פ')
+	'צְ': 'Tz.mp3',   // [Israeli accent] צְ
+	'קְ': 'K.mp3',    // q (ק) — אותו צליל כ-כּ (כמו בסיבוב 1)
+	'רְ': 'R.mp3',    // פשרה — American R
+	// sh (שׁ) + sin (שׂ): שניהם char='ש' → speak='שְ'. ה-TTS מפיק צליל shin.
+	// sin אמורה לצלול כ-S אבל אין דרך להפריד בלי speakChar (מחוץ לscope).
+	'שְ': 'Sh.mp3',
+	'תְ': 'T.mp3',    // tav (ת) — אותו צליל כ-ט (כמו בסיבוב 1)
+	// fa_rafe: speakChar='F' → speak='Fְ' (Latin F + שווא) → נפרד מ-P.mp3
+	// eslint-disable-next-line no-misleading-character-class -- Intentional: Latin F + Hebrew shva
+	'Fְ': 'F.mp3',
+
+	// ===== גרוניות + עיצור — פאזה 2 (ממתין להחלטה) =====
+	// 'אְ': 'A-consonant.mp3',  ← יוסף אחרי NEEDS_DECISION
+	// 'עְ': 'Aa-consonant.mp3', ← יוסף אחרי NEEDS_DECISION
 };
 
 /**

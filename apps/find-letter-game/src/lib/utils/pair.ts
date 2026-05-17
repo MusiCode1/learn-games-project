@@ -46,10 +46,12 @@ export function makePair(letter: Letter, vowel: Vowel): LetterVowelPair {
 		vowel.code === 'patah' ? letter.legacyCardId : `${letter.id}__${vowel.code}`;
 
 	// עבור patah — משתמש בערכים legacy כדי לשמור תאימות מלאה עם TTS_FILES
+	// עבור שאר הניקודים — בונה דינמית מ-speakChar (אם קיים) או char + suffix
+	const speakBase = letter.speakChar ?? letter.char;
 	const speak =
 		vowel.code === 'patah'
 			? letter.legacySpeakPatah
-			: letter.displayChar + vowel.speakSuffix;
+			: speakBase + vowel.speakSuffix;
 
 	const display =
 		vowel.code === 'patah'

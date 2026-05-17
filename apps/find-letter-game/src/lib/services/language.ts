@@ -52,6 +52,15 @@ export const language = {
 	resetToDefaultLabel: 'ברירת מחדל',
 	minimumLettersHint: 'יש לסמן לפחות שתי אותיות',
 
+	// === בחירת ניקוד ===
+	vowelSelectionHeader: 'ניקוד להצגה',
+	vowelSelectionHint: 'אילו סוגי ניקוד יופיעו בלוח',
+	minimumVowelsHint: 'יש לסמן לפחות סוג ניקוד אחד',
+
+	// שמות הניקודים
+	vowelNamePatah: 'פתח',
+	vowelNameNone: 'עיצור',
+
 	// הגדרות TTS
 	ttsProviderLabel: 'ספק הקראה',
 	ttsVoiceLabel: 'קול',

@@ -141,7 +141,7 @@ test('getTtsFilename מנרמל trim ו-NFC', () => {
 	expect(getTtsFilename('  בָּא  ')).toBe('Ba.mp3');
 });
 
-// בדיקה 20: כל ה-speak של ALL_LETTERS ממופה ב-TTS_FILES
+// בדיקה 20: כל ה-speak של ALL_LETTERS (פתח) ממופה ב-TTS_FILES
 test('כל ה-speak של ALL_LETTERS ממופה ב-TTS_FILES', () => {
 	for (const card of ALL_LETTERS) {
 		const filename = getTtsFilename(card.speak);
@@ -149,10 +149,35 @@ test('כל ה-speak של ALL_LETTERS ממופה ב-TTS_FILES', () => {
 	}
 });
 
-// בדיקה 21: כל קובץ ב-TTS_FILES בשימוש
+// בדיקה 21: כל קובץ ב-TTS_FILES בשימוש (patah + none, ללא גרוניות)
 test('כל קובץ ב-TTS_FILES בשימוש על-ידי לפחות אות אחת', () => {
-	const usedFiles = new Set(ALL_LETTERS.map(c => getTtsFilename(c.speak)));
+	// כולל pairs עם none vowel — מייצר כיסוי על הקבצים החדשים B.mp3, G.mp3 וכו'
+	const nonGutturalIds = DEFAULT_LETTER_IDS.filter(id => id !== 'a' && id !== 'aa');
+	const deckPatahNone = generateDeck(nonGutturalIds, ['patah', 'none']);
+	const patahDeck = generateDeck(DEFAULT_LETTER_IDS, ['patah']); // כולל גרוניות (patah בלבד)
+	const allTestPairs = [...deckPatahNone, ...patahDeck];
+	const usedFiles = new Set(allTestPairs.map(c => getTtsFilename(c.speak)));
+	// קבצי גרוניות עיצור (A-consonant, Aa-consonant) יתווספו אחרי NEEDS_DECISION
+	const pendingFiles = new Set(['A-consonant.mp3', 'Aa-consonant.mp3']);
 	for (const filename of Object.values(TTS_FILES)) {
+		if (pendingFiles.has(filename)) continue;
 		expect(usedFiles.has(filename), `הקובץ ${filename} ב-TTS_FILES לא בשימוש`).toBe(true);
+	}
+});
+
+// בדיקה 22: none vowel — כל עיצור לא-גרוני ממופה ב-TTS_FILES
+test('כל speak של עיצור (none) לאותיות לא-גרוניות ממופה ב-TTS_FILES', () => {
+	// TODO: גרוניות + עיצור — TTS דורש פתרון בעתיד (ראה walkthrough.md פאזה 2).
+	// pair<a, none>.speak='אְ' ו-pair<aa, none>.speak='עְ' לא ממופים בכוונה:
+	// eleven_v3/Sarah לא מסוגל להפיק עיצור טהור לגרוניות — יפל ל-Web Speech fallback.
+	const gutturalLegacyIds = new Set(['a', 'aa']);
+	const nonGutturalIds = DEFAULT_LETTER_IDS.filter(id => !gutturalLegacyIds.has(id));
+	const deck = generateDeck(nonGutturalIds, ['none']);
+	for (const pair of deck) {
+		const filename = getTtsFilename(pair.speak);
+		expect(
+			filename,
+			`חסר מיפוי TTS עבור עיצור: speak="${pair.speak}" (id=${pair.id})`
+		).not.toBeNull();
 	}
 });
