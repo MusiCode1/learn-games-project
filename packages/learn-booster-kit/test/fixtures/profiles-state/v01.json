@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "profiles": {
+    "00000000-0000-0000-0000-000000000001": {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "name": "Default Profile",
+      "config": {
+        "appVersion": "0.0.1",
+        "rewardType": "video",
+        "rewardDisplayDurationMs": 20000,
+        "turnsPerReward": 1,
+        "environmentMode": "development",
+        "envVals": {
+          "hostname": "localhost",
+          "fullPath": "http://localhost/settings",
+          "isIframe": false,
+          "selfUrl": "http://localhost/_app/immutable/chunks/test.js",
+          "isDevServer": false,
+          "devMode": false,
+          "deployServer": "",
+          "isDeployServer": false,
+          "isDirectToGamePage": false,
+          "isGingim": false,
+          "isGamePage": false,
+          "isBoosterIframe": false,
+          "isGamesListPage": false,
+          "isGingimHomepage": false
+        },
+        "notifications": {
+          "endingNotification": {
+            "text": "המחזק יסתיים בעוד 10 שניות",
+            "displayBeforeEndMs": 10000,
+            "enabledFor": "none"
+          }
+        },
+        "video": {
+          "videos": [
+            {
+              "url": "https://example.com/sample-video-1.mp4",
+              "mimeType": "video/mp4"
+            },
+            {
+              "url": "https://example.com/sample-video-2.mp4",
+              "mimeType": "video/mp4"
+            }
+          ],
+          "source": "google-drive",
+          "googleDriveFolderUrl": "https://drive.google.com/drive/u/0/folders/EXAMPLE_FOLDER_ID",
+          "hideProgressBar": false
+        },
+        "app": {
+          "packageName": "com.google.android.youtube"
+        },
+        "booster": {
+          "siteUrl": ""
+        },
+        "system": {
+          "enableHideModalButton": true,
+          "disableGameCodeInjection": false
+        },
+        "gameSettings": {
+          "find-letter-game": {
+            "gridSize": "4x4",
+            "autoSpeakOnNewRound": true,
+            "voiceEnabled": true,
+            "boosterEnabled": true,
+            "selectedLetterIds": [
+              "a", "ba", "va_rafe", "ga", "da", "ha", "va", "za", "cha", "ta",
+              "ya", "ka", "cha_rafe", "la", "ma", "na", "sa", "aa", "pa",
+              "fa_rafe", "tza", "qa", "ra", "sha", "sa_sin", "tav"
+            ],
+            "avoidSimilar": true,
+            "cooldownMs": 2000,
+            "questionsPerBoard": 0,
+            "boardsPerSet": 1
+          }
+        }
+      },
+      "meta": {
+        "createdAt": 1779019113848,
+        "updatedAt": 1779022230167
+      }
+    }
+  },
+  "order": [
+    "00000000-0000-0000-0000-000000000001"
+  ],
+  "activeProfileId": "00000000-0000-0000-0000-000000000001",
+  "uiEnabled": false,
+  "dirtyConfig": null
+}

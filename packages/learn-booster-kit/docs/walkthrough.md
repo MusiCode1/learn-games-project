@@ -1,5 +1,23 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 14:37 — Phase 3: Fixtures + Integration Tests למיגרציות state
+
+### מה בוצע?
+
+**`test/fixtures/profiles-state/v01.expected.json`** — fixture של target shape (v2):
+- `boosterConfig` במקום `config` (עם `schemaVersion: 1`)
+- `gameSettings` ברמת profile, כל entry עטוף ב-`{ schemaVersion: 1, data: {...} }`
+- `dirtyBoosterConfig: null` במקום `dirtyConfig`
+- `schemaVersion: 2`
+
+**`test/state-migration.spec.ts`** — integration test מקצה לקצה:
+- `v01 → migrated == v01.expected`: טוען fixture v01, מריץ `runStateMigrations`, משווה deep-equal לtarget.
+- `does not mutate input`: מאמת שה-input לא השתנה.
+
+**`test/state-migration.live.spec.ts`** — live snapshot test:
+- `it.skip` אוטומטי אם הקובץ `docs/private-docs/live-snapshots/profiles-state-baseline.json` לא קיים.
+- ב-CI: יידולג. מקומית (כאשר הקובץ קיים): עובר — ריצה מאשרת שה-migration עובד על baseline אמיתי.
+
 ## 2026-05-17 14:35 — Phase 2: Migration Engines — 3 שכבות state/boosterConfig/per-game
 
 ### מה בוצע?
