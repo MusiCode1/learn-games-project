@@ -1,5 +1,20 @@
 # יומן פיתוח - kit-test-screen
 
+## 2026-05-17 00:11
+
+### מסך ברוכים הבאים לבחינת themes
+
+#### מה בוצע?
+
+**`src/routes/showcase/welcome/+page.svelte`** — מסך פתיחה מלא
+
+- `GameShell` + `StartScreen` מהקיט במסך מלא
+- `heroIllustration` snippet: gradient box 200×200 עם אמוג'י 🎮
+- `secondaryActions`: IconButton הגדרות + קישור חזרה
+- primary action מנווט ל-`/showcase/game`
+
+**`+layout.svelte`** — הוספת nav link "Welcome"
+
 ## 2026-05-17 00:10
 
 ### הרחבת theme switcher — 8 themes

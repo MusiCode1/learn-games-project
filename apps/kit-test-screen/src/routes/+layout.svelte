@@ -34,6 +34,7 @@
 	<div class="links">
 		<a href="/">Booster Test</a>
 		<a href="/showcase">Showcase</a>
+		<a href="/showcase/welcome">Welcome</a>
 	</div>
 	<div class="theme-switch">
 		<span>Theme:</span>
