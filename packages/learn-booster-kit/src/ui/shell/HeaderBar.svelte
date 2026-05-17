@@ -23,7 +23,6 @@
 </script>
 
 <header
-	role="banner"
 	data-variant={variant}
 	class="flex items-center justify-between bg-surface-elevated border-b border-border-subtle shadow-card {paddingClass} {className}"
 >

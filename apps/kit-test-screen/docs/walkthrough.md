@@ -1,5 +1,32 @@
 # יומן פיתוח - kit-test-screen
 
+## 2026-05-17 00:07
+
+### Showcase page — הצגת כל קומפוננטות ה-component system + theme switcher
+
+#### מה בוצע?
+
+**1. `src/routes/showcase/+page.svelte`** — דף showcase חדש
+
+- מציג את כל הprimitives: Button, IconButton, SegmentedControl, ScoreBadge, Card
+- מציג animation hooks: useShake, usePop
+- מציג CooldownOverlay (3 שניות)
+- מציג HeaderBar עם 3 אזורים
+- מציג StartScreen בתוך preview box
+- swatches לכל Color Tokens
+- RTL מלא
+
+**2. `src/routes/+layout.svelte`** — עדכון עם theme switcher
+
+- navigation: Booster Test / Showcase
+- `<select>` לבחירת theme: default/kids/minimal
+- `$effect` מגדיר `document.documentElement.dataset.theme` ב-runtime
+- CSS variables משתנים מיד עם החלפת theme
+
+#### החלטות ארכיטקטורה
+
+- **`data-theme` על `<html>`**: שינוי theme-attribute על document.documentElement מפעיל את כל ה-CSS overrides של [data-theme='kids'] וכו'
+
 ## 2026-02-21 00:00
 
 ### הסרת @source עם path יחסי ל-learn-booster-kit

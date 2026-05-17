@@ -35,7 +35,7 @@
 		lg: 'p-8'
 	};
 
-	const isButton = onclick !== undefined;
+	const isButton = $derived(onclick !== undefined);
 </script>
 
 {#if isButton}
