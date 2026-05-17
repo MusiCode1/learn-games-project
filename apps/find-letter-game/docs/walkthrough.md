@@ -1,5 +1,65 @@
 # יומן פיתוח — איפה האות?
 
+## 2026-05-17 20:10
+
+### Phase 1 — Refactor: פיצול `LetterCard` ל-`Letter` + `Vowel` + `LetterVowelPair` (ניטרלי למשתמש)
+
+ריפקטור מבנה הנתונים הפנימי מ-`LetterCard` (אות+ניקוד מקובעים יחד)
+למודל נפרד `Letter × Vowel → LetterVowelPair`. המשתמש לא רואה שום שינוי.
+
+#### מה בוצע?
+
+**1. קבצי data חדשים**
+- `src/lib/data/letters.ts` — 26 ערכי `Letter` עם `legacyCardId` ו-`legacySpeakPatah`/`legacyDisplayPatah` לתאימות מלאה.
+- `src/lib/data/vowels.ts` — 2 ערכי `Vowel`: `patah` ו-`none` (פאזה 1).
+
+**2. utils חדש**
+- `src/lib/utils/pair.ts` — `makePair()`, `generateDeck()`, `isValidCombination()`.
+  - `makePair(letter, patah).{id,display,speak}` זהה בדיוק ל-`LetterCard` הישן עבור כל 26 האותיות (regression tests).
+
+**3. עדכון settings + migration**
+- `settings.svelte.ts` — הוסף `schemaVersion: 4` ו-`selectedVowels: ['patah']` ל-`makeDefaults()`.
+- `settings-migration.ts` — migration v3→v4 ו-v2→v4: מוסיף `selectedVowels: ['patah']`, מעדכן `schemaVersion: 4`.
+
+**4. עדכון `letters.ts` + `game-state.svelte.ts`**
+- `LetterCard` הפך ל-type alias של `LetterVowelPair`.
+- `pickBoard()` מקבל `pairs: LetterVowelPair[]` במקום `selectedLetterIds`.
+- `getLettersByIds`, `getLettersForGroups` הוסרו (לא בשימוש).
+- `game-state.svelte.ts`: `startBoard()` קורא ל-`generateDeck(settings.selectedLetterIds, settings.selectedVowels)` לפני `pickBoard`.
+
+**5. עדכון test suite**
+- `letters.test.ts` עודכן לעבוד עם API החדש (pairs במקום selectedLetterIds).
+- tests חדשים: `letters.test.ts` (data), `vowels.test.ts`, `pair.test.ts` (42 tests), `pickBoard.test.ts` (integration).
+- `settings-migration.test.ts`: tests חדשים ל-v3→v4 ו-v2→v4.
+- סה"כ: 113 tests עוברים (1 pre-existing failure).
+
+#### החלטות ארכיטקטורה
+
+- **`legacySpeakPatah` ו-`legacyDisplayPatah` ב-`Letter`**: במקום לחשב את ה-speak מ-suffix, שמרנו את הערכים הישנים המדויקים. זאת כי ל-8 אותיות יש חריגים (za='זַה', tza='[Israeli accent] צַה', qa='כָּא', tav='טָא', וכו'). גישה זו מבטיחה 100% תאימות עם TTS_FILES.
+- **`selectedVowels` ב-settings ו-migration**: ב-defaults ה-`schemaVersion: 4` נוסף כ-data key, ולא כ-metadata. זה מאפשר גרסאות migration עתידיות ושמירה ב-localStorage/profile.
+
+#### Evidence ויזואלי (screenshots ב-/tmp/find-letter-phase-1/)
+- `phase1-board.png` — לוח 3×4 עם 12 אותיות עם פתח — זהה לקיים.
+- `phase1-settings.png` — מסך ההגדרות **ללא** fieldset ניקוד (כנדרש).
+- `phase1-desktop.png`, `phase1-main.png` — מסך פתיחה.
+
+#### קבצים שהשתנו
+- `src/lib/data/letters.ts` (חדש)
+- `src/lib/data/vowels.ts` (חדש)
+- `src/lib/data/letters.test.ts` (חדש)
+- `src/lib/data/vowels.test.ts` (חדש)
+- `src/lib/utils/pair.ts` (חדש)
+- `src/lib/utils/pair.test.ts` (חדש)
+- `src/lib/utils/pickBoard.test.ts` (חדש)
+- `src/lib/utils/letters.ts` (עדכון: type alias, pickBoard חדש, הסרת deprecated functions)
+- `src/lib/utils/letters.test.ts` (עדכון: API חדש)
+- `src/lib/stores/settings.svelte.ts` (עדכון: schemaVersion + selectedVowels)
+- `src/lib/stores/settings-migration.ts` (עדכון: v3→v4, v2→v4)
+- `src/lib/stores/settings-migration.test.ts` (עדכון: tests חדשים)
+- `src/lib/stores/game-state.svelte.ts` (עדכון: generateDeck + pairs)
+
+---
+
 ## 2026-05-17 12:22
 
 ### תיקוני באגים במיגרציה — toJSON + fast-path + intermediate filter

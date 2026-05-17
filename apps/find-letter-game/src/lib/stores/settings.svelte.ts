@@ -2,6 +2,7 @@
 
 import { configManager } from 'learn-booster-kit';
 import { DEFAULT_LETTER_IDS } from '../utils/letters';
+import type { VowelCode } from '../data/vowels';
 import { migrateSettings } from './settings-migration';
 
 const LEGACY_KEY = 'find-letter-game-settings';
@@ -24,11 +25,13 @@ export type GridSize = '2x3' | '3x3' | '3x4' | '4x4';
 // =============================================================
 function makeDefaults() {
 	return {
+		schemaVersion: 4 as number,
 		gridSize: '3x4' as GridSize,
 		autoSpeakOnNewRound: true,
 		voiceEnabled: true,
 		boosterEnabled: true,
 		selectedLetterIds: [...DEFAULT_LETTER_IDS] as string[],
+		selectedVowels: ['patah'] as VowelCode[],
 		avoidSimilar: true,
 		cooldownMs: 2000,
 		questionsPerBoard: 0,

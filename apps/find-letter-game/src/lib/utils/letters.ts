@@ -13,22 +13,23 @@
  * דומות באותו לוח.
  *
  * רקע: docs/similar-letters.md
+ * עדכון Phase 1 (2026-05-17): data/letters.ts הוא המאגר החדש.
+ *   - LetterCard הוא כעת alias ל-LetterVowelPair
+ *   - pickBoard מקבל pairs: LetterVowelPair[] ישירות
+ *   - getLettersByIds, getLettersForGroups הוסרו (לא בשימוש)
  */
+
+import type { LetterVowelPair } from './pair';
 
 export type LetterGroup = 'base' | 'confusing' | 'rafe';
 
-export interface LetterCard {
-	/** מזהה ייחודי לכרטיס (לדוגמה 'ba', 'ga', 'va_rafe') */
-	id: string;
-	/** האות עם הניקוד לתצוגה (לדוגמה 'בַּ', 'בַ') */
-	display: string;
-	/** הטקסט שיוקרא ע"י ה-TTS (לדוגמה 'בָּה', 'וָה') */
-	speak: string;
-	/** הקבוצה שאליה שייך הכרטיס */
-	group: LetterGroup;
-}
+/**
+ * @deprecated — type alias ל-LetterVowelPair. בשימוש לתאימות עם Board.svelte ו-game-state.
+ * יישמר עד לסיום המיגרציה המלאה.
+ */
+export type LetterCard = LetterVowelPair;
 
-// ===== קבוצה: base =====
+// ===== legacy data (ALL_LETTERS) — נשמר לתאימות =====
 
 /*
  * הערה על ה-`speak`:
@@ -43,46 +44,29 @@ export interface LetterCard {
  * בתעתיק לטיני המודל קורא את ההברה כמו שהיא נכתבת.
  *
  * אומת מול Gemini transcription על כל הקבצים — ראו docs/walkthrough.md.
+ *
+ * עדכון Phase 1: ALL_LETTERS נוצר מ-generateDeck() של data/letters.ts + data/vowels.ts.
+ * השדות id/display/speak זהים בדיוק לישן.
  */
 
-const BASE_LETTERS: LetterCard[] = [
-	{ id: 'a', display: 'אַ', speak: 'אָא', group: 'base' },
-	{ id: 'ba', display: 'בַּ', speak: 'בָּא', group: 'base' },
-	{ id: 'ga', display: 'גַ', speak: 'גָא', group: 'base' },
-	{ id: 'da', display: 'דַ', speak: 'דָא', group: 'base' },
-	{ id: 'ha', display: 'הַ', speak: 'הָא', group: 'base' },
-	{ id: 'va', display: 'וַ', speak: 'וָא', group: 'base' },
-	{ id: 'za', display: 'זַ', speak: 'זַה', group: 'base' },
-	{ id: 'cha', display: 'חַ', speak: 'חָא', group: 'base' },
-	{ id: 'ta', display: 'טַ', speak: 'טָא', group: 'base' }, // ט = ת — אותו קובץ TTS
-	{ id: 'ya', display: 'יַ', speak: 'יָא', group: 'base' },
-	{ id: 'ka', display: 'כַּ', speak: 'כָּא', group: 'base' }, // כּ = ק — אותו קובץ TTS
-	{ id: 'la', display: 'לַ', speak: 'לָא', group: 'base' },
-	{ id: 'ma', display: 'מַ', speak: 'מָא', group: 'base' },
-	{ id: 'na', display: 'נַ', speak: 'נָא', group: 'base' },
-	{ id: 'sa', display: 'סַ', speak: 'סָא', group: 'base' },
-	{ id: 'pa', display: 'פַּ', speak: 'פָּא', group: 'base' },
-	{ id: 'tza', display: 'צַ', speak: '[Israeli accent] צַה', group: 'base' },
-	{ id: 'qa', display: 'קַ', speak: 'כָּא', group: 'base' }, // ק = כּ — אותו קובץ TTS
-	{ id: 'ra', display: 'רַ', speak: 'רָא', group: 'base' },
-	{ id: 'sha', display: 'שַׁ', speak: 'שָׁא', group: 'base' },
-	{ id: 'tav', display: 'תַּ', speak: 'טָא', group: 'base' } // ת = ט — אותו קובץ TTS
-];
+import { ALL_LETTERS_DATA, LETTERS_BY_LEGACY_ID } from '../data/letters';
+import { VOWELS_BY_CODE } from '../data/vowels';
+import { makePair, generateDeck } from './pair';
 
-// ===== קבוצה: confusing =====
+// בנייה דינמית מה-data החדש — זהה בדיוק ל-ALL_LETTERS הישן
+const _patah = VOWELS_BY_CODE.patah;
 
-const CONFUSING_LETTERS: LetterCard[] = [
-	{ id: 'sa_sin', display: 'שַׂ', speak: 'סָא', group: 'confusing' },
-	{ id: 'aa', display: 'עַ', speak: 'אָא', group: 'confusing' }
-];
+const BASE_LETTERS: LetterVowelPair[] = ALL_LETTERS_DATA
+	.filter((l) => l.group === 'base')
+	.map((l) => makePair(l, _patah));
 
-// ===== קבוצה: rafe =====
+const CONFUSING_LETTERS: LetterVowelPair[] = ALL_LETTERS_DATA
+	.filter((l) => l.group === 'confusing')
+	.map((l) => makePair(l, _patah));
 
-const RAFE_LETTERS: LetterCard[] = [
-	{ id: 'va_rafe', display: 'בַ', speak: 'וָא', group: 'rafe' },
-	{ id: 'cha_rafe', display: 'כַ', speak: 'חָא', group: 'rafe' },
-	{ id: 'fa_rafe', display: 'פַ', speak: 'Fa', group: 'rafe' } // תעתיק לטיני — ראה הערה למעלה
-];
+const RAFE_LETTERS: LetterVowelPair[] = ALL_LETTERS_DATA
+	.filter((l) => l.group === 'rafe')
+	.map((l) => makePair(l, _patah));
 
 // ===== מיפוי קבצי TTS סטטיים =====
 
@@ -130,29 +114,24 @@ export function getTtsFilename(text: string): string | null {
 
 // ===== מאגר מאוחד =====
 
-export const ALL_LETTERS: LetterCard[] = [...BASE_LETTERS, ...CONFUSING_LETTERS, ...RAFE_LETTERS];
+export const ALL_LETTERS: LetterVowelPair[] = [...BASE_LETTERS, ...CONFUSING_LETTERS, ...RAFE_LETTERS];
 
-export const LETTERS_BY_GROUP: Record<LetterGroup, LetterCard[]> = {
+export const LETTERS_BY_GROUP: Record<LetterGroup, LetterVowelPair[]> = {
 	base: BASE_LETTERS,
 	confusing: CONFUSING_LETTERS,
 	rafe: RAFE_LETTERS
 };
 
-/** מחזיר את כל האותיות בקבוצות הפעילות. */
-export function getLettersForGroups(groups: LetterGroup[]): LetterCard[] {
-	return groups.flatMap((g) => LETTERS_BY_GROUP[g] ?? []);
-}
-
 // ===== כל האותיות לפי סדר א-ב =====
 
-/** מפה פנימית: id → LetterCard, לשימוש ב-ALL_LETTERS_ALPHABETICAL */
+/** מפה פנימית: legacyCardId → LetterVowelPair, לשימוש ב-ALL_LETTERS_ALPHABETICAL */
 const _lettersById = new Map(ALL_LETTERS.map(c => [c.id, c]));
 
 /**
  * כל 26 האותיות לפי סדר א-ב — לתצוגה ב-UI של בחירת אותיות.
  * הסדר: א, בּ, בַ, ג, ד, ה, ו, ז, ח, ט, י, כּ, כַ, ל, מ, נ, ס, ע, פּ, פַ, צ, ק, ר, שׁ, שׂ, ת
  */
-export const ALL_LETTERS_ALPHABETICAL: LetterCard[] = [
+export const ALL_LETTERS_ALPHABETICAL: LetterVowelPair[] = [
 	'a', 'ba', 'va_rafe', 'ga', 'da', 'ha', 'va', 'za', 'cha', 'ta', 'ya',
 	'ka', 'cha_rafe', 'la', 'ma', 'na', 'sa', 'aa', 'pa', 'fa_rafe', 'tza',
 	'qa', 'ra', 'sha', 'sa_sin', 'tav'
@@ -160,18 +139,6 @@ export const ALL_LETTERS_ALPHABETICAL: LetterCard[] = [
 
 /** מזהי כל 26 האותיות — ברירת המחדל לבחירת אותיות */
 export const DEFAULT_LETTER_IDS: string[] = ALL_LETTERS_ALPHABETICAL.map(c => c.id);
-
-/**
- * מחזיר כרטיסי אותיות לפי רשימת מזהים.
- * שומר על סדר הקלט. מדלג על מזהים לא-מוכרים.
- */
-export function getLettersByIds(ids: string[]): LetterCard[] {
-	const byId = new Map(ALL_LETTERS.map(c => [c.id, c]));
-	return ids.flatMap(id => {
-		const c = byId.get(id);
-		return c ? [c] : [];
-	});
-}
 
 // ===== צמדי דמיון =====
 
@@ -259,30 +226,16 @@ export function areSimilar(idA: string, idB: string): boolean {
 
 /**
  * אופציות בחירה לבחירת לוח.
- * תומך בשני מצבים:
- *   1. selectedLetterIds (מצב חדש) — רשימת מזהי אותיות ישירות.
- *   2. groups (מצב ישן, deprecated) — לתאימות לאחור.
+ * Phase 1: מקבל pairs: LetterVowelPair[] ישירות (מ-generateDeck).
  */
 export type PickBoardOptions = {
 	/** מספר כרטיסים בלוח (לפי גודל הגריד) */
 	count: number;
 	/** האם לוודא שאין שני כרטיסים "דומים" באותו לוח */
 	avoidSimilar: boolean;
-} & (
-	| {
-			/** מזהי האותיות הנבחרות להצגה בלוח */
-			selectedLetterIds: string[];
-			groups?: never;
-	  }
-	| {
-			/**
-			 * @deprecated השתמש ב-selectedLetterIds במקום.
-			 * נשמר לתאימות לאחור עם קוד ישן שמשתמש בקבוצות.
-			 */
-			groups: LetterGroup[];
-			selectedLetterIds?: never;
-	  }
-);
+	/** ה-pairs שנוצרו מ-generateDeck — pool מוכן */
+	pairs: LetterVowelPair[];
+};
 
 /** מספר ניסיונות מקסימלי לבניית לוח שעומד ב-avoidSimilar */
 const PICK_BOARD_MAX_ATTEMPTS = 50;
@@ -291,9 +244,9 @@ const PICK_BOARD_MAX_ATTEMPTS = 50;
  * ניסיון בודד לבחירת לוח חמדני: עוברים על pool מעורבב ומוסיפים
  * כרטיס רק אם אף נבחר קודם אינו דומה לו.
  */
-function pickBoardAttempt(pool: LetterCard[], count: number): LetterCard[] {
+function pickBoardAttempt(pool: LetterVowelPair[], count: number): LetterVowelPair[] {
 	const shuffled = [...pool].sort(() => Math.random() - 0.5);
-	const chosen: LetterCard[] = [];
+	const chosen: LetterVowelPair[] = [];
 	const chosenIds = new Set<string>();
 
 	for (const card of shuffled) {
@@ -308,18 +261,14 @@ function pickBoardAttempt(pool: LetterCard[], count: number): LetterCard[] {
 }
 
 /**
- * בחירת אותיות ללוח חדש.
+ * בחירת כרטיסים ללוח חדש.
  *
+ * מקבל pairs: LetterVowelPair[] שנוצרו מ-generateDeck().
  * אם `avoidSimilar=true`, מנסים עד `PICK_BOARD_MAX_ATTEMPTS` פעמים
- * לבחור לוח רנדומלי שעומד באילוץ. אם אף ניסיון לא הצליח (כי האילוץ
- * חזק מדי בהינתן הקבוצות הפעילות וגודל הלוח), חוזרים למצב הטוב ביותר
- * שנמצא ומשלימים אותו עם כרטיסים נוספים בלי האילוץ — שהמשחק לא ייתקע.
+ * לבחור לוח רנדומלי שעומד באילוץ.
  */
-export function pickBoard(opts: PickBoardOptions): LetterCard[] {
-	// תמיכה בשני מצבי קריאה: selectedLetterIds (חדש) ו-groups (ישן — לתאימות)
-	const pool = 'selectedLetterIds' in opts && opts.selectedLetterIds !== undefined
-		? getLettersByIds(opts.selectedLetterIds)
-		: getLettersForGroups(('groups' in opts && opts.groups) ? opts.groups : []);
+export function pickBoard(opts: PickBoardOptions): LetterVowelPair[] {
+	const pool = opts.pairs;
 	if (pool.length === 0) return [];
 
 	if (!opts.avoidSimilar) {
@@ -328,7 +277,7 @@ export function pickBoard(opts: PickBoardOptions): LetterCard[] {
 	}
 
 	// ננסה כמה פעמים לקבל לוח שעומד ב-constraint
-	let best: LetterCard[] = [];
+	let best: LetterVowelPair[] = [];
 	for (let i = 0; i < PICK_BOARD_MAX_ATTEMPTS; i++) {
 		const attempt = pickBoardAttempt(pool, opts.count);
 		if (attempt.length === opts.count) return attempt;
@@ -350,3 +299,6 @@ export function pickBoard(opts: PickBoardOptions): LetterCard[] {
 
 	return best;
 }
+
+// Re-export generateDeck for use by game-state (convenience)
+export { generateDeck } from './pair';

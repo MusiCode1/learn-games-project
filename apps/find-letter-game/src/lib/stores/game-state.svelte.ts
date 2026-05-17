@@ -30,7 +30,7 @@
  */
 
 import { boosterService } from 'learn-booster-kit';
-import { pickBoard, type LetterCard } from '../utils/letters';
+import { pickBoard, generateDeck, type LetterCard } from '../utils/letters';
 import { settings } from './settings.svelte';
 import { speak } from '../utils/tts';
 import { playSuccess, playError, playWin } from '../utils/sound';
@@ -91,9 +91,10 @@ class GameState {
 	 * הכרטיסים על הלוח — אם questionsPerBoard מוגדר נמוך יותר).
 	 */
 	startBoard(): void {
+		const deck = generateDeck(settings.selectedLetterIds, settings.selectedVowels);
 		this.board = pickBoard({
 			count: settings.totalCellsInGrid,
-			selectedLetterIds: settings.selectedLetterIds,
+			pairs: deck,
 			avoidSimilar: settings.avoidSimilar
 		});
 
