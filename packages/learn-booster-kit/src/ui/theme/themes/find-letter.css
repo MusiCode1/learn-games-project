@@ -11,6 +11,7 @@
 	--theme-surface-elevated: #ffffff;
 	--theme-surface-sunken: #eff6ff;
 	--theme-surface-overlay: rgba(15, 23, 42, 0.55);
+	--theme-surface-header: var(--theme-surface-elevated);
 	--theme-border-subtle: #e2e8f0;
 	--theme-border-strong: #cbd5e1;
 
@@ -26,6 +27,8 @@
 	--theme-text-tertiary: #94a3b8;
 	--theme-text-on-brand: #ffffff;
 	--theme-text-on-feedback: #ffffff;
+	--theme-text-on-header: var(--theme-text-primary);
+	--theme-accent-frame: #ff6a3d;
 
 	/* Feedback */
 	--theme-feedback-success: #22c55e;

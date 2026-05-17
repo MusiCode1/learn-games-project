@@ -2,15 +2,17 @@
    Theme: Slate
    ========================
    אפור-כהה, ירוק/צהוב feedback, פונקציונלי.
+   Header כהה (#1e293b) עם טקסט לבן — הזהות הבסיסית של המשחק.
    מבוסס על sort-cards / train-addition / passcode / jigsaw-v2.
 */
 
 [data-theme='slate'] {
 	/* Surfaces & Backgrounds */
-	--theme-surface-base: #f8fafc;
+	--theme-surface-base: #fef9c3;
 	--theme-surface-elevated: #ffffff;
-	--theme-surface-sunken: #f1f5f9;
+	--theme-surface-sunken: #fef3c7;
 	--theme-surface-overlay: rgba(15, 23, 42, 0.6);
+	--theme-surface-header: #1e293b;
 	--theme-border-subtle: #e2e8f0;
 	--theme-border-strong: #94a3b8;
 
@@ -26,6 +28,8 @@
 	--theme-text-tertiary: #94a3b8;
 	--theme-text-on-brand: #ffffff;
 	--theme-text-on-feedback: #ffffff;
+	--theme-text-on-header: #ffffff;
+	--theme-accent-frame: transparent;
 
 	/* Feedback */
 	--theme-feedback-success: #22c55e;

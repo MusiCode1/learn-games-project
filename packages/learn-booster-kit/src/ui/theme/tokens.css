@@ -13,6 +13,7 @@
 	--color-surface-elevated: var(--theme-surface-elevated);
 	--color-surface-sunken: var(--theme-surface-sunken);
 	--color-surface-overlay: var(--theme-surface-overlay);
+	--color-surface-header: var(--theme-surface-header);
 	--color-border-subtle: var(--theme-border-subtle);
 	--color-border-strong: var(--theme-border-strong);
 
@@ -28,6 +29,7 @@
 	--color-text-tertiary: var(--theme-text-tertiary);
 	--color-text-on-brand: var(--theme-text-on-brand);
 	--color-text-on-feedback: var(--theme-text-on-feedback);
+	--color-text-on-header: var(--theme-text-on-header);
 
 	/* Feedback */
 	--color-feedback-success: var(--theme-feedback-success);
@@ -42,6 +44,9 @@
 	--radius-md: var(--theme-radius-md);
 	--radius-lg: var(--theme-radius-lg);
 	--radius-pill: var(--theme-radius-pill);
+
+	/* Accent */
+	--color-accent-frame: var(--theme-accent-frame);
 
 	/* Shadows */
 	--shadow-card: var(--theme-shadow-card);

@@ -11,6 +11,7 @@
 	--theme-surface-elevated: #ffffff;
 	--theme-surface-sunken: #fef3c7;
 	--theme-surface-overlay: rgba(15, 23, 42, 0.5);
+	--theme-surface-header: var(--theme-surface-elevated);
 	--theme-border-subtle: #e7d9c0;
 	--theme-border-strong: #c4a878;
 
@@ -26,6 +27,8 @@
 	--theme-text-tertiary: #94a3b8;
 	--theme-text-on-brand: #f7f2e8;
 	--theme-text-on-feedback: #ffffff;
+	--theme-text-on-header: var(--theme-text-primary);
+	--theme-accent-frame: transparent;
 
 	/* Feedback */
 	--theme-feedback-success: #16a34a;
@@ -44,7 +47,7 @@
 
 	/* Shadows */
 	--theme-shadow-card: 0 24px 70px rgba(15, 23, 42, 0.09);
-	--theme-shadow-elevated: 0 24px 90px rgba(15, 23, 42, 0.14);
+	--theme-shadow-elevated: 0 32px 90px rgba(15, 23, 42, 0.16);
 	--theme-shadow-focus: 0 0 0 3px rgba(190, 24, 93, 0.3);
 
 	/* Typography */

@@ -1,5 +1,36 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 00:22
+
+### שדרוג themes לפי השוואה למשחקים אמיתיים — surface-header token
+
+#### מה בוצע?
+
+**1. `tokens.css`** — 3 tokens חדשים ב-@theme:
+
+- `--color-surface-header: var(--theme-surface-header)` — utility `bg-surface-header`
+- `--color-text-on-header: var(--theme-text-on-header)` — utility `text-text-on-header`
+- `--color-accent-frame: var(--theme-accent-frame)` — utility `border-accent-frame`
+
+**2. `HeaderBar.svelte`** — `bg-surface-header text-text-on-header` (במקום `bg-surface-elevated`)
+
+**3. כל ה-themes** — tokens חדשים (ברירת מחדל: header=elevated, text=primary, accent-frame=transparent):
+
+- `default/kids/minimal/find-letter/wordys/read-faster/portal`: surface-header=elevated, text-on-header=primary
+- `slate`: surface-header: `#1e293b` (slate-800), text-on-header: `#ffffff` — header כהה!
+- `find-letter`: accent-frame: `#ff6a3d`
+
+**4. `slate.css`** — surface-base: `#fef9c3`, surface-sunken: `#fef3c7` (קרם-צהוב)
+
+**5. `read-faster.css`** — radius-sm:2px, radius-md:4px, radius-lg:8px, shadow-card:none
+
+**6. `portal.css`** — shadow-elevated גדול יותר: `0 32px 90px rgba(15,23,42,.16)`
+
+#### החלטות ארכיטקטורה
+
+- **אופציה א (token)**: surface-header token נבחר על פני :has selector — מאפשר בעתיד גם themes כהים אחרים בלי CSS מיוחד
+- **slate surface-base**: שונה מ-gray לcream כדי להתאים למשחק המקורי (כרטיסי מיון צהובים)
+
 ## 2026-05-17 00:21
 
 ### הוספת fonts — Rubik + Frank Ruhl Libre

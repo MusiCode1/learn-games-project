@@ -24,7 +24,7 @@
 
 <header
 	data-variant={variant}
-	class="flex items-center justify-between bg-surface-elevated border-b border-border-subtle shadow-card {paddingClass} {className}"
+	class="flex items-center justify-between bg-surface-header text-text-on-header border-b border-border-subtle shadow-card {paddingClass} {className}"
 >
 	<div class="flex items-center gap-3">
 		{#if leftActions}
