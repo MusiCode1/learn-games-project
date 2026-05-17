@@ -1,5 +1,38 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 00:03
+
+### Button + IconButton primitives — TDD
+
+#### מה בוצע?
+
+**1. `src/ui/primitives/Button.svelte`**
+
+- 4 variants: primary/secondary/ghost/danger עם Tailwind theme colors
+- 3 sizes: sm/md/lg עם min-height לנגישות מגע
+- `rounded-pill`, `focus-visible:shadow-focus`, `disabled` מוחלט עם pointer-events-none
+- `data-variant` attribute לבדיקה ב-tests
+
+**2. `src/ui/primitives/IconButton.svelte`**
+
+- 3 variants: solid/subtle/ghost
+- 3 sizes: sm/md/lg — ממדים שונים בהתאם ל-showLabel
+- `sizeClass` כ-`$derived` (reactive ל-showLabel)
+- `aria-label` חובה לנגישות
+
+**3. `apps/kit-test-screen/src/lib/primitives/Button.svelte.test.ts`** — 5 browser tests
+
+**4. `apps/kit-test-screen/src/lib/primitives/IconButton.svelte.test.ts`** — 4 browser tests
+
+**5. `packages/learn-booster-kit/package.json`** — תיקון exports
+
+- `"./ui/*": "./src/ui/*.svelte"` → `"./ui/*": "./src/ui/*"` כדי שTypeScript יפתור `learn-booster-kit/ui/primitives/Button.svelte` נכון
+
+#### החלטות ארכיטקטורה
+
+- **$derived לsizeClass**: מכיוון ש-`showLabel` הוא prop reactive, חישוב `sizeClass` חייב להיות ב-`$derived` ולא בקבוע
+- **createRawSnippet בטסטים**: ב-vitest-browser-svelte v2 עם Svelte 5, snippets מועברות דרך `createRawSnippet` ולא כ-plain functions
+
 ## 2026-05-17 00:02
 
 ### Icons primitives — 5 אייקוני Lucide-style
