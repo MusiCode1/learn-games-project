@@ -1,5 +1,29 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 00:05
+
+### CooldownOverlay primitive + cooldown-math — TDD
+
+#### מה בוצע?
+
+**1. `src/ui/primitives/cooldown-math.ts`** — pure function
+
+- `cooldownProgress(now, untilTs, durationMs)` → 0..1
+- מגבלות: durationMs=0 → 1, חורג → clamp ל-[0,1]
+- 5 טסטים (vitest node, TDD red→green)
+
+**2. `src/ui/primitives/CooldownOverlay.svelte`**
+
+- overlay `fixed inset-0` עם `bg-surface-overlay`
+- טבעת SVG עם stroke-dashoffset ל-countdown אנימציה (קיבלנו מ-find-letter-game)
+- `$effect` + `setInterval` 100ms לעדכון `now`
+- `onComplete` callback כשנגמר
+- משתמש ב-theme tokens (לא צבעים hardcoded)
+
+**3. 3 browser tests** ב-kit-test-screen
+
+**4. exports** ב-src/index.ts: CooldownOverlay + cooldownProgress
+
 ## 2026-05-17 00:04
 
 ### SegmentedControl + ScoreBadge + Card — TDD

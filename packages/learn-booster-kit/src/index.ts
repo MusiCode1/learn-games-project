@@ -36,3 +36,5 @@ export { default as IconButton } from "./ui/primitives/IconButton.svelte";
 export { default as SegmentedControl } from "./ui/primitives/SegmentedControl.svelte";
 export { default as ScoreBadge } from "./ui/primitives/ScoreBadge.svelte";
 export { default as Card } from "./ui/primitives/Card.svelte";
+export { default as CooldownOverlay } from "./ui/primitives/CooldownOverlay.svelte";
+export { cooldownProgress } from "./ui/primitives/cooldown-math";
