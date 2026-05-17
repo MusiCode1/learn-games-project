@@ -1,5 +1,33 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 14:35 — Phase 2: Migration Engines — 3 שכבות state/boosterConfig/per-game
+
+### מה בוצע?
+
+**`src/lib/config/migrations.ts` — קובץ חדש.**
+
+**1. State migration (v1 → v2)**
+
+- `migrateStateToV2`: לכל profile — `config` → `boosterConfig`, `gameSettings` יוצא עטוף ב-`{ schemaVersion: 1, data }`, `_configSchemaVersion` → `boosterConfig.schemaVersion` (fallback 1), `_configSchemaVersion` נמחק.
+- `state.dirtyConfig` → `state.dirtyBoosterConfig`.
+- `runStateMigrations(input)` — clones input, לולאת `while (version < STATE_LATEST)`.
+
+**2. BoosterConfig migration**
+
+- `runBoosterConfigMigrations(input)` — passthrough כי v1=LATEST. Registry ריק, מוכן להרחבה עתידית.
+
+**3. Per-game migration**
+
+- `registerGameSchema(gameId, { currentVersion, migrate })` — registry לכל משחק.
+- `runGameSettingsMigrations(gameId, wrapped)` — passthrough אם לא רשום, migration loop אם כן.
+- `_clearGameSchemaRegistryForTesting()` — TEST-ONLY.
+
+#### החלטות ארכיטקטורה
+
+- **cloneForMigration**: מנע mutation של ה-input. משתמש ב-`structuredClone` (polyfill JSON.parse).
+- **getSafeVersion**: קלט לא-מספרי מחזיר fallback=1, מונע NaN/Infinity loops.
+- **State migration כוללת dirtyConfig**: הדפוס זהה לprofile — rename + ניקוי `_configSchemaVersion`.
+
 ## 2026-05-17 14:31 — Phase 1: Schemas + Types — BoosterConfig + Profile עם gameSettings ברמת root
 
 ### מה בוצע?
