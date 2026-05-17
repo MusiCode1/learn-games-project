@@ -190,6 +190,7 @@
 	}
 	.game-area-wrap {
 		display: flex;
+		align-items: flex-start;
 		gap: 1rem;
 		height: 100%;
 		padding: 1rem;
@@ -200,6 +201,7 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 1rem 0.5rem;
+		flex-shrink: 0;
 		background: var(--theme-surface-elevated);
 		border-radius: var(--theme-radius-md);
 		box-shadow: var(--theme-shadow-card);

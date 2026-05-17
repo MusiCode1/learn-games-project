@@ -1,5 +1,14 @@
 # יומן פיתוח - kit-test-screen
 
+## 2026-05-17 — קומיט 17: תיקון ProgressWidget גובה
+
+### מה בוצע?
+
+**`showcase/game/+page.svelte`** — תיקון layout שגרם ל-ProgressWidget להימתח לכל גובה האזור (~800px):
+
+- `.game-area-wrap`: הוספת `align-items: flex-start` — ביטול ברירת המחדל `stretch` שגרמה למתיחה
+- `.progress-mock`: הוספת `flex-shrink: 0` — מנע כיווץ לא רצוי ברוחב בעת flex-start
+
 ## 2026-05-17 00:25
 
 ### שיפור מסך game להתאמה למקור
