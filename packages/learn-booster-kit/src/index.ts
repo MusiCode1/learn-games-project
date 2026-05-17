@@ -33,3 +33,6 @@ export { default as XIcon } from "./ui/primitives/icons/XIcon.svelte";
 // === Primitives ===
 export { default as Button } from "./ui/primitives/Button.svelte";
 export { default as IconButton } from "./ui/primitives/IconButton.svelte";
+export { default as SegmentedControl } from "./ui/primitives/SegmentedControl.svelte";
+export { default as ScoreBadge } from "./ui/primitives/ScoreBadge.svelte";
+export { default as Card } from "./ui/primitives/Card.svelte";

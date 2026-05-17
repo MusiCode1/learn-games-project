@@ -1,5 +1,37 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 00:04
+
+### SegmentedControl + ScoreBadge + Card — TDD
+
+#### מה בוצע?
+
+**1. `src/ui/primitives/SegmentedControl.svelte`**
+
+- `role="radiogroup"` + כפתורים עם `role="radio"` + `aria-checked`
+- keyboard: ← → ↑ ↓ Home/End
+- Generics TypeScript: `generics="T extends string"` עם $bindable value
+- ביסוס על lotto SegmentedControl עם העברה ל-tokens
+
+**2. `src/ui/primitives/ScoreBadge.svelte`**
+
+- 3 variants: default/success/warning עם theme feedback colors
+- `data-variant` attribute לבדיקה
+- תמיכה ב-icon snippet ו-label optional
+
+**3. `src/ui/primitives/Card.svelte`**
+
+- 3 variants: elevated/flat/outlined
+- 4 padding sizes, interactive mode
+- כשיש `onclick` — מתרגם ל-`<button>`, אחרת `<div>`
+
+**4. 9 browser tests** (3 לכל קומפוננטה)
+
+#### החלטות ארכיטקטורה
+
+- **Generics ב-Svelte 5**: `<script lang="ts" generics="T extends string">` מאפשר type safety לvalues
+- **role="radio" vs button**: לSC, כל אפשרות מקבלת role=radio עם aria-checked, role=radiogroup על ה-container
+
 ## 2026-05-17 00:03
 
 ### Button + IconButton primitives — TDD
