@@ -1,0 +1,61 @@
+/* ========================
+   Theme: Default ("Trust")
+   ========================
+   ברירת מחדל — מוגדר תחת :root כדי להיות הtheme הפעיל ללא data-theme.
+   כמו כן מוגדר תחת [data-theme='default'] לאפשרות בחירה מפורשת.
+*/
+
+:root,
+[data-theme='default'] {
+	/* Surfaces & Backgrounds */
+	--theme-surface-base: #fafaf9;
+	--theme-surface-elevated: #ffffff;
+	--theme-surface-sunken: #f1f5f9;
+	--theme-surface-overlay: rgba(15, 23, 42, 0.55);
+	--theme-border-subtle: #e2e8f0;
+	--theme-border-strong: #cbd5e1;
+
+	/* Brand */
+	--theme-brand-primary: #1e40af;
+	--theme-brand-primary-hover: #1e3a8a;
+	--theme-brand-secondary: #ea580c;
+	--theme-brand-secondary-hover: #c2410c;
+
+	/* Text */
+	--theme-text-primary: #0f172a;
+	--theme-text-secondary: #475569;
+	--theme-text-tertiary: #94a3b8;
+	--theme-text-on-brand: #ffffff;
+	--theme-text-on-feedback: #ffffff;
+
+	/* Feedback */
+	--theme-feedback-success: #16a34a;
+	--theme-feedback-success-bg: #dcfce7;
+	--theme-feedback-error: #dc2626;
+	--theme-feedback-error-bg: #fee2e2;
+	--theme-feedback-warning: #d97706;
+	--theme-feedback-warning-bg: #fef3c7;
+
+	/* Radius */
+	--theme-radius-sm: 4px;
+	--theme-radius-md: 8px;
+	--theme-radius-lg: 16px;
+	--theme-radius-pill: 9999px;
+	--theme-touch-min: 70px;
+
+	/* Shadows */
+	--theme-shadow-card: 0 4px 12px rgba(15, 23, 42, 0.06);
+	--theme-shadow-elevated: 0 8px 24px rgba(15, 23, 42, 0.12);
+	--theme-shadow-focus: 0 0 0 3px rgba(30, 64, 175, 0.4);
+
+	/* Typography */
+	--theme-font-display: 'Heebo', system-ui, sans-serif;
+	--theme-font-body: 'Heebo', system-ui, sans-serif;
+	--theme-font-size-xs: 0.75rem;
+	--theme-font-size-sm: 0.875rem;
+	--theme-font-size-md: 1rem;
+	--theme-font-size-lg: 1.25rem;
+	--theme-font-size-xl: 1.5rem;
+	--theme-font-weight-regular: 400;
+	--theme-font-weight-bold: 700;
+}

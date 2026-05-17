@@ -1,5 +1,47 @@
 # Learn Booster Kit — יומן פיתוח
 
+## 2026-05-17 00:00
+
+### הוספת theme system — tokens, 3 ערכות נושא, animations
+
+תשתית עיצוב משותפת לפלטפורמה: CSS custom properties סמנטיות ו-Tailwind 4 `@theme` block לתמיכה ב-runtime theme switching.
+
+#### מה בוצע?
+
+**1. `src/ui/theme/themes/default.css`** — ערכת "Trust" (ברירת מחדל תחת `:root`)
+
+- כל 24 ה-tokens: surfaces, brand, text, feedback, radius, shadows, typography
+
+**2. `src/ui/theme/themes/kids.css`** — ערכת ילדים
+
+- צבעים עזים (violet/amber), עיגולים גדולים (radius-md=16px), פונט Varela Round
+
+**3. `src/ui/theme/themes/minimal.css`** — ערכה מינימלית
+
+- שחור-לבן, עיגולים קטנים (radius-md=4px), ללא צל, IBM Plex Sans Hebrew
+
+**4. `src/ui/theme/tokens.css`** — `@theme` block
+
+- מגדיר mapping: `--color-brand-primary: var(--theme-brand-primary)` וכו'
+- Tailwind 4 מייצר `bg-brand-primary`, `text-feedback-error`, `rounded-md`, `shadow-card`, `font-display` וכו'
+
+**5. `src/ui/theme/animations.css`** — 3 keyframes + utility classes
+
+- `lbk-anim-shake`, `lbk-anim-pop`, `lbk-anim-fade-in` עם תחילית `lbk-` למניעת התנגשות
+
+**6. `src/styles.css`** — entry point
+
+- @import של כל קבצי ה-theme לפי הסדר הנכון (default קודם, אחר כך overrides)
+
+#### החלטות ארכיטקטורה
+
+- **CSS variables ב-@theme**: Tailwind 4 עם `var(--theme-*)` ב-@theme מאפשר runtime theme switching דרך `data-theme` attribute — הtheme משתנה ב-JS ו-CSS נפתר אוטומטית
+- **תחילית `lbk-`**: כל class names של הקיט מקבלות תחילית למניעת conflicts עם אפליקציות צרכניות
+
+#### מעקפים ופתרונות
+
+- אין — CSS only, אין build issues
+
 ## 2026-05-16 16:40
 
 ### `neverthrow` כסטנדרט פלטפורמה ל-Result + `updateGameSettings` מחזיר Result

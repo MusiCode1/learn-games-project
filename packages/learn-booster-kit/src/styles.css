@@ -1,1 +1,8 @@
 @source '.';
+
+/* Theme tokens + themes */
+@import './ui/theme/themes/default.css';
+@import './ui/theme/themes/kids.css';
+@import './ui/theme/themes/minimal.css';
+@import './ui/theme/tokens.css';
+@import './ui/theme/animations.css';
