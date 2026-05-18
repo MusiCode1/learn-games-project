@@ -1,5 +1,133 @@
 # יומן פיתוח - Wordy's
 
+## 2026-05-18 21:31
+
+### תיקון פריסה רספונסיבית: כרטיס תמונה, קוביות אותיות, מקלדת ו-ProgressWidget
+
+המשך התיקון של גלישת קוביות אותיות (cff6fa2). הפעם תוקנו 4 בעיות שהתגלו בבדיקה חזותית
+במכשירים שונים (Mobile 390, Tablet 820, Desktop 1280) דרך Playwright + linux-gui:
+
+1. כרטיס תמונה היה צמוד לקצוות המסך (אין padding).
+2. קוביות אותיות היו עם תקרה קבועה של 6.5rem גם בדסקטופ עם הרבה מקום פנוי.
+3. אותיות המקלדת היו קטנות מדי בטלפון (`text-[4.5cqh]` עם container-type שגוי).
+4. ProgressWidget אנכי בצד גזר רוחב יקר בטלפון.
+
+עבודה ב-branch `wordys-responsive-layout`.
+
+#### מה בוצע?
+
+**1. `GameContainer.svelte` — section עם container-type: size לכרטיס תמונה**
+
+החלפת הלוגיקה הקודמת (`aspect-square` + `max-h/w-full` + `h-auto/w-auto` + `object-contain`
+על div) שעבדה לסירוגין ב-Flexbox. במקום זה:
+
+```css
+#imageSection { container-type: size; }
+.image-card-frame {
+  width: min(100cqi, 100cqb);
+  height: min(100cqi, 100cqb);
+}
+```
+
+הכרטיס הוא הריבוע הגדול ביותר שנכנס בשני הממדים של ה-section. אמין יותר מ-aspect-ratio
+ב-flex children. ImageDisplay עצמו לא נגענו — הוא עדיין עם `object-cover`.
+
+**2. `WordDisplay.svelte` + `GameContainer.svelte` — קוביות ללא תקרה, עם הגבלה לפי גובה**
+
+הוסר משתנה `maxCubeWidth` (התקרה הקבועה של 6.5rem / 4.5rem). הוסף משתנה `totalRows`
+ומועבר כ-CSS var. נוסחת רוחב קובייה כפולה:
+
+```css
+.cube {
+  width: min(
+    /* (א) חלוקת השורה הצרה */
+    calc((100% - (var(--max-len) - 1) * var(--gap)) / var(--max-len)),
+    /* (ב) הגבלה לפי גובה ה-section או svh fallback */
+    calc((max(40svh, 100cqb) - (var(--total-rows) - 1) * var(--gap)) / var(--total-rows) * 5 / 7)
+  );
+  aspect-ratio: 5 / 7;
+  container-type: inline-size;
+}
+```
+
+ב-GameContainer נוסף wrapper `.word-display-section` עם מצב דואלי:
+
+```css
+.word-display-section { /* תמיד */ width: 100%; display: flex; align-items: center; justify-content: center; }
+.word-display-section.is-landscape { flex: 1 1 0; min-height: 0; container-type: size; }
+```
+
+בנוסף, האות בכל קובייה נעטפה ב-`<span class="cube-letter">{item.char}</span>` עם
+`font-size: 60cqw` על ה-span ולא על ה-cube — כי לפי spec של CSS Containment, אלמנט לא יכול
+לשמש container לעצמו. font-size על ה-cube היה מתייחס ל-`.word-display-section`
+(ה-container הקרוב הבא) ולא ל-cube עצמה.
+
+**3. `GameContainer.svelte` — padding אנכי**
+
+ה-div הפנימי של `#gameContent` קיבל רק `px-2` / `px-4`. שונה ל-`p-2` / `p-4` כדי שיהיה גם
+padding אנכי, ושכרטיס התמונה לא ייצמד לקצה העליון של המסך.
+
+**4. `GameContainer.svelte` — ProgressWidget אופקי בראש העמוד במסכים צרים**
+
+נוסף state רספונסיבי:
+
+```ts
+let isNarrow = $derived(containerWidth > 0 && containerWidth < 500);
+```
+
+ב-template מופיע widget אופקי בראש העמוד כאשר `isNarrow=true`, ו-widget אנכי בצד אחרת.
+ה-widget האופקי נדחף מטה ב-`pt-16` כדי לא להתחפף עם כפתורי ⚙️ ו-X (שב-no-settings layout
+ב-`absolute top-4 left-4/right-4`).
+
+**5. `VirtualKeyboard.svelte` — האות מתאימה לגודל הכפתור**
+
+```css
+.key-wrapper {
+  /* היה @container (=inline-size) */
+  container-type: size;
+}
+.key-char {
+  /* היה text-[4.5cqh] שנפל ל-svh כי inline-size לא מפעיל cqh */
+  font-size: min(100cqw, 70cqh);
+}
+```
+
+עם `container-type: size` גם `cqw` וגם `cqh` עובדים מול ה-wrapper. `100cqw` בטוח כי אות
+עברית רחבה ~60% מ-font-size — אז גם font ברוחב הכפתור המלא משאיר מרווח אופקי. `70cqh`
+מגבילה את הגובה ומשאירה מקום ל-`border-b-4`. מובייל 30×48 → 30px font (היה 18px בגרסה
+המקורית עם cqh שגוי וגם 25.5px בניסיון ביניים).
+
+#### החלטות ארכיטקטורה
+
+- **גישה דואלית ל-section של הקוביות**: ב-landscape `controlsSection` יש לו `h-full` ויש
+  גובה אמיתי, אז ה-section הוא container-type: size והקוביות יודעות את הגובה דרך `100cqb`.
+  ב-portrait `controlsSection` הוא `shrink-0` (תוכן-תלוי) — אם נשים שם `flex: 1 1 0` הוא
+  יתכווץ ל-0 (קוביות נעלמות). הפתרון: `is-landscape` modifier שמפעיל את ה-container רק
+  במצב הרחב. ב-portrait נשענים על `max(40svh, 100cqb)` שנופל ל-svh כשאין container.
+
+- **`<span class="cube-letter">` כעטיפת אות**: לפי CSS Containment spec, "element is not its
+  own container". `font-size: 60cqw` ישירות על `.cube` היה מקבל את `cqw` של ה-ancestor
+  הקרוב (`.word-display-section`) — מה שגרם לאותיות ענקיות שגלשו מהקובייה. ה-span כילד
+  מקבל cqw של ה-cube עצמה — בדיוק מה שאנחנו רוצים.
+
+- **סף `isNarrow < 500px`**: מכסה את כל הטלפונים הסטנדרטיים (390-430) ומשאיר טאבלט portrait
+  (820) כמו דסקטופ. בחירה מודעת על פי בקשת המשתמש.
+
+- **`pt-16` ל-widget האופקי במקום הקטנת רוחב הווידג'ט**: `ProgressWidget` בקיט הוא
+  `w-[300px]` קבוע. שינוי המידה היה דורש עריכת הקיט. במקום זה דחפנו את הווידג'ט מתחת
+  לכפתורי ⚙️/X.
+
+#### מעקפים ופתרונות
+
+- **CSS container queries — fallback של `cqb` ל-svb**: כאשר `.cube` משתמש ב-`100cqb`
+  אבל לא נמצא ancestor עם container-type: size, היחידה נופלת ל-`100svb` שזה ~100svh
+  (גובה viewport). במצב כזה הקוביות היו ענקיות. הפתרון: `max(40svh, 100cqb)` — שני המקרים
+  מכוסים, וברוב המצבים ב-portrait ההגבלה האמיתית מגיעה ממילא מ-row distribution הצרה.
+
+- **תוויות ProgressWidget רק ב-lg**: ה-label "עד המחזק" מוגדר ב-ProgressWidget עם
+  `hidden lg:block` — לכן בטלפון הוא לא יוצג, ובטאבלט (820 < 1024 = lg) גם לא. רק בדסקטופ
+  הוא נראה. זה התנהגות קיימת של הקיט שלא שינינו.
+
 ## 2026-05-14 10:01
 
 ### תיקון `state_unsafe_mutation` ב-`cardImageStore` + תשתית E2E

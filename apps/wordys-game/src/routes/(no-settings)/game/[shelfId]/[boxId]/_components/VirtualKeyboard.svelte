@@ -103,7 +103,8 @@
 	@reference 'tailwindcss';
 
 	.key-wrapper {
-		@apply @container relative h-12 w-[8%] shrink-0 sm:h-14 md:h-16;
+		@apply relative h-12 w-[8%] shrink-0 sm:h-14 md:h-16;
+		container-type: size;
 	}
 
 	.key-wrapper.is-space {
@@ -119,7 +120,11 @@
 	}
 
 	.key-char {
-		@apply p-0 text-[4.5cqh] leading-none font-medium;
+		@apply p-0 leading-none font-medium;
+		/* רוחב: 100% (האות העברית רחבה ~60% מ-font-size, אז גם font ברוחב הכפתור
+		   המלא משאירה מרווח אופקי).
+		   גובה: 70% (משאיר מקום ל-border-b-4 ולמרווח אנכי). */
+		font-size: min(100cqw, 70cqh);
 	}
 
 	.key-char.is-visible {

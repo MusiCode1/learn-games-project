@@ -215,6 +215,10 @@
 	let aspectRatio = $derived(containerHeight > 0 ? containerWidth / containerHeight : 0);
 	let isLandscape = $derived(aspectRatio > 1.3);
 
+	// מסך צר (טלפון): ProgressWidget עובר לראש העמוד במצב horizontal
+	// כדי לא לגזור עוד רוחב מאזור המשחק. סף 500px מתאים לכל הטלפונים.
+	let isNarrow = $derived(containerWidth > 0 && containerWidth < 500);
+
 	// Progress Widget Logic
 	let batchSize = $derived(playQueue.length);
 
@@ -242,6 +246,21 @@
 			rewardEnabled={settings.boosterEnabled}
 		/>
 	{:else}
+		<!-- Progress Widget — במצב narrow (טלפון) עובר לראש העמוד, אופקי.
+		     זה חוסך רוחב יקר באזור המשחק. pt-16 דוחף את ה-widget מתחת
+		     לכפתורי ⚙️ ו-X (שב-no-settings layout ב-top-4 left-4/right-4
+		     ומסתיימים בערך ב-y=64). -->
+		{#if settings.boosterEnabled && isNarrow}
+			<div class="w-full shrink-0 flex items-center justify-center pt-16 pb-2 px-2 z-20">
+				<ProgressWidget
+					value={progressInBatch}
+					max={batchSize}
+					orientation="horizontal"
+					label="עד המחזק"
+				/>
+			</div>
+		{/if}
+
 		<!-- Game Content Wrapper (Padded) -->
 		<!-- שינוי ב-Flexbox:
              min-h-0: קריטי כדי לאפשר התכווצות כשיש תוכן גולש
@@ -252,8 +271,8 @@
 			class="flex-1 w-full flex flex-row items-center justify-center
 			relative min-h-0 overflow-hidden"
 		>
-			<!-- Progress Widget (Always Vertical, Side Panel) -->
-			{#if settings.boosterEnabled}
+			<!-- Progress Widget בצד (אנכי) — רק כשלא narrow -->
+			{#if settings.boosterEnabled && !isNarrow}
 				<div class="shrink-0 flex items-center justify-center h-full mr-4 pl-2 md:pl-4 z-20">
 					<ProgressWidget
 						value={progressInBatch}
@@ -271,7 +290,7 @@
 					flex-1 w-full flex flex-col items-center
 					gap-4 transition-all duration-300 h-full
                     justify-center
-                    {isLandscape ? 'flex-row gap-8 px-4' : 'px-2'}"
+                    {isLandscape ? 'flex-row gap-8 p-4' : 'p-2'}"
 				>
 					<!-- Image Section -->
 					<!-- לוגיקת גודל תמונה:
@@ -282,6 +301,9 @@
                          במצב שורה (Landscape):
                            flex-1: תופס את שארית הרוחב שנותרה מהם-Controls
                     -->
+					<!-- אזור התמונה: ה-section עצמו הוא container-type: size, והכרטיס בפנים
+					     מחושב כריבוע הגדול ביותר שנכנס בו (min בין הרוחב לגובה).
+					     זה מבטל את הצורך ב-aspect-square + max-h/max-w + h-auto/w-auto. -->
 					<div
 						id="imageSection"
 						class="flex items-center justify-center transition-all duration-300 w-full
@@ -289,19 +311,10 @@
 					>
 						<div
 							class="
+                                image-card-frame
                                 bg-white rounded-2xl shadow-xl border-4 border-white overflow-hidden
-                                aspect-square
                                 transition-all duration-300
-                                {/* אילוץ גודל:
-                                   h-auto / w-auto בשילוב עם max-h/max-w מבטיח שהתמונה לא תחרוג
-                                   במצב שורה: max-h-full מבטיח שלא תחרוג מהגובה, w-auto שומר יחס
-                                   במצב עמודה: h-full מבטיח שתימתח לגובה המקסימלי האפשרי
-                                */ ''}
-                                {isLandscape
-								? 'max-h-full max-w-full w-auto h-auto object-contain'
-								: 'max-h-full max-w-full h-auto w-auto object-contain'}
                             "
-							style="max-height: 100%; max-width: 100%;"
 						>
 							<ImageDisplay
 								src={getCardImage(currentWord)}
@@ -326,18 +339,25 @@
 							? 'flex-[1.5] justify-center h-full min-w-[350px]'
 							: 'shrink-0 w-full pb-2'}"
 					>
-						<WordDisplay
-							word={currentWord.word}
-							compact={isLandscape}
-							forceShow={isHintActive}
-							currentIndex={// Calculate index of first mismatch or length if correct so far
-							(() => {
-								for (let i = 0; i < typedValue.length; i++) {
-									if (typedValue[i] !== currentWord.word[i]) return i;
-								}
-								return typedValue.length;
-							})()}
-						/>
+						<!-- ה-section של הקוביות:
+						     ב-landscape (controls עם h-full ומקום פנוי): container-type: size + flex-1,
+						     כך שהקוביות ימלאו את הגובה הזמין.
+						     ב-portrait (controls הוא shrink-0): רק wrapper פשוט — הקוביות נשלטות
+						     ע"י max(40svh, 100cqb) שייפול ל-svh כשאין container.  -->
+						<div class="word-display-section {isLandscape ? 'is-landscape' : ''}">
+							<WordDisplay
+								word={currentWord.word}
+								compact={isLandscape}
+								forceShow={isHintActive}
+								currentIndex={// Calculate index of first mismatch or length if correct so far
+								(() => {
+									for (let i = 0; i < typedValue.length; i++) {
+										if (typedValue[i] !== currentWord.word[i]) return i;
+									}
+									return typedValue.length;
+								})()}
+							/>
+						</div>
 
 						<!-- Key prop forces re-render of input on word change to reset state -->
 						{#key currentWord.id}
@@ -386,3 +406,35 @@
 		</div>
 	{/if}
 </div>
+
+<style>
+	/* כרטיס תמונה: ה-section הוא size container, והכרטיס בפנים הוא הריבוע
+	   הגדול ביותר שנכנס גם ברוחב וגם בגובה. */
+	#imageSection {
+		container-type: size;
+	}
+
+	.image-card-frame {
+		width: min(100cqi, 100cqb);
+		height: min(100cqi, 100cqb);
+	}
+
+	/* Section של קוביות האותיות:
+	   - תמיד: wrapper שמרכז את התוכן.
+	   - ב-landscape בלבד: flex-1 + container-type: size, כדי שהקוביות
+	     ידעו את הגובה הזמין דרך 100cqb וימלאו את ה-section.
+	   ב-portrait controlsSection הוא shrink-0 ולכן flex-1 כאן יקרוס ל-0.
+	   במצב כזה הקוביות נשלטות ע"י svh, ולא ע"י ה-section. */
+	.word-display-section {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.word-display-section.is-landscape {
+		flex: 1 1 0;
+		min-height: 0;
+		container-type: size;
+	}
+</style>

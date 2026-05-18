@@ -32,9 +32,7 @@
 
 	// כל השורות יקבלו רוחב קובייה אחיד, מבוסס על השורה הארוכה ביותר.
 	let maxRowLen = $derived(Math.max(...rows.map((r) => r.length), 1));
-
-	// תקרה לרוחב הקובייה (במסכים גדולים מאוד). compact מקטין אותה.
-	let maxCubeWidth = $derived(compact ? '4.5rem' : '6.5rem');
+	let totalRows = $derived(rows.length);
 </script>
 
 <!--
@@ -53,8 +51,8 @@
 -->
 <div
 	id="wordDisplayContainer"
-	class="flex flex-col items-center w-full p-2 md:p-4 transition-all duration-300"
-	style="--max-len: {maxRowLen}; --max-cube-w: {maxCubeWidth};"
+	class="flex flex-col items-center justify-center w-full h-full p-2 md:p-4 transition-all duration-300"
+	style="--max-len: {maxRowLen}; --total-rows: {totalRows};"
 	dir="rtl"
 >
 	{#if settings.wordDisplayMode === 'word'}
@@ -113,7 +111,7 @@
 									class="w-full h-full object-contain p-2 opacity-80"
 								/>
 							{:else}
-								{item.char}
+								<span class="cube-letter">{item.char}</span>
 							{/if}
 						{:else}
 							&nbsp;
@@ -147,19 +145,38 @@
 	}
 
 	/*
-		רוחב קובייה = (100% מינוס סך הרווחים) חלקי מספר הקוביות בשורה הארוכה,
-		עם תקרה של --max-cube-w. flex: 0 0 auto כדי שהדפדפן לא ימתח/יכווץ.
+		רוחב קובייה = המינימום בין:
+		(א) חלוקת רוחב השורה: (100% - גאפים) / מספר קוביות בשורה הארוכה
+		(ב) חלוקת גובה ה-section: ((100cqb - גאפים אנכיים) / מספר שורות) × 5/7
+		    כאשר 100cqb מתייחס ל-section המגדיר container-type: size שעוטף את WordDisplay
+		    (.word-display-section ב-GameContainer.svelte).
+		flex: 0 0 auto כדי שהדפדפן לא ימתח/יכווץ.
 	*/
 	.cube {
 		flex: 0 0 auto;
 		width: min(
+			/* (א) חלוקת הרוחב לפי השורה הארוכה ביותר */
 			calc((100% - (var(--max-len) - 1) * var(--gap)) / var(--max-len)),
-			var(--max-cube-w)
+			/* (ב) הגבלה לפי גובה:
+			       ב-landscape — section עם container-type: size, 100cqb הוא גובה ה-section.
+			       ב-portrait — אין container, 100cqb נופל ל-svb (~100svh), שזה הרבה
+			       מדי. ה-max עם 40svh עוטף את שני המקרים, וב-portrait ההגבלה האמיתית
+			       מגיעה ממילא מ-(א) (חלוקת השורה הצרה). */
+			calc(
+				(max(40svh, 100cqb) - (var(--total-rows) - 1) * var(--gap)) /
+					var(--total-rows) * 5 / 7
+			)
 		);
 		aspect-ratio: 5 / 7;
 		container-type: inline-size;
-		/* גודל גופן גדל ויורד עם רוחב הקובייה */
-		font-size: clamp(1.25rem, 55cqw, 4.5rem);
+	}
+
+	/* ה-font-size על הילד (span) ולא על ה-cube עצמה, כי אלמנט לא יכול לשמש
+	   container query target לעצמו — cqw על ה-cube יחזיר את הרוחב של ה-ancestor
+	   הבא במקום של הקובייה. בתוך ה-span, 60cqw מתייחס נכון ל-.cube. */
+	.cube-letter {
+		font-size: 60cqw;
+		line-height: 1;
 	}
 
 	.whole-word {
