@@ -137,3 +137,28 @@ describe('isValidCombination', () => {
 		}
 	});
 });
+
+// === Sub-phase 3.3: שורוק (וּ) — Unicode מורכב ===
+describe('שורוק — Unicode handling (Sub-phase 3.3)', () => {
+	const shuruk = VOWELS_BY_CODE['shuruk'];
+
+	it('shuruk.mark הוא 2 chars: ו (U+05D5) + דגש (U+05BC)', () => {
+		expect(shuruk).toBeDefined();
+		expect([...shuruk!.mark].length).toBe(2);
+		expect(shuruk!.mark.codePointAt(0)).toBe(0x05D5); // ו
+		expect(shuruk!.mark.codePointAt(1)).toBe(0x05BC); // דגש
+	});
+
+	it('makePair(b, shuruk).display === "בּוּ"', () => {
+		const pair = makePair(bLetter, shuruk!);
+		// displayChar='בּ' (בּ עם דגש) + mark='וּ' (ו+דגש) = 'בּוּ'
+		expect(pair.display).toBe('בּ' + '\u05D5\u05BC');
+	});
+
+	it('makePair(b, shuruk).speak === "בוּ" (char ב + speakSuffix וּ)', () => {
+		const pair = makePair(bLetter, shuruk!);
+		// speakBase = speakChar ?? char = undefined ?? 'ב' = 'ב'
+		// speak = 'ב' + 'וּ' = 'בוּ'
+		expect(pair.speak).toBe('ב' + '\u05D5\u05BC');
+	});
+});

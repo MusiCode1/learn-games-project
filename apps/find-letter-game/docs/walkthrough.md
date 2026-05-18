@@ -705,3 +705,54 @@ Section חדש "ניקוד להצגה" אחרי "אותיות להצגה" ולפ
 - **`$state.snapshot` על fa_rafe.speakChar**: הוספת `speakChar: 'F'` ל-`$state` object ב-letters.ts נמנעה — speakChar הוא שדה רגיל ב-interface, לא ב-reactive state. אין בעיה.
 
 #### תשתית
+
+---
+
+## 2026-05-18 — Phase 3: הוספת 10 הניקודים הנותרים (data only)
+
+**Slice:** `phase-3-remaining-vowels` | **Base commit:** `9d2269d`
+
+### מה בוצע?
+
+**1. הרחבת `src/lib/data/vowels.ts` ל-12 ניקודים**
+
+הוספת 10 entries חדשים בסדר פדגוגי: kamatz, hirik, segol, tzere, holam, shuruk, kubutz, shva, hataf-patah, hataf-segol.
+
+כל entry כולל `mark` (Unicode combining char), `speakSuffix` (לבניית `speak` דינמי), ו-`displayName` מ-`language.ts`.
+
+שימוש ב-`import { language }` ישירות ב-vowels.ts לשמות — לא hardcoded.
+
+**Unicode שורוק:** `mark = '\u05D5\u05BC'` — שני chars (ו + דגש). מאומת בtest שאורך הוא 2.
+
+**2. הרחבת `src/lib/services/language.ts`**
+
+הוספת 10 שמות ניקוד בעברית: vowelNameKamatz, vowelNameHirik, vowelNameSegol, vowelNameTzere, vowelNameHolam, vowelNameShuruk, vowelNameKubutz, vowelNameShva, vowelNameHatafPatah, vowelNameHatafSegol.
+
+**3. תיקון `VowelSelectionGrid.svelte`**
+
+הוסרה פונקציית `vowelDisplayName(code)` שהכילה switch ישן (רק patah+none). הוחלפה ב-`vowel.displayName` ישירות — `Vowel` כבר מכיל את השם.
+
+**4. עדכון tests**
+
+- `vowels.test.ts`: עודכן ל-12 ניקודים (במקום 2). בדיקות mark, speakSuffix, displayName לכל ניקוד חדש. בדיקת Unicode שורוק (2 chars).
+- `pair.test.ts`: הוספת tests לשורוק — `makePair(b, shuruk).display`, `.speak`.
+- `letters.test.ts` (#22): עודכן לסנן רק `PAIRS_WITH_MP3 = ['patah', 'none']` — הניקודים החדשים יפלו ל-Web Speech fallback.
+
+### הליך TDD
+
+- Sub-phase 3.1+3.3: RED (tests אדומים) → GREEN (קוד) → REFACTOR.
+- Sub-phase 3.2: `none` (typecheck תפס breakage ב-VowelSelectionGrid).
+- Sub-phase 3.4: `integration` (עדכון test #22 אחרי קוד).
+
+### תוצאות
+
+- `bun run check`: 0 errors, 10 warnings (warnings קיימים מ-learn-booster-kit, לא בסקופ).
+- `bun test` (כל קבצי tests פרט ל-settings.regression): 130 pass, 0 fail (ה-fail ב-settings.regression קיים גם ב-base commit — בעיית `rune_outside_svelte` unrelated).
+- `VowelSelectionGrid` יציג אוטומטית 12 כפתורים (קורא `ALL_VOWELS`).
+- צירופים חדשים יפלו ל-Web Speech fallback — אין MP3, זה מתוכנן.
+
+### לא בוצע (out of scope)
+
+- ייצור MP3 לניקודים החדשים — בעבודה נפרדת עתידית.
+- שינוי ב-`makePair`, `generateDeck`, `isValidCombination`.
+- סופיות (פאזה 4).

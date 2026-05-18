@@ -1,21 +1,37 @@
 /**
- * מאגר סוגי ניקוד — פאזה 1: patah ו-none בלבד.
+ * מאגר סוגי ניקוד — פאזה 3: כל 12 הניקודים.
  *
- * שימו לב על ה-speakSuffix עבור patah:
- *   ה-speak הישן של LetterCard היה: letter.displayChar + 'ָ' + 'א'
- *   (לדוגמה: 'בּ' + 'ָ' + 'א' = 'בָּא')
- *   לכן speakSuffix של patah = 'ָא' (קמץ U+05B8 + אלף)
- *   ו-makePair בונה: letter.displayChar + speakSuffix
+ * הניקודים בסדר פדגוגי:
+ * patah, kamatz, hirik, segol, tzere, holam, shuruk, kubutz, shva, hataf-patah, hataf-segol, none
  *
- * שימו לב על speakSuffix של none:
- *   שווא נח: letter.displayChar + 'ְ' (לדוגמה: 'בּ' + 'ְ' = 'בְּ')
- *   אבל לאותיות רפות (בלי דגש) — 'ב' + 'ְ' = 'בְ'
- *   זה נכון — speakSuffix הוא שווא נח U+05B0
+ * שימו לב על ה-speakSuffix:
+ *   - patah: 'ָא' (קמץ U+05B8 + אלף) — TTS יציב כמו הישן
+ *   - kamatz: 'ָא' — זהה צלילית לפתח (אותו MP3 בעתיד)
+ *   - hirik: 'ִי' (חיריק + יוד) — חיריק מסיים ב-יוד
+ *   - kubutz: 'ֻ' — קצר, בלי תוספת
+ *   - shuruk: 'וּ' (U+05D5 + U+05BC) — שני chars, ראה §Special handling
+ *   - shva: 'ְ' — שווא נע, זהה לnone
+ *   - none: 'ְ' — שווא נח (עיצור)
  *
  * מסמך תכנון: docs/plans/vowels-support-plan.md §3 ו-§4
+ * Brief: docs/plans/briefs/phase-3-remaining-vowels-brief.md
  */
 
-export type VowelCode = 'patah' | 'none';
+import { language } from '../services/language';
+
+export type VowelCode =
+	| 'patah'
+	| 'kamatz'
+	| 'hirik'
+	| 'segol'
+	| 'tzere'
+	| 'holam'
+	| 'shuruk'
+	| 'kubutz'
+	| 'shva'
+	| 'hataf-patah'
+	| 'hataf-segol'
+	| 'none';
 
 export interface Vowel {
 	code: VowelCode;
@@ -34,18 +50,98 @@ export interface Vowel {
 export const VOWELS_BY_CODE: Record<VowelCode, Vowel> = {
 	patah: {
 		code: 'patah',
-		displayName: 'פתח',
-		mark: '\u05B7', // ַ
+		displayName: language.vowelNamePatah,
+		mark: '\u05B7', // ַ (U+05B7)
 		// קמץ (ָ U+05B8) + אלף — ל-TTS יציב בדיוק כמו הישן
 		speakSuffix: '\u05B8\u05D0' // ָא
 	},
+	kamatz: {
+		code: 'kamatz',
+		displayName: language.vowelNameKamatz,
+		mark: '\u05B8', // ָ (U+05B8)
+		// זהה צלילית לפתח — אותו MP3 בעתיד (ראה vowels-support-plan.md §4.3)
+		speakSuffix: '\u05B8\u05D0' // ָא
+	},
+	hirik: {
+		code: 'hirik',
+		displayName: language.vowelNameHirik,
+		mark: '\u05B4', // ִ (U+05B4)
+		// חיריק מסיים ב-יוד
+		speakSuffix: '\u05B4\u05D9' // ִי
+	},
+	segol: {
+		code: 'segol',
+		displayName: language.vowelNameSegol,
+		mark: '\u05B6', // ֶ (U+05B6)
+		speakSuffix: '\u05B6\u05D0' // ֶא
+	},
+	tzere: {
+		code: 'tzere',
+		displayName: language.vowelNameTzere,
+		mark: '\u05B5', // ֵ (U+05B5)
+		speakSuffix: '\u05B5\u05D0' // ֵא
+	},
+	holam: {
+		code: 'holam',
+		displayName: language.vowelNameHolam,
+		mark: '\u05B9', // ֹ (U+05B9)
+		speakSuffix: '\u05B9\u05D0' // ֹא
+	},
+	shuruk: {
+		code: 'shuruk',
+		displayName: language.vowelNameShuruk,
+		// שורוק = ו (U+05D5) + דגש (U+05BC) — שני chars!
+		mark: '\u05D5\u05BC', // וּ
+		// speakSuffix זהה ל-mark
+		speakSuffix: '\u05D5\u05BC' // וּ
+	},
+	kubutz: {
+		code: 'kubutz',
+		displayName: language.vowelNameKubutz,
+		mark: '\u05BB', // ֻ (U+05BB)
+		// קצר — בלי תוספת
+		speakSuffix: '\u05BB' // ֻ
+	},
+	shva: {
+		code: 'shva',
+		displayName: language.vowelNameShva,
+		mark: '\u05B0', // ְ (U+05B0)
+		// שווא נע — זהה צלילית ל-none
+		speakSuffix: '\u05B0' // ְ
+	},
+	'hataf-patah': {
+		code: 'hataf-patah',
+		displayName: language.vowelNameHatafPatah,
+		mark: '\u05B2', // ֲ (U+05B2)
+		speakSuffix: '\u05B2\u05D0' // ֲא
+	},
+	'hataf-segol': {
+		code: 'hataf-segol',
+		displayName: language.vowelNameHatafSegol,
+		mark: '\u05B1', // ֱ (U+05B1)
+		speakSuffix: '\u05B1\u05D0' // ֱא
+	},
 	none: {
 		code: 'none',
-		displayName: 'עיצור',
+		displayName: language.vowelNameNone,
 		mark: '',
 		// שווא נח U+05B0 — "בְּ", "גְ"
 		speakSuffix: '\u05B0' // ְ
 	}
 };
 
-export const ALL_VOWELS: Vowel[] = [VOWELS_BY_CODE.patah, VOWELS_BY_CODE.none];
+// סדר פדגוגי: patah → kamatz → hirik → segol → tzere → holam → shuruk → kubutz → shva → hataf-patah → hataf-segol → none
+export const ALL_VOWELS: Vowel[] = [
+	VOWELS_BY_CODE.patah,
+	VOWELS_BY_CODE.kamatz,
+	VOWELS_BY_CODE.hirik,
+	VOWELS_BY_CODE.segol,
+	VOWELS_BY_CODE.tzere,
+	VOWELS_BY_CODE.holam,
+	VOWELS_BY_CODE.shuruk,
+	VOWELS_BY_CODE.kubutz,
+	VOWELS_BY_CODE.shva,
+	VOWELS_BY_CODE['hataf-patah'],
+	VOWELS_BY_CODE['hataf-segol'],
+	VOWELS_BY_CODE.none
+];

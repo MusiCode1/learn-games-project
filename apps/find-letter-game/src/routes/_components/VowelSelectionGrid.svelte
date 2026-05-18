@@ -9,14 +9,6 @@
 	}
 	let { selectedCodes, onChange }: Props = $props();
 
-	/** שם תצוגה של ניקוד לפי קוד — מ-language.ts */
-	function vowelDisplayName(code: VowelCode): string {
-		switch (code) {
-			case 'patah': return language.vowelNamePatah;
-			case 'none':  return language.vowelNameNone;
-		}
-	}
-
 	/** החלפת מצב בחירה — מינימום 1 ניקוד */
 	function toggle(code: VowelCode) {
 		const has = selectedCodes.includes(code);
@@ -60,7 +52,7 @@
 				aria-pressed={selectedCodes.includes(vowel.code)}
 				title={vowel.code}
 			>
-				{vowelDisplayName(vowel.code)}
+				{vowel.displayName}
 			</button>
 		{/each}
 	</div>

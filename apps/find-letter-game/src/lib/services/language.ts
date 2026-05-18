@@ -57,8 +57,18 @@ export const language = {
 	vowelSelectionHint: 'אילו סוגי ניקוד יופיעו בלוח',
 	minimumVowelsHint: 'יש לסמן לפחות סוג ניקוד אחד',
 
-	// שמות הניקודים
+	// שמות הניקודים — סדר פדגוגי
 	vowelNamePatah: 'פתח',
+	vowelNameKamatz: 'קמץ',
+	vowelNameHirik: 'חיריק',
+	vowelNameSegol: 'סגול',
+	vowelNameTzere: 'צירה',
+	vowelNameHolam: 'חולם',
+	vowelNameShuruk: 'שורוק',
+	vowelNameKubutz: 'קובוץ',
+	vowelNameShva: 'שווא',
+	vowelNameHatafPatah: 'חטף פתח',
+	vowelNameHatafSegol: 'חטף סגול',
 	vowelNameNone: 'עיצור',
 
 	// הגדרות TTS

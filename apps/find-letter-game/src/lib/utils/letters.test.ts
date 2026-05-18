@@ -1,6 +1,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import { areSimilar, PHONETIC_SIMILARITY_PAIRS, VISUAL_SIMILARITY_PAIRS_FUTURE, pickBoard, ALL_LETTERS, ALL_LETTERS_ALPHABETICAL, DEFAULT_LETTER_IDS, getTtsFilename, TTS_FILES } from './letters';
 import { generateDeck } from './pair';
+import type { VowelCode } from '../data/vowels';
 
 // בדיקה 1: regression — ס ↔ שׂ כבר צריכות לעבור לפני כל שינוי
 test('ס ↔ שׂ נחשבות דומות (regression)', () => {
@@ -165,19 +166,31 @@ test('כל קובץ ב-TTS_FILES בשימוש על-ידי לפחות אות אח
 	}
 });
 
-// בדיקה 22: none vowel — כל עיצור לא-גרוני ממופה ב-TTS_FILES
-test('כל speak של עיצור (none) לאותיות לא-גרוניות ממופה ב-TTS_FILES', () => {
-	// TODO: גרוניות + עיצור — TTS דורש פתרון בעתיד (ראה walkthrough.md פאזה 2).
-	// pair<a, none>.speak='אְ' ו-pair<aa, none>.speak='עְ' לא ממופים בכוונה:
-	// eleven_v3/Sarah לא מסוגל להפיק עיצור טהור לגרוניות — יפל ל-Web Speech fallback.
+// בדיקה 22: coverage TTS — רק עבור צירופים שיש להם MP3 (patah ו-none בלבד, ללא גרוניות+עיצור)
+test('כל speak של צירופים עם MP3 ממופה ב-TTS_FILES', () => {
+	// פאזה 3: נוספו 10 ניקודים חדשים — אין להם MP3 עדיין, יפלו ל-Web Speech fallback.
+	// הtest בודק רק את הניקודים שיש להם MP3: patah ו-none.
+	// גרוניות (א, ע) + עיצור — אין MP3, fallback ל-Web Speech (ידוע, ראה walkthrough פאזה 2).
+	const PAIRS_WITH_MP3: VowelCode[] = ['patah', 'none'];
 	const gutturalLegacyIds = new Set(['a', 'aa']);
-	const nonGutturalIds = DEFAULT_LETTER_IDS.filter(id => !gutturalLegacyIds.has(id));
-	const deck = generateDeck(nonGutturalIds, ['none']);
-	for (const pair of deck) {
+	const pairsToCheck = DEFAULT_LETTER_IDS.flatMap(letterId =>
+		PAIRS_WITH_MP3
+			.map(vowelCode => {
+				const deck = generateDeck([letterId], [vowelCode]);
+				return deck[0];
+			})
+			.filter((pair): pair is NonNullable<typeof pair> => {
+				if (!pair) return false;
+				// סנן גרוניות + עיצור (אין MP3, fallback ל-Web Speech)
+				if (gutturalLegacyIds.has(pair.letter.legacyCardId) && pair.vowel.code === 'none') return false;
+				return true;
+			})
+	);
+	for (const pair of pairsToCheck) {
 		const filename = getTtsFilename(pair.speak);
 		expect(
 			filename,
-			`חסר מיפוי TTS עבור עיצור: speak="${pair.speak}" (id=${pair.id})`
+			`חסר מיפוי TTS עבור speak="${pair.speak}" (id=${pair.id})`
 		).not.toBeNull();
 	}
 });
