@@ -1,5 +1,65 @@
 # Jigsaw Puzzle Game — יומן פיתוח
 
+## 2026-05-13 18:45
+
+### version-2 — חלקים מחוברים מראש (Pre-merged Pieces) — TDD
+
+נוסף פיצ'ר חדש שמאפשר למורה להגדיר שחלק מהחלקים יהיו מחוברים מראש כשהמשחק עולה — חוויה ידידותית למתחילים. התלמיד רואה קבוצה של חלקים שכבר מחוברים יחד, וצריך לחבר אליה רק את החלקים שנשארו חופשיים. הפיצ'ר פותח בגישת TDD מלאה (פונקציות טהורות + DOM integration).
+
+#### מה בוצע?
+
+**1. הגדרות חדשות (`types.ts`, `settings.svelte.ts`)**
+
+| הגדרה | טיפוס | ברירת מחדל | תיאור |
+|-------|-------|-------------|--------|
+| `prePlacedPieces` | boolean | `false` | האם הפיצ'ר פעיל |
+| `loosePieceSelection` | `"top-left" \| "random"` | `"top-left"` | אילו חלקים יישארו חופשיים |
+| `loosePiecesCount` | number | `1` | כמה חלקים יישארו חופשיים (1..N-1) |
+
+`CURRENT_VERSION` הועלה מ-7 ל-9 (שני שלבים: v8 הוסיף את שני הראשונים, v9 הוסיף את `loosePiecesCount`). פרופיל `beginner` מפעיל את הפיצ'ר עם count=1.
+
+**2. מודול pure helpers (`pre-merge.ts`) — חדש**
+
+שלוש פונקציות טהורות, ללא תלות ב-DOM או ב-Puzzle class:
+
+- `pickLooseIndices({nx, ny, mode, count, rng})` — מחזיר מערך של אינדקסים. `top-left` → K הראשונים ב-row-major. `random` → K אינדקסים מובחנים ע"י דגימה ללא חזרה. clamping אוטומטי ל-`[1, N-1]`.
+- `gridIndexToCoords(idx, nx)` — אינדקס row-major → `{kx, ky}`.
+- `computeMergePlan({...})` — מחזיר `{loose: PieceCoords[], mergeOrder: PieceCoords[]}`. ה-mergeOrder ב-row-major עם anchor ראשון.
+
+**3. שינוי ב-Puzzle class (`puzzle.ts`)**
+
+נוספה מתודה `applyPrePlacedMerge()` שרצה **בסוף `init()` — אחרי הלייאאוט**. ה-orchestrator עצמו דק (10 שורות): קורא ל-`computeMergePlan`, מוצא את ה-anchor, ובלולאה ממזג כל אחד מהשאר אליו דרך `PolyPiece.merge()` הקיים.
+
+**4. בדיקות TDD — 33 חדשות (סה"כ 48)**
+
+| קובץ | mode | בדיקות חדשות | מה נבדק |
+|------|------|---------------|----------|
+| `pre-merge.test.ts` | node | 20 | פונקציות טהורות (top-left, random, count, clamping, edge cases) |
+| `settings.test.ts` | node | 11 | ברירות מחדל, פרופילים, מיגרציות v7→v8→v9, custom marking |
+| `puzzle.svelte.test.ts` | chromium | 3 | DOM integration: regression + count=1 + count=2 |
+
+**5. חיווט UI (`settings/+page.svelte`)**
+
+- Toggle "חלקים מחוברים מראש"
+- כשפעיל: בחירה רדיו ל-`loosePieceSelection` + סליידר דינמי ל-`loosePiecesCount` (טווח 1..N-1 לפי הרשת הנוכחית)
+
+#### החלטות ארכיטקטורה
+
+- **layout → merge (לא merge → layout)**: התלבטנו בין שתי גישות. בחרנו ש-`applyPrePlacedMerge` ירוץ **אחרי** `compactInitial`/`optimInitial`, ולא לפני. הסיבה: כך ה-PolyPiece.merge הקיים "מושך" את החלקים זה לזה בדיוק כמו merge ידני של תלמיד, ובלי שינוי בקוד הלייאאוט. ה-anchor נשאר במקום שהלייאאוט הציב אותו, ושאר החלקים נצמדים אליו. **אפס שינויים ב-`compactInitial`, `optimInitial`, `handleResize`, `rearrangeUnconnected`, או `merge`**.
+- **חוויית משתמש**: התלמיד לא רואה "תמונה כמעט שלמה עם חור", אלא "3 חלקים שכבר מחוברים יחד" — מדמה את החוויה האמיתית של מי שעשה כמה חיבורים.
+- **פונקציות טהורות נפרדות**: כל הלוגיקה האלגוריתמית הוצאה ל-`pre-merge.ts`. ה-Puzzle class רק מתזמר. כך הבדיקות פשוטות (node mode) ולא תלויות ב-canvas.
+- **clamping בתוך הפונקציה**: `pickLooseIndices` מבצעת clamp ל-`[1, N-1]`. אם מורה הגדיר count=5 לגריד 3×3 ואז עבר ל-2×2, השדה ב-settings נשאר 5 אבל בפועל ה-clamp מחזיר 3.
+- **DOM integration test כ-template**: נוצר `puzzle.svelte.test.ts` (browser mode עם Chromium) עם helpers `createTestImage` ו-`createTestContainer` — בסיס לבדיקות DOM עתידיות.
+
+#### מעקפים ופתרונות
+
+- **`$effect.root` לא רץ ב-vitest node mode**: הבדיקה שמשתמשת ב-`markAsCustom()` ידני ולא מסתמכת על ה-effect האוטומטי. ה-effect האוטומטי עובד ב-runtime אמיתי בתוך Svelte component, אבל לא בבדיקות יחידה.
+
+#### דפלוי
+
+- Pages: https://dev.puzzle-game-92p.pages.dev (branch `dev`)
+- Worker preview (deprecated): https://aacbc52b-puzzle.aybritman.workers.dev
+
 ## 2026-05-01 10:07
 
 ### version-2 — מערכת פרופילים (שלב 3 מתוך 3) — TDD

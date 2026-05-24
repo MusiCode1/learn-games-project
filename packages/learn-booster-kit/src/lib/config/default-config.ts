@@ -59,6 +59,10 @@ const defaultConfig: Config = {
     enableHideModalButton: true,
     disableGameCodeInjection: false,
   },
+
+  // game-specific settings — מפה ריקה כברירת מחדל.
+  // המשחקים יזריקו את שלהם דרך updateGameSettings(gameId, ...).
+  gameSettings: {},
 };
 
 export function getDefaultConfig(): Config {

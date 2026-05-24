@@ -1,5 +1,187 @@
 # יומן פיתוח - Wordy's
 
+## 2026-05-14 10:01
+
+### תיקון `state_unsafe_mutation` ב-`cardImageStore` + תשתית E2E
+
+מהפריסה הקודמת ל-dev התגלה ש-Svelte זרק `state_unsafe_mutation` בכל מסך admin שמרנדר רשימת כרטיסים/קופסאות/מדפים. נבנתה תשתית טסטים מינימלית שתפסה את הבאג כ-tracer bullet, ואז תוקן עם שינוי קטן ומדויק. בסיום הלולאה נוספו 4 טסטי E2E שמכסים את הזרימה המרכזית של תמונות מותאמות.
+
+#### מה בוצע?
+
+**1. תשתית טסטים (`e2e/_helpers/`)**
+
+- `console.ts` — `trackErrors(page)` מאזין ל-`console.error` ול-`pageerror`, מסנן noise מוכר (`VITE_GOOGLE_DRIVE_*`, `learn-booster` API key, favicon 404).
+- `fixtures.ts` — מרחיב את `test` של Playwright עם fixture `errorTracker` שמספק אוטומטית `consoleErrors` ו-`pageErrors` לכל טסט.
+- `admin.ts` — helpers משותפים: `TINY_PNG` (Buffer), `addCardWithImage(page, word)`, `getIDBCardImages(page)` (שולף ישירות מ-IndexedDB דרך `page.evaluate`), `getCardImageLocator(page, word)`.
+
+**2. Tracer bullet — `admin-shelves-renders-clean.test.ts`**
+
+- ניווט יחיד ל-`/admin/shelves` + ציפייה ש-`pageErrors` ו-`consoleErrors` ריקים. עוצר את `state_unsafe_mutation` בלי שום אינטראקציה.
+- ירוץ אדום *לפני* התיקון. שימש כ-spec לתיקון.
+
+**3. תיקון `card-images.svelte.ts`**
+
+עטיפת כל ה-logic האסינכרוני של `cardImageStore.get(cardId)` ב-`queueMicrotask(...)`:
+
+```ts
+get(cardId: string): string | null {
+  if (cache.has(cardId)) return cache.get(cardId)!;
+  if (typeof indexedDB === 'undefined') return null;
+  if (inFlight.has(cardId)) return null;
+
+  // get() נקראת לעיתים קרובות מתוך render. מוטציה של SvelteSet/SvelteMap
+  // בזמן render אסורה (state_unsafe_mutation). לכן דוחים את כל המוטציות.
+  queueMicrotask(() => {
+    if (cache.has(cardId)) return;
+    inFlight.add(cardId);
+    dbGet(cardId)
+      .then(blob => cache.set(cardId, blob ? URL.createObjectURL(blob) : null))
+      .catch(e => { console.error(...); cache.set(cardId, null); })
+      .finally(() => inFlight.delete(cardId));
+  });
+
+  return null;
+}
+```
+
+**4. ארבעה טסטים נוספים שמכסים את ה-flow המרכזי**
+
+- `admin-add-card-with-image.test.ts` — מילוי טופס + העלאת קובץ + לחיצה על "הוסף" → הכרטיס מופיע ברשימה עם `blob:` URL.
+- `admin-card-image-persists-after-reload.test.ts` — אחרי `page.reload()` הכרטיס עדיין שם, וה-`src` חוזר ל-`blob:` תוך timeout של Playwright (=מאשר תגובתיות של הקאש אחרי טעינה מ-IDB).
+- `admin-card-image-visible-in-game-flow.test.ts` — מוסיפים ב-admin, מנווטים ל-`/select/...` (תמונה blob:), בוחרים, מתחילים משחק, ב-`/game/...` התמונה עדיין `blob:`.
+- `admin-delete-card-cleans-idb.test.ts` — שאילתת IDB ישירה לפני ואחרי מחיקה, מאמת ירידה ב-entry אחד + הכרטיס נעלם מה-DOM.
+
+#### החלטות ארכיטקטורה
+
+- **`queueMicrotask` ולא `setTimeout(0)`**: microtask רץ מיד אחרי ה-render הנוכחי (לפני ש-browser מצייר), כך שהמשתמשת לא רואה הבהוב מ-CDN ל-blob:.
+- **`expect(errorTracker.pageErrors).toEqual([])`** כפעולה אחרונה בכל טסט: רשת ביטחון אוניברסלית. כל regression שמכניס שגיאה כלשהי לקונסול יתפס מיידית, גם בלי טסט ספציפי לו.
+- **`KNOWN_NOISE` כ-allow-list ולא deny-list**: רק שגיאות שאומתו ידנית כלא-באגים מסוננות. דורש fix-it-forward לכל שגיאה חדשה — אבל זה מה שאנחנו רוצים.
+
+#### מעקפים ופתרונות
+
+- **`state_unsafe_mutation`** — ראה למעלה.
+- **`setInputFiles` לא מטריגר `change` ב-CDP attach** (נצפה ב-walk-through ידני ב-linux-gui). ב-Playwright "אמיתי" (`@playwright/test`) זה כן עובד, אז הטסטים עוברים.
+
+#### קבצים ששונו
+
+- `src/lib/services/card-images.svelte.ts` — תיקון הבאג.
+- `e2e/_helpers/{console,fixtures,admin}.ts` — חדש.
+- `e2e/admin-*.test.ts` — חמישה טסטי E2E חדשים.
+- `docs/test-plan.md` — תוכנית בדיקות כללית (נכתבה כמפת חום של עדיפויות, לא TODO).
+
+---
+
+## 2026-05-13 20:05
+
+### תמונות מותאמות לכרטיסים — אחסון ב-IndexedDB
+
+עד כה, ה-UI ב-admin לקבלת תמונה לכרטיס היה דקורטיבי בלבד: הקובץ נקרא, הוצגה תצוגה מקדימה, אבל בלחיצה על "הוסף" הוא הושמט בשקט (הערה בקוד: "imageUrl is removed from Card type. For now, ignoring manual image URL setting as it's auto-derived from ID"). הכרטיס נשמר רק עם `id` ו-`word`, והתמונה נטענה מ-CDN לפי `{id}.png` — מנגנון שמצפה שמישהו יעלה ידנית קובץ ל-Cloudflare R2 עם השם המתאים. בפועל — חוסר תאימות בין ה-UI לארכיטקטורה.
+
+#### מה בוצע?
+
+**1. שירות חדש: `card-images.svelte.ts`**
+
+- שכבת IndexedDB דקה: DB `wordys-game-images`, object store `cards`, key=cardId, value=`{id, blob, savedAt}`.
+- Cache תגובתי מבוסס `SvelteMap`/`SvelteSet` (מ-`svelte/reactivity`) — מפתח=cardId, ערך=`blob:` URL או null.
+- API ציבורי:
+  - `cardImageStore.get(cardId)` — **תגובתי**. מחזיר URL מיידי אם בקאש; אחרת מתחיל טעינה אסינכרונית ומחזיר null. כשהטעינה מסתיימת, ה-Map מתעדכן ו-Svelte מבצע re-render אוטומטית בכל קומפוננטה שהשתמשה בערך.
+  - `.save(cardId, blob)` — שמירה ל-IDB + עדכון קאש (יוצר `blob:` URL חדש, משחרר ישן).
+  - `.remove(cardId)` — מחיקה מה-IDB + `URL.revokeObjectURL` + עדכון קאש.
+- מטפל ב-SSR: אם `typeof indexedDB === 'undefined'` — מחזיר null ולא ניגש ל-IDB.
+
+**2. `assets.ts` — פונקציה חדשה `getCardImage(card)`**
+
+- מעדיפה תמונה מותאמת מ-IDB (`cardImageStore.get(card.id)`), אחרת נופלת ל-`getCardImageUrl(card.id)` (CDN).
+- `getAssetUrl()` תוקנה לכבד גם `blob:` ו-`data:` URLs (לא להוסיף להם prefix של ה-CDN).
+
+**3. `image-helpers.ts`, `GameContainer.svelte`, `admin/shelves/[shelfId]/[boxId]/+page.svelte`, `select/[shelfId]/[boxId]/+page.svelte`**
+
+- כולם הוסבו מ-`getCardImageUrl(card.id)` ל-`getCardImage(card)` — כך שתמונות מותאמות מ-IDB יוצגו בכל מקום (משחק, בחירת כרטיסים, ממשק ניהול, תצוגות מקדימות).
+
+**4. `shelvesStore` — ניקוי בעת מחיקה**
+
+- `addCard` עכשיו מחזיר את ה-id החדש (כדי שנוכל לשמור את התמונה מיד לאחר היצירה).
+- `deleteCard`, `deleteBox`, `deleteShelf` קוראים ל-`cardImageStore.remove(...)` רקורסיבית — מונע נכסים יתומים ב-IDB.
+
+**5. `admin/shelves/[shelfId]/[boxId]/+page.svelte` — תיקון טופס הוספה/עריכה**
+
+- שמירה של `File` כ-state (במקום data URL מסורבל).
+- תצוגה מקדימה דרך `URL.createObjectURL` (מהיר, ללא overhead של base64).
+- `URL.revokeObjectURL` בכל reset/replace למניעת memory leaks.
+- במצב עריכה: אם התלמיד לא מחליף תמונה, התמונה הקיימת נשמרת.
+- `previewUrl` (derived): קובץ חדש > תמונה קיימת מ-IDB > כלום.
+
+#### החלטות ארכיטקטורה
+
+- **IndexedDB ולא localStorage**: localStorage מוגבל ל-5–10MB, מאחסן רק strings (=base64 עם 33% overhead), וסינכרוני (חוסם UI). IndexedDB תומך ב-Blob native, אסינכרוני, ויכול להגיע ל-gigabytes.
+- **`Pick<Card, 'id'>` ב-`getCardImage`**: הפונקציה לא צריכה את כל ה-Card — רק את ה-id. שימוש ב-`Pick` מקל על call sites שיש להם רק חלק מהאובייקט.
+- **לא הוספנו `hasCustomImage?: boolean` ל-`Card`**: הקאש משמש כ-cache + הצהרה. בדיקה אחת מול IDB ברינדור הראשון של כל כרטיס מספיקה; אחרי זה הקאש מטפל.
+
+#### מעקפים ופתרונות
+
+- **`$state(new Map())` *לא* תגובתי**: זו הייתה הטעות הראשונית — חשבתי ש-`$state` הופך כל Map לתגובתי. בפועל, Svelte 5 לא עוטף Map/Set/Date ב-Proxy (built-ins מוגנים), וצריך `SvelteMap`/`SvelteSet` מ-`svelte/reactivity`. הסימפטום: התמונה נטענה מ-IDB, הקאש התעדכן, אבל הקומפוננטה לא רינדרה מחדש. **ESLint עם `svelte/prefer-svelte-reactivity` תופס את הגרסה הגלויה (`new Set()`), אך לא את `$state(new Map())` — כלומר אין הגנה אוטומטית מלאה. צריך לזכור ידנית.**
+- **שגיאות SSR**: בקריאה ראשונה ב-SSR ל-`cardImageStore.get`, ה-IDB לא זמין. נוסף קצר-מסלול: `if (typeof indexedDB === 'undefined') return null;` — מונע מילוי הקונסול בשגיאות.
+
+#### קבצים ששונו
+
+- `src/lib/services/card-images.svelte.ts` (חדש)
+- `src/lib/services/assets.ts`
+- `src/lib/utils/image-helpers.ts`
+- `src/lib/stores/shelves.svelte.ts`
+- `src/routes/(no-settings)/game/[shelfId]/[boxId]/_components/GameContainer.svelte`
+- `src/routes/(no-settings)/select/[shelfId]/[boxId]/+page.svelte`
+- `src/routes/admin/shelves/[shelfId]/[boxId]/+page.svelte`
+
+---
+
+## 2026-05-13 18:54
+
+### ריפקטור `WordDisplay` — תיקון גלישת קוביות אותיות מחוץ לפריים
+
+הוחלף מנגנון המידות של אריחי האותיות. הבעיה: בכרטיס "מודיעין עילית" הקוביות גלשו אופקית מחוץ למסך כי החישוב לא התחשב במספר האותיות במילה. בוצע ריפקטור שמייצר רוחב קובייה אחיד לכל השורות, הנגזר משורת המילים הארוכה ביותר. שולב עם פיצ'ר `beginnerMode` הקיים (אותיות שהושלמו בירוק, אותיות עתידיות מטושטשות).
+
+#### מה בוצע?
+
+**1. פיצול לוגי לשורות**
+
+- כל מילה מקבלת שורה משלה בנפרד; אריח הרווח מוצמד לסוף המילה הקודמת באותה שורה (במקום `flex-wrap` גלובלי שאיפשר שתי המילים בשורה אחת).
+- זה גם מבטיח התנהגות עקבית — כל מילה תמיד תופיע בשורה משלה, לא תלוי בגודל המסך.
+
+**2. חישוב גודל קובייה אחיד**
+
+- כל הקוביות מקבלות אותו רוחב, הנקבע לפי השורה הארוכה ביותר: `min(calc((100% - gaps) / max-len), max-cube-w)`.
+- שורות קצרות מתמרכזות (`justify-content: center`) — לא נמתחות לרוחב המקסימלי.
+- `aspect-ratio: 5/7` נשמר.
+
+**3. גודל גופן רספונסיבי לפי הקובייה עצמה**
+
+- כל קובייה מקבלת `container-type: inline-size`, וגודל הגופן הוא `clamp(1.25rem, 55cqw, 4.5rem)` — האות מתאימה את עצמה לרוחב הקובייה האמיתי.
+
+**4. שילוב עם beginnerMode**
+
+- שמירה על הלוגיקה הקיימת מ-`776bd78`: `isCompleted` (ירוק), `isCurrent` (הדגשה צהובה רגילה), `isFuture` (`opacity-25 blur-[2px]` כשמופעל מצב מתחילים).
+- שינוי שמות פנימיים: `isCurrent` במקור החדש מתייחס לאינדקס בלבד, ו-`shouldHighlight` הוא הדגל המורכב (`highlightCurrentChar && isCurrent && (mode !== 'hidden' || forceShow)`).
+
+#### החלטות ארכיטקטורה
+
+- **רוחב אחיד בין שורות**: נבחר על פני "רוחב עצמאי לכל שורה" כי מילה קצרה עם קוביות ענקיות לצד מילה ארוכה עם קוביות זעירות נראית לא-מאוזנת ויוצרת חיווי דרגות שלא מכוון.
+- **`@container inline-size` במקום `size`**: לא נדרש כי משתמשים רק ב-`cqw` (רוחב). שימוש ב-`size` היה דורש `container-type: size` שמשפיע על כל ה-layout החיצוני.
+
+#### מעקפים ופתרונות
+
+- **למה זה היה שבור קודם**: הקוד הישן השתמש ב-`w-[clamp(45px,11cqh,150px)]` — אבל `cqh` דורש `container-type: size`, וב-Tailwind `@container` נותן רק `inline-size`. התוצאה: `cqh` נופל ל-svh (גובה ה-viewport) — הגודל מנותק לחלוטין מהמיכל בפועל. במסך 950px → 11cqh = 105px → 7 קוביות = 735px + רווחים, גלישה בטוחה.
+
+#### קבצים ששונו
+
+- `src/routes/(no-settings)/game/[shelfId]/[boxId]/_components/WordDisplay.svelte`
+- `vite.config.ts` — הוספת `allowedHosts: ['.tuns.sh', '.trycloudflare.com', '.ngrok-free.app']` כדי שמנהרות לבדיקות חיצוניות יעבדו.
+
+#### עבודה בענף
+
+- `fix/wordys-word-display-overflow` (rebased על `dev` שהביא את הקומיטים `776bd78` + `fbfe5bb`).
+
+---
+
 ## 2026-04-02 23:00
 
 ### תיקון TTS — שמות אותיות מנוקדים + סדר השמעה

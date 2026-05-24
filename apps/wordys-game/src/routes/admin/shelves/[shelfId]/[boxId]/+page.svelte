@@ -3,7 +3,9 @@
 	import { shelvesStore } from '$lib/stores/shelves.svelte';
 	import { slide, fade } from 'svelte/transition';
 	import type { PageData } from './$types';
-	import { getCardImageUrl } from '$lib/services/assets';
+	import type { Card } from '$lib/types';
+	import { getCardImage } from '$lib/services/assets';
+	import { cardImageStore } from '$lib/services/card-images.svelte';
 
 	let { data }: { data: PageData } = $props();
 	let { shelfId, boxId } = $derived($page.params);
@@ -11,62 +13,78 @@
 	let box = $derived(shelf?.boxes.find((b) => b.id === boxId));
 
 	let newCardWord = $state('');
-	let newCardImage = $state<string | null>(null);
+	// קובץ התמונה החדש שנבחר (מקור האמת); ה-URL לתצוגה נגזר ממנו דרך URL.createObjectURL
+	let newCardImageFile = $state<File | null>(null);
+	// URL זמני לתצוגה מקדימה — מנוהל ידנית כדי שנוכל לשחרר אותו (revokeObjectURL)
+	let newCardImagePreview = $state<string | null>(null);
 	let newCardAudio = $state('');
 	let editingCardId = $state<string | null>(null);
 	let fileInput = $state<HTMLInputElement | null>(null);
 
 	let availableSounds = $derived(data.sounds);
 
+	// סטטוס שליחה: יש מילה + תמונה (חדשה או קיימת לכרטיס שעורכים)
+	let canSubmit = $derived.by(() => {
+		if (!newCardWord) return false;
+		if (newCardImageFile) return true;
+		// במצב עריכה — מותר לשמור גם בלי לשנות תמונה
+		if (editingCardId && cardImageStore.get(editingCardId)) return true;
+		return false;
+	});
+
 	function handleFileSelect(event: Event) {
 		const target = event.target as HTMLInputElement;
 		if (target.files && target.files[0]) {
 			const file = target.files[0];
-			const reader = new FileReader();
-			reader.onload = (e) => {
-				newCardImage = e.target?.result as string;
-			};
-			reader.readAsDataURL(file);
+			// שחרור preview קודם אם קיים
+			if (newCardImagePreview) URL.revokeObjectURL(newCardImagePreview);
+			newCardImageFile = file;
+			newCardImagePreview = URL.createObjectURL(file);
 		}
 	}
 
-	function handleSubmitCard() {
-		if (newCardWord && newCardImage && shelfId && boxId) {
-			if (editingCardId) {
-				// Update existing
-				shelvesStore.updateCard(shelfId, boxId, editingCardId, {
-					word: newCardWord,
-                    // Note: imageUrl is removed from Card type. 
-                    // To support "custom" images in future we'd need a different strategy or just rely on ID naming.
-                    // For now, ignoring manual image URL setting as it's auto-derived from ID.
-				});
-			} else {
-				// Add new
-				shelvesStore.addCard(shelfId, boxId, {
-					word: newCardWord,
-                    // Same as above, strict ID based assets now.
-				});
+	async function handleSubmitCard() {
+		if (!canSubmit || !shelfId || !boxId) return;
+
+		let cardId: string;
+
+		if (editingCardId) {
+			shelvesStore.updateCard(shelfId, boxId, editingCardId, { word: newCardWord });
+			cardId = editingCardId;
+		} else {
+			cardId = shelvesStore.addCard(shelfId, boxId, { word: newCardWord });
+		}
+
+		// אם נבחר קובץ חדש — שמירה ל-IndexedDB
+		if (newCardImageFile) {
+			try {
+				await cardImageStore.save(cardId, newCardImageFile);
+			} catch (e) {
+				console.error('Failed to save image to IndexedDB', e);
+				alert('שמירת התמונה נכשלה. ראה Console.');
 			}
-			resetForm();
 		}
+
+		resetForm();
 	}
 
-	function startEdit(card: any) {
+	function startEdit(card: Card) {
 		editingCardId = card.id;
 		newCardWord = card.word;
-		editingCardId = card.id;
-		newCardWord = card.word;
-		newCardImage = getCardImageUrl(card.id);
-		// Audio is mostly auto-derived too now, but keeping this simple for now or ignoring
-		newCardAudio = ''; 
+		newCardImageFile = null;
+		// אין צורך ב-preview נפרד — התצוגה המקדימה תיקח את התמונה הקיימת (IDB או CDN)
+		if (newCardImagePreview) URL.revokeObjectURL(newCardImagePreview);
+		newCardImagePreview = null;
+		newCardAudio = '';
 
-		// Scroll to form
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	}
 
 	function resetForm() {
 		newCardWord = '';
-		newCardImage = null;
+		newCardImageFile = null;
+		if (newCardImagePreview) URL.revokeObjectURL(newCardImagePreview);
+		newCardImagePreview = null;
 		newCardAudio = '';
 		editingCardId = null;
 		if (fileInput) fileInput.value = '';
@@ -85,6 +103,16 @@
 		const isCover = box.coverCardId === cardId;
 		shelvesStore.updateBox(shelfId, boxId, box.name, undefined, isCover ? '' : cardId);
 	}
+
+	// URL שמוצג ב-preview — קובץ חדש > תמונה קיימת בעריכה > כלום
+	let previewUrl = $derived.by(() => {
+		if (newCardImagePreview) return newCardImagePreview;
+		if (editingCardId) {
+			const card = box?.cards.find((c) => c.id === editingCardId);
+			if (card) return getCardImage(card);
+		}
+		return null;
+	});
 </script>
 
 <div class="space-y-8">
@@ -163,7 +191,7 @@
 				<div class="flex gap-2">
 					<button
 						onclick={handleSubmitCard}
-						disabled={!newCardWord || !newCardImage}
+						disabled={!canSubmit}
 						class="flex-1 px-4 py-2 text-white font-bold rounded-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
 						class:bg-orange-500={!editingCardId}
 						class:hover:bg-orange-600={!editingCardId}
@@ -187,12 +215,14 @@
 				</div>
 			</div>
 
-			{#if newCardImage}
+			{#if previewUrl}
 				<div transition:slide class="mt-4">
-					<p class="text-sm text-slate-500 mb-2">תצוגה מקדימה:</p>
+					<p class="text-sm text-slate-500 mb-2">
+						תצוגה מקדימה{newCardImageFile ? ' (קובץ חדש)' : ' (תמונה קיימת)'}:
+					</p>
 					<div class="flex items-center gap-4">
 						<img
-							src={newCardImage}
+							src={previewUrl}
 							alt="Preview"
 							class="h-24 w-24 object-cover rounded-xl border-2 border-orange-100 shadow-sm"
 						/>
@@ -223,7 +253,7 @@
 							class:ring-yellow-400={box.coverCardId === card.id && editingCardId !== card.id}
 						>
 							<img
-								src={getCardImageUrl(card.id)}
+								src={getCardImage(card)}
 								alt={card.word}
 								class="w-full h-32 object-cover object-top rounded-lg bg-white"
 							/>

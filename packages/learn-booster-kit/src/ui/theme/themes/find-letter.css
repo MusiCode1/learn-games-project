@@ -1,0 +1,63 @@
+/* ========================
+   Theme: Find Letter
+   ========================
+   Navy + כתום עז, pills בולטים, חם.
+   מבוסס על apps/find-letter-game.
+*/
+
+[data-theme='find-letter'] {
+	/* Surfaces & Backgrounds */
+	--theme-surface-base: #f8fafc;
+	--theme-surface-elevated: #ffffff;
+	--theme-surface-sunken: #eff6ff;
+	--theme-surface-overlay: rgba(15, 23, 42, 0.55);
+	--theme-surface-header: var(--theme-surface-elevated);
+	--theme-border-subtle: #e2e8f0;
+	--theme-border-strong: #cbd5e1;
+
+	/* Brand */
+	--theme-brand-primary: #1e3a8a;
+	--theme-brand-primary-hover: #1e40af;
+	--theme-brand-secondary: #f97316;
+	--theme-brand-secondary-hover: #ea580c;
+
+	/* Text */
+	--theme-text-primary: #0f172a;
+	--theme-text-secondary: #64748b;
+	--theme-text-tertiary: #94a3b8;
+	--theme-text-on-brand: #ffffff;
+	--theme-text-on-feedback: #ffffff;
+	--theme-text-on-header: var(--theme-text-primary);
+	--theme-accent-frame: #ff6a3d;
+
+	/* Feedback */
+	--theme-feedback-success: #22c55e;
+	--theme-feedback-success-bg: #dcfce7;
+	--theme-feedback-error: #ef4444;
+	--theme-feedback-error-bg: #fee2e2;
+	--theme-feedback-warning: #ea580c;
+	--theme-feedback-warning-bg: #fed7aa;
+
+	/* Radius */
+	--theme-radius-sm: 6px;
+	--theme-radius-md: 12px;
+	--theme-radius-lg: 20px;
+	--theme-radius-pill: 9999px;
+	--theme-touch-min: 70px;
+
+	/* Shadows */
+	--theme-shadow-card: 0 4px 12px rgba(15, 23, 42, 0.04);
+	--theme-shadow-elevated: 0 8px 22px rgba(249, 115, 22, 0.25);
+	--theme-shadow-focus: 0 0 0 3px rgba(249, 115, 22, 0.4);
+
+	/* Typography */
+	--theme-font-display: 'Heebo', system-ui, sans-serif;
+	--theme-font-body: 'Heebo', system-ui, sans-serif;
+	--theme-font-size-xs: 0.75rem;
+	--theme-font-size-sm: 0.875rem;
+	--theme-font-size-md: 1rem;
+	--theme-font-size-lg: 1.25rem;
+	--theme-font-size-xl: 1.5rem;
+	--theme-font-weight-regular: 400;
+	--theme-font-weight-bold: 700;
+}

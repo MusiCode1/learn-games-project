@@ -10,6 +10,8 @@ export { boosterService } from "./lib/booster-service";
 export type { BoosterServiceInitialized } from "./lib/booster-service";
 export * from "./types";
 export * from "./lib/config";
+export * as configManager from "./lib/config/config-manager";
+export * from "./lib/result";
 export { getAppsList } from "./lib/fully-kiosk";
 export { default as ProgressWidget } from "./ui/ProgressWidget.svelte";
 export { default as AdminGate } from "./ui/AdminGate.svelte";
@@ -17,3 +19,28 @@ export { isFullyKiosk } from "./lib/fully-kiosk";
 export * as gingim from "./lib/gingim";
 export { default as OverlayTimerPage } from "./ui/OverlayTimerPage.svelte";
 export { default as OverlayTimerSettings } from "./ui/components/OverlayTimerSettings.svelte";
+
+// === Animations (helpers) ===
+export { useShake } from "./ui/animations/use-shake.svelte";
+export { usePop } from "./ui/animations/use-pop.svelte";
+
+// === Icons ===
+export { default as SpeakerIcon } from "./ui/primitives/icons/SpeakerIcon.svelte";
+export { default as RefreshIcon } from "./ui/primitives/icons/RefreshIcon.svelte";
+export { default as SettingsIcon } from "./ui/primitives/icons/SettingsIcon.svelte";
+export { default as CheckIcon } from "./ui/primitives/icons/CheckIcon.svelte";
+export { default as XIcon } from "./ui/primitives/icons/XIcon.svelte";
+
+// === Primitives ===
+export { default as Button } from "./ui/primitives/Button.svelte";
+export { default as IconButton } from "./ui/primitives/IconButton.svelte";
+export { default as SegmentedControl } from "./ui/primitives/SegmentedControl.svelte";
+export { default as ScoreBadge } from "./ui/primitives/ScoreBadge.svelte";
+export { default as Card } from "./ui/primitives/Card.svelte";
+export { default as CooldownOverlay } from "./ui/primitives/CooldownOverlay.svelte";
+export { cooldownProgress } from "./ui/primitives/cooldown-math";
+
+// === Shell ===
+export { default as HeaderBar } from "./ui/shell/HeaderBar.svelte";
+export { default as GameShell } from "./ui/shell/GameShell.svelte";
+export { default as StartScreen } from "./ui/shell/StartScreen.svelte";

@@ -1,5 +1,113 @@
 # יומן פיתוח — איפה האות?
 
+## 2026-05-17 12:22
+
+### תיקוני באגים במיגרציה — toJSON + fast-path + intermediate filter
+
+המיגרציה הראשונית (קומיט הקודם) הופיעה ב-Devtools עם 2 באגים שזוהו
+בבדיקה ידנית: warnings ב-snapshot ו-DataCloneError שגרם להגדרות לא
+להישמר לפרופיל. בנוסף — חוויית טעינה איטית של ההגדרות בריענון
+(המתינו ל-boosterService.init שטוען Google Drive).
+
+#### באג 1: `state_snapshot_uncloneable` + DataCloneError
+
+הגדרת `toJSON()` בתוך ה-`$state({...})` object literal **לא נקלטה
+נכון** ע"י `$state.snapshot`. ה-snapshot ניסה לעשות `structuredClone`
+על האובייקט (כולל המתודה), נכשל ב-warning, וה-snap המוחזר עוד
+הכיל את ה-`toJSON` כפרופ. כש-snap עבר ל-`updateGameSettings` →
+`cloneConfig` של הקיט (שמשתמש ב-`structuredClone`), הוא נכשל ב-
+`DataCloneError` והפרופיל **לא הסתנכרן**. למרות שהמשתמש שינה הגדרות,
+הם נשארו רק ב-`learn-booster-config` ולא ב-`learn-booster-profiles:v1`,
+ובריענון הם אבדו (כי הפרופיל היה ה-source of truth).
+
+**תיקון:** הסרת `toJSON` מתוך ה-`$state` literal. במקום זה — פונקציה
+exported `dataSnapshot()` שבונה plain object ידנית מ-DATA_KEYS, כולל
+deep-copy של arrays כדי לפרק את ה-$state proxy. ה-snap בטוח להעבר
+ל-`structuredClone`.
+
+#### באג 2: settings טוענות באיטיות (חכייה ל-Google Drive)
+
+`configManager.getGameSettings()` חוזר עם `undefined` עד שה-init של
+ה-Kit מסיים — כולל טעינת videos מ-Google Drive (איטי). זה גרם ל-
+settings UI להציג defaults בהתחלה ואז "לקפוץ" לערכי המשתמש.
+
+**תיקון:** Fast-path — קריאה ישירה מ-`learn-booster-profiles:v1`
+ב-localStorage **לפני** ה-Kit init. ה-settings מופיעות מיד עם הערכים
+הנכונים מהפרופיל. ה-Kit init ממשיך ברקע ולא חוסם.
+
+#### באג 3: Stale `learn-booster-config` יוצר flicker
+
+ה-Kit שומר 2 העתקים של ה-config: `learn-booster-profiles:v1` (source
+of truth) ו-`learn-booster-config` (cache). אחרי שבאג 1 הופצע, ה-cache
+היה מסונכרן עם ערכים ישנים בעוד שהפרופיל היה מאוחר. בעת init, הקיט
+טוען מה-cache ומודיע ל-listeners. ה-`subscribe` callback שלנו היה
+מעדכן את settings לערכי ה-cache הישן (overwrite של fast-path הנכון),
+ואחר כך כשהקיט סיים לטעון את הפרופיל — חוזר לערכים הנכונים. תוצאה:
+flicker זמני של defaults.
+
+**תיקון:** ב-`subscribe` callback, מתעלמים מ-`s` אם הוא לא תואם את
+מה ש-`learn-booster-profiles:v1` מכיל באותו רגע. הקאש יכול להיות
+stale; הפרופיל הוא ה-source of truth.
+
+#### Regression tests
+
+נוסף `settings.regression.test.ts` (6 בדיקות):
+
+- ה-`$state` object לא חושף `toJSON` (regression guard לבאג 1)
+- `dataSnapshot()` מחזיר plain object עם DATA_KEYS בלבד
+- `dataSnapshot()` עובר `structuredClone` בלי לזרוק
+- `selectedLetterIds` מקבל deep-copy (לא proxy)
+- `dataSnapshot()` עוקב אחר שינויי $state
+- `JSON.stringify(dataSnapshot())` תקין ו-roundtrip-able
+
+#### Logging
+
+נוסף flag `TRACE` בקובץ + פונקציה `log()`. ברירת מחדל: `false`.
+להפעלה ידנית בעת דיבוג עתידי, מציג כל פעולה (fast-path, $effect,
+subscribe) עם timestamps.
+
+---
+
+## 2026-05-17 10:43
+
+### מיגרציה: SettingsStore → configManager (POC)
+
+החלפת ה-storage backend של ה-settings מ-localStorage ישיר למערכת
+הפרופילים של הקיט (`learn-booster-kit/configManager`).
+
+#### מה השתנה?
+
+- `class SettingsStore` הוסר → `export const settings = $state({...})`
+- מקור-אמת יחיד: `makeDefaults()` + `type FindLetterSettings = ReturnType<typeof makeDefaults>`
+- derivations (`totalCellsInGrid` וכו') נשארות על `settings` כ-reactive getters
+- echo cancellation עם JSON.stringify compare (לא flag)
+- מיגרציה חד-פעמית מהמפתח legacy `find-letter-game-settings`
+
+#### השלכות חיוביות
+
+- settings נשמרות תחת הפרופיל הפעיל
+- החלפת פרופיל מחליפה אוטומטית את כל ה-settings
+- בעתיד: אם יהיה backend sync, find-letter יקבל אותו "חינם"
+
+#### מה לא השתנה?
+
+- ה-API של `settings` לצרכנים (אפס שינויים בקומפוננטות)
+- ה-migration logic מ-v1/v2/v3 (`migrateSettings` נשאר)
+- שמות שדות, defaults, derivations
+
+#### בדיקות
+
+- כל הטסטים הקיימים עוברים (`bun run --filter find-letter-game test`)
+- `bun run check` עובר
+- ניסוי בעבודה ידנית של המפעיל לפני merge
+
+#### הערות מימוש
+
+- `configManager` namespace נוסף לקיט (commit 1 על אותו branch) כ-`export * as configManager from "./lib/config/config-manager"` — additive, ללא breaking changes
+- תוך כדי, תוקן pre-existing TypeScript bug בקיט (`err<ValidationError>` → `err({ kind: "validation" as const, ... })`) שנחשף בגלל ה-namespace import
+
+---
+
 תיעוד התקדמות פיתוח של משחק "איפה האות?" — תרגול זיהוי אותיות עברית בקול ובמראה.
 
 **Live URLs:**
@@ -8,6 +116,49 @@
 - **Dev (Cloudflare)**: https://dev.find-letter-game.pages.dev (Cloudflare Pages — dev branch)
 - Dev (פנימי): https://musicode-find-letter.nue.tuns.sh (HMR, tuns.sh)
 - Preview (פנימי): https://musicode-find-letter-preview.nue.tuns.sh (build, tuns.sh)
+
+---
+
+## 2026-05-16 01:35
+
+### הפרדת מסך פתיחה ממסך משחק — `/` ↔ `/play` לעקיפת autoplay policy
+
+עד עכשיו ה-route `/` היה גם מסך הפתיחה וגם מסך המשחק. הבעיה: התלמיד מגיע ל-`/`, ה-game state מתאתחל ב-`onMount`, ו-`Audio.play()` של ה-TTS נחסם ע"י הדפדפן כי אין user gesture חי (במיוחד ב-iOS Safari). הפתרון: פיצול ל-`/` (פתיחה עם CTA) ו-`/play` (משחק), כך שה-`resetGame` רץ בתוך `onclick` של הכפתור — gesture חי, האודיו עובד.
+
+#### מה בוצע?
+
+**1. `routes/+page.svelte` — שכתוב מלא למסך פתיחה**
+
+- מסך נחיתה ייעודי עם hero, אות-לוגו `בַּ`, כותרת, subtitle, CTA "להתחלת המשחק"
+- אייקון הגדרות בפינה (גלגל SVG) עטוף ב-`AdminGate` — מורה יכול לקפוץ ל-`/settings` בלי להיכנס למשחק
+- ה-`handleStart()` עושה `gameState.resetGame()` ואז `goto('/play')` — שניהם בתוך call-stack של ה-click → ה-`Audio.play()` ב-`startBoard()` עובר את autoplay policy
+- מסיר את כל הלוגיקה של הלוח, `ProgressWidget` ו-`COOLDOWN` (עברה ל-`/play`)
+
+**2. `routes/play/+page.svelte` (חדש) — מסך המשחק**
+
+- מכיל את הלוח, `HeaderBar`, `ProgressWidget`, ו-`CooldownOverlay`
+- ה-`onMount` בודק `gameState.status === 'IDLE'` — אם נכנסו ישירות ל-`/play` (refresh/URL), מחזיר ל-`/` (אין gesture). כניסה תקינה היא רק דרך מסך הפתיחה
+- מאתחל `boosterService` רק אם `settings.boosterEnabled`
+
+**3. `routes/settings/+page.svelte` — "חזרה למשחק" מאפס + הולך ל-`/play`**
+
+- כפתור החזרה היה `goto('/')` — עכשיו `gameState.resetGame() + goto('/play')` בתוך אותו click
+- מאפס את ה-state כדי שהגדרות חדשות יחולו (`gridSize`, `boardsPerSet`, וכו') ולא ייווצרו מצבי "14/12" כש-`totalQuestionsPerSet` משתנה באמצע סבב
+- bonus: `cooldownMs` max עלה מ-5000 ל-10000ms
+
+**4. `services/language.ts` — 3 מחרוזות חדשות**
+
+- `startScreenSubtitle: "משחק זיהוי אותיות בעברית"`
+- `startButtonLabel: "להתחלת המשחק"`
+- `startScreenTip: "הקשיבו ולחצו על האות הנכונה"`
+
+#### מעקפים ופתרונות
+
+- **autoplay policy של דפדפנים**: הדפדפן (בעיקר Safari) חוסם `Audio.play()` אם הוא לא בתוך call-stack של event-handler חי. ה-`startBoard()` עושה `setTimeout(250)` ובו `repeatTarget()` עם `Audio.play()` — ה-`setTimeout` שובר את ה-gesture chain. התיקון פה הוא ארכיטקטוני: לוודא שה-`resetGame` קורה תחת click, ושה-`/play` בעצמו לא מאתחל game state אם הוא מצא `IDLE` — מחזיר ל-`/`.
+
+#### החלטות ארכיטקטורה
+
+- **שני routes במקום state machine ב-`/`**: יכולנו להישאר ב-route אחד ולהוסיף `{#if showStartScreen}`. בחרנו ב-routes כי: (א) מאפשר deep-link ל-`/settings` בלי לעבור דרך הלוגיקה של המשחק, (ב) מוודא שה-game state נטען בעצלן רק כשנכנסים ל-`/play`, (ג) מסיר תלות בין hero ו-game logic.
 
 ---
 

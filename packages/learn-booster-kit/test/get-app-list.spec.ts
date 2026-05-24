@@ -26,9 +26,11 @@ describe('getAppsList — not in Fully Kiosk', () => {
 
 describe('getAppsList — Fully Kiosk', () => {
   it('מחזיר רשימת אפליקציות מ-Fully Kiosk', async () => {
+    // ה-mock objects חייבים לכלול את כל השדות של AppListItemSchema:
+    // { icon, label, package, version, versionCode } — לא packageName!
     const mockApps = [
-      { packageName: 'com.example.app1', label: 'App1' },
-      { packageName: 'com.example.app2', label: 'App2' },
+      { icon: 'data:image/png;base64,AAAA', label: 'App1', package: 'com.example.app1', version: '1.0.0', versionCode: 1 },
+      { icon: 'data:image/png;base64,BBBB', label: 'App2', package: 'com.example.app2', version: '2.0.0', versionCode: 2 },
     ];
 
     vi.doMock('../src/lib/fully-kiosk/fully-kiosk', () => ({

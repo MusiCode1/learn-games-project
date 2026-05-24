@@ -8,7 +8,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./styles": "./src/styles.css",
-    "./ui/*": "./src/ui/*.svelte"
+    "./ui/*": "./src/ui/*"
   },
   "scripts": {
     "dev": "vite",
@@ -47,7 +47,9 @@
     "vitest": "^4.0.15"
   },
   "dependencies": {
+    "@fontsource/frank-ruhl-libre": "^5.2.8",
     "@fontsource/heebo": "^5.1.0",
+    "@fontsource/rubik": "^5.2.8",
     "@playwright/test": "^1.51.1",
     "@tailwindcss/postcss": "^4.1.17",
     "@tailwindcss/vite": "^4.1.17",
@@ -56,6 +58,7 @@
     "caniuse-lite": "^1.0.30001759",
     "dotenv": "^17.3.1",
     "fully-kiosk-js": "*",
+    "neverthrow": "^8.2.0",
     "vite-plugin-css-injected-by-js": "^3.5.2"
   }
 }

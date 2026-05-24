@@ -9,6 +9,7 @@
 	} from 'learn-booster-kit';
 	import { language } from '$lib/services/language';
 	import { settings, type GridSize } from '$lib/stores/settings.svelte';
+	import { gameState } from '$lib/stores/game-state.svelte';
 	import LetterSelectionGrid from '../_components/LetterSelectionGrid.svelte';
 
 	const sizes: GridSize[] = ['2x3', '3x3', '3x4', '4x4'];
@@ -47,6 +48,16 @@
 		// ה-kit קורא לזה כדי לבדוק וידאו — אנחנו רק מפעילים reward
 		boosterService.triggerReward();
 	}
+
+	/**
+	 * חזרה למשחק: מאפסים את ה-state כדי שההגדרות החדשות יחולו (כולל גודל
+	 * לוח, boardsPerSet, וכו'), והניווט קורה מאותו ה-click — gesture חי
+	 * שמאפשר ל-Audio.play() של ה-TTS לרוץ ב-/play.
+	 */
+	function backToGame() {
+		gameState.resetGame();
+		goto('/play');
+	}
 </script>
 
 <svelte:head>
@@ -58,7 +69,7 @@
 		<!-- Header -->
 		<header class="page-header">
 			<h1 class="page-title">{language.settingsPageTitle}</h1>
-			<button class="back-btn" onclick={() => goto('/')}>
+			<button class="back-btn" onclick={backToGame}>
 				← {language.backToGame}
 			</button>
 		</header>
@@ -164,7 +175,7 @@
 						id="cooldown"
 						type="range"
 						min="0"
-						max="5000"
+						max="10000"
 						step="500"
 						bind:value={settings.cooldownMs}
 					/>

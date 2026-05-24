@@ -1,0 +1,63 @@
+/* ========================
+   Theme: Wordys
+   ========================
+   כתום-זהב, Rubik, רדיוסים גדולים, ילדותי.
+   מבוסס על apps/wordys-game.
+*/
+
+[data-theme='wordys'] {
+	/* Surfaces & Backgrounds */
+	--theme-surface-base: #fef3c7;
+	--theme-surface-elevated: #ffffff;
+	--theme-surface-sunken: #fde68a;
+	--theme-surface-overlay: rgba(234, 88, 12, 0.5);
+	--theme-surface-header: var(--theme-surface-elevated);
+	--theme-border-subtle: #fcd34d;
+	--theme-border-strong: #f59e0b;
+
+	/* Brand */
+	--theme-brand-primary: #ea580c;
+	--theme-brand-primary-hover: #c2410c;
+	--theme-brand-secondary: #fbbf24;
+	--theme-brand-secondary-hover: #f59e0b;
+
+	/* Text */
+	--theme-text-primary: #78350f;
+	--theme-text-secondary: #92400e;
+	--theme-text-tertiary: #b45309;
+	--theme-text-on-brand: #ffffff;
+	--theme-text-on-feedback: #ffffff;
+	--theme-text-on-header: var(--theme-text-primary);
+	--theme-accent-frame: transparent;
+
+	/* Feedback */
+	--theme-feedback-success: #22c55e;
+	--theme-feedback-success-bg: #dcfce7;
+	--theme-feedback-error: #ef4444;
+	--theme-feedback-error-bg: #fee2e2;
+	--theme-feedback-warning: #b45309;
+	--theme-feedback-warning-bg: #fef3c7;
+
+	/* Radius */
+	--theme-radius-sm: 12px;
+	--theme-radius-md: 20px;
+	--theme-radius-lg: 32px;
+	--theme-radius-pill: 9999px;
+	--theme-touch-min: 80px;
+
+	/* Shadows */
+	--theme-shadow-card: 0 8px 20px rgba(234, 88, 12, 0.15);
+	--theme-shadow-elevated: 0 8px 22px rgba(234, 88, 12, 0.2);
+	--theme-shadow-focus: 0 0 0 4px rgba(250, 204, 21, 0.5);
+
+	/* Typography */
+	--theme-font-display: 'Rubik', 'Heebo', system-ui, sans-serif;
+	--theme-font-body: 'Rubik', 'Heebo', system-ui, sans-serif;
+	--theme-font-size-xs: 0.75rem;
+	--theme-font-size-sm: 0.875rem;
+	--theme-font-size-md: 1rem;
+	--theme-font-size-lg: 1.75rem;
+	--theme-font-size-xl: 2.5rem;
+	--theme-font-weight-regular: 400;
+	--theme-font-weight-bold: 800;
+}

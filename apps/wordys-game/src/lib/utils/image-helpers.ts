@@ -1,13 +1,13 @@
 import type { Shelf, Box } from '$lib/types';
-import { getCardImageUrl } from '$lib/services/assets';
+import { getCardImage } from '$lib/services/assets';
 
 export function getBoxImage(box: Box): string | null {
 	if (box.coverCardId) {
-		// We just need the ID to get the image
-		return getCardImageUrl(box.coverCardId);
+		const card = box.cards.find((c) => c.id === box.coverCardId);
+		if (card) return getCardImage(card);
 	}
 	if (box.cards.length > 0) {
-		return getCardImageUrl(box.cards[0].id);
+		return getCardImage(box.cards[0]);
 	}
 	return null;
 }

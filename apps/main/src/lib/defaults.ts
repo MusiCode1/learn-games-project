@@ -5,6 +5,7 @@ export interface AvailableGame {
 	category: CategoryTextKey;
 	status: StatusTextKey;
 	href: string;
+	devHref?: string;
 	appPath: string;
 	icon: string;
 	accent: string;
@@ -16,6 +17,7 @@ export const AVAILABLE_GAMES: AvailableGame[] = [
 		category: 'reading',
 		status: 'available',
 		href: 'https://wordys-game.pages.dev',
+		devHref: 'https://dev.wordys-game.pages.dev',
 		appPath: 'apps/wordys-game',
 		icon: 'אב',
 		accent: 'rose'
@@ -24,7 +26,7 @@ export const AVAILABLE_GAMES: AvailableGame[] = [
 		id: 'readFaster',
 		category: 'reading',
 		status: 'available',
-		href: 'https://read-faster.vercel.app',
+		href: 'https://read-faster-tzlev.vercel.app',
 		appPath: 'apps/read-faster',
 		icon: 'רץ',
 		accent: 'sky'
@@ -43,6 +45,7 @@ export const AVAILABLE_GAMES: AvailableGame[] = [
 		category: 'math',
 		status: 'available',
 		href: 'https://train-addition-game.pages.dev',
+		devHref: 'https://dev.train-addition-game.pages.dev',
 		appPath: 'apps/train-addition-game',
 		icon: '+',
 		accent: 'amber'
@@ -52,6 +55,7 @@ export const AVAILABLE_GAMES: AvailableGame[] = [
 		category: 'lifeSkills',
 		status: 'available',
 		href: 'https://passcode-practice.pages.dev',
+		devHref: 'https://dev.passcode-practice.pages.dev',
 		appPath: 'apps/passcode-practice',
 		icon: '123',
 		accent: 'violet'
@@ -69,7 +73,8 @@ export const AVAILABLE_GAMES: AvailableGame[] = [
 		id: 'jigsawPuzzle',
 		category: 'visual',
 		status: 'available',
-		href: 'https://dev.puzzle-game-92p.pages.dev',
+		href: 'https://puzzle-game-92p.pages.dev',
+		devHref: 'https://dev.puzzle-game-92p.pages.dev',
 		appPath: 'apps/jigsaw-puzzle-game/version-2',
 		icon: 'חלק',
 		accent: 'indigo'
@@ -79,6 +84,7 @@ export const AVAILABLE_GAMES: AvailableGame[] = [
 		category: 'reading',
 		status: 'available',
 		href: 'https://find-letter-game.pages.dev',
+		devHref: 'https://dev.find-letter-game.pages.dev',
 		appPath: 'apps/find-letter-game',
 		icon: 'בַּ',
 		accent: 'rose'

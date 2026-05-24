@@ -79,6 +79,10 @@
           rows,
           shapeStyle: settings.shapeStyle,
           organizedStart: !settings.shufflePiecePlacement,
+          organizedGap: settings.organizedGap,
+          prePlacedPieces: settings.prePlacedPieces,
+          loosePieceSelection: settings.loosePieceSelection,
+          loosePiecesCount: settings.loosePiecesCount,
           onPieceConnected: (count: number) => {
             gameState.onPieceConnected(count);
           },

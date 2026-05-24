@@ -1,0 +1,85 @@
+/* ========================
+   Theme: Slate
+   ========================
+   אפור-כהה, ירוק/צהוב feedback, פונקציונלי.
+   Header כהה (#1e293b) עם טקסט לבן — הזהות הבסיסית של המשחק.
+   מבוסס על sort-cards / train-addition / passcode / jigsaw-v2.
+*/
+
+[data-theme='slate'] {
+	/* Surfaces & Backgrounds */
+	--theme-surface-base: #fef9c3;
+	--theme-surface-elevated: #ffffff;
+	--theme-surface-sunken: #fef3c7;
+	--theme-surface-overlay: rgba(15, 23, 42, 0.6);
+	--theme-surface-header: #1e293b;
+	--theme-border-subtle: #e2e8f0;
+	--theme-border-strong: #94a3b8;
+
+	/* Brand */
+	--theme-brand-primary: #1e293b;
+	--theme-brand-primary-hover: #0f172a;
+	--theme-brand-secondary: #4ade80;
+	--theme-brand-secondary-hover: #22c55e;
+
+	/* Text */
+	--theme-text-primary: #0f172a;
+	--theme-text-secondary: #475569;
+	--theme-text-tertiary: #94a3b8;
+	--theme-text-on-brand: #ffffff;
+	--theme-text-on-feedback: #ffffff;
+	--theme-text-on-header: #ffffff;
+	--theme-accent-frame: transparent;
+
+	/* Feedback */
+	--theme-feedback-success: #22c55e;
+	--theme-feedback-success-bg: #dcfce7;
+	--theme-feedback-error: #ef4444;
+	--theme-feedback-error-bg: #fee2e2;
+	--theme-feedback-warning: #facc15;
+	--theme-feedback-warning-bg: #fef9c3;
+
+	/* Radius */
+	--theme-radius-sm: 8px;
+	--theme-radius-md: 16px;
+	--theme-radius-lg: 24px;
+	--theme-radius-pill: 9999px;
+	--theme-touch-min: 70px;
+
+	/* Shadows */
+	--theme-shadow-card: 0 4px 6px rgba(15, 23, 42, 0.05);
+	--theme-shadow-elevated: 0 10px 25px rgba(15, 23, 42, 0.15);
+	--theme-shadow-focus: 0 0 0 3px rgba(74, 222, 128, 0.4);
+
+	/* Typography */
+	--theme-font-display: system-ui, 'Segoe UI', Tahoma, sans-serif;
+	--theme-font-body: system-ui, 'Segoe UI', Tahoma, sans-serif;
+	--theme-font-size-xs: 0.75rem;
+	--theme-font-size-sm: 0.875rem;
+	--theme-font-size-md: 1rem;
+	--theme-font-size-lg: 1.25rem;
+	--theme-font-size-xl: 1.5rem;
+	--theme-font-weight-regular: 400;
+	--theme-font-weight-bold: 700;
+}
+
+/* Header dark — scoped token overrides */
+[data-theme='slate'] header.lbk-header-bar {
+	/* Surfaces become semi-transparent white over dark header */
+	--theme-surface-sunken: rgba(255, 255, 255, 0.12);
+	--theme-surface-elevated: rgba(255, 255, 255, 0.08);
+
+	/* Text becomes white-on-dark */
+	--theme-text-primary: #ffffff;
+	--theme-text-secondary: rgba(255, 255, 255, 0.75);
+	--theme-text-tertiary: rgba(255, 255, 255, 0.55);
+
+	/* Feedback bgs become tinted-transparent (work over dark) */
+	--theme-feedback-success-bg: rgba(74, 222, 128, 0.2);
+	--theme-feedback-warning-bg: rgba(250, 204, 21, 0.2);
+	--theme-feedback-error-bg: rgba(248, 113, 113, 0.2);
+
+	/* Borders white-tinted */
+	--theme-border-subtle: rgba(255, 255, 255, 0.18);
+	--theme-border-strong: rgba(255, 255, 255, 0.35);
+}

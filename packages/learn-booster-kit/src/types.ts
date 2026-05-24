@@ -1,9 +1,42 @@
 import type { Component as ComponentImport, SvelteComponent } from "svelte";
 import type { Writable, Readable } from "svelte/store";
+import type { WatchStateWatchOptions } from "./lib/watchdog/reward-watchdog";
 export type { FullyKiosk, FullyItem } from "fully-kiosk-js";
 
-// טיפוסים שמקורם ב-schemas (ArkType inferred) — re-export לתאימות לאחור
-export type {
+// === Global window extensions ===
+//
+// `learn-booster-kit` רץ בתוך 3 סביבות:
+// 1. אפליקציות SvelteKit עצמאיות (find-letter-game, lotto-game, etc.)
+// 2. דף gingim.net הישן (WordPress) שמזריק `window.config` עם פורמט legacy
+// 3. ה-overlay של Fully Kiosk
+//
+// ה-declare global הזה ב-types.ts (ולא ב-vite-env.d.ts) — כדי שהוא יחול
+// אוטומטית על כל צרכן של הקיט, גם אם ה-tsconfig שלו לא כולל את ה-d.ts
+// של הקיט. types.ts כן מיובא ע"י כל צרכן (דרך re-exports מ-index.ts).
+declare global {
+  interface Window {
+    /** legacy gingim config — נקרא ע"י config-manager לזיהוי OldConfig שדורש migration */
+    config?: unknown;
+
+    /** debug/control hooks שהקיט מציע ל-DevTools console ול-overlay חיצוני */
+    GingimBoosterTools?: {
+      watchdog?: {
+        logRemainingSeconds: () => void;
+        getRemainingSeconds: () => number | null;
+        watchStateUntilReturn: (options?: WatchStateWatchOptions) => boolean;
+      };
+      overlay?: {
+        start: (durationMs?: number) => void;
+        stop: () => void;
+      };
+    };
+  }
+}
+
+// טיפוסים שמקורם ב-schemas (ArkType inferred) — מיובאים ל-binding מקומי
+// (לשימוש בקובץ זה: VideoDialogProps, VideoConfig, AppConfig, ConfigOverrides, VideoList)
+// וגם מיוצאים החוצה לתאימות לאחור
+import type {
   Config,
   VideoItem,
   Profile,
@@ -12,6 +45,15 @@ export type {
   OldConfig,
   AppListItem,
 } from "./schemas";
+export type {
+  Config,
+  VideoItem,
+  Profile,
+  ProfilesState,
+  ProfilesExportPayload,
+  OldConfig,
+  AppListItem,
+};
 
 /**
  * Game Configuration passing to triggerReward

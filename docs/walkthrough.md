@@ -6,6 +6,186 @@
 
 ---
 
+## 2026-05-17 12:30
+
+### Pilot מיגרציה ראשון: find-letter-game משתמש ב-configManager של הקיט
+
+POC להוכחה שהמכניזם של `gameSettings` בפרופיל (שבנה הסוכן המקביל
+בקיט) עובד בפועל על משחק חי. הניסוי בוצע על branch ניסיוני
+(`experiment/find-letter-config-manager`) ומוזג ל-dev אחרי בדיקה
+ידנית מקיפה בדפדפן.
+
+#### מה בוצע?
+
+**1. הרחבת ה-API של הקיט — namespace `configManager`** (1 שורה, additive)
+
+ב-`packages/learn-booster-kit/src/index.ts` נוסף:
+```ts
+export * as configManager from './lib/config/config-manager';
+```
+
+מאפשר ל-consumers לייבא `configManager.X()` במקום named imports
+בודדים. ה-flat exports הקיימים נשמרו ל-tree-shaking.
+
+**2. מיגרציית `SettingsStore` של find-letter ל-configManager**
+
+הקובץ `apps/find-letter-game/src/lib/stores/settings.svelte.ts` עבר
+שכתוב משמעותי:
+
+- `class SettingsStore` הוסר → `export const settings = $state({...})`
+- מקור-אמת יחיד: `makeDefaults()` + `type = ReturnType<typeof makeDefaults>`
+- Derivations (`totalCellsInGrid` וכו') נשארות כ-reactive getters
+- Echo cancellation דרך `JSON.stringify` compare (אין flag stateful)
+- Fast-path: קריאה ישירה מ-`learn-booster-profiles:v1` ב-localStorage,
+  כדי שה-settings יופיעו מיד בלי להמתין ל-`boosterService.init` (שטוען
+  Google Drive — איטי)
+- מיגרציה חד-פעמית מהמפתח legacy `find-letter-game-settings`
+- Filter ל-intermediate notifications מהקיט (cache stale)
+- **אפס שינוי בקומפוננטות צרכניות** — אותו API ל-`settings.gridSize` וכו'
+
+**3. 6 regression tests חדשים**
+
+`settings.regression.test.ts` מגן מ-3 הבאגים שזוהו בבדיקה:
+- toJSON בתוך $state יוצר state_snapshot_uncloneable
+- DataCloneError ב-cloneConfig של הקיט מונע sync לפרופיל
+- selectedLetterIds כ-proxy שובר structuredClone
+
+**4. מסמכים תכנוניים**
+
+- `docs/find-letter-config-migration.md` — ה-spec ההיסטורי של הניסוי
+- `docs/component-system-spec.md` — spec של מערכת הקומפוננטות
+  המשותפת (4 חלקים, 30 קומיטים, נכתב ע"י Opus ובוצע ע"י Sonnet
+  במהלך אותו סשן)
+
+#### החלטות ארכיטקטורה
+
+- **Adapter pattern, לא Reactive Wrapper בקיט** (אופציה A מתוך 2-3
+  שנשקלו): נשאר ה-SettingsStore כ-reactive layer ב-find-letter,
+  רק ה-storage backend עבר ל-configManager. הקיט לא ידע על Svelte
+  reactivity, וכל משחק עתידי שירצה adapter יעתיק את הקובץ הזה
+  ויתאים. אם נמיגר 3+ משחקים — אז שווה להוציא ל-factory בקיט.
+
+- **`learn-booster-profiles:v1` הוא ה-source of truth, לא
+  `learn-booster-config`**: ה-cache של הקיט עלול להיות stale
+  (מ-buggy $effect שרץ לפני init). הfilter בקובץ שלנו מסתמך על
+  הפרופיל הישיר.
+
+- **$state אובייקט יחיד עם getters, לא class עם 9 שדות**: דרישה
+  של המשתמש לאיחוד ה-DRY (9 שדות פעם אחת ב-`makeDefaults()`,
+  לא 5×9=45). ה-API לצרכן זהה לחלוטין ל-class הישן.
+
+#### מעקפים ופתרונות
+
+- **`$state.snapshot()` לא מכבד `toJSON` ב-object literal**: נכתב
+  ב-learnings.md הגלובלי. הפתרון: helper `dataSnapshot()` עצמאי
+  שבונה plain object מ-DATA_KEYS.
+
+- **`subscribeGameSettings` יורה סינכרונית מיד עם הרישום**: יוצר
+  אתגר ל-init order. הפתרון: ב-callback עם `s === undefined`,
+  לאתחל את `lastSyncedJson` ל-snapshot של ה-state הנוכחי, כך
+  שה-$effect הראשון יראה "אותו דבר" וידלג.
+
+#### מצב אחרי merge ל-dev
+
+- 3 קומיטים נוספו לdev (`d192770`, `1ebc02f`, `8d6cce4`)
+- branch ניסיוני נמחק לאחר merge מוצלח
+- production build נבדק בדפדפן (`musicode-find-letter-exp.nue.tuns.sh`)
+- אם יש להגר משחקים נוספים — הקובץ של find-letter הוא ה-template
+
+---
+
+## 2026-05-16 16:30
+
+### כללי קוד מאוחדים — `AGENTS.md` + `coding-conventions.md` + `functional-programming.md`
+
+איחוד כללי הקוד למסמכים מרכזיים בעקבות זיהוי פיזור: היו כללים ב-`GEMINI.md` של ה-root, ב-`AGENTS.md` של חלק מה-apps (wordys-game היחיד מפורט, השאר רק Svelte MCP), וב-`apps/read-faster/ללא כותרת.md` (שכלל את החלק המפורט ביותר על FP ו-Result type).
+
+#### מה בוצע?
+
+**1. `AGENTS.md` בשורש (חדש)** — entry point רזה
+
+- תקציר של הכללים הקריטיים (שפה, stack, FP, תהליך עבודה, files)
+- 7 "חוקי זהב" חיוביים (החזר Result, השתמש ב-language.ts, וכו')
+- הפניות ל-5 מסמכי תיעוד עיקריים
+- מבנה הפרויקט בקיצור
+
+**2. `docs/coding-conventions.md` (חדש)** — 11 פרקים על קוד
+
+- שפה ותקשורת (עברית למשתמש, אנגלית לשמות)
+- Stack (SvelteKit 5, Tailwind 4, Bun, ArkType)
+- TypeScript + Svelte 5 (runes, snippets, onclick, $bindable)
+- שמות קבצים (PascalCase / kebab-case / `.svelte.ts`)
+- מבנה תיקיות עם co-location
+- **תיעוד פר-app** — מסומן כ"בתהליך" (~5/12 apps מכילים `AGENTS.md` עדיין)
+- תהליך עבודה עם **3 מודלי אישור לקומיטים**:
+  - מודל א — Per-commit (ברירת מחדל)
+  - מודל ב — Batch approval (כמה קומיטים יחד עם אישור גלובלי)
+  - מודל ג — Session-level autonomous (לסשנים ללא השגחה, ברשות מפורשת)
+- בדיקות (עברית מומלץ, אנגלית מקובל, עקביות בקובץ)
+
+**3. `docs/functional-programming.md` (חדש)** — כללי FP
+
+- "Functional Core, Imperative Shell" כעיקרון מנחה
+- מה כן: pure functions בלוגיקה (migrate, validate, shuffle, score)
+- מה לא: FP אגרסיבי ב-UI / על Svelte runes
+- `Result<T, E>` במקום `throw` ב-public API
+- ❌ לא Effect.ts / fp-ts / monads
+- Composition over inheritance
+- Checklist לפני כל פונקציה חדשה
+- מצב הפרויקט נכון לעכשיו + יעדי המרה
+
+**4. מחיקת `GEMINI.md` בשורש**
+
+- הוסר. הוא הכיל "Project Rules for Wordy's Game" שעלו עכשיו כפילות עם `AGENTS.md` החדש.
+- Gemini CLI יקרא `AGENTS.md` אם `GEMINI.md` לא קיים.
+
+#### החלטות ארכיטקטורה
+
+- **מבנה היברידי: AGENTS.md רזה + מסמכים מפורטים**: בחירה בין מסמך-יחיד גדול לבין AGENTS.md + מסמכים מודולריים. בחרנו במודולרי כי כל מסמך מתחזק את עצמו בקצב משלו (game-design-rules ו-functional-programming השונים בעולמם), וה-AGENTS.md משמש כ-index.
+
+- **FP חכם ולא קנאי**: לא Effect.ts/fp-ts. בעיקר Result type ו-pure helpers. Svelte 5 runes נשארים native (mutable). ה-tradeoff: לא port-able ל-Go (לא יעד פה), אבל גם לא נלחמים ב-framework.
+
+- **ArkType ולא Zod**: הקיט כבר משתמש ב-ArkType. read-faster המליץ Zod, אבל הוא חריג. במונוריפו — ArkType סטנדרט.
+
+- **אסור `&&` באופן מלא**: סתירה בין `GEMINI.md` הישן (התיר `&&`) לבין סקיל `commit` (אסר). הכרענו ל"אסור" כי הוא מאפשר בדיקת פלט בין פקודות.
+
+- **3 מודלי אישור**: per-commit לעבודה בליווי, batch לעבודה רציפה, autonomous לריצות לילה. המודלים נבחרים לפי הסכמה גלובלית בתחילת הסשן, לא פר-קומיט.
+
+#### מעקפים ופתרונות
+
+- **שמות טסטים מעורבים**: סקרנו את כל קבצי הטסט וגילינו שלא כל הטסטים בעברית. במקום לכפות אחידות מלאה, הכלל הוא "עברית מומלצת + עקביות בתוך הקובץ".
+
+---
+
+## 2026-05-16 01:22
+
+### תיעוד פלטפורמיזציה — קביעת תוכנית ארוכת-טווח לאיחוד 12 המשחקים
+
+נקבעו מסמכי ההפניה לתהליך איחוד פלטפורמת המשחקים: כללי עיצוב משותפים, ותוכנית רב-שלבית לפלטפורמיזציה הדרגתית בהשראת Bitsboard.
+
+#### מה בוצע?
+
+**1. `docs/game-design-rules.md` (חדש, 362 שורות)**
+
+- מסמך כללי-עיצוב לכל המשחקים הלימודיים
+- 10 סעיפים: booster, AdminGate, sounds, cooldown, TTS, settings, persistence, accessibility, language, debugging
+- מקור-אמת לכל משחק חדש או רפקטור משחק קיים
+
+**2. `docs/platform-plan.md` (חדש, 418 שורות)**
+
+- תוכנית 6 שלבים לאיחוד הפלטפורמה: חילוץ קוד משותף → Themes → הפרדת תוכן → Providers → Backend → איחוד דומיין
+- ארבע החלטות אסטרטגיות: Composition (Shell משותף → איחוד עתידי), Content (היברידי בסגנון Bitsboard), הגירה (Strangler לפי שכבה), היקף (טכני עכשיו)
+- מפת 12 ה-apps עם קטגוריזציה (חלוצים / מועמדים / מקובעים בריאים / חריגים / תשתית)
+- סקירת פטרני ContentProvider (Provider של lotto + Data Pack של sort-cards)
+- הצעת הרחבה ל-`SelectionAxis` לתמיכה במכפלה קרטזית (עיצור × ניקוד) — מבחן הקצה שיוודא שהמנגנון מספיק לכל משחק עתידי
+
+#### החלטות ארכיטקטורה
+
+- **שני מסמכים נפרדים**: `game-design-rules` הוא ספסיפיקציה ("איך משחק *צריך* להיראות"), `platform-plan` הוא ROADMAP ("איך מגיעים לשם"). הפרדה מאפשרת לעדכן כל אחד בקצב משלו.
+- **תיעוד פלטפורמה במונוריפו ולא בקיט**: התוכנית רוחבית ל-12 ה-apps + 2 ה-packages, לא ספציפית ל-`learn-booster-kit`. מקומה הטבעי ב-`docs/` של השורש.
+
+---
+
 ## 2026-04-03 22:00
 
 ### סקריפט יצירת אודיו עם ElevenLabs V3

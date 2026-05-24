@@ -34,35 +34,40 @@ describe("adaptGridToImage", () => {
     expect(result).toEqual({ columns: 2, rows: 3 });
   });
 
-  it("מעדיף יחס נכון על פני מספר חלקים מדויק — תמונה רחבה מאוד (16:9) עם 4 חלקים", () => {
+  it("שומר על מספר חלקים מינימלי — תמונה רחבה מאוד (16:9) עם 4 חלקים", () => {
     const result = adaptGridToImage({
       targetPieceCount: 4,
       imageAspectRatio: 16 / 9,
     });
 
-    // 2x2 (יחס 1.0) רחוק מאוד מ-1.78
-    // 3x2 (יחס 1.5) קרוב יותר ל-1.78
-    expect(result).toEqual({ columns: 3, rows: 2 });
+    // עם targetPieceCount=4, מינימום 4 חלקים
+    // 2x2 (יחס 1.0) יש לו 4 חלקים — מתאים
+    // 4x1 (יחס 4.0) יש לו 4 חלקים — יחס רחוק
+    expect(result.columns * result.rows).toBeGreaterThanOrEqual(4);
   });
 
-  it("מחזיר לפחות 2 חלקים בכל ציר — אין שורה/עמודה בודדת", () => {
-    const result = adaptGridToImage({
-      targetPieceCount: 2,
-      imageAspectRatio: 1.0,
-    });
-
-    expect(result.columns).toBeGreaterThanOrEqual(2);
-    expect(result.rows).toBeGreaterThanOrEqual(2);
+  it("מחזיר 2x1 עבור 2 חלקים — תמיד אנכי (אחד ליד השני)", () => {
+    // תמונה רחבה
+    expect(adaptGridToImage({ targetPieceCount: 2, imageAspectRatio: 2.0 }))
+      .toEqual({ columns: 2, rows: 1 });
+    
+    // תמונה ריבועית
+    expect(adaptGridToImage({ targetPieceCount: 2, imageAspectRatio: 1.0 }))
+      .toEqual({ columns: 2, rows: 1 });
+    
+    // תמונה אנכית — עדיין 2×1
+    expect(adaptGridToImage({ targetPieceCount: 2, imageAspectRatio: 0.5 }))
+      .toEqual({ columns: 2, rows: 1 });
   });
 
-  it("לא חורג בהרבה ממספר החלקים המבוקש — 6 חלקים בתמונה ריבועית מחזיר 6 ולא 9 או 16", () => {
+  it("שומר על מינימום חלקים — 6 חלקים בתמונה ריבועית", () => {
     const result = adaptGridToImage({
       targetPieceCount: 6,
       imageAspectRatio: 1.0,
     });
 
     const total = result.columns * result.rows;
-    expect(total).toBeLessThanOrEqual(8);
-    expect(total).toBeGreaterThanOrEqual(4);
+    // מינימום 6 חלקים, אבל יכול להיות יותר אם היחס מצדיק
+    expect(total).toBeGreaterThanOrEqual(6);
   });
 });

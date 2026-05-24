@@ -10,7 +10,7 @@ import { initializeConfig, configStore } from './config/config-manager';
 import { createTimer } from './utils/timer';
 import { sleep } from './utils/sleep';
 import { log } from './logger.svelte';
-import { createRewardWatchdog } from './watchdog/reward-watchdog';
+import { createRewardWatchdog, type WatchStateWatchOptions } from './watchdog/reward-watchdog';
 import { createOverlayChannel, sendCommand } from './overlay/overlay-channel';
 import { loadOverlaySettings } from './overlay/overlay-settings';
 
@@ -98,7 +98,7 @@ class BoosterService {
         window.GingimBoosterTools.watchdog = {
             logRemainingSeconds: () => this.rewardWatchdog.logRemainingSeconds(),
             getRemainingSeconds: () => this.rewardWatchdog.getRemainingSeconds(),
-            watchStateUntilReturn: (options) => this.rewardWatchdog.watchStateUntilReturn(options)
+            watchStateUntilReturn: (options?: WatchStateWatchOptions) => this.rewardWatchdog.watchStateUntilReturn(options)
         };
         window.GingimBoosterTools.overlay = {
             start: (durationMs = 30_000) => sendCommand(this.getOverlayChannel(), {

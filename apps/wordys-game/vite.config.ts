@@ -39,6 +39,7 @@ export default defineConfig({
 	server: {
 		host: true,
 		open: true,
+		allowedHosts: ['.tuns.sh', '.trycloudflare.com', '.ngrok-free.app'],
 		cors: {
 			origin: '*',
 			preflightContinue: true

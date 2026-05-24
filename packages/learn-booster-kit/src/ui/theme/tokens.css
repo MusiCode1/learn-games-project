@@ -1,0 +1,59 @@
+/* ========================
+   Tokens — @theme block
+   ========================
+   מגדיר את ה-mapping בין CSS variables סמנטיים (--color-*)
+   ל-CSS variables של ה-theme (--theme-*).
+   Tailwind 4 מייצר utility classes מה-@theme block.
+   ה-var(--theme-*) נפתר ב-runtime לפי [data-theme] הפעיל.
+*/
+
+@theme {
+	/* Surfaces */
+	--color-surface-base: var(--theme-surface-base);
+	--color-surface-elevated: var(--theme-surface-elevated);
+	--color-surface-sunken: var(--theme-surface-sunken);
+	--color-surface-overlay: var(--theme-surface-overlay);
+	--color-surface-header: var(--theme-surface-header);
+	--color-border-subtle: var(--theme-border-subtle);
+	--color-border-strong: var(--theme-border-strong);
+
+	/* Brand */
+	--color-brand-primary: var(--theme-brand-primary);
+	--color-brand-primary-hover: var(--theme-brand-primary-hover);
+	--color-brand-secondary: var(--theme-brand-secondary);
+	--color-brand-secondary-hover: var(--theme-brand-secondary-hover);
+
+	/* Text */
+	--color-text-primary: var(--theme-text-primary);
+	--color-text-secondary: var(--theme-text-secondary);
+	--color-text-tertiary: var(--theme-text-tertiary);
+	--color-text-on-brand: var(--theme-text-on-brand);
+	--color-text-on-feedback: var(--theme-text-on-feedback);
+	--color-text-on-header: var(--theme-text-on-header);
+
+	/* Feedback */
+	--color-feedback-success: var(--theme-feedback-success);
+	--color-feedback-success-bg: var(--theme-feedback-success-bg);
+	--color-feedback-error: var(--theme-feedback-error);
+	--color-feedback-error-bg: var(--theme-feedback-error-bg);
+	--color-feedback-warning: var(--theme-feedback-warning);
+	--color-feedback-warning-bg: var(--theme-feedback-warning-bg);
+
+	/* Radius (Tailwind 4 reads --radius-*) */
+	--radius-sm: var(--theme-radius-sm);
+	--radius-md: var(--theme-radius-md);
+	--radius-lg: var(--theme-radius-lg);
+	--radius-pill: var(--theme-radius-pill);
+
+	/* Accent */
+	--color-accent-frame: var(--theme-accent-frame);
+
+	/* Shadows */
+	--shadow-card: var(--theme-shadow-card);
+	--shadow-elevated: var(--theme-shadow-elevated);
+	--shadow-focus: var(--theme-shadow-focus);
+
+	/* Fonts */
+	--font-display: var(--theme-font-display);
+	--font-body: var(--theme-font-body);
+}

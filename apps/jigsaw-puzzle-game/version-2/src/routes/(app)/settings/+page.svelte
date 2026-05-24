@@ -240,6 +240,105 @@
             class="h-6 w-6 accent-sky-500"
           />
         </label>
+
+        <!-- רווח בין חלקים (רק כשערבוב כבוי) -->
+        {#if !settings.shufflePiecePlacement}
+          <div class="mt-4 pt-4 border-t border-slate-200">
+            <label class="block text-lg font-bold text-slate-700 mb-3">
+              רווח בין חלקים: {settings.organizedGap}%
+            </label>
+            <input
+              type="range"
+              bind:value={settings.organizedGap}
+              min="0"
+              max="100"
+              step="5"
+              class="w-full accent-sky-500"
+            />
+            <div class="flex justify-between text-sm text-slate-500 mt-1">
+              <span>צמוד</span>
+              <span>מרווח</span>
+            </div>
+          </div>
+        {/if}
+      </div>
+
+      <!-- חלקים מחוברים מראש -->
+      <div class="rounded-2xl bg-white/80 p-5 shadow-md">
+        <label class="flex items-center justify-between">
+          <div>
+            <span class="text-lg font-bold text-slate-700">חלקים מחוברים מראש</span>
+            <p class="text-sm text-slate-500">
+              חלק אחד נשאר חופשי, השאר מתחילים כקבוצה מחוברת
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            bind:checked={settings.prePlacedPieces}
+            class="h-6 w-6 accent-sky-500"
+          />
+        </label>
+
+        {#if settings.prePlacedPieces}
+          <div class="mt-4 pt-4 border-t border-slate-200" transition:slide>
+            <label class="block text-lg font-bold text-slate-700 mb-3">החלק החופשי</label>
+            <div class="flex gap-3">
+              <label
+                class="flex-1 flex items-center gap-2 rounded-xl border-2 p-3 cursor-pointer transition-colors"
+                class:border-sky-500={settings.loosePieceSelection === "top-left"}
+                class:bg-sky-50={settings.loosePieceSelection === "top-left"}
+                class:border-slate-300={settings.loosePieceSelection !== "top-left"}
+              >
+                <input
+                  type="radio"
+                  bind:group={settings.loosePieceSelection}
+                  value="top-left"
+                  class="accent-sky-500"
+                />
+                <span class="text-base">תמיד הפינה השמאלית-עליונה</span>
+              </label>
+              <label
+                class="flex-1 flex items-center gap-2 rounded-xl border-2 p-3 cursor-pointer transition-colors"
+                class:border-sky-500={settings.loosePieceSelection === "random"}
+                class:bg-sky-50={settings.loosePieceSelection === "random"}
+                class:border-slate-300={settings.loosePieceSelection !== "random"}
+              >
+                <input
+                  type="radio"
+                  bind:group={settings.loosePieceSelection}
+                  value="random"
+                  class="accent-sky-500"
+                />
+                <span class="text-base">אקראי בכל משחק</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- כמות חלקים לחיבור -->
+          {@const currentGrid = GRID_PRESETS[settings.gridPresetIndex]}
+          {@const totalPieces = currentGrid.columns * currentGrid.rows}
+          {@const maxLoose = Math.max(1, totalPieces - 1)}
+          <div class="mt-4 pt-4 border-t border-slate-200">
+            <label class="block text-lg font-bold text-slate-700 mb-3">
+              כמות חלקים לחיבור: {Math.min(settings.loosePiecesCount, maxLoose)}
+              <span class="text-sm text-slate-500 font-normal">
+                (מתוך {totalPieces})
+              </span>
+            </label>
+            <input
+              type="range"
+              bind:value={settings.loosePiecesCount}
+              min="1"
+              max={maxLoose}
+              step="1"
+              class="w-full accent-sky-500"
+            />
+            <div class="flex justify-between text-sm text-slate-500 mt-1">
+              <span>קל (1 חלק)</span>
+              <span>קשה ({maxLoose} חלקים)</span>
+            </div>
+          </div>
+        {/if}
       </div>
 
       <!-- סינון חלקים -->

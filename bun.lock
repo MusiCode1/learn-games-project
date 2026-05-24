@@ -253,6 +253,7 @@
         "@eslint/js": "^9.39.1",
         "@playwright/test": "^1.57.0",
         "@sveltejs/adapter-auto": "^7.0.0",
+        "@sveltejs/adapter-cloudflare": "^7.2.4",
         "@sveltejs/kit": "^2.49.1",
         "@sveltejs/vite-plugin-svelte": "^6.2.1",
         "@tailwindcss/forms": "^0.5.10",
@@ -277,6 +278,7 @@
         "vite-plugin-devtools-json": "^1.0.0",
         "vitest": "^4.0.15",
         "vitest-browser-svelte": "^2.0.1",
+        "wrangler": "^4.56.0",
       },
     },
     "apps/passcode-practice": {
@@ -438,7 +440,9 @@
       "name": "learn-booster-kit",
       "version": "0.0.1",
       "dependencies": {
+        "@fontsource/frank-ruhl-libre": "^5.2.8",
         "@fontsource/heebo": "^5.1.0",
+        "@fontsource/rubik": "^5.2.8",
         "@playwright/test": "^1.51.1",
         "@tailwindcss/postcss": "^4.1.17",
         "@tailwindcss/vite": "^4.1.17",
@@ -447,6 +451,7 @@
         "caniuse-lite": "^1.0.30001759",
         "dotenv": "^17.3.1",
         "fully-kiosk-js": "*",
+        "neverthrow": "^8.2.0",
         "vite-plugin-css-injected-by-js": "^3.5.2",
       },
       "devDependencies": {
@@ -640,7 +645,11 @@
 
     "@fontsource/fira-mono": ["@fontsource/fira-mono@5.2.7", "", {}, "sha512-wYrAn6i3nH6luqQBZxtWUpl4UTUvs9AEbEeZxksPMwIqyjRRaxHTNW3c2VfM50gabS2IS7pT8lVWS2USB4ukYA=="],
 
+    "@fontsource/frank-ruhl-libre": ["@fontsource/frank-ruhl-libre@5.2.8", "", {}, "sha512-6ISorITeqsIsJ92KUgvShp0/KyGGzex6yEGYkzfVuVLntwfj9OdxsZavsaoNwx+IyVUI5Hz8m39vktt+TjIi/w=="],
+
     "@fontsource/heebo": ["@fontsource/heebo@5.2.8", "", {}, "sha512-K5aMLH2Yy/CmmjuM9lpToyIEwSdPKwW6KzZOGCFnj7XFrgatIpnesu6FDgmQl3bkyP/YCT62rzLRqRM9s/OzLw=="],
+
+    "@fontsource/rubik": ["@fontsource/rubik@5.2.8", "", {}, "sha512-PIc8QR7FqWPcYhbdRiGff56vQlKqg/ytES1YqecSq1GkgxiH4TBshrFvDEOZ9JonUF9m1qQ+qXxJj7wD5zgXEw=="],
 
     "@humanfs/core": ["@humanfs/core@0.19.1", "", {}, "sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA=="],
 
@@ -1585,6 +1594,8 @@
     "nanoid": ["nanoid@3.3.11", "", { "bin": { "nanoid": "bin/nanoid.cjs" } }, "sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w=="],
 
     "natural-compare": ["natural-compare@1.4.0", "", {}, "sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw=="],
+
+    "neverthrow": ["neverthrow@8.2.0", "", { "optionalDependencies": { "@rollup/rollup-linux-x64-gnu": "^4.24.0" } }, "sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ=="],
 
     "node-fetch": ["node-fetch@2.7.0", "", { "dependencies": { "whatwg-url": "^5.0.0" }, "peerDependencies": { "encoding": "^0.1.0" }, "optionalPeers": ["encoding"] }, "sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A=="],
 

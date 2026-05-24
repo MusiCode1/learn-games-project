@@ -10,7 +10,7 @@
 	import type { Card } from '$lib/types';
 
 	import { playSuccess, playError, speak, speakLetter, playAudio } from '$lib/utils/sound';
-	import { getCardImageUrl, getCardAudioUrl } from '$lib/services/assets';
+	import { getCardImage, getCardAudioUrl } from '$lib/services/assets';
 	import VirtualKeyboard from './VirtualKeyboard.svelte';
 	import { boosterService, ProgressWidget } from 'learn-booster-kit';
 	import HintButton from './HintButton.svelte';
@@ -304,7 +304,7 @@
 							style="max-height: 100%; max-width: 100%;"
 						>
 							<ImageDisplay
-								src={getCardImageUrl(currentWord.id)}
+								src={getCardImage(currentWord)}
 								alt={currentWord.word}
 								onclick={playCardAudio}
 							/>

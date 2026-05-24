@@ -2,11 +2,17 @@
  * הגדרות מורה עם שמירה ב-localStorage
  */
 
-import type { TeacherSettings, ShapeStyle, PieceFilter, SettingsProfile } from "$lib/types";
+import type {
+  TeacherSettings,
+  ShapeStyle,
+  PieceFilter,
+  SettingsProfile,
+  LoosePieceSelection,
+} from "$lib/types";
 import { DEFAULT_SETTINGS, BEGINNER_MAX_GRID_INDEX } from "$lib/types";
 
 const STORAGE_KEY = "jigsaw-puzzle-v2-settings";
-const CURRENT_VERSION = 7;
+const CURRENT_VERSION = 9;
 
 /** הגדרות לפי פרופיל */
 const PROFILE_PRESETS: Record<Exclude<SettingsProfile, "custom">, Partial<TeacherSettings>> = {
@@ -18,6 +24,9 @@ const PROFILE_PRESETS: Record<Exclude<SettingsProfile, "custom">, Partial<Teache
     studentLockMode: true,
     proximity: 70,
     shapeStyle: "classic",
+    prePlacedPieces: true,
+    loosePieceSelection: "top-left",
+    loosePiecesCount: 1,
   },
   intermediate: {
     beginnerMode: false,
@@ -27,6 +36,9 @@ const PROFILE_PRESETS: Record<Exclude<SettingsProfile, "custom">, Partial<Teache
     studentLockMode: false,
     proximity: 50,
     shapeStyle: "classic",
+    prePlacedPieces: false,
+    loosePieceSelection: "top-left",
+    loosePiecesCount: 1,
   },
   advanced: {
     beginnerMode: false,
@@ -36,6 +48,9 @@ const PROFILE_PRESETS: Record<Exclude<SettingsProfile, "custom">, Partial<Teache
     studentLockMode: false,
     proximity: 25,
     shapeStyle: "classic",
+    prePlacedPieces: false,
+    loosePieceSelection: "top-left",
+    loosePiecesCount: 1,
   },
 };
 
@@ -48,6 +63,9 @@ const PROFILE_AFFECTING_KEYS: (keyof TeacherSettings)[] = [
   "studentLockMode",
   "proximity",
   "shapeStyle",
+  "prePlacedPieces",
+  "loosePieceSelection",
+  "loosePiecesCount",
 ];
 
 class SettingsStore {
@@ -68,6 +86,10 @@ class SettingsStore {
   studentLockMode = $state(DEFAULT_SETTINGS.studentLockMode);
   showRearrangeButton = $state(DEFAULT_SETTINGS.showRearrangeButton);
   adaptGridToImage = $state(DEFAULT_SETTINGS.adaptGridToImage);
+  organizedGap = $state(DEFAULT_SETTINGS.organizedGap);
+  prePlacedPieces = $state(DEFAULT_SETTINGS.prePlacedPieces);
+  loosePieceSelection = $state<LoosePieceSelection>(DEFAULT_SETTINGS.loosePieceSelection);
+  loosePiecesCount = $state(DEFAULT_SETTINGS.loosePiecesCount);
   activeProfile = $state<SettingsProfile>(DEFAULT_SETTINGS.activeProfile);
 
   /** דגל פנימי שמונע מעבר ל-custom בזמן applyProfile */
@@ -100,6 +122,9 @@ class SettingsStore {
           studentLockMode: this.studentLockMode,
           proximity: this.proximity,
           shapeStyle: this.shapeStyle,
+          prePlacedPieces: this.prePlacedPieces,
+          loosePieceSelection: this.loosePieceSelection,
+          loosePiecesCount: this.loosePiecesCount,
         };
 
         if (this._applyingProfile) return;
@@ -128,6 +153,9 @@ class SettingsStore {
       studentLockMode: this.studentLockMode,
       proximity: this.proximity,
       shapeStyle: this.shapeStyle,
+      prePlacedPieces: this.prePlacedPieces,
+      loosePieceSelection: this.loosePieceSelection,
+      loosePiecesCount: this.loosePiecesCount,
     };
   }
 
@@ -158,6 +186,10 @@ class SettingsStore {
         this.studentLockMode = parsed.studentLockMode ?? DEFAULT_SETTINGS.studentLockMode;
         this.showRearrangeButton = parsed.showRearrangeButton ?? DEFAULT_SETTINGS.showRearrangeButton;
         this.adaptGridToImage = parsed.adaptGridToImage ?? DEFAULT_SETTINGS.adaptGridToImage;
+        this.organizedGap = parsed.organizedGap ?? DEFAULT_SETTINGS.organizedGap;
+        this.prePlacedPieces = parsed.prePlacedPieces ?? DEFAULT_SETTINGS.prePlacedPieces;
+        this.loosePieceSelection = parsed.loosePieceSelection ?? DEFAULT_SETTINGS.loosePieceSelection;
+        this.loosePiecesCount = parsed.loosePiecesCount ?? DEFAULT_SETTINGS.loosePiecesCount;
 
         // מיגרציה מ-v6 (ומטה): משתמש קיים מקבל custom
         if (!parsed.activeProfile) {
@@ -200,6 +232,10 @@ class SettingsStore {
       studentLockMode: this.studentLockMode,
       showRearrangeButton: this.showRearrangeButton,
       adaptGridToImage: this.adaptGridToImage,
+      organizedGap: this.organizedGap,
+      prePlacedPieces: this.prePlacedPieces,
+      loosePieceSelection: this.loosePieceSelection,
+      loosePiecesCount: this.loosePiecesCount,
       activeProfile: this.activeProfile,
     };
   }
@@ -227,6 +263,10 @@ class SettingsStore {
     this.studentLockMode = DEFAULT_SETTINGS.studentLockMode;
     this.showRearrangeButton = DEFAULT_SETTINGS.showRearrangeButton;
     this.adaptGridToImage = DEFAULT_SETTINGS.adaptGridToImage;
+    this.organizedGap = DEFAULT_SETTINGS.organizedGap;
+    this.prePlacedPieces = DEFAULT_SETTINGS.prePlacedPieces;
+    this.loosePieceSelection = DEFAULT_SETTINGS.loosePieceSelection;
+    this.loosePiecesCount = DEFAULT_SETTINGS.loosePiecesCount;
     this.activeProfile = DEFAULT_SETTINGS.activeProfile;
     this._snapshotProfileValues();
   }
@@ -265,6 +305,9 @@ class SettingsStore {
       if (preset.studentLockMode !== undefined) this.studentLockMode = preset.studentLockMode;
       if (preset.proximity !== undefined) this.proximity = preset.proximity;
       if (preset.shapeStyle !== undefined) this.shapeStyle = preset.shapeStyle;
+      if (preset.prePlacedPieces !== undefined) this.prePlacedPieces = preset.prePlacedPieces;
+      if (preset.loosePieceSelection !== undefined) this.loosePieceSelection = preset.loosePieceSelection;
+      if (preset.loosePiecesCount !== undefined) this.loosePiecesCount = preset.loosePiecesCount;
     }
 
     this._snapshotProfileValues();

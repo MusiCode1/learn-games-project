@@ -1,0 +1,63 @@
+/* ========================
+   Theme: Portal
+   ========================
+   קרם פרימיום, accents מובחנים, עיתונאי.
+   מבוסס על apps/main (portal ראשי).
+*/
+
+[data-theme='portal'] {
+	/* Surfaces & Backgrounds */
+	--theme-surface-base: #f7f2e8;
+	--theme-surface-elevated: #ffffff;
+	--theme-surface-sunken: #fef3c7;
+	--theme-surface-overlay: rgba(15, 23, 42, 0.5);
+	--theme-surface-header: var(--theme-surface-elevated);
+	--theme-border-subtle: #e7d9c0;
+	--theme-border-strong: #c4a878;
+
+	/* Brand */
+	--theme-brand-primary: #0f172a;
+	--theme-brand-primary-hover: #1e293b;
+	--theme-brand-secondary: #be185d;
+	--theme-brand-secondary-hover: #9f1239;
+
+	/* Text */
+	--theme-text-primary: #0f172a;
+	--theme-text-secondary: #475569;
+	--theme-text-tertiary: #94a3b8;
+	--theme-text-on-brand: #f7f2e8;
+	--theme-text-on-feedback: #ffffff;
+	--theme-text-on-header: var(--theme-text-primary);
+	--theme-accent-frame: transparent;
+
+	/* Feedback */
+	--theme-feedback-success: #16a34a;
+	--theme-feedback-success-bg: #dcfce7;
+	--theme-feedback-error: #b91c1c;
+	--theme-feedback-error-bg: #fee2e2;
+	--theme-feedback-warning: #d97706;
+	--theme-feedback-warning-bg: #fef3c7;
+
+	/* Radius */
+	--theme-radius-sm: 8px;
+	--theme-radius-md: 16px;
+	--theme-radius-lg: 32px;
+	--theme-radius-pill: 9999px;
+	--theme-touch-min: 70px;
+
+	/* Shadows */
+	--theme-shadow-card: 0 24px 70px rgba(15, 23, 42, 0.09);
+	--theme-shadow-elevated: 0 32px 90px rgba(15, 23, 42, 0.16);
+	--theme-shadow-focus: 0 0 0 3px rgba(190, 24, 93, 0.3);
+
+	/* Typography */
+	--theme-font-display: 'Heebo', 'Frank Ruhl Libre', Georgia, serif;
+	--theme-font-body: 'Heebo', system-ui, sans-serif;
+	--theme-font-size-xs: 0.75rem;
+	--theme-font-size-sm: 0.875rem;
+	--theme-font-size-md: 1rem;
+	--theme-font-size-lg: 1.25rem;
+	--theme-font-size-xl: 3rem;
+	--theme-font-weight-regular: 400;
+	--theme-font-weight-bold: 700;
+}

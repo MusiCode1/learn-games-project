@@ -1,3 +1,16 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+html {
+	direction: rtl;
+}
+
+body {
+	margin: 0;
+	background: #f7f2e8;
+}
+
+* {
+	box-sizing: border-box;
+}
