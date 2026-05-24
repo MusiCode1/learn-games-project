@@ -49,3 +49,5 @@ apps/train-addition-game/static/assets/
 *.7z
 .playwright-cli
 .playwright-cli/**
+.specstory
+ .vscode
