@@ -1,5 +1,57 @@
 # יומן פיתוח — איפה האות?
 
+## 2026-05-28 15:10
+
+### סבב 5 — סקירת איכות TTS ידנית + 11 החלפות master
+
+המשתמש עבר ידנית על כל קבצי ה-TTS (126/156) דרך HTML viewer חדש שבנינו בסשן (`tts-review/batch/all.html` — עם UI מלא לסימון OK/Bad/Skip + בחירת variant + תיעוד הערות + tab-navigation ידידותי + auto-save ל-localStorage + ייצוא Markdown report).
+
+הדוח: 115 OK, 9 בעייתיים, 2 skip, 7 variant choices.
+
+#### מה בוצע?
+
+**1. UI לסקירת איכות (`tts-review/batch/all.html`)**
+- ‏החלפת ה-`<audio controls>` המובנים בכפתור `▶` משלנו (controls המובנים tabindex=-1 — לא חוטפים focus)
+- ‏Tab order: `▶` → ✅ OK → ❌ Bad → ⏭️ Skip → note → next row
+- ‏Keyboard shortcuts: `1`/`2`/`3` למיון מהיר, `Space` להשמעה
+- ‏Variant rows: לכל קובץ עם variants (10 slots: Chi/Hi/Tsai ב-hirik, 7 ב-shuruk) נטענות שורות variants מתחתיו עם כפתור 👑 best
+- ‏auto-save ב-localStorage + 3 כפתורי toolbar: 📋 Copy report, 💾 Download JSON, 🗑️ Reset
+- ‏עדכון תוכן הדף לשקף את המצב הסופי (6 ניקודים פעילים, צירה ו-קובוץ עם תיקיות נפרדות במקום SHARED)
+
+**2. החלפת 11 master files ב-`assets/shared/tts/find-letter/`**
+
+7 variant choices:
+- ‏hirik/Chi.mp3 ← Chi-v6-chi-only.mp3
+- ‏hirik/Tsai.mp3 ← Tsai-v7-accent-noniqqud.mp3
+- ‏shuruk/{Au,Gu,Hu,Vu,Fu}.mp3 ← variants המתאימים
+
+4 sibling substitutions (סגול = צירה, שורוק = קובוץ במבטא ישראלי):
+- ‏tzere/Zei.mp3 ← segol/Ze.mp3
+- ‏kubutz/Guu.mp3 ← shuruk/Gu.mp3 (כבר אחרי החלפת variant)
+- ‏kubutz/Vuu.mp3 ← shuruk/Vu.mp3 (כבר אחרי החלפת variant)
+- ‏kubutz/Zuu.mp3 ← shuruk/Zu.mp3
+
+`bun run sync:assets` הצליח — 6 קבצים עלו חדשים ל-R2, השאר היו כבר עם content זהה ל-variant מהריצה הקודמת (יום 27/5). ETag ב-CDN מאומת.
+
+**3. תיעוד מלא של ה-speak texts (`tts-review/speak-texts.md`, חדש)**
+
+374 שורות. מקור-אמת לכל 156 קבצי MP3 בשימוש: לכל אות × ניקוד פירטנו (a) App key — מה ה-runtime מחפש ב-`TTS_FILES`, (b) Speak ל-Eleven — מה נשלח בייצור (עם overrides — fa_rafe Latin, tz Latin, ch hirik = "חִ"), (c) Filename, (d) Variant נבחר אם רלוונטי. כולל סיכום של 17 הקבצים הבעייתיים עם פתרון לכל אחד.
+
+**4. עדכון results.md** — סבב 5 בראש הקובץ.
+
+#### החלטות
+
+- **גישת `cp` על master, לא שינוי mapping**: שמרנו על `letters.ts:VOWEL_FILE_INFO` ללא שינוי — רק תוכן הקבצים ב-`assets/` הוחלף. ‏ה-mapping בקוד נשאר זהה, ה-CDN מקבל content חדש דרך sync. סיבה: אין dead files ב-R2, ה-key ב-`TTS_FILES` קצר ויציב.
+- **‏Variant choices ידוע ב-tts-review בלבד**: שמות הקבצים `Chi-v6-chi-only.mp3` נשארים ב-`assets/` ב-R2 אבל ‏אפליקציה לא מבקשת אותם. הם משמרים כ-fallback אם נרצה להחליף שוב.
+
+#### מה לא נעשה
+
+- **4 בעיות חולם** (Cho, Sino, Chro, So) — אין sibling צלילי. ממתינים להקלטה ידנית או re-record עתידי.
+- **2 sibling שלא נבדקו** (segol/Sine, kubutz/Sinuu) — המשתמש לא הספיק לסקור. אם יהיו OK, ניתן להחליף את tzere/Sinei ו-shuruk/Sinu בעתיד.
+- **~30 קבצים שלא נסקרו** (רוב kubutz מ-Aauu ועד Tavuu, כמה ב-segol) — לא נחשבו דחופים.
+
+---
+
 ## 2026-05-28 14:00
 
 ### הסרת חטף-פתח וחטף-סגול ממערכת הניקודים

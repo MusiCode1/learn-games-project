@@ -48,28 +48,77 @@
   .sum-tbl{width:100%;border-collapse:collapse;margin:.7rem 0 1.5rem;font-size:.85rem;}
   .sum-tbl th{background:var(--bg3);padding:.45rem .9rem;text-align:right;color:var(--muted);}
   .sum-tbl td{padding:.4rem .9rem;border-bottom:1px solid #1d2035;}
+
+  /* === Review UI === */
+  audio { /* keep mounted but invisible & non-tabbable */ display:none; }
+  .play-btn{background:#2c3050;color:var(--text);border:1px solid #3a3e5c;
+    border-radius:4px;padding:.3rem .6rem;font-size:1rem;cursor:pointer;width:48px;}
+  .play-btn:hover{background:#3a3e60;}
+  .play-btn:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .play-btn.playing{background:var(--accent);color:#0f1117;}
+  .mark-cell{white-space:nowrap;}
+  .mark-btn{background:transparent;border:1px solid #3a3e5c;color:var(--muted);
+    border-radius:3px;padding:.2rem .45rem;cursor:pointer;font-size:.85rem;margin:0 1px;}
+  .mark-btn:hover{border-color:#5a5e80;color:var(--text);}
+  .mark-btn:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .mark-btn.active.ok{background:#14532d;border-color:var(--ok);color:var(--ok);}
+  .mark-btn.active.bad{background:#450a0a;border-color:var(--prob);color:var(--prob);}
+  .mark-btn.active.skip{background:#2a2d3f;border-color:var(--muted);color:var(--text);}
+  .note-input{background:#1a1d27;border:1px solid #2a2e40;border-radius:3px;
+    color:var(--text);font-size:.78rem;padding:.25rem .4rem;width:160px;}
+  .note-input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
+
+  /* Variant rows */
+  .variant-row{background:#0c0e18;}
+  .variant-row td:first-child{padding-right:2.2rem;font-size:.74rem;color:#8088a8;}
+  .best-btn{background:transparent;border:1px solid #3a3e5c;color:var(--muted);
+    border-radius:3px;padding:.18rem .4rem;cursor:pointer;font-size:.7rem;}
+  .best-btn:hover{border-color:#5a5e80;}
+  .best-btn:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .best-btn.active{background:#14532d;border-color:var(--ok);color:var(--ok);font-weight:700;}
+
+  /* Top bar */
+  .toolbar{position:sticky;top:0;background:var(--bg);z-index:10;
+    padding:.5rem 0;margin-bottom:1rem;border-bottom:1px solid #2a2e40;
+    display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;}
+  .toolbar button{background:var(--bg3);color:var(--text);border:1px solid #3a3e5c;
+    border-radius:4px;padding:.35rem .8rem;cursor:pointer;font-size:.8rem;}
+  .toolbar button:hover{background:#3a3e60;}
+  .toolbar button:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .counter{color:var(--muted);font-size:.8rem;}
+  .counter b{color:var(--text);}
+  .counter .ok-c{color:var(--ok);}
+  .counter .bad-c{color:var(--prob);}
   .sum-tbl .skip{color:var(--muted);}
 </style>
 </head>
 <body>
 
-<h1>🎵 TTS Batch Review — כל הניקודים (v2, post-review)</h1>
-<div class="sub">8 ניקודים × 26 אותיות. אחרי סקירת המשתמש + החלטות שיתוף.</div>
+<div class="toolbar">
+  <span class="counter">סטטוס: <b id="cnt-total">0</b> | <span class="ok-c">✅ <b id="cnt-ok">0</b></span> | <span class="bad-c">❌ <b id="cnt-bad">0</b></span> | <b id="cnt-skip">0</b> ⏭️</span>
+  <button id="btn-export">📋 העתק דוח</button>
+  <button id="btn-download">💾 הורד JSON</button>
+  <button id="btn-reset">🗑️ אפס הכל</button>
+  <span class="counter" style="margin-right:auto;">⌨️ <b>Tab</b> = הבא | <b>Space</b> = השמע | <b>1</b>=OK <b>2</b>=Bad <b>3</b>=Skip</span>
+</div>
+
+<h1>🎵 TTS Batch Review — כל הניקודים</h1>
+<div class="sub">6 ניקודים פעילים × 26 אותיות. חטף פתח/סגול הוסרו (קומיט a216811).</div>
 
 <div class="nav">
   <a href="#hirik">חיריק i</a>
   <a href="#segol">סגול e</a>
-  <a href="#tzere">צירה ei →e</a>
+  <a href="#tzere">צירה ei</a>
   <a href="#holam">חולם o</a>
   <a href="#shuruk">שורוק u</a>
-  <a href="#kubutz">קובוץ uu →u</a>
+  <a href="#kubutz">קובוץ uu</a>
 </div>
 
 <div class="alert al-info">
-  <strong>החלטות מהסקירה:</strong><br>
-  • <strong>צירה ≡ סגול</strong> — אין העלאת tzere/, entries יצביעו ל-segol MP3<br>
-  • <strong>קובוץ ≡ שורוק</strong> — אין העלאת kubutz/, entries יצביעו ל-shuruk MP3<br>
-  • <strong>חטף פתח + חטף סגול</strong> — Web Speech fallback, לא מעלים<br>
+  <strong>מצב סופי (2026-05-28):</strong><br>
+  • <strong>6 ניקודים עם MP3 ייעודיים</strong> ב-R2: חיריק, סגול, צירה, חולם, שורוק, קובוץ.<br>
+  • <strong>צירה ו-קובוץ — תיקיות נפרדות</strong> (לא משתפים יותר עם סגול/שורוק כפי שתוכנן בהתחלה).<br>
+  • <strong>חטף פתח + חטף סגול — הוסרו</strong> ממערכת הניקודים (קומיט a216811). הקבצים ב-R2 dead.<br>
   • <strong>Tsai.mp3</strong> = בדיוק Tsai-v4 (md5 זהה) — אם שמעת "סי" זה browser cache. נקה cache.
 </div>
 
@@ -77,12 +126,10 @@
   <tr><th>ניקוד</th><th>MP3 dir</th><th>Status</th><th>Variants לבדיקה</th></tr>
   <tr><td>חיריק</td><td>hirik/</td><td class="ok">✅ 26 קבצים, variants מופעלים</td><td>Hi.mp3 (הִ), Ki.mp3 (verify)</td></tr>
   <tr><td>סגול</td><td>segol/</td><td class="ok">✅ 26 קבצים</td><td>Re.mp3 (פשרה R אמריקאי), Fe.mp3 (verify "Fay")</td></tr>
-  <tr><td>צירה</td><td>tzere/ → segol/</td><td class="un">SHARED</td><td>—</td></tr>
+  <tr><td>צירה</td><td>tzere/</td><td class="un">26 קבצים (לא נבדק ידנית)</td><td>Fei.mp3 ✅, Tsaei.mp3 ⚠️ "say"</td></tr>
   <tr><td>חולם</td><td>holam/</td><td class="ok">✅ 26 קבצים</td><td>—</td></tr>
   <tr><td>שורוק</td><td>shuruk/</td><td class="ok">✅ variants מופעלים</td><td>Vu(voo), Fu(foo), Su(soo), Au(oo), Gu(goo), Hu(hoo), Chu/Chru(חֻ)</td></tr>
-  <tr><td>קובוץ</td><td>kubutz/ → shuruk/</td><td class="un">SHARED</td><td>—</td></tr>
-  <tr><td>חטף פתח</td><td>—</td><td class="skip">Web Speech</td><td>—</td></tr>
-  <tr><td>חטף סגול</td><td>—</td><td class="skip">Web Speech</td><td>—</td></tr>
+  <tr><td>קובוץ</td><td>kubutz/</td><td class="un">26 קבצים (לא נבדק ידנית)</td><td>Fuu.mp3 ✅, Tsauu.mp3 ✅</td></tr>
 </table>
 
 <!-- ==================== HIRIK ==================== -->
@@ -163,13 +210,43 @@
   </table>
 </div>
 
-<!-- ==================== TZERE (shared) ==================== -->
+<!-- ==================== TZERE ==================== -->
 <div class="section" id="tzere">
   <div class="sec-hdr">
-    <span class="sec-name">צירה — ei (ֵא) → SHARED עם סגול</span>
-    <span class="badge b-u">לא מעלים</span>
+    <span class="sec-name">צירה — ei (ֵא)</span>
+    <span class="badge b-u">26 (לא נבדק ידנית)</span>
+    <div style="font-size:.78rem;color:var(--muted)">speak: displayChar+ֵא | tz=tsei | fa=Fei</div>
   </div>
-  <div class="sec-note">כל entries של צירה ב-TTS_FILES יצביעו ל-segol MP3. tz=tsei→Tsae.mp3, fa=Fei→Fe.mp3. לא צריך האזנה — אין העלאה.</div>
+  <div class="sec-note">⚠️ רוב הקבצים לא נבדקו ידנית. Gemini judge: Fei.mp3 ✅, Tsaei.mp3 ❌ (נשמע "say").</div>
+  <table>
+    <tr><th>קובץ</th><th>Speak</th><th>הקשב</th><th>הערה</th></tr>
+    <tr><td>Aei.mp3</td><td class="sp">אֵא</td><td><audio controls src="tzere/Aei.mp3"></audio></td><td></td></tr>
+    <tr><td>Bei.mp3</td><td class="sp">בֵּא</td><td><audio controls src="tzere/Bei.mp3"></audio></td><td></td></tr>
+    <tr><td>Gei.mp3</td><td class="sp">גֵא</td><td><audio controls src="tzere/Gei.mp3"></audio></td><td></td></tr>
+    <tr><td>Dei.mp3</td><td class="sp">דֵא</td><td><audio controls src="tzere/Dei.mp3"></audio></td><td></td></tr>
+    <tr><td>Hei.mp3</td><td class="sp">הֵא</td><td><audio controls src="tzere/Hei.mp3"></audio></td><td></td></tr>
+    <tr><td>Vei.mp3</td><td class="sp">וֵא</td><td><audio controls src="tzere/Vei.mp3"></audio></td><td></td></tr>
+    <tr><td>Zei.mp3</td><td class="sp">זֵא</td><td><audio controls src="tzere/Zei.mp3"></audio></td><td></td></tr>
+    <tr><td>Chei.mp3</td><td class="sp">חֵא</td><td><audio controls src="tzere/Chei.mp3"></audio></td><td></td></tr>
+    <tr><td>Tei.mp3</td><td class="sp">טֵא</td><td><audio controls src="tzere/Tei.mp3"></audio></td><td></td></tr>
+    <tr><td>Yei.mp3</td><td class="sp">יֵא</td><td><audio controls src="tzere/Yei.mp3"></audio></td><td></td></tr>
+    <tr><td>Kei.mp3</td><td class="sp">כֵּא</td><td><audio controls src="tzere/Kei.mp3"></audio></td><td></td></tr>
+    <tr><td>Lei.mp3</td><td class="sp">לֵא</td><td><audio controls src="tzere/Lei.mp3"></audio></td><td></td></tr>
+    <tr><td>Mei.mp3</td><td class="sp">מֵא</td><td><audio controls src="tzere/Mei.mp3"></audio></td><td></td></tr>
+    <tr><td>Nei.mp3</td><td class="sp">נֵא</td><td><audio controls src="tzere/Nei.mp3"></audio></td><td></td></tr>
+    <tr><td>Sei.mp3</td><td class="sp">סֵא</td><td><audio controls src="tzere/Sei.mp3"></audio></td><td></td></tr>
+    <tr><td>Aaei.mp3</td><td class="sp">עֵא</td><td><audio controls src="tzere/Aaei.mp3"></audio></td><td></td></tr>
+    <tr><td>Pei.mp3</td><td class="sp">פֵּא</td><td><audio controls src="tzere/Pei.mp3"></audio></td><td></td></tr>
+    <tr class="override"><td>Tsaei.mp3</td><td class="sp">tsei</td><td><audio controls src="tzere/Tsaei.mp3"></audio></td><td>⚠️ Gemini: "say"</td></tr>
+    <tr><td>Qei.mp3</td><td class="sp">קֵא</td><td><audio controls src="tzere/Qei.mp3"></audio></td><td></td></tr>
+    <tr><td>Rei.mp3</td><td class="sp">רֵא</td><td><audio controls src="tzere/Rei.mp3"></audio></td><td>American R</td></tr>
+    <tr><td>Shei.mp3</td><td class="sp">שֵׁא</td><td><audio controls src="tzere/Shei.mp3"></audio></td><td></td></tr>
+    <tr><td>Tavei.mp3</td><td class="sp">תֵּא</td><td><audio controls src="tzere/Tavei.mp3"></audio></td><td></td></tr>
+    <tr><td>Sinei.mp3</td><td class="sp">שֵׂא</td><td><audio controls src="tzere/Sinei.mp3"></audio></td><td>shared: S sound</td></tr>
+    <tr><td>Vrei.mp3</td><td class="sp">וֵא</td><td><audio controls src="tzere/Vrei.mp3"></audio></td><td>shared: V (=Vei)</td></tr>
+    <tr><td>Chrei.mp3</td><td class="sp">חֵא</td><td><audio controls src="tzere/Chrei.mp3"></audio></td><td>shared: kh (=Chei)</td></tr>
+    <tr class="override"><td>Fei.mp3</td><td class="sp">Fei</td><td><audio controls src="tzere/Fei.mp3"></audio></td><td>✅ Gemini OK</td></tr>
+  </table>
 </div>
 
 <!-- ==================== HOLAM ==================== -->
@@ -249,13 +326,43 @@
   </table>
 </div>
 
-<!-- ==================== KUBUTZ (shared) ==================== -->
+<!-- ==================== KUBUTZ ==================== -->
 <div class="section" id="kubutz">
   <div class="sec-hdr">
-    <span class="sec-name">קובוץ — uu (ֻ) → SHARED עם שורוק</span>
-    <span class="badge b-u">לא מעלים</span>
+    <span class="sec-name">קובוץ — uu (ֻ)</span>
+    <span class="badge b-u">26 (לא נבדק ידנית)</span>
+    <div style="font-size:.78rem;color:var(--muted)">speak: displayChar+ֻ | tz=tsoo | fa=fuu</div>
   </div>
-  <div class="sec-note">כל entries של קובוץ ב-TTS_FILES יצביעו ל-shuruk MP3. לא צריך האזנה — אין העלאה.</div>
+  <div class="sec-note">⚠️ רוב הקבצים לא נבדקו ידנית. Gemini judge: Fuu.mp3 ✅, Tsauu.mp3 ✅.</div>
+  <table>
+    <tr><th>קובץ</th><th>Speak</th><th>הקשב</th><th>הערה</th></tr>
+    <tr><td>Auu.mp3</td><td class="sp">אֻ</td><td><audio controls src="kubutz/Auu.mp3"></audio></td><td></td></tr>
+    <tr><td>Buu.mp3</td><td class="sp">בֻּ</td><td><audio controls src="kubutz/Buu.mp3"></audio></td><td></td></tr>
+    <tr><td>Guu.mp3</td><td class="sp">גֻ</td><td><audio controls src="kubutz/Guu.mp3"></audio></td><td></td></tr>
+    <tr><td>Duu.mp3</td><td class="sp">דֻ</td><td><audio controls src="kubutz/Duu.mp3"></audio></td><td></td></tr>
+    <tr><td>Huu.mp3</td><td class="sp">הֻ</td><td><audio controls src="kubutz/Huu.mp3"></audio></td><td></td></tr>
+    <tr><td>Vuu.mp3</td><td class="sp">וֻ</td><td><audio controls src="kubutz/Vuu.mp3"></audio></td><td></td></tr>
+    <tr><td>Zuu.mp3</td><td class="sp">זֻ</td><td><audio controls src="kubutz/Zuu.mp3"></audio></td><td></td></tr>
+    <tr><td>Chuu.mp3</td><td class="sp">חֻ</td><td><audio controls src="kubutz/Chuu.mp3"></audio></td><td></td></tr>
+    <tr><td>Tuu.mp3</td><td class="sp">טֻ</td><td><audio controls src="kubutz/Tuu.mp3"></audio></td><td></td></tr>
+    <tr><td>Yuu.mp3</td><td class="sp">יֻ</td><td><audio controls src="kubutz/Yuu.mp3"></audio></td><td></td></tr>
+    <tr><td>Kuu.mp3</td><td class="sp">כֻּ</td><td><audio controls src="kubutz/Kuu.mp3"></audio></td><td></td></tr>
+    <tr><td>Luu.mp3</td><td class="sp">לֻ</td><td><audio controls src="kubutz/Luu.mp3"></audio></td><td></td></tr>
+    <tr><td>Muu.mp3</td><td class="sp">מֻ</td><td><audio controls src="kubutz/Muu.mp3"></audio></td><td></td></tr>
+    <tr><td>Nuu.mp3</td><td class="sp">נֻ</td><td><audio controls src="kubutz/Nuu.mp3"></audio></td><td></td></tr>
+    <tr><td>Suu.mp3</td><td class="sp">סֻ</td><td><audio controls src="kubutz/Suu.mp3"></audio></td><td></td></tr>
+    <tr><td>Aauu.mp3</td><td class="sp">עֻ</td><td><audio controls src="kubutz/Aauu.mp3"></audio></td><td></td></tr>
+    <tr><td>Puu.mp3</td><td class="sp">פֻּ</td><td><audio controls src="kubutz/Puu.mp3"></audio></td><td></td></tr>
+    <tr class="override"><td>Tsauu.mp3</td><td class="sp">tsoo</td><td><audio controls src="kubutz/Tsauu.mp3"></audio></td><td>✅ Gemini OK</td></tr>
+    <tr><td>Quu.mp3</td><td class="sp">קֻ</td><td><audio controls src="kubutz/Quu.mp3"></audio></td><td></td></tr>
+    <tr><td>Ruu.mp3</td><td class="sp">רֻ</td><td><audio controls src="kubutz/Ruu.mp3"></audio></td><td>American R</td></tr>
+    <tr><td>Shuu.mp3</td><td class="sp">שֻׁ</td><td><audio controls src="kubutz/Shuu.mp3"></audio></td><td></td></tr>
+    <tr><td>Tavuu.mp3</td><td class="sp">תֻּ</td><td><audio controls src="kubutz/Tavuu.mp3"></audio></td><td></td></tr>
+    <tr><td>Sinuu.mp3</td><td class="sp">שֻׂ</td><td><audio controls src="kubutz/Sinuu.mp3"></audio></td><td>shared: S sound</td></tr>
+    <tr><td>Vruu.mp3</td><td class="sp">וֻ</td><td><audio controls src="kubutz/Vruu.mp3"></audio></td><td>shared: V (=Vuu)</td></tr>
+    <tr><td>Chruu.mp3</td><td class="sp">חֻ</td><td><audio controls src="kubutz/Chruu.mp3"></audio></td><td>shared: kh (=Chuu)</td></tr>
+    <tr class="override"><td>Fuu.mp3</td><td class="sp">Fuu</td><td><audio controls src="kubutz/Fuu.mp3"></audio></td><td>✅ Gemini OK</td></tr>
+  </table>
 </div>
 
 <div class="alert al-info" style="margin-top:1rem;">
@@ -264,6 +371,347 @@
   <span style="background:#1c1940;padding:2px 6px;border-radius:3px;">כחול</span> override &nbsp;|&nbsp;
   <span style="background:#0f1c20;padding:2px 6px;border-radius:3px;">ירוק-כהה</span> shared
 </div>
+
+<script>
+// =====================================================================
+// TTS Review UI — keyboard-friendly tagging interface
+// State stored in localStorage; export as JSON.
+// =====================================================================
+
+// Map: main file → array of variant filenames (same dir, alternative recordings)
+const VARIANTS = {
+  'hirik/Chi.mp3':  ['Chi-v2-chil.mp3', 'Chi-v3-chida.mp3', 'Chi-v4-plain.mp3',
+                     'Chi-v5-accent.mp3', 'Chi-v6-chi-only.mp3', 'Chi-v7-accent-chi.mp3'],
+  'hirik/Hi.mp3':   ['Hi-v2-twice.mp3', 'Hi-v3-no-yod.mp3', 'Hi-v4-latin.mp3'],
+  'hirik/Tsai.mp3': ['Tsai-v2-tsia.mp3', 'Tsai-v3-latin.mp3', 'Tsai-v4-tsee-eng.mp3',
+                     'Tsai-v5-accent-tsi.mp3', 'Tsai-v6-tsif.mp3',
+                     'Tsai-v7-accent-noniqqud.mp3', 'Tsai-v8-accent-tsif.mp3'],
+  'shuruk/Au.mp3':  ['Au-v2-space.mp3', 'Au-v3-oo.mp3'],
+  'shuruk/Chu.mp3': ['Chu-v2-kubutz.mp3', 'Chu-v3-khoo.mp3'],
+  'shuruk/Fu.mp3':  ['Fu-v2-foo.mp3', 'Fu-v3-Foo.mp3'],
+  'shuruk/Gu.mp3':  ['Gu-v2-space.mp3', 'Gu-v3-goo.mp3'],
+  'shuruk/Hu.mp3':  ['Hu-v2-hoo.mp3', 'Hu-v3-space.mp3'],
+  'shuruk/Su.mp3':  ['Su-v2-space.mp3', 'Su-v3-soo.mp3'],
+  'shuruk/Vu.mp3':  ['Vu-v2-voo.mp3', 'Vu-v3-wu.mp3', 'Vu-v4-vu.mp3'],
+};
+
+const STORAGE_KEY = 'tts-review:v1';
+
+// state schema:
+//   { [filepath]: { status: 'ok'|'bad'|'skip'|null, note: string } }
+//   slot.bestVariant is keyed under main file: state[main].bestVariant = 'Chi-v3-...' or null
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveState(s) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+}
+
+const state = loadState();
+
+function getEntry(path) {
+  if (!state[path]) state[path] = { status: null, note: '' };
+  return state[path];
+}
+
+// ============ stop other audios when one plays ============
+let currentlyPlaying = null;
+function playAudio(audio, btn) {
+  if (currentlyPlaying && currentlyPlaying !== audio) {
+    currentlyPlaying.pause();
+    currentlyPlaying.currentTime = 0;
+  }
+  if (audio.paused) {
+    audio.currentTime = 0;
+    audio.play();
+    currentlyPlaying = audio;
+    btn.classList.add('playing');
+    btn.textContent = '⏸';
+    audio.onended = () => { btn.classList.remove('playing'); btn.textContent = '▶'; };
+  } else {
+    audio.pause();
+    btn.classList.remove('playing');
+    btn.textContent = '▶';
+  }
+}
+
+// ============ counters ============
+function updateCounters() {
+  const all = Object.keys(state).filter(k => !k.includes('::best'));
+  const okC = all.filter(k => state[k].status === 'ok').length;
+  const badC = all.filter(k => state[k].status === 'bad').length;
+  const skipC = all.filter(k => state[k].status === 'skip').length;
+  document.getElementById('cnt-total').textContent = all.length;
+  document.getElementById('cnt-ok').textContent = okC;
+  document.getElementById('cnt-bad').textContent = badC;
+  document.getElementById('cnt-skip').textContent = skipC;
+}
+
+// ============ build row UI ============
+// For each <audio> in the page, build the review row.
+// Tab order within row: [▶ play] → [✅] → [❌] → [⏭️] → [note] → (variants if any) → next row
+function enhanceRow(audio) {
+  const src = audio.getAttribute('src'); // "hirik/Chi.mp3"
+  if (!src) return;
+  audio.setAttribute('tabindex', '-1');
+  audio.removeAttribute('controls');
+
+  const td = audio.parentElement;        // <td>
+  const row = td.parentElement;          // <tr>
+  const noteCell = row.lastElementChild; // last <td> — note column (we'll rebuild)
+  const origNote = noteCell.innerHTML;
+
+  const entry = getEntry(src);
+
+  // === play button (replaces audio UI) ===
+  const playBtn = document.createElement('button');
+  playBtn.className = 'play-btn';
+  playBtn.textContent = '▶';
+  playBtn.setAttribute('aria-label', 'השמע ' + src);
+  playBtn.dataset.path = src;
+  playBtn.addEventListener('click', () => playAudio(audio, playBtn));
+  td.appendChild(playBtn);
+
+  // === mark buttons cell (new td inserted before note) ===
+  const markTd = document.createElement('td');
+  markTd.className = 'mark-cell';
+  ['ok', 'bad', 'skip'].forEach((kind, idx) => {
+    const b = document.createElement('button');
+    b.className = 'mark-btn ' + kind;
+    b.textContent = ['✅', '❌', '⏭️'][idx];
+    b.title = ['Mark OK (1)', 'Mark Problem (2)', 'Skip / clear (3)'][idx];
+    b.dataset.kind = kind;
+    b.dataset.path = src;
+    if (entry.status === kind) b.classList.add('active');
+    b.addEventListener('click', () => setMark(src, kind));
+    markTd.appendChild(b);
+  });
+  row.insertBefore(markTd, noteCell);
+
+  // === note input replaces note column content ===
+  noteCell.innerHTML = '';
+  const orig = document.createElement('div');
+  orig.style.fontSize = '.7rem';
+  orig.style.color = '#7b82a0';
+  orig.style.marginBottom = '.15rem';
+  orig.innerHTML = origNote;
+  if (origNote && origNote.trim()) noteCell.appendChild(orig);
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'note-input';
+  input.placeholder = 'הערה...';
+  input.value = entry.note || '';
+  input.dataset.path = src;
+  input.addEventListener('input', () => {
+    getEntry(src).note = input.value;
+    saveState(state);
+  });
+  noteCell.appendChild(input);
+
+  // === insert variant rows directly after this row (if any) ===
+  const variants = VARIANTS[src];
+  if (variants && variants.length > 0) {
+    const dir = src.split('/')[0];
+    const slotKey = '::best/' + src;
+    if (!state[slotKey]) state[slotKey] = null; // null = original is best
+
+    variants.forEach((vFile, i) => {
+      const vPath = dir + '/' + vFile;
+      const vRow = document.createElement('tr');
+      vRow.className = 'variant-row';
+
+      const fileCell = document.createElement('td');
+      fileCell.textContent = '└ ' + vFile;
+      vRow.appendChild(fileCell);
+
+      const specCell = document.createElement('td');
+      specCell.innerHTML = '<span style="color:#7b82a0;font-size:.74rem">variant</span>';
+      vRow.appendChild(specCell);
+
+      const audioCell = document.createElement('td');
+      const vAudio = document.createElement('audio');
+      vAudio.setAttribute('src', vPath);
+      vAudio.setAttribute('tabindex', '-1');
+      audioCell.appendChild(vAudio);
+      const vPlay = document.createElement('button');
+      vPlay.className = 'play-btn';
+      vPlay.textContent = '▶';
+      vPlay.setAttribute('aria-label', 'השמע ' + vPath);
+      vPlay.addEventListener('click', () => playAudio(vAudio, vPlay));
+      audioCell.appendChild(vPlay);
+      vRow.appendChild(audioCell);
+
+      const bestCell = document.createElement('td');
+      const bestBtn = document.createElement('button');
+      bestBtn.className = 'best-btn';
+      bestBtn.textContent = '👑 best';
+      bestBtn.title = 'בחר variant זה כעדיף על המקור';
+      if (state[slotKey] === vPath) bestBtn.classList.add('active');
+      bestBtn.addEventListener('click', () => setBest(slotKey, vPath));
+      bestCell.appendChild(bestBtn);
+      vRow.appendChild(bestCell);
+
+      row.parentNode.insertBefore(vRow, row.nextSibling);
+    });
+    // re-arrange — variants were inserted in reverse order with insertBefore(row.nextSibling)
+    // since we insert one-by-one and each goes right after row, the last-inserted is closest.
+    // To fix order: collect and re-insert. Simpler: insert in reverse first.
+  }
+}
+
+function setMark(path, kind) {
+  const entry = getEntry(path);
+  // toggle if same button clicked
+  entry.status = (entry.status === kind) ? null : kind;
+  saveState(state);
+  // update visual
+  document.querySelectorAll('.mark-btn[data-path="' + CSS.escape(path) + '"]').forEach(b => {
+    b.classList.toggle('active', b.dataset.kind === entry.status);
+  });
+  updateCounters();
+}
+
+function setBest(slotKey, vPath) {
+  // toggle off if same
+  state[slotKey] = (state[slotKey] === vPath) ? null : vPath;
+  saveState(state);
+  // update visual — only buttons in same slot
+  document.querySelectorAll('.best-btn').forEach(b => {
+    if (b.dataset.slot === slotKey) {
+      b.classList.toggle('active', b.dataset.vpath === state[slotKey]);
+    }
+  });
+}
+
+// ============ init ============
+// 1) reverse the audios so when we insert variants, order is natural
+const audios = Array.from(document.querySelectorAll('audio[src]'));
+audios.forEach(a => enhanceRow(a));
+
+// 2) Fix variant insertion order — variants were inserted one-by-one as next sibling,
+// so they're now in reverse. Walk through and fix.
+document.querySelectorAll('table').forEach(tbl => {
+  const rows = Array.from(tbl.querySelectorAll('tr'));
+  // group: main row followed by reversed variants — find and reverse runs of .variant-row
+  let i = 0;
+  while (i < rows.length) {
+    if (rows[i].classList.contains('variant-row')) {
+      let j = i;
+      while (j < rows.length && rows[j].classList.contains('variant-row')) j++;
+      // rows[i..j) are variants (currently reversed). Reverse them in DOM.
+      const run = rows.slice(i, j);
+      const parent = run[0].parentNode;
+      const anchor = run[run.length - 1].nextSibling;
+      run.forEach(r => parent.removeChild(r));
+      run.reverse().forEach(r => parent.insertBefore(r, anchor));
+      i = j;
+    } else {
+      i++;
+    }
+  }
+});
+
+// 3) Re-set data-slot on best buttons (after variant rows are in final order)
+document.querySelectorAll('.best-btn').forEach(b => {
+  const audio = b.parentElement.previousElementSibling.querySelector('audio');
+  if (!audio) return;
+  const vPath = audio.getAttribute('src');
+  // find main row above
+  let prev = b.closest('tr').previousElementSibling;
+  while (prev && prev.classList.contains('variant-row')) {
+    prev = prev.previousElementSibling;
+  }
+  const mainAudio = prev && prev.querySelector('audio');
+  if (!mainAudio) return;
+  const mainPath = mainAudio.getAttribute('src');
+  b.dataset.slot = '::best/' + mainPath;
+  b.dataset.vpath = vPath;
+});
+
+// ============ keyboard shortcuts ============
+document.addEventListener('keydown', e => {
+  const f = document.activeElement;
+  if (!f) return;
+
+  // Space on play btn → play (browser default)
+  // 1/2/3 when focused on play btn or mark btn → mark current row
+  if (['1', '2', '3'].includes(e.key)) {
+    const row = f.closest('tr');
+    if (!row) return;
+    const mainAudio = row.querySelector('audio[src]');
+    if (!mainAudio) return;
+    e.preventDefault();
+    const kind = e.key === '1' ? 'ok' : e.key === '2' ? 'bad' : 'skip';
+    setMark(mainAudio.getAttribute('src'), kind);
+  }
+});
+
+// ============ toolbar ============
+document.getElementById('btn-export').addEventListener('click', () => {
+  const report = generateReport();
+  navigator.clipboard.writeText(report).then(() => {
+    alert('הדוח הועתק ללוח. הדבק עם Ctrl+V.');
+  });
+});
+
+document.getElementById('btn-download').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'tts-review-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (confirm('אפס את כל הסימונים? אי-אפשר לבטל.')) {
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  }
+});
+
+function generateReport() {
+  const bad = [], ok = [], skip = [], bests = [];
+  Object.entries(state).forEach(([k, v]) => {
+    if (k.startsWith('::best/')) {
+      if (v) bests.push({ slot: k.slice(7), preferred: v });
+      return;
+    }
+    if (!v) return;
+    const line = v.note ? `${k} — ${v.note}` : k;
+    if (v.status === 'ok') ok.push(line);
+    else if (v.status === 'bad') bad.push(line);
+    else if (v.status === 'skip') skip.push(line);
+  });
+  let s = `# TTS Review — ${new Date().toLocaleString('he-IL')}\n\n`;
+  s += `סיכום: ${ok.length} OK, ${bad.length} בעייתיים, ${skip.length} skip\n\n`;
+  if (bad.length) {
+    s += `## ❌ בעייתיים (${bad.length})\n`;
+    bad.forEach(l => s += `- ${l}\n`);
+    s += '\n';
+  }
+  if (bests.length) {
+    s += `## 👑 בחירות variant (${bests.length})\n`;
+    bests.forEach(b => s += `- ${b.slot} → ${b.preferred}\n`);
+    s += '\n';
+  }
+  if (ok.length) {
+    s += `## ✅ OK (${ok.length})\n`;
+    ok.forEach(l => s += `- ${l}\n`);
+    s += '\n';
+  }
+  if (skip.length) {
+    s += `## ⏭️ דילגתי (${skip.length})\n`;
+    skip.forEach(l => s += `- ${l}\n`);
+  }
+  return s;
+}
+
+updateCounters();
+</script>
 
 </body>
 </html>

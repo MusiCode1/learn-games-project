@@ -2,6 +2,72 @@
 
 ---
 
+## סבוב 5 — סקירה ידנית של כל הקבצים (2026-05-28)
+
+**סקירה אנושית** של כל קבצי ה-TTS דרך ה-HTML viewer (`tts-review/batch/all.html`) — לאחר הסרת חטף-פתח וחטף-סגול מהקוד.
+
+### סיכום
+
+| | |
+|--|--|
+| נסקרו | 126 / 156 |
+| ✅ OK | 115 |
+| ❌ בעייתיים | 9 |
+| ⏭️ דילגתי | 2 |
+| 👑 variant choices | 7 |
+| לא נסקרו | ~30 (רוב kubutz, כמה ב-segol) |
+
+### Variant choices (7) — בוצעה החלפה ב-master
+
+| ‏Master שהוחלף | Variant נבחר |
+|----------------|----------------|
+| ‏hirik/Chi.mp3 | ‏Chi-v6-chi-only.mp3 |
+| ‏hirik/Tsai.mp3 | ‏Tsai-v7-accent-noniqqud.mp3 |
+| ‏shuruk/Au.mp3 | ‏Au-v3-oo.mp3 |
+| ‏shuruk/Gu.mp3 | ‏Gu-v2-space.mp3 |
+| ‏shuruk/Hu.mp3 | ‏Hu-v2-hoo.mp3 |
+| ‏shuruk/Vu.mp3 | ‏Vu-v2-voo.mp3 |
+| ‏shuruk/Fu.mp3 | ‏Fu-v2-foo.mp3 |
+
+**טכני:** רק 1 (`shuruk/Gu`) נדרש upload — היתר כבר היו עם content זהה ל-variant ב-R2 מהריצה הקודמת.
+
+### Sibling substitutions (4) — החלפה ב-master מתיקייה אחות
+
+| בעייתי | הוחלף ב- | רציונל |
+|---------|-----------|----------|
+| ‏tzere/Zei.mp3 | ‏segol/Ze.mp3 | sibling phonetic (סגול = צירה במבטא ישראלי) |
+| ‏kubutz/Guu.mp3 | ‏shuruk/Gu.mp3 (אחרי החלפת variant) | sibling phonetic (שורוק = קובוץ) |
+| ‏kubutz/Vuu.mp3 | ‏shuruk/Vu.mp3 (אחרי החלפת variant) | sibling phonetic |
+| ‏kubutz/Zuu.mp3 (skip) | ‏shuruk/Zu.mp3 | sibling phonetic |
+
+### בעיות שנותרו ללא פתרון (4)
+
+| קובץ | סיבה |
+|------|--------|
+| ‏holam/Cho.mp3 | אין sibling — חולם ייחודי צלילית |
+| ‏holam/Sino.mp3 | אין sibling |
+| ‏holam/Chro.mp3 | אין sibling |
+| ‏holam/So.mp3 (skip) | אין sibling — נשמע "צו" |
+
+**ל-future:** להקליט ידנית או לנסות re-record דרך ElevenLabs עם prompt שונה.
+
+### Sibling שלא נבדקו (2) — לא הוחלפו
+
+| בעייתי | sibling פוטנציאלי | סטטוס |
+|---------|---------------------|--------|
+| ‏tzere/Sinei.mp3 ("שֵׁה") | ‏segol/Sine.mp3 | sibling לא נסקר |
+| ‏shuruk/Sinu.mp3 | ‏kubutz/Sinuu.mp3 | sibling לא נסקר |
+
+**ל-future:** המשתמש יוכל לבדוק את ה-siblings ולהחליט.
+
+### מה הועלה ל-R2
+
+‏הרצנו `bun run sync:assets` — 6 קבצים בעצם עלו חדשים, היתר היו כבר עם content זהה ל-variant מהריצה הקודמת.
+
+ETag מאומת ב-CDN: `https://static.tzlev.ovh/shared/tts/find-letter/hirik/Chi.mp3` → ETag = MD5 של Chi-v6.
+
+---
+
 ## סבוב 4 — Batch ניקודים (2026-05-18)
 
 ### חיריק (Pilot) — הושלם
