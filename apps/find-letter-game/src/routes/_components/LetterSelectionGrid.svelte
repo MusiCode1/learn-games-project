@@ -52,7 +52,7 @@
 				aria-pressed={selectedIds.includes(card.id)}
 				title={card.id}
 			>
-				{card.display}
+				{card.letter.displayChar}
 			</button>
 		{/each}
 	</div>
