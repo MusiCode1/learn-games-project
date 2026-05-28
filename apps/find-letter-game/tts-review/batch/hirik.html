@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hirik Batch Review — find-letter TTS</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #1a1a2e; color: #eee; padding: 1rem 2rem; }
+  h1 { color: #a8d8ea; }
+  h2 { color: #ccc; margin-top: 2rem; border-bottom: 1px solid #444; padding-bottom: 0.3rem; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
+  th { background: #2d2d5e; padding: 8px 12px; text-align: right; }
+  td { padding: 6px 12px; border-bottom: 1px solid #333; }
+  tr:hover td { background: #222244; }
+  audio { height: 32px; width: 200px; }
+  .ok { color: #4caf50; font-weight: bold; }
+  .problem { color: #f44336; font-weight: bold; }
+  .uncertain { color: #ff9800; font-weight: bold; }
+  .variant { color: #888; font-style: italic; font-size: 0.85em; }
+  .speak { font-family: monospace; direction: rtl; unicode-bidi: embed; background: #2a2a3e; padding: 2px 6px; border-radius: 4px; }
+  .note { background: #1e3a1e; border-left: 3px solid #4caf50; padding: 10px 14px; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+  .warn { background: #3a1e1e; border-left: 3px solid #f44336; padding: 10px 14px; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+  .summary { background: #1e2a3a; padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+
+  /* Verdict buttons */
+  .verdict { display: inline-flex; gap: 4px; }
+  .verdict button {
+    background: #2a2a3e; color: #aaa; border: 1px solid #444; cursor: pointer;
+    padding: 4px 10px; border-radius: 4px; font-size: 1rem; font-weight: bold;
+    transition: all 100ms;
+  }
+  .verdict button:hover { background: #3a3a5e; color: #fff; }
+  .verdict button[data-active="good"]    { background: #1b5e20; color: #fff; border-color: #4caf50; }
+  .verdict button[data-active="bad"]     { background: #b71c1c; color: #fff; border-color: #f44336; }
+  .verdict button[data-active="unsure"]  { background: #e65100; color: #fff; border-color: #ff9800; }
+
+  /* Sticky results panel */
+  #results-panel {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #0f0f1e; border-top: 2px solid #4caf50;
+    padding: 12px 24px; box-shadow: 0 -4px 16px rgba(0,0,0,0.5);
+    display: flex; gap: 16px; align-items: center; z-index: 100;
+  }
+  #results-panel button {
+    background: #4caf50; color: #fff; border: none; padding: 8px 16px;
+    border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.95rem;
+  }
+  #results-panel button:hover { background: #66bb6a; }
+  #results-panel button.secondary { background: #555; }
+  #results-panel button.secondary:hover { background: #777; }
+  #results-counter { font-weight: bold; color: #ccc; }
+  #results-counter .num-good { color: #4caf50; }
+  #results-counter .num-bad { color: #f44336; }
+  #results-counter .num-unsure { color: #ff9800; }
+  #results-counter .num-pending { color: #888; }
+
+  body { padding-bottom: 80px; } /* room for sticky panel */
+</style>
+</head>
+<body>
+
+<h1>🎵 Hirik Batch Review — חיריק (pilot)</h1>
+
+<div class="summary">
+  <strong>סיכום Gemini judge:</strong>
+  ✅ 22/26 תקינים &nbsp;|&nbsp;
+  ❌ 3 בעייתיים (Chi, Chri, Tsai) &nbsp;|&nbsp;
+  ⚠️ 1 לא ברור (Hi) &nbsp;|&nbsp;
+  <br>
+  <strong>Speak pattern:</strong> <span class="speak">displayChar + ִי</span> | 
+  <strong>פ רפה:</strong> <span class="speak">Fi</span> (Latin) |
+  <strong>צ:</strong> <span class="speak">[Israeli accent] צִי</span>
+  <br><br>
+  <strong>📝 הוראות:</strong> ליד כל קובץ — <b>✅</b> טוב, <b>❌</b> לא טוב, <b>❓</b> לא בטוח.
+  בתחתית הדף כפתור Copy לתוצאות.
+</div>
+
+<h2>✅ קבצים תקינים (22)</h2>
+<table>
+  <tr><th>קובץ</th><th>Speak</th><th>ציפייה</th><th>Gemini</th><th>הקשב</th><th>החלטה</th></tr>
+  <tr><td>Ai.mp3</td><td class="speak">אִי</td><td>ee (אלף אילמת)</td><td class="ok">OK — ee</td><td><audio controls src="hirik/Ai.mp3"></audio></td><td data-file="Ai.mp3"></td></tr>
+  <tr><td>Bi.mp3</td><td class="speak">בִּי</td><td>bee</td><td class="ok">OK — Bi</td><td><audio controls src="hirik/Bi.mp3"></audio></td><td data-file="Bi.mp3"></td></tr>
+  <tr><td>Di.mp3</td><td class="speak">דִי</td><td>dee</td><td class="ok">OK — Di</td><td><audio controls src="hirik/Di.mp3"></audio></td><td data-file="Di.mp3"></td></tr>
+  <tr><td>Fi.mp3</td><td class="speak">Fi</td><td>fee (פ רפה לטיני)</td><td class="ok">OK — Fi</td><td><audio controls src="hirik/Fi.mp3"></audio></td><td data-file="Fi.mp3"></td></tr>
+  <tr><td>Gi.mp3</td><td class="speak">גִי</td><td>gee</td><td class="ok">OK — גי</td><td><audio controls src="hirik/Gi.mp3"></audio></td><td data-file="Gi.mp3"></td></tr>
+  <tr><td>Ki.mp3</td><td class="speak">כִּי</td><td>kee</td><td class="ok">OK — Ki</td><td><audio controls src="hirik/Ki.mp3"></audio></td><td data-file="Ki.mp3"></td></tr>
+  <tr><td>Li.mp3</td><td class="speak">לִי</td><td>lee</td><td class="ok">OK — Li</td><td><audio controls src="hirik/Li.mp3"></audio></td><td data-file="Li.mp3"></td></tr>
+  <tr><td>Mi.mp3</td><td class="speak">מִי</td><td>mee</td><td class="ok">OK — Me</td><td><audio controls src="hirik/Mi.mp3"></audio></td><td data-file="Mi.mp3"></td></tr>
+  <tr><td>Ni.mp3</td><td class="speak">נִי</td><td>nee</td><td class="ok">OK — Ni</td><td><audio controls src="hirik/Ni.mp3"></audio></td><td data-file="Ni.mp3"></td></tr>
+  <tr><td>Pi.mp3</td><td class="speak">פִּי</td><td>pee</td><td class="ok">OK — P</td><td><audio controls src="hirik/Pi.mp3"></audio></td><td data-file="Pi.mp3"></td></tr>
+  <tr><td>Qi.mp3</td><td class="speak">קִי</td><td>kee (= Ki)</td><td class="ok">OK — kee</td><td><audio controls src="hirik/Qi.mp3"></audio></td><td data-file="Qi.mp3"></td></tr>
+  <tr><td>Ri.mp3</td><td class="speak">רִי</td><td>ree (American R)</td><td class="ok">OK — Ri</td><td><audio controls src="hirik/Ri.mp3"></audio></td><td data-file="Ri.mp3"></td></tr>
+  <tr><td>Shi.mp3</td><td class="speak">שִׁי</td><td>shee</td><td class="ok">OK — she</td><td><audio controls src="hirik/Shi.mp3"></audio></td><td data-file="Shi.mp3"></td></tr>
+  <tr><td>Si.mp3</td><td class="speak">סִי</td><td>see</td><td class="ok">OK — C</td><td><audio controls src="hirik/Si.mp3"></audio></td><td data-file="Si.mp3"></td></tr>
+  <tr><td>Sini.mp3</td><td class="speak">שִׂי</td><td>see (= Si)</td><td class="ok">OK — See</td><td><audio controls src="hirik/Sini.mp3"></audio></td><td data-file="Sini.mp3"></td></tr>
+  <tr><td>Tavi.mp3</td><td class="speak">תִּי</td><td>tee (= Ti)</td><td class="ok">OK — T</td><td><audio controls src="hirik/Tavi.mp3"></audio></td><td data-file="Tavi.mp3"></td></tr>
+  <tr><td>Ti.mp3</td><td class="speak">טִי</td><td>tee</td><td class="ok">OK — Tee</td><td><audio controls src="hirik/Ti.mp3"></audio></td><td data-file="Ti.mp3"></td></tr>
+  <tr><td>Vi.mp3</td><td class="speak">וִי</td><td>vee</td><td class="ok">OK — vi</td><td><audio controls src="hirik/Vi.mp3"></audio></td><td data-file="Vi.mp3"></td></tr>
+  <tr><td>Vri.mp3</td><td class="speak">וִי</td><td>vee (= Vi)</td><td class="ok">OK — vee</td><td><audio controls src="hirik/Vri.mp3"></audio></td><td data-file="Vri.mp3"></td></tr>
+  <tr><td>Yi.mp3</td><td class="speak">יִי</td><td>yee</td><td class="ok">OK — Yi</td><td><audio controls src="hirik/Yi.mp3"></audio></td><td data-file="Yi.mp3"></td></tr>
+  <tr><td>Aai.mp3</td><td class="speak">עִי</td><td>ee (עין אילמת)</td><td class="ok">OK — ee</td><td><audio controls src="hirik/Aai.mp3"></audio></td><td data-file="Aai.mp3"></td></tr>
+  <tr><td>Zi.mp3</td><td class="speak">זִי</td><td>zee</td><td class="ok">OK — Zi (inferred)</td><td><audio controls src="hirik/Zi.mp3"></audio></td><td data-file="Zi.mp3"></td></tr>
+</table>
+
+<h2>⚠️ לא ברור — Hi.mp3 (Gemini timeout)</h2>
+<div class="warn">
+  Gemini timeout עקבי על קובץ זה. ה-speak הוא <span class="speak">הִי</span> שאמור לצאת "hee".
+  האזן ותחליט: האם זה תקין?
+</div>
+<table>
+  <tr><th>קובץ</th><th>Speak</th><th>ציפייה</th><th>הקשב</th><th>החלטה</th></tr>
+  <tr><td>Hi.mp3</td><td class="speak">הִי</td><td>hee (ה + חיריק)</td><td><audio controls src="hirik/Hi.mp3"></audio></td><td data-file="Hi.mp3"></td></tr>
+</table>
+
+<h2>❌ בעייתיים — Chi / Chri (ח נשמע כ-ה)</h2>
+<div class="warn">
+  Gemini שמע "Hai" / "Hi" במקום "khee". ח+חיריק (<span class="speak">חִי</span>) אינה מפיקה צליל גרוני מ-Sarah.
+  ידוע מסיבוב 1: ח בהקשר מילה (חִיל, חִידָה) עובד — אבל הברה בודדת נשמעת כ-ה.
+  <br><strong>הצעה:</strong> פשרה כמו Ra.mp3 — לקבל ח=ה בחיריק. או: להשתמש ב-speak של מילה ולחתוך (מורכב).
+</div>
+<table>
+  <tr><th>קובץ</th><th>Speak</th><th>ציפייה</th><th>Gemini</th><th>הקשב</th><th>החלטה</th></tr>
+  <tr><td>Chi.mp3</td><td class="speak">חִי</td><td>khee (ח גרונית + ee)</td><td class="problem">PROBLEM — Hai</td><td><audio controls src="hirik/Chi.mp3"></audio></td><td data-file="Chi.mp3"></td></tr>
+  <tr><td>Chri.mp3</td><td class="speak">חִי</td><td>khee (כ רפה = ח)</td><td class="problem">PROBLEM — Hi</td><td><audio controls src="hirik/Chri.mp3"></audio></td><td data-file="Chri.mp3"></td></tr>
+  <tr><td class="variant">Chi-v2-chil.mp3</td><td class="speak">חִיל</td><td>khil (word context)</td><td class="ok">OK — חיל (in context)</td><td><audio controls src="hirik/Chi-v2-chil.mp3"></audio></td><td data-file="Chi-v2-chil.mp3"></td></tr>
+  <tr><td class="variant">Chi-v3-chida.mp3</td><td class="speak">חִידָה</td><td>kheeda (word context)</td><td class="ok">OK — חידה</td><td><audio controls src="hirik/Chi-v3-chida.mp3"></audio></td><td data-file="Chi-v3-chida.mp3"></td></tr>
+  <tr><td class="variant">Chi-v6-chi-only.mp3</td><td class="speak">חִ</td><td>khi (without yod)</td><td class="uncertain">? (Gemini timeout)</td><td><audio controls src="hirik/Chi-v6-chi-only.mp3"></audio></td><td data-file="Chi-v6-chi-only.mp3"></td></tr>
+  <tr><td class="variant">Chi-v7-accent-chi.mp3</td><td class="speak">[Israeli accent] חִ</td><td>khi (accent tag)</td><td class="uncertain">? (Gemini timeout)</td><td><audio controls src="hirik/Chi-v7-accent-chi.mp3"></audio></td><td data-file="Chi-v7-accent-chi.mp3"></td></tr>
+</table>
+
+<h2>❌ בעייתיים — Tsai (צ נשמע כ-ס)</h2>
+<div class="warn">
+  כל וריאנט יצא "see" ולא "tsee". ה-<code>[Israeli accent]</code> שפתר את Tsa.mp3 (פתח) לא עוזר לחיריק.
+  <br><strong>הצעה:</strong> לנסות תעתיק לטיני <span class="speak">Tsi</span> (כמו Fa לפ רפה) — Gemini הגיד "See" גם שם.
+  ייתכן ש-Sarah לא יכולה לייצר ts+ee בשום צורה. שיקול: Web Speech fallback לצ+חיריק.
+</div>
+<table>
+  <tr><th>קובץ</th><th>Speak</th><th>ציפייה</th><th>Gemini</th><th>הקשב</th><th>החלטה</th></tr>
+  <tr><td>Tsai.mp3</td><td class="speak">[Israeli accent] צִי</td><td>tsee</td><td class="problem">PROBLEM — See</td><td><audio controls src="hirik/Tsai.mp3"></audio></td><td data-file="Tsai.mp3"></td></tr>
+  <tr><td class="variant">Tsai-v2-tsia.mp3</td><td class="speak">[Israeli accent] צִיא</td><td>tsee + aleph</td><td class="problem">PROBLEM — Sia</td><td><audio controls src="hirik/Tsai-v2-tsia.mp3"></audio></td><td data-file="Tsai-v2-tsia.mp3"></td></tr>
+  <tr><td class="variant">Tsai-v3-latin.mp3</td><td class="speak">Tsi</td><td>Tsi (Latin)</td><td class="problem">PROBLEM — See</td><td><audio controls src="hirik/Tsai-v3-latin.mp3"></audio></td><td data-file="Tsai-v3-latin.mp3"></td></tr>
+  <tr><td class="variant">Tsai-v4-tsee-eng.mp3</td><td class="speak">tsee</td><td>tsee (English)</td><td class="problem">PROBLEM</td><td><audio controls src="hirik/Tsai-v4-tsee-eng.mp3"></audio></td><td data-file="Tsai-v4-tsee-eng.mp3"></td></tr>
+  <tr><td class="variant">Tsai-v8-accent-tsif.mp3</td><td class="speak">[Israeli accent] צִיף</td><td>tsif (word context)</td><td class="uncertain">? (Gemini timeout)</td><td><audio controls src="hirik/Tsai-v8-accent-tsif.mp3"></audio></td><td data-file="Tsai-v8-accent-tsif.mp3"></td></tr>
+</table>
+
+<div class="note">
+  <strong>מסקנות עד כה:</strong><br>
+  • <strong>22/26 תקינים</strong> — אפשר להמשיך לbatch מלא.<br>
+  • <strong>Chi/Chri:</strong> ח אינה גרונית מ-Sarah בהברה בודדת. פשרה: לקבל כ-"hee" (ה קיצוני), או לבדוק Chi-v6/v7 ידנית.<br>
+  • <strong>Tsai:</strong> צ+חיריק בכל variant = "see". שאלה פתוחה: לקבל כ-Si.mp3 (share עם ס)? או Web Speech fallback לצ+חיריק בלבד?<br>
+  • <strong>Hi.mp3:</strong> נשמע OK מבחינת duration/volume — Gemini timeout לא אומר PROBLEM.
+</div>
+
+<div id="results-panel">
+  <span id="results-counter">טוען...</span>
+  <button id="copy-btn">📋 העתק תוצאות</button>
+  <button id="copy-md-btn" class="secondary">📋 העתק כ-Markdown</button>
+  <button id="reset-btn" class="secondary">🗑 איפוס</button>
+  <span id="copy-feedback" style="color:#4caf50; font-weight:bold;"></span>
+</div>
+
+<script>
+const STORAGE_KEY = 'tts-hirik-verdicts-v1';
+
+function loadVerdicts() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch { return {}; }
+}
+
+function saveVerdicts(verdicts) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(verdicts));
+}
+
+let verdicts = loadVerdicts();
+
+function setVerdict(file, value) {
+  if (verdicts[file] === value) {
+    delete verdicts[file]; // toggle off
+  } else {
+    verdicts[file] = value;
+  }
+  saveVerdicts(verdicts);
+  renderCell(file);
+  renderCounter();
+}
+
+function renderCell(file) {
+  const cell = document.querySelector(`td[data-file="${file}"]`);
+  if (!cell) return;
+  const current = verdicts[file];
+  cell.innerHTML = `
+    <div class="verdict">
+      <button data-active="${current === 'good' ? 'good' : ''}"   onclick="setVerdict('${file}', 'good')"   title="טוב">✅</button>
+      <button data-active="${current === 'bad' ? 'bad' : ''}"     onclick="setVerdict('${file}', 'bad')"     title="לא טוב">❌</button>
+      <button data-active="${current === 'unsure' ? 'unsure' : ''}" onclick="setVerdict('${file}', 'unsure')" title="לא בטוח">❓</button>
+    </div>
+  `;
+}
+
+function renderAllCells() {
+  document.querySelectorAll('td[data-file]').forEach(td => renderCell(td.dataset.file));
+}
+
+function renderCounter() {
+  const allCells = document.querySelectorAll('td[data-file]');
+  const total = allCells.length;
+  let good = 0, bad = 0, unsure = 0;
+  allCells.forEach(td => {
+    const v = verdicts[td.dataset.file];
+    if (v === 'good') good++;
+    else if (v === 'bad') bad++;
+    else if (v === 'unsure') unsure++;
+  });
+  const pending = total - good - bad - unsure;
+  document.getElementById('results-counter').innerHTML = `
+    <span class="num-good">✅ ${good}</span> · 
+    <span class="num-bad">❌ ${bad}</span> · 
+    <span class="num-unsure">❓ ${unsure}</span> · 
+    <span class="num-pending">⏳ ${pending} (מתוך ${total})</span>
+  `;
+}
+
+function buildResultsJSON() {
+  const allCells = document.querySelectorAll('td[data-file]');
+  const result = { good: [], bad: [], unsure: [], pending: [] };
+  allCells.forEach(td => {
+    const file = td.dataset.file;
+    const v = verdicts[file];
+    if (v === 'good') result.good.push(file);
+    else if (v === 'bad') result.bad.push(file);
+    else if (v === 'unsure') result.unsure.push(file);
+    else result.pending.push(file);
+  });
+  return result;
+}
+
+function buildResultsMarkdown() {
+  const r = buildResultsJSON();
+  const lines = ['# Hirik batch — תוצאות סקירה', ''];
+  lines.push(`✅ **טוב (${r.good.length}):** ${r.good.join(', ') || '—'}`);
+  lines.push('');
+  lines.push(`❌ **לא טוב (${r.bad.length}):** ${r.bad.join(', ') || '—'}`);
+  lines.push('');
+  lines.push(`❓ **לא בטוח (${r.unsure.length}):** ${r.unsure.join(', ') || '—'}`);
+  if (r.pending.length) {
+    lines.push('');
+    lines.push(`⏳ **לא סומן (${r.pending.length}):** ${r.pending.join(', ')}`);
+  }
+  return lines.join('\n');
+}
+
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    flashFeedback('✓ הועתק');
+  } catch (e) {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    flashFeedback('✓ הועתק (fallback)');
+  }
+}
+
+function flashFeedback(msg) {
+  const el = document.getElementById('copy-feedback');
+  el.textContent = msg;
+  setTimeout(() => el.textContent = '', 2000);
+}
+
+document.getElementById('copy-btn').onclick = () => {
+  copyToClipboard(JSON.stringify(buildResultsJSON(), null, 2));
+};
+document.getElementById('copy-md-btn').onclick = () => {
+  copyToClipboard(buildResultsMarkdown());
+};
+document.getElementById('reset-btn').onclick = () => {
+  if (!confirm('לאפס את כל ההחלטות?')) return;
+  verdicts = {};
+  saveVerdicts(verdicts);
+  renderAllCells();
+  renderCounter();
+};
+
+renderAllCells();
+renderCounter();
+</script>
+
+</body>
+</html>

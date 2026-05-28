@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TTS Batch Review — כל הניקודים (v2)</title>
+<style>
+  :root {
+    --bg:#0f1117; --bg2:#1a1d27; --bg3:#222638;
+    --text:#dde1f0; --muted:#7b82a0;
+    --ok:#4ade80; --prob:#f87171; --unc:#fbbf24; --accent:#818cf8;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font:14px/1.6 system-ui,sans-serif;margin:0;padding:1rem 1.5rem;}
+  h1{color:var(--accent);font-size:1.4rem;margin-bottom:.2rem;}
+  .sub{color:var(--muted);margin-bottom:1.2rem;font-size:.85rem;}
+  .nav{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.2rem;}
+  .nav a{background:var(--bg3);color:var(--accent);padding:.3rem .7rem;border-radius:5px;text-decoration:none;font-size:.8rem;}
+  .nav a:hover{background:#2e3248;}
+  .section{margin-bottom:2rem;border:1px solid #2a2e40;border-radius:8px;overflow:hidden;}
+  .sec-hdr{background:var(--bg3);padding:.7rem 1rem;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;}
+  .sec-name{font-size:1rem;font-weight:600;color:var(--accent);}
+  .badge{display:inline-block;padding:.1rem .45rem;border-radius:4px;font-size:.72rem;font-weight:700;}
+  .b-ok{background:#14532d;color:var(--ok);}
+  .b-p{background:#450a0a;color:var(--prob);}
+  .b-u{background:#451a03;color:var(--unc);}
+  .sec-note{background:#1c1930;padding:.45rem 1rem;font-size:.78rem;color:#a8b4d0;}
+  table{width:100%;border-collapse:collapse;}
+  th{background:#181b28;padding:.4rem .8rem;text-align:right;font-size:.72rem;color:var(--muted);font-weight:normal;text-transform:uppercase;}
+  td{padding:.35rem .8rem;border-bottom:1px solid #1d2035;vertical-align:middle;}
+  tr:hover td{background:#181b28;}
+  td:first-child{font-family:monospace;font-size:.78rem;color:#a5b4fc;}
+  .sp{font-family:monospace;font-size:.82rem;direction:rtl;unicode-bidi:embed;background:#1e2235;padding:1px 5px;border-radius:3px;}
+  audio{height:26px;width:170px;}
+  .ok{color:var(--ok);font-weight:700;}
+  .pr{color:var(--prob);font-weight:700;}
+  .un{color:var(--unc);}
+  .override{background:#1c1940;}
+  .shared{background:#0f1c20;}
+  .variant{background:#1a1510;}
+  .fixed{background:#0a1f0a;}
+
+  .alert{margin:.7rem 0;padding:.65rem 1rem;border-radius:5px;font-size:.83rem;}
+  .al-warn{background:#2d1a00;border-left:3px solid var(--unc);}
+  .al-ok{background:#0a1f0d;border-left:3px solid var(--ok);}
+  .al-info{background:#0d1f2d;border-left:3px solid var(--accent);}
+
+  .sum-tbl{width:100%;border-collapse:collapse;margin:.7rem 0 1.5rem;font-size:.85rem;}
+  .sum-tbl th{background:var(--bg3);padding:.45rem .9rem;text-align:right;color:var(--muted);}
+  .sum-tbl td{padding:.4rem .9rem;border-bottom:1px solid #1d2035;}
+  .sum-tbl .skip{color:var(--muted);}
+</style>
+</head>
+<body>
+
+<h1>🎵 TTS Batch Review — כל הניקודים (v2, post-review)</h1>
+<div class="sub">8 ניקודים × 26 אותיות. אחרי סקירת המשתמש + החלטות שיתוף.</div>
+
+<div class="nav">
+  <a href="#hirik">חיריק i</a>
+  <a href="#segol">סגול e</a>
+  <a href="#tzere">צירה ei →e</a>
+  <a href="#holam">חולם o</a>
+  <a href="#shuruk">שורוק u</a>
+  <a href="#kubutz">קובוץ uu →u</a>
+</div>
+
+<div class="alert al-info">
+  <strong>החלטות מהסקירה:</strong><br>
+  • <strong>צירה ≡ סגול</strong> — אין העלאת tzere/, entries יצביעו ל-segol MP3<br>
+  • <strong>קובוץ ≡ שורוק</strong> — אין העלאת kubutz/, entries יצביעו ל-shuruk MP3<br>
+  • <strong>חטף פתח + חטף סגול</strong> — Web Speech fallback, לא מעלים<br>
+  • <strong>Tsai.mp3</strong> = בדיוק Tsai-v4 (md5 זהה) — אם שמעת "סי" זה browser cache. נקה cache.
+</div>
+
+<table class="sum-tbl">
+  <tr><th>ניקוד</th><th>MP3 dir</th><th>Status</th><th>Variants לבדיקה</th></tr>
+  <tr><td>חיריק</td><td>hirik/</td><td class="ok">✅ 26 קבצים, variants מופעלים</td><td>Hi.mp3 (הִ), Ki.mp3 (verify)</td></tr>
+  <tr><td>סגול</td><td>segol/</td><td class="ok">✅ 26 קבצים</td><td>Re.mp3 (פשרה R אמריקאי), Fe.mp3 (verify "Fay")</td></tr>
+  <tr><td>צירה</td><td>tzere/ → segol/</td><td class="un">SHARED</td><td>—</td></tr>
+  <tr><td>חולם</td><td>holam/</td><td class="ok">✅ 26 קבצים</td><td>—</td></tr>
+  <tr><td>שורוק</td><td>shuruk/</td><td class="ok">✅ variants מופעלים</td><td>Vu(voo), Fu(foo), Su(soo), Au(oo), Gu(goo), Hu(hoo), Chu/Chru(חֻ)</td></tr>
+  <tr><td>קובוץ</td><td>kubutz/ → shuruk/</td><td class="un">SHARED</td><td>—</td></tr>
+  <tr><td>חטף פתח</td><td>—</td><td class="skip">Web Speech</td><td>—</td></tr>
+  <tr><td>חטף סגול</td><td>—</td><td class="skip">Web Speech</td><td>—</td></tr>
+</table>
+
+<!-- ==================== HIRIK ==================== -->
+<div class="section" id="hirik">
+  <div class="sec-hdr">
+    <span class="sec-name">חיריק — i (ִי)</span>
+    <span class="badge b-ok">26 ✅</span>
+    <div style="font-size:.78rem;color:var(--muted)">speak: displayChar+ִי | ch=חִ | tz=tsee | fa=Fi</div>
+  </div>
+  <div class="sec-note">🔧 variants: Hi.mp3 ← הִ (no yod, like Chi fix). Ki.mp3 — verify.</div>
+  <table>
+    <tr><th>קובץ</th><th>Speak</th><th>הקשב</th><th>הערה</th></tr>
+    <tr><td>Ai.mp3</td><td class="sp">אִי</td><td><audio controls src="hirik/Ai.mp3"></audio></td><td>✅</td></tr>
+    <tr><td>Bi.mp3</td><td class="sp">בִּי</td><td><audio controls src="hirik/Bi.mp3"></audio></td><td>✅</td></tr>
+    <tr><td>Gi.mp3</td><td class="sp">גִי</td><td><audio controls src="hirik/Gi.mp3"></audio></td><td>✅</td></tr>
+    <tr><td>Di.mp3</td><td class="sp">דִי</td><td><audio controls src="hirik/Di.mp3"></audio></td><td>✅</td></tr>
+    <tr class="fixed"><td>Hi.mp3 🔧</td><td class="sp">הִ</td><td><audio controls src="hirik/Hi.mp3"></audio></td><td>variant: no-yod (was "Hay")</td></tr>
+    <tr class="fixed"><td>Vi.mp3 🔧</td><td class="sp">[short] וִי</td><td><audio controls src="hirik/Vi.mp3"></audio></td><td>variant: [short] tag</td></tr>
+    <tr><td>Zi.mp3</td><td class="sp">זִי</td><td><audio controls src="hirik/Zi.mp3"></audio></td><td>✅</td></tr>
+    <tr class="override"><td>Chi.mp3</td><td class="sp">חִ</td><td><audio controls src="hirik/Chi.mp3"></audio></td><td>override: no yod</td></tr>
+    <tr><td>Ti.mp3</td><td class="sp">טִי</td><td><audio controls src="hirik/Ti.mp3"></audio></td><td>✅</td></tr>
+    <tr><td>Yi.mp3</td><td class="sp">יִי</td><td><audio controls src="hirik/Yi.mp3"></audio></td><td>✅</td></tr>
+    <tr><td>Ki.mp3</td><td class="sp">כִּי</td><td><audio controls src="hirik/Ki.mp3"></audio></td><td>✅ verify</td></tr>
+    <tr><td>Li.mp3</td><td class="sp">לִי</td><td><audio controls src="hirik/Li.mp3"></audio></td><td>✅</td></tr>
+    <tr><td>Mi.mp3</td><td class="sp">מִי</td><td><audio controls src="hirik/Mi.mp3"></audio></td><td>✅</td></tr>
+    <tr><td>Ni.mp3</td><td class="sp">נִי</td><td><audio controls src="hirik/Ni.mp3"></audio></td><td>✅</td></tr>
+    <tr><td>Si.mp3</td><td class="sp">סִי</td><td><audio controls src="hirik/Si.mp3"></audio></td><td>✅</td></tr>
+    <tr><td>Pi.mp3</td><td class="sp">פִּי</td><td><audio controls src="hirik/Pi.mp3"></audio></td><td>✅</td></tr>
+    <tr class="override fixed"><td>Tsai.mp3 🔧</td><td class="sp">tsee</td><td><audio controls src="hirik/Tsai.mp3"></audio></td><td>variant: Latin tsee (md5=Tsai-v4)</td></tr>
+    <tr class="shared"><td>Qi.mp3</td><td class="sp">קִי</td><td><audio controls src="hirik/Qi.mp3"></audio></td><td>shared: K sound</td></tr>
+    <tr><td>Ri.mp3</td><td class="sp">רִי</td><td><audio controls src="hirik/Ri.mp3"></audio></td><td>✅ (American R)</td></tr>
+    <tr><td>Shi.mp3</td><td class="sp">שִׁי</td><td><audio controls src="hirik/Shi.mp3"></audio></td><td>✅</td></tr>
+    <tr class="shared"><td>Tavi.mp3</td><td class="sp">תִּי</td><td><audio controls src="hirik/Tavi.mp3"></audio></td><td>shared: T sound (=Ti)</td></tr>
+    <tr class="shared"><td>Sini.mp3</td><td class="sp">שִׂי</td><td><audio controls src="hirik/Sini.mp3"></audio></td><td>shared: S sound (=Si)</td></tr>
+    <tr class="fixed shared"><td>Aai.mp3 🔧</td><td class="sp">עִיא</td><td><audio controls src="hirik/Aai.mp3"></audio></td><td>variant: +aleph (was 0.2s)</td></tr>
+    <tr class="shared fixed"><td>Vri.mp3 🔧</td><td class="sp">[short] וִי</td><td><audio controls src="hirik/Vri.mp3"></audio></td><td>shared: V sound (=Vi)</td></tr>
+    <tr class="override shared"><td>Chri.mp3</td><td class="sp">חִ</td><td><audio controls src="hirik/Chri.mp3"></audio></td><td>shared: kh sound (=Chi)</td></tr>
+    <tr class="override"><td>Fi.mp3</td><td class="sp">Fi</td><td><audio controls src="hirik/Fi.mp3"></audio></td><td>Latin override</td></tr>
+  </table>
+</div>
+
+<!-- ==================== SEGOL ==================== -->
+<div class="section" id="segol">
+  <div class="sec-hdr">
+    <span class="sec-name">סגול — e (ֶא)</span>
+    <span class="badge b-ok">26 ✅</span>
+    <div style="font-size:.78rem;color:var(--muted)">speak: displayChar+ֶא | tz=tse | fa=Fe</div>
+  </div>
+  <div class="sec-note">Re.mp3 = American R (פשרה ידועה). Fe.mp3 = Gemini אמר "Fay" — verify.</div>
+  <table>
+    <tr><th>קובץ</th><th>Speak</th><th>הקשב</th><th>הערה</th></tr>
+    <tr><td>Ae.mp3</td><td class="sp">אֶא</td><td><audio controls src="segol/Ae.mp3"></audio></td><td>silent aleph + eh</td></tr>
+    <tr><td>Be.mp3</td><td class="sp">בֶּא</td><td><audio controls src="segol/Be.mp3"></audio></td><td>✅</td></tr>
+    <tr><td>Ge.mp3</td><td class="sp">גֶא</td><td><audio controls src="segol/Ge.mp3"></audio></td><td></td></tr>
+    <tr><td>De.mp3</td><td class="sp">דֶא</td><td><audio controls src="segol/De.mp3"></audio></td><td></td></tr>
+    <tr><td>He.mp3</td><td class="sp">הֶא</td><td><audio controls src="segol/He.mp3"></audio></td><td>✅</td></tr>
+    <tr class="shared"><td>Ve.mp3</td><td class="sp">וֶא</td><td><audio controls src="segol/Ve.mp3"></audio></td><td>=Vre (ב רפה)</td></tr>
+    <tr><td>Ze.mp3</td><td class="sp">זֶא</td><td><audio controls src="segol/Ze.mp3"></audio></td><td></td></tr>
+    <tr class="shared"><td>Che.mp3</td><td class="sp">חֶא</td><td><audio controls src="segol/Che.mp3"></audio></td><td>✅ =Chre (כ רפה)</td></tr>
+    <tr><td>Te.mp3</td><td class="sp">טֶא</td><td><audio controls src="segol/Te.mp3"></audio></td><td></td></tr>
+    <tr><td>Ye.mp3</td><td class="sp">יֶא</td><td><audio controls src="segol/Ye.mp3"></audio></td><td></td></tr>
+    <tr class="shared"><td>Ke.mp3</td><td class="sp">כֶּא</td><td><audio controls src="segol/Ke.mp3"></audio></td><td>=Qe (ק)</td></tr>
+    <tr><td>Le.mp3</td><td class="sp">לֶא</td><td><audio controls src="segol/Le.mp3"></audio></td><td>✅</td></tr>
+    <tr><td>Me.mp3</td><td class="sp">מֶא</td><td><audio controls src="segol/Me.mp3"></audio></td><td></td></tr>
+    <tr><td>Ne.mp3</td><td class="sp">נֶא</td><td><audio controls src="segol/Ne.mp3"></audio></td><td></td></tr>
+    <tr class="shared"><td>Se.mp3</td><td class="sp">סֶא</td><td><audio controls src="segol/Se.mp3"></audio></td><td>=Sine (שׂ)</td></tr>
+    <tr><td>Pe.mp3</td><td class="sp">פֶּא</td><td><audio controls src="segol/Pe.mp3"></audio></td><td></td></tr>
+    <tr class="override"><td>Tsae.mp3</td><td class="sp">tse</td><td><audio controls src="segol/Tsae.mp3"></audio></td><td>✅ Latin tz</td></tr>
+    <tr class="shared"><td>Qe.mp3</td><td class="sp">קֶא</td><td><audio controls src="segol/Qe.mp3"></audio></td><td>shared: K (=Ke)</td></tr>
+    <tr><td>Re.mp3</td><td class="sp">רֶא</td><td><audio controls src="segol/Re.mp3"></audio></td><td>American R (פשרה)</td></tr>
+    <tr><td>She.mp3</td><td class="sp">שֶׁא</td><td><audio controls src="segol/She.mp3"></audio></td><td></td></tr>
+    <tr class="shared"><td>Tave.mp3</td><td class="sp">תֶּא</td><td><audio controls src="segol/Tave.mp3"></audio></td><td>shared: T (=Te)</td></tr>
+    <tr class="shared"><td>Sine.mp3</td><td class="sp">שֶׂא</td><td><audio controls src="segol/Sine.mp3"></audio></td><td>shared: S (=Se)</td></tr>
+    <tr class="shared"><td>Aae.mp3</td><td class="sp">עֶא</td><td><audio controls src="segol/Aae.mp3"></audio></td><td>✅ =Ae (א)</td></tr>
+    <tr class="shared"><td>Vre.mp3</td><td class="sp">וֶא</td><td><audio controls src="segol/Vre.mp3"></audio></td><td>shared: V (=Ve)</td></tr>
+    <tr class="shared"><td>Chre.mp3</td><td class="sp">חֶא</td><td><audio controls src="segol/Chre.mp3"></audio></td><td>✅ shared: kh (=Che)</td></tr>
+    <tr class="override"><td>Fe.mp3</td><td class="sp">Fe</td><td><audio controls src="segol/Fe.mp3"></audio></td><td>Gemini: "Fay" — verify!</td></tr>
+  </table>
+</div>
+
+<!-- ==================== TZERE (shared) ==================== -->
+<div class="section" id="tzere">
+  <div class="sec-hdr">
+    <span class="sec-name">צירה — ei (ֵא) → SHARED עם סגול</span>
+    <span class="badge b-u">לא מעלים</span>
+  </div>
+  <div class="sec-note">כל entries של צירה ב-TTS_FILES יצביעו ל-segol MP3. tz=tsei→Tsae.mp3, fa=Fei→Fe.mp3. לא צריך האזנה — אין העלאה.</div>
+</div>
+
+<!-- ==================== HOLAM ==================== -->
+<div class="section" id="holam">
+  <div class="sec-hdr">
+    <span class="sec-name">חולם — o (ֹא)</span>
+    <span class="badge b-ok">26 ✅</span>
+    <div style="font-size:.78rem;color:var(--muted)">speak: displayChar+ֹא | tz=tso | fa=Fo</div>
+  </div>
+  <table>
+    <tr><th>קובץ</th><th>Speak</th><th>הקשב</th><th>הערה</th></tr>
+    <tr><td>Ao.mp3</td><td class="sp">אֹא</td><td><audio controls src="holam/Ao.mp3"></audio></td><td>silent aleph+oh</td></tr>
+    <tr><td>Bo.mp3</td><td class="sp">בֹּא</td><td><audio controls src="holam/Bo.mp3"></audio></td><td></td></tr>
+    <tr><td>Go.mp3</td><td class="sp">גֹא</td><td><audio controls src="holam/Go.mp3"></audio></td><td></td></tr>
+    <tr><td>Do.mp3</td><td class="sp">דֹא</td><td><audio controls src="holam/Do.mp3"></audio></td><td></td></tr>
+    <tr><td>Ho.mp3</td><td class="sp">הֹא</td><td><audio controls src="holam/Ho.mp3"></audio></td><td></td></tr>
+    <tr class="shared"><td>Vo.mp3</td><td class="sp">וֹא</td><td><audio controls src="holam/Vo.mp3"></audio></td><td>=Vro (ב רפה)</td></tr>
+    <tr><td>Zo.mp3</td><td class="sp">זֹא</td><td><audio controls src="holam/Zo.mp3"></audio></td><td></td></tr>
+    <tr class="shared"><td>Cho.mp3</td><td class="sp">חֹא</td><td><audio controls src="holam/Cho.mp3"></audio></td><td>=Chro (כ רפה)</td></tr>
+    <tr><td>To.mp3</td><td class="sp">טֹא</td><td><audio controls src="holam/To.mp3"></audio></td><td></td></tr>
+    <tr><td>Yo.mp3</td><td class="sp">יֹא</td><td><audio controls src="holam/Yo.mp3"></audio></td><td></td></tr>
+    <tr class="shared"><td>Ko.mp3</td><td class="sp">כֹּא</td><td><audio controls src="holam/Ko.mp3"></audio></td><td>=Qo (ק)</td></tr>
+    <tr><td>Lo.mp3</td><td class="sp">לֹא</td><td><audio controls src="holam/Lo.mp3"></audio></td><td></td></tr>
+    <tr><td>Mo.mp3</td><td class="sp">מֹא</td><td><audio controls src="holam/Mo.mp3"></audio></td><td></td></tr>
+    <tr><td>No.mp3</td><td class="sp">נֹא</td><td><audio controls src="holam/No.mp3"></audio></td><td></td></tr>
+    <tr class="shared"><td>So.mp3</td><td class="sp">סֹא</td><td><audio controls src="holam/So.mp3"></audio></td><td>=Sino (שׂ)</td></tr>
+    <tr><td>Po.mp3</td><td class="sp">פֹּא</td><td><audio controls src="holam/Po.mp3"></audio></td><td></td></tr>
+    <tr class="override"><td>Tsao.mp3</td><td class="sp">tso</td><td><audio controls src="holam/Tsao.mp3"></audio></td><td>✅ Latin tz</td></tr>
+    <tr class="shared"><td>Qo.mp3</td><td class="sp">קֹא</td><td><audio controls src="holam/Qo.mp3"></audio></td><td>shared: K (=Ko)</td></tr>
+    <tr><td>Ro.mp3</td><td class="sp">רֹא</td><td><audio controls src="holam/Ro.mp3"></audio></td><td>American R</td></tr>
+    <tr><td>Sho.mp3</td><td class="sp">שֹׁא</td><td><audio controls src="holam/Sho.mp3"></audio></td><td></td></tr>
+    <tr class="shared"><td>Tavo.mp3</td><td class="sp">תֹּא</td><td><audio controls src="holam/Tavo.mp3"></audio></td><td>shared: T (=To)</td></tr>
+    <tr class="shared"><td>Sino.mp3</td><td class="sp">שֹׂא</td><td><audio controls src="holam/Sino.mp3"></audio></td><td>shared: S (=So)</td></tr>
+    <tr class="shared"><td>Aao.mp3</td><td class="sp">עֹא</td><td><audio controls src="holam/Aao.mp3"></audio></td><td>=Ao (א)</td></tr>
+    <tr class="shared"><td>Vro.mp3</td><td class="sp">וֹא</td><td><audio controls src="holam/Vro.mp3"></audio></td><td>shared: V (=Vo)</td></tr>
+    <tr class="shared"><td>Chro.mp3</td><td class="sp">חֹא</td><td><audio controls src="holam/Chro.mp3"></audio></td><td>shared: kh (=Cho)</td></tr>
+    <tr class="override"><td>Fo.mp3</td><td class="sp">Fo</td><td><audio controls src="holam/Fo.mp3"></audio></td><td>✅ Latin</td></tr>
+  </table>
+</div>
+
+<!-- ==================== SHURUK ==================== -->
+<div class="section" id="shuruk">
+  <div class="sec-hdr">
+    <span class="sec-name">שורוק — u (וּ)</span>
+    <span class="badge b-ok">26 🔧 variants</span>
+    <div style="font-size:.78rem;color:var(--muted)">speak: displayChar+וּ | tz=tsoo | fa=foo</div>
+  </div>
+  <div class="sec-note">🔧 7 variants: Au(oo), Gu(goo), Hu(hoo), Vu/Vru(voo), Su(soo), Fu(foo), Chu/Chru(חֻ)</div>
+  <table>
+    <tr><th>קובץ</th><th>Speak</th><th>הקשב</th><th>הערה</th></tr>
+    <tr class="fixed"><td>Au.mp3 🔧</td><td class="sp">oo</td><td><audio controls src="shuruk/Au.mp3"></audio></td><td>variant: pure oo (silent aleph)</td></tr>
+    <tr><td>Bu.mp3</td><td class="sp">בּוּ</td><td><audio controls src="shuruk/Bu.mp3"></audio></td><td></td></tr>
+    <tr class="fixed"><td>Gu.mp3 🔧</td><td class="sp">goo</td><td><audio controls src="shuruk/Gu.mp3"></audio></td><td>variant: goo</td></tr>
+    <tr><td>Du.mp3</td><td class="sp">דוּ</td><td><audio controls src="shuruk/Du.mp3"></audio></td><td></td></tr>
+    <tr class="fixed"><td>Hu.mp3 🔧</td><td class="sp">hoo</td><td><audio controls src="shuruk/Hu.mp3"></audio></td><td>variant: hoo</td></tr>
+    <tr class="shared fixed"><td>Vu.mp3 🔧</td><td class="sp">voo</td><td><audio controls src="shuruk/Vu.mp3"></audio></td><td>variant: voo (was ווּ→Viu)</td></tr>
+    <tr><td>Zu.mp3</td><td class="sp">זוּ</td><td><audio controls src="shuruk/Zu.mp3"></audio></td><td></td></tr>
+    <tr class="shared fixed"><td>Chu.mp3 🔧</td><td class="sp">חֻ</td><td><audio controls src="shuruk/Chu.mp3"></audio></td><td>variant: חֻ (no waw)</td></tr>
+    <tr><td>Tu.mp3</td><td class="sp">טוּ</td><td><audio controls src="shuruk/Tu.mp3"></audio></td><td></td></tr>
+    <tr><td>Yu.mp3</td><td class="sp">יוּ</td><td><audio controls src="shuruk/Yu.mp3"></audio></td><td></td></tr>
+    <tr class="shared"><td>Ku.mp3</td><td class="sp">כּוּ</td><td><audio controls src="shuruk/Ku.mp3"></audio></td><td>=Qu (ק)</td></tr>
+    <tr><td>Lu.mp3</td><td class="sp">לוּ</td><td><audio controls src="shuruk/Lu.mp3"></audio></td><td></td></tr>
+    <tr><td>Mu.mp3</td><td class="sp">מוּ</td><td><audio controls src="shuruk/Mu.mp3"></audio></td><td></td></tr>
+    <tr><td>Nu.mp3</td><td class="sp">נוּ</td><td><audio controls src="shuruk/Nu.mp3"></audio></td><td></td></tr>
+    <tr class="shared fixed"><td>Su.mp3 🔧</td><td class="sp">soo</td><td><audio controls src="shuruk/Su.mp3"></audio></td><td>variant: soo (was 0.37s)</td></tr>
+    <tr><td>Pu.mp3</td><td class="sp">פּוּ</td><td><audio controls src="shuruk/Pu.mp3"></audio></td><td></td></tr>
+    <tr class="override"><td>Tsau.mp3</td><td class="sp">tsoo</td><td><audio controls src="shuruk/Tsau.mp3"></audio></td><td>✅ Latin tz</td></tr>
+    <tr class="shared"><td>Qu.mp3</td><td class="sp">קוּ</td><td><audio controls src="shuruk/Qu.mp3"></audio></td><td>shared: K (=Ku)</td></tr>
+    <tr><td>Ru.mp3</td><td class="sp">רוּ</td><td><audio controls src="shuruk/Ru.mp3"></audio></td><td>American R</td></tr>
+    <tr><td>Shu.mp3</td><td class="sp">שׁוּ</td><td><audio controls src="shuruk/Shu.mp3"></audio></td><td></td></tr>
+    <tr class="shared"><td>Tavu.mp3</td><td class="sp">תּוּ</td><td><audio controls src="shuruk/Tavu.mp3"></audio></td><td>shared: T (=Tu)</td></tr>
+    <tr class="shared"><td>Sinu.mp3</td><td class="sp">שׂוּ</td><td><audio controls src="shuruk/Sinu.mp3"></audio></td><td>shared: S (=Su)</td></tr>
+    <tr><td>Aau.mp3</td><td class="sp">עוּ</td><td><audio controls src="shuruk/Aau.mp3"></audio></td><td>silent ayin+oo</td></tr>
+    <tr class="shared fixed"><td>Vru.mp3 🔧</td><td class="sp">voo</td><td><audio controls src="shuruk/Vru.mp3"></audio></td><td>shared: V (=Vu)</td></tr>
+    <tr class="shared fixed"><td>Chru.mp3 🔧</td><td class="sp">חֻ</td><td><audio controls src="shuruk/Chru.mp3"></audio></td><td>shared: kh (=Chu)</td></tr>
+    <tr class="override fixed"><td>Fu.mp3 🔧</td><td class="sp">foo</td><td><audio controls src="shuruk/Fu.mp3"></audio></td><td>variant: foo (was Fu→Fiu)</td></tr>
+  </table>
+</div>
+
+<!-- ==================== KUBUTZ (shared) ==================== -->
+<div class="section" id="kubutz">
+  <div class="sec-hdr">
+    <span class="sec-name">קובוץ — uu (ֻ) → SHARED עם שורוק</span>
+    <span class="badge b-u">לא מעלים</span>
+  </div>
+  <div class="sec-note">כל entries של קובוץ ב-TTS_FILES יצביעו ל-shuruk MP3. לא צריך האזנה — אין העלאה.</div>
+</div>
+
+<div class="alert al-info" style="margin-top:1rem;">
+  <strong>Legend:</strong>
+  <span style="background:#1a1510;padding:2px 6px;border-radius:3px;">ירוק-חום</span> variant מתוקן 🔧 &nbsp;|&nbsp;
+  <span style="background:#1c1940;padding:2px 6px;border-radius:3px;">כחול</span> override &nbsp;|&nbsp;
+  <span style="background:#0f1c20;padding:2px 6px;border-radius:3px;">ירוק-כהה</span> shared
+</div>
+
+</body>
+</html>
