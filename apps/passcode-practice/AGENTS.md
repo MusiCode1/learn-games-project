@@ -24,13 +24,13 @@ After completing the code, ask the user if they want a playground link. Only cal
 
 ---
 
-# wordys-game
+# passcode-practice
 
-**מה זה:** תרגול מילים — היררכיה Shelf → Boxes → Cards.
+**מה זה:** תרגול קוד 4 ספרות לתלמידים.
 
 **סטטוס:**
-- ✅ מועמד לפלטפורמיזציה — התוכן (`defaultShelves`) hardcoded, מתאים ל-ContentProvider עם מילים בקטגוריות
-- ⚠️ מחרוזות עברית hardcoded בקוד (לא דרך `language.ts`) — צריך תיקון
+- ✅ משחק "מקובע בריא" — מוגדר לעבוד עם קוד 4 ספרות, לא יהפוך גנרי
+- ⚠️ `tts.ts` — עותק מקומי, לא מהקיט (ראה open tasks)
 
 **הפניות:**
 - כל כללי הקוד: `../../docs/coding-conventions.md`

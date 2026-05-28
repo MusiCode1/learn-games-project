@@ -24,15 +24,14 @@ After completing the code, ask the user if they want a playground link. Only cal
 
 ---
 
-# wordys-game
+# kit-test-screen
 
-**מה זה:** תרגול מילים — היררכיה Shelf → Boxes → Cards.
+**מה זה:** סביבת בדיקה ו-showcase של `learn-booster-kit`. לא משחק לתלמידים.
 
 **סטטוס:**
-- ✅ מועמד לפלטפורמיזציה — התוכן (`defaultShelves`) hardcoded, מתאים ל-ContentProvider עם מילים בקטגוריות
-- ⚠️ מחרוזות עברית hardcoded בקוד (לא דרך `language.ts`) — צריך תיקון
+- ✅ מכיל `/showcase` — תצוגת כל הקומפוננטות החדשות (Button, Card, HeaderBar וכו') עם 3 themes
+- ✅ theme switcher בתפריט עליון
 
 **הפניות:**
 - כל כללי הקוד: `../../docs/coding-conventions.md`
-- design spec מכשירים: `../../docs/design-specs.md`
 - תיעוד: `docs/walkthrough.md`

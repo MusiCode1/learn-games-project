@@ -6,6 +6,51 @@
 
 ---
 
+## 2026-05-28 00:00
+
+### סדר בתיעוד — ארכיון, AGENTS.md לכל apps, תוכנית עבודה
+
+סקירת כוללת של כל מסמכי הפרויקט. חמישה מסמכי spec שהסתיימו הועברו לארכיון,
+פקודת יצירת app נשמרה, AGENTS.md נוצרו לכל 9 האפליקציות שחסרו,
+ותוכנית עבודה כוללת נכתבה לכל הפתוחים.
+
+#### מה בוצע?
+
+**1. ארכיון — `docs/archive/` (5 קבצים)**
+
+- `component-system-spec.md` — spec לבניית component system, בוצע (30 קומיטים)
+- `find-letter-config-migration.md` — POC spec, מוזג ולא פעיל
+- `migration-system-spec.md` — spec מיגרציות, הושלם (19/19 DoD items)
+- `migration-system-verification-report.md` — דוח verification ללא פריטים פתוחים
+- `sv-create.md` — פקודה קצרה, לא מסמך
+
+**2. `docs/coding-conventions.md` — הוספת §12**
+
+- פקודת `sv create` המלאה (מ-sv-create.md) נשמרה תחת "יצירת App חדש"
+
+**3. `AGENTS.md` לכל 9 האפליקציות שחסרו**
+
+- נוצרו עם Svelte MCP instructions + הערת סטטוס ייחודית לכל app:
+  `find-letter-game`, `jigsaw-puzzle-game`, `kit-test-screen`, `learn-booster`,
+  `main`, `passcode-practice`, `read-faster`, `sort-cards-game`, `train-addition-game`
+- `wordys-game/AGENTS.md` עודכן — הוסרו כללים ישנים שסתרו את root
+  (בעיקר: `&&` מותר vs. האיסור שב-root)
+
+**4. `docs/platform-plan.md` — הוספת §9: משימות פתוחות**
+
+- קריטי/חוב-טכני: `registerGameSchema` ל-find-letter, בדיקת `updateGameSettings` → Result, Svelte warnings
+- DRY לא טופל: `sound.ts` ×6, `tts.ts` ×3, `shuffle` שכבר בkit אבל לא בשימוש
+- עמידה בכללים: hardcoded Hebrew ב-~8 אפליקציות
+- רספונסיביות: טבלת 6 viewports מ-`design-specs.md` + רשימת משחקים לבדיקה
+- החלטות ממתינות: `read-faster`, `jigsaw-v1`, `learn-booster`
+
+#### החלטות ארכיטקטורה
+
+- **`design-specs.md` נשאר פעיל** — נמצא שהוא מכיל דרישות viewport שלא הושלמו לכל המשחקים. לא הועבר לארכיון.
+- **AGENTS.md של app = דק** — רק Svelte MCP + הפניה ל-root + סטטוס. הכללים המלאים ב-root AGENTS.md.
+
+---
+
 ## 2026-05-17 12:30
 
 ### Pilot מיגרציה ראשון: find-letter-game משתמש ב-configManager של הקיט

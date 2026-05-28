@@ -24,15 +24,14 @@ After completing the code, ask the user if they want a playground link. Only cal
 
 ---
 
-# wordys-game
+# learn-booster
 
-**מה זה:** תרגול מילים — היררכיה Shelf → Boxes → Cards.
+**⚠️ LEGACY — הקפוא. אין לגעת ללא הנחיה מפורשת.**
 
-**סטטוס:**
-- ✅ מועמד לפלטפורמיזציה — התוכן (`defaultShelves`) hardcoded, מתאים ל-ContentProvider עם מילים בקטגוריות
-- ⚠️ מחרוזות עברית hardcoded בקוד (לא דרך `language.ts`) — צריך תיקון
+זהו פרויקט gingim.net המקורי — הפלטפורמה הקודמת לפני המונוריפו.
+מכיל: vite-plugin משלו, server/, prompts/, output/.
+
+לפי `../../docs/platform-plan.md §3.4`: **להקפיא, לא תחזוקה**.
 
 **הפניות:**
-- כל כללי הקוד: `../../docs/coding-conventions.md`
-- design spec מכשירים: `../../docs/design-specs.md`
-- תיעוד: `docs/walkthrough.md`
+- תיעוד: `docs/walkthrough.md` (אם קיים)

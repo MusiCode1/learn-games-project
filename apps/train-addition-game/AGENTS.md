@@ -24,13 +24,13 @@ After completing the code, ask the user if they want a playground link. Only cal
 
 ---
 
-# wordys-game
+# train-addition-game
 
-**מה זה:** תרגול מילים — היררכיה Shelf → Boxes → Cards.
+**מה זה:** משחק תרגול חיבור (חשבון).
 
 **סטטוס:**
-- ✅ מועמד לפלטפורמיזציה — התוכן (`defaultShelves`) hardcoded, מתאים ל-ContentProvider עם מילים בקטגוריות
-- ⚠️ מחרוזות עברית hardcoded בקוד (לא דרך `language.ts`) — צריך תיקון
+- ✅ משחק "מקובע בריא" — מוגדר לחיבור (`maxA`, `maxB`, `builtA`), לא יהפוך גנרי
+- ✅ מימש Fully Kiosk TTS polyfill (2026-02-11)
 
 **הפניות:**
 - כל כללי הקוד: `../../docs/coding-conventions.md`

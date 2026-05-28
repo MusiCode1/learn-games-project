@@ -404,7 +404,59 @@ function legacyToMultiAxis<TItem, TSettings>(
 
 ---
 
-## 9. מקורות
+## 9. משימות פתוחות (Backlog)
+
+> עודכן: 2026-05-28. מבוסס על סקירת תיעוד כוללת.
+
+### 9.1 קריטי / טכני-חוב
+
+| משימה | היכן | הערות |
+|-------|------|--------|
+| `registerGameSchema` ל-find-letter-game | `apps/find-letter-game` | כרגע passthrough — פגמי migration לא יתגלו. הוזכר ב-verification report כ-"slice הבא" |
+| `updateGameSettings` להחזיר `Result<T, E>` | `packages/learn-booster-kit` | מוגדר ב-`functional-programming.md §8` כ-`❌ זורק`. לוודא אם תוקן ב-migration system slice |
+| 10 Svelte `state_referenced_locally` warnings | `apps/find-letter-game` | ב-SettingsForm.svelte, VideoMain.svelte ועוד. Pre-existing, לא מ-migration slice |
+
+### 9.2 DRY — כפילויות שזוהו ועוד לא טופלו
+
+| דפוס | מצב | פעולה נדרשת |
+|------|------|--------------|
+| `sound.ts` (playSuccess/playError/playWin) | 6 עותקים. קוד דומה מאוד | לחלץ ל-kit, להחליף בכל אפליקציה |
+| `tts.ts` | 3+ עותקים זהים (passcode, sort-cards, jigsaw-v2) | לחלץ ל-kit |
+| `shuffle` | 3+ אפליקציות שמממשות בעצמן | כבר קיים ב-kit — פשוט לעדכן imports |
+
+### 9.3 עמידה בכללים — מה עדיין שבור
+
+| כלל | מצב | אפליקציות מושפעות |
+|-----|------|-------------------|
+| אסור hardcoded Hebrew בקוד | רק `find-letter` ו-`main` עומדים בכלל | `wordys-game`, `passcode-practice`, `sort-cards-game`, `train-addition-game`, ועוד |
+
+### 9.4 תאימות ורספונסיביות — design-specs.md
+
+לפי `design-specs.md`, יש לבדוק תאימות בכל המשחקים על:
+
+| מכשיר | Viewport | יחס |
+|-------|----------|-----|
+| CUBOT Tab KingKong | 1097 × 685 | 16:10 landscape |
+| iPad Air (1/2) | 1024 × 768 | 4:3 |
+| Desktop FHD | 1920 × 1080 | 16:9 |
+| Desktop Laptop | 1366 × 768 | 16:9 |
+| Mobile portrait | ~390 × 844 | portrait |
+| Mobile landscape | ~844 × 390 | landscape |
+
+**משחקים שלא נבדקו אחרונה:** wordys-game, jigsaw-v2, sort-cards-game, train-addition-game, passcode-practice, lotto-game.
+**כלי בדיקה:** Playwright viewport testing דרך linux-gui.
+
+### 9.5 החלטות ממתינות
+
+| נושא | אפשרויות | מצב |
+|------|----------|------|
+| `read-faster` | להגר ל-Cloudflare + kit, או להוציא ל-repo נפרד | ממתין להחלטה |
+| `jigsaw-puzzle-game v1` | למחוק? להקפיא? | ממתין |
+| `learn-booster` | להקפיא רשמית? למחוק? | ממתין |
+
+---
+
+## 10. מקורות
 
 - `docs/game-design-rules.md` — המפרט הקיים (10 סעיפים) — **מקור האמת לעקרונות**
 - `docs/walkthrough.md` — יומן פיתוח
@@ -415,4 +467,4 @@ function legacyToMultiAxis<TItem, TSettings>(
 
 ---
 
-*מסמך חי. עדכון אחרון: 2026-05-13.*
+*מסמך חי. עדכון אחרון: 2026-05-28.*

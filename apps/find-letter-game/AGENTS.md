@@ -24,13 +24,14 @@ After completing the code, ask the user if they want a playground link. Only cal
 
 ---
 
-# wordys-game
+# find-letter-game
 
-**מה זה:** תרגול מילים — היררכיה Shelf → Boxes → Cards.
+**מה זה:** משחק "איפה האות?" — תלמיד שומע אות ומוצא אותה על הלוח.
 
 **סטטוס:**
-- ✅ מועמד לפלטפורמיזציה — התוכן (`defaultShelves`) hardcoded, מתאים ל-ContentProvider עם מילים בקטגוריות
-- ⚠️ מחרוזות עברית hardcoded בקוד (לא דרך `language.ts`) — צריך תיקון
+- ✅ הכי מתקדם בפלטפורמיזציה — SettingsStore מחובר ל-`configManager` של הקיט
+- ✅ migration system עבד (schemaVersion 1)
+- ⚠️ עדיין לא רשום ב-`registerGameSchema` — passthrough כרגע
 
 **הפניות:**
 - כל כללי הקוד: `../../docs/coding-conventions.md`

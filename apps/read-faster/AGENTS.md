@@ -24,13 +24,15 @@ After completing the code, ask the user if they want a playground link. Only cal
 
 ---
 
-# wordys-game
+# read-faster
 
-**מה זה:** תרגול מילים — היררכיה Shelf → Boxes → Cards.
+**מה זה:** תרגול קריאה מהירה.
 
-**סטטוס:**
-- ✅ מועמד לפלטפורמיזציה — התוכן (`defaultShelves`) hardcoded, מתאים ל-ContentProvider עם מילים בקטגוריות
-- ⚠️ מחרוזות עברית hardcoded בקוד (לא דרך `language.ts`) — צריך תיקון
+**⚠️ חריג מהסטנדרט:**
+- עדיין על **Vercel adapter** (לא Cloudflare) — ראה `../../docs/platform-plan.md §3.4`
+- מכיל **Storybook** — לא בשימוש בשאר המשחקים
+- לא משתמש ב-`learn-booster-kit`
+- **החלטה ממתינה:** להגר ל-Cloudflare + kit, או להוציא ל-repo נפרד
 
 **הפניות:**
 - כל כללי הקוד: `../../docs/coding-conventions.md`

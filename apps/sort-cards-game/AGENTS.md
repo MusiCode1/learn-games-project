@@ -20,17 +20,17 @@ You MUST use this tool whenever writing Svelte code before sending it to the use
 ### 4. playground-link
 
 Generates a Svelte Playground link with the provided code.
-After completing the code, ask the user if they want a playground link. Only call this tool after user confirmation and NEVER if code was written to files in their project.
+After completing the code, ask the user if they want a playground link. Only call this tool after user confirmation and NEVER if code was confirmed to files in their project.
 
 ---
 
-# wordys-game
+# sort-cards-game
 
-**מה זה:** תרגול מילים — היררכיה Shelf → Boxes → Cards.
+**מה זה:** משחק מיון כרטיסים לקטגוריות.
 
 **סטטוס:**
-- ✅ מועמד לפלטפורמיזציה — התוכן (`defaultShelves`) hardcoded, מתאים ל-ContentProvider עם מילים בקטגוריות
-- ⚠️ מחרוזות עברית hardcoded בקוד (לא דרך `language.ts`) — צריך תיקון
+- ✅ **מודל ContentPack** — הגישה הטובה ביותר לתוכן סטטי. מהווה מקור להשראה.
+- ⚠️ `tts.ts` — עותק מקומי, לא מהקיט (ראה open tasks)
 
 **הפניות:**
 - כל כללי הקוד: `../../docs/coding-conventions.md`

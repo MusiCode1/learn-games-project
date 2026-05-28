@@ -24,13 +24,14 @@ After completing the code, ask the user if they want a playground link. Only cal
 
 ---
 
-# wordys-game
+# jigsaw-puzzle-game
 
-**מה זה:** תרגול מילים — היררכיה Shelf → Boxes → Cards.
+**מה זה:** משחק פאזל.
 
 **סטטוס:**
-- ✅ מועמד לפלטפורמיזציה — התוכן (`defaultShelves`) hardcoded, מתאים ל-ContentProvider עם מילים בקטגוריות
-- ⚠️ מחרוזות עברית hardcoded בקוד (לא דרך `language.ts`) — צריך תיקון
+- `version-1/` — legacy, לא בתחזוקה
+- `version-2/` — הגרסה הפעילה. העבודה היא כאן בלבד.
+- ⚠️ `lib/` ריק בגרסה הפעילה — כל הקוד ב-`+page.svelte` (לא אידאלי, ראה `../../docs/platform-plan.md §3.4`)
 
 **הפניות:**
 - כל כללי הקוד: `../../docs/coding-conventions.md`

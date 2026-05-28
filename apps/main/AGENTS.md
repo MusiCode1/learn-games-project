@@ -24,13 +24,13 @@ After completing the code, ask the user if they want a playground link. Only cal
 
 ---
 
-# wordys-game
+# main
 
-**מה זה:** תרגול מילים — היררכיה Shelf → Boxes → Cards.
+**מה זה:** פורטל הכניסה הראשי — `https://learn-games.pages.dev`
 
 **סטטוס:**
-- ✅ מועמד לפלטפורמיזציה — התוכן (`defaultShelves`) hardcoded, מתאים ל-ContentProvider עם מילים בקטגוריות
-- ⚠️ מחרוזות עברית hardcoded בקוד (לא דרך `language.ts`) — צריך תיקון
+- ✅ אחד מ-2 האפס שעומדים בכלל no-hardcoded-Hebrew (דרך `language.ts`)
+- ✅ מכיל `AVAILABLE_GAMES` — רשימת המשחקים הפעילים
 
 **הפניות:**
 - כל כללי הקוד: `../../docs/coding-conventions.md`
