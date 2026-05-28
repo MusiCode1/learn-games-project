@@ -150,14 +150,18 @@ test('כל ה-speak של ALL_LETTERS ממופה ב-TTS_FILES', () => {
 	}
 });
 
-// בדיקה 21: כל קובץ ב-TTS_FILES בשימוש (patah + none, ללא גרוניות)
+// בדיקה 21: כל קובץ ב-TTS_FILES בשימוש (patah + kamatz + ניקודים חדשים + none, ללא גרוניות עם עיצור)
 test('כל קובץ ב-TTS_FILES בשימוש על-ידי לפחות אות אחת', () => {
-	// כולל pairs עם none vowel — מייצר כיסוי על הקבצים החדשים B.mp3, G.mp3 וכו'
-	const nonGutturalIds = DEFAULT_LETTER_IDS.filter(id => id !== 'a' && id !== 'aa');
-	const deckPatahNone = generateDeck(nonGutturalIds, ['patah', 'none']);
-	const patahDeck = generateDeck(DEFAULT_LETTER_IDS, ['patah']); // כולל גרוניות (patah בלבד)
-	const allTestPairs = [...deckPatahNone, ...patahDeck];
-	const usedFiles = new Set(allTestPairs.map(c => getTtsFilename(c.speak)));
+	// generate a deck for every vowel that has MP3 mappings + filter guttural+none
+	// (a/aa עם none עדיין ממתינים ל-NEEDS_DECISION → fallback ל-Web Speech)
+	const VOWELS_WITH_MP3: VowelCode[] = [
+		'patah', 'kamatz', 'hirik', 'segol', 'tzere', 'holam',
+		'shuruk', 'kubutz', 'hataf-patah', 'hataf-segol', 'none'
+	];
+	const allPairs = generateDeck(DEFAULT_LETTER_IDS, VOWELS_WITH_MP3);
+	const usedFiles = new Set(
+		allPairs.map(c => getTtsFilename(c.speak)).filter((f): f is string => f !== null)
+	);
 	// קבצי גרוניות עיצור (A-consonant, Aa-consonant) יתווספו אחרי NEEDS_DECISION
 	const pendingFiles = new Set(['A-consonant.mp3', 'Aa-consonant.mp3']);
 	for (const filename of Object.values(TTS_FILES)) {

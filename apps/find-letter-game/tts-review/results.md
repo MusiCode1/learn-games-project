@@ -1,4 +1,36 @@
-# תוצאות סקירת TTS — סיבוב 2 (English speak)
+# תוצאות סקירת TTS
+
+---
+
+## סבוב 4 — Batch ניקודים (2026-05-18)
+
+### חיריק (Pilot) — הושלם
+
+| | |
+|--|--|
+| סטטוס | ✅ הושלם, 22/26 OK |
+| בעיות שנפתרו | Chi.mp3: `חִ` (ללא יוד) → OK; Tsai.mp3: `tsee` (לטיני) → OK |
+| Re-produced | Vi.mp3, Vri.mp3 (`[short] וִי`), Aai.mp3 (`עִיא`), Hi.mp3 (`הִי `) |
+| לבדיקה ידנית | Vi, Vri, Aai, Hi (Gemini timeout — בדוק ב-HTML) |
+
+### 7 ניקודים נוספים — הופקו, ממתינים לאישור ידני
+
+| ניקוד | קבצים | Override files (Gemini OK) | PROBLEM |
+|-------|-------|---------------------------|---------|
+| סגול | 26 | Tsae.mp3 ✅ | Fe.mp3 ❌ (נשמע "Fay") |
+| צירה | 26 | Fei.mp3 ✅ | Tsaei.mp3 ❌ (נשמע "say") |
+| חולם | 26 | Fo.mp3 ✅ Tsao.mp3 ✅ | — |
+| שורוק | 26 | Fu.mp3 ✅ Tsau.mp3 ✅ | — |
+| קובוץ | 26 | Fuu.mp3 ✅ Tsauu.mp3 ✅ | — |
+| חטף פתח | 26 | Fah.mp3 ✅ Tsaah.mp3 ✅ | — |
+| חטף סגול | 26 | Feh.mp3 ✅ Tsaeh.mp3 ✅ | — |
+
+שאר הקבצים (>150) לא נבדקו ע"י Gemini (rate-limited) — לבדיקה ידנית ב-HTML.
+URL: https://musicode-find-letter-tts.nue.tuns.sh/all.html
+
+---
+
+## סבוב 2 — English speak (ישן)
 
 הפעם ה-`speak` הוא תעתיק לטיני (אנגלית). מטרה: לתקן Fa שהיה Pa, ולנסות Ra/Tsa/Za.
 

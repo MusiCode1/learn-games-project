@@ -1,5 +1,58 @@
 # יומן פיתוח — איפה האות?
 
+## 2026-05-27 18:30
+
+### Phase 4 — חיבור TTS לכל הניקודים החדשים (העלאה ל-R2 + מיפוי)
+
+239 קבצי MP3 של 8 ניקודים (חיריק, סגול, צירי, חולם, שורוק, קובוץ, חטף-פתח, חטף-סגול) הועלו ל-R2, ו-`TTS_FILES` הורחב כך שהמשחק יודע לבחור את הקובץ הנכון לכל צירוף `letter × vowel`. עד הקומיט הזה, הקבצים נוצרו ב-`tts-review/batch/` אבל לא היו ב-CDN ולא היה מיפוי — הניקודים החדשים נפלו ל-Web Speech.
+
+#### מה בוצע?
+
+**1. העלאה ל-R2 (`tzlev-static`, prefix `shared/tts/find-letter/`)**
+
+- 239 קבצים ב-8 תיקיות-משנה: `hirik/` (42), `segol/` (26), `tzere/` (26), `holam/` (26), `shuruk/` (41), `kubutz/` (26), `hatafPatah/` (26), `hatafSegol/` (26).
+- ‏הקבצים הועתקו אל `assets/shared/tts/find-letter/<vowel>/` בשורש המונורפו (תיקייה חדשה), ואז `bun run sync:assets` (סקריפט קיים) העלה הכול ל-R2 עם hash dedup.
+- ‏8 כשלי `fetch failed` זמניים נפתרו בריצה שנייה של אותו סקריפט.
+- אומת ב-CDN HEAD שדגימה מכל תנועה מחזירה 200.
+
+**2. מיפוי `TTS_FILES` (`src/lib/utils/letters.ts`)**
+
+- ‏המיפוי פוצל ל-`TTS_FILES_BASE` (פתח+קמץ+שווא, flat) ו-`VOWEL_FILE_INFO` (8 הניקודים החדשים בתיקיות-משנה).
+- ‏IIFE שמחבר `speakBase` (char או speakChar) עם `vowel.speakSuffix` ומייצר ~184 entries אוטומטית — שווה-ערך ל-key שמיוצר ב-runtime על ידי `makePair`.
+- ‏נוספו 10 entries ידניים לקמץ עבור אותיות שבהן `legacySpeakPatah` חורג מהנוסחה הכללית (b/k/p — דגש; tav/q — אות שונה; z/tz — accent tag; aa — גרונית; sh — שיניים; f_rafe — תעתיק לטיני).
+- ‏סה"כ ה-`TTS_FILES` עלה מ-~40 ל-~234 entries.
+
+**3. עדכון טסט 21 (`letters.test.ts`)**
+
+- ‏בדיקת "כל קובץ ב-TTS_FILES בשימוש" הסתמכה על deck של `patah + none` בלבד; הורחבה לכלול את כל 11 הניקודים עם MP3 (`'patah', 'kamatz', 'hirik', 'segol', 'tzere', 'holam', 'shuruk', 'kubutz', 'hataf-patah', 'hataf-segol', 'none'`). 134 tests passing.
+
+**4. פריסה ל-dev**
+
+- ‏`https://dev.find-letter-game.pages.dev` — deployment `c08c6beb` עם המיפוי המלא.
+
+#### החלטות ארכיטקטורה
+
+- **תיקיות-משנה ב-R2 לפי ניקוד** (`<vowel>/<file>.mp3` במקום flat) — שומר על namespace נקי כשיש 250+ קבצים, ומקל על דיבוג והחלפת קבצים פר-ניקוד.
+- **יצירה תכנותית של ה-entries (IIFE) במקום 184 שורות ידניות** — מבטיח שה-key מתאים בדיוק למה ש-`makePair` מייצר ב-runtime (משתמש באותו `speakSuffix` מ-`vowels.ts`), ומקל על הוספת ניקודים בעתיד.
+- **tzere, kubutz, hataf-patah, hataf-segol מקבלים תיקיות ייעודיות** ולא משתפים עם sister vowel — מסמך התכנון `tts-files-mapping-plan.md` שמר שיתוף כברירת מחדל, אבל הקלטות נפרדות נוצרו כבר ב-batch ונמצאות ב-R2, אז עדיף לתת לכל ניקוד את הצליל הייחודי שלו.
+- **sin עדיין משתף את `שׁ` (Shi/She/...)** — לא הוסף `speakChar: 'ס'` ל-sin ב-data layer, כדי לא להחיל שינוי התנהגות מעבר ל-scope של הקומיט. זה משמר את ההתנהגות הקיימת מ-`שְ` (sin נשמע כמו shin) — חוסר עקביות מודעת, ראה הערה ב-TTS_FILES_BASE.
+
+#### מעקפים ופתרונות
+
+- **המניפסט של sync-assets שומר רק הצלחות** — כשהיו 8 כשלי `fetch failed` זמניים, ריצה שנייה של אותו סקריפט דילגה על 231 ההצלחות וניסתה רק את ה-8 הכושלים (כולן הצליחו). זו תכונה רצויה של הסקריפט הקיים.
+
+#### איכות הצלילים — לא נבדקה
+
+- ‏ה-`judge-report.md` בכל תיקיית `batch/<vowel>/` נבדק רק עבור hirik (מלא), segol (חלקי, 17 timeouts), ושאר 6 הניקודים נבדקו רק עבור Fe ו-Tsa (24 `? not tested` בכל אחד). המשתמש יבדוק אחרי הפריסה והחלפות יבוצעו לפי הצורך.
+
+#### קבצים שהשתנו
+
+- `src/lib/utils/letters.ts` — הרחבת TTS_FILES + IIFE + 10 entries לקמץ
+- `src/lib/utils/letters.test.ts` — עדכון בדיקה 21 לכל הניקודים
+- ‏(monorepo root) `assets/.sync-manifest.json` — manifest חדש עם hashes של 239 קבצים
+
+---
+
 ## 2026-05-17 — תיקון UI
 
 הוסר ה-panel של בחירת גודל הגריד (2x3, 3x3, 3x4, 4x4) מ-HeaderBar.
