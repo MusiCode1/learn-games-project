@@ -1,19 +1,25 @@
 /**
  * Tests for vowels.ts data module
- * Phase 3: 12 vowels total
+ * 10 vowels total (חטף-פתח וחטף-סגול הוסרו)
  */
 import { describe, it, expect } from 'vitest';
 import { ALL_VOWELS, VOWELS_BY_CODE } from './vowels';
 
 describe('vowels data module', () => {
-	it('מכיל בדיוק 12 ערכי Vowel בפאזה 3', () => {
-		expect(ALL_VOWELS).toHaveLength(12);
+	it('מכיל בדיוק 10 ערכי Vowel', () => {
+		expect(ALL_VOWELS).toHaveLength(10);
 	});
 
 	it('קודים ייחודיים', () => {
 		const codes = ALL_VOWELS.map((v) => v.code);
 		const unique = new Set(codes);
-		expect(unique.size).toBe(12);
+		expect(unique.size).toBe(10);
+	});
+
+	it('hataf-patah ו-hataf-segol לא קיימים יותר', () => {
+		const codes = ALL_VOWELS.map((v) => v.code);
+		expect(codes).not.toContain('hataf-patah');
+		expect(codes).not.toContain('hataf-segol');
 	});
 
 	it('מכיל patah', () => {
@@ -115,23 +121,7 @@ describe('vowels data module', () => {
 		expect(shva.displayName).toBe('שווא');
 	});
 
-	it('hataf-patah: mark=ֲ (U+05B2), speakSuffix מסתיים ב-א', () => {
-		const hatafPatah = VOWELS_BY_CODE['hataf-patah'];
-		expect(hatafPatah).toBeDefined();
-		expect(hatafPatah.mark).toBe('\u05B2'); // ֲ
-		expect(hatafPatah.speakSuffix.endsWith('א')).toBe(true);
-		expect(hatafPatah.displayName).toBe('חטף פתח');
-	});
-
-	it('hataf-segol: mark=ֱ (U+05B1), speakSuffix מסתיים ב-א', () => {
-		const hatafSegol = VOWELS_BY_CODE['hataf-segol'];
-		expect(hatafSegol).toBeDefined();
-		expect(hatafSegol.mark).toBe('\u05B1'); // ֱ
-		expect(hatafSegol.speakSuffix.endsWith('א')).toBe(true);
-		expect(hatafSegol.displayName).toBe('חטף סגול');
-	});
-
-	// סדר פדגוגי: patah, kamatz, hirik, segol, tzere, holam, shuruk, kubutz, shva, hataf-patah, hataf-segol, none
+	// סדר פדגוגי: patah, kamatz, hirik, segol, tzere, holam, shuruk, kubutz, shva, none
 	it('הסדר הפדגוגי ב-ALL_VOWELS: patah ראשון, none אחרון', () => {
 		expect(ALL_VOWELS[0].code).toBe('patah');
 		expect(ALL_VOWELS[ALL_VOWELS.length - 1].code).toBe('none');

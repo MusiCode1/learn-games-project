@@ -162,8 +162,8 @@ const TTS_FILES_BASE: Record<string, string> = {
  * speakBase 'ו' משותף ל-v ול-v_rafe. 'ח' ל-ch ול-ch_rafe. 'F' ל-f_rafe.
  *
  * כל קובץ יושב בתיקיית-משנה משלו ב-R2: `shared/tts/find-letter/<dir>/<file>.mp3`.
- * tzere, kubutz, hatafPatah, hatafSegol — לכל אחד יש דירקטוריה ייעודית
- * עם הקלטות נפרדות (גם אם השמיעה הסופית יכולה להתאים לסגול/שורוק).
+ * tzere, kubutz — לכל אחד יש דירקטוריה ייעודית עם הקלטות נפרדות
+ * (גם אם השמיעה הסופית יכולה להתאים לסגול/שורוק).
  */
 const VOWEL_FILE_INFO: Record<
 	Exclude<VowelCode, 'patah' | 'kamatz' | 'shva' | 'none'>,
@@ -227,26 +227,6 @@ const VOWEL_FILE_INFO: Record<
 			'כ': 'Kuu', 'ל': 'Luu', 'מ': 'Muu', 'נ': 'Nuu', 'ס': 'Suu',
 			'ע': 'Aauu', 'פ': 'Puu', 'צ': 'Tsauu', 'ק': 'Quu', 'ר': 'Ruu',
 			'ש': 'Shuu', 'ת': 'Tavuu', F: 'Fuu'
-		}
-	},
-	'hataf-patah': {
-		dir: 'hatafPatah',
-		bases: {
-			'א': 'Aah', 'ב': 'Bah', 'ג': 'Gah', 'ד': 'Dah', 'ה': 'Hah',
-			'ו': 'Vah', 'ז': 'Zah', 'ח': 'Chah', 'ט': 'Tah', 'י': 'Yah',
-			'כ': 'Kah', 'ל': 'Lah', 'מ': 'Mah', 'נ': 'Nah', 'ס': 'Sah',
-			'ע': 'Aaah', 'פ': 'Pah', 'צ': 'Tsaah', 'ק': 'Qah', 'ר': 'Rah',
-			'ש': 'Shah', 'ת': 'Tavah', F: 'Fah'
-		}
-	},
-	'hataf-segol': {
-		dir: 'hatafSegol',
-		bases: {
-			'א': 'Aeh', 'ב': 'Beh', 'ג': 'Geh', 'ד': 'Deh', 'ה': 'Heh',
-			'ו': 'Veh', 'ז': 'Zeh', 'ח': 'Cheh', 'ט': 'Teh', 'י': 'Yeh',
-			'כ': 'Keh', 'ל': 'Leh', 'מ': 'Meh', 'נ': 'Neh', 'ס': 'Seh',
-			'ע': 'Aaeh', 'פ': 'Peh', 'צ': 'Tsaeh', 'ק': 'Qeh', 'ר': 'Reh',
-			'ש': 'Sheh', 'ת': 'Taveh', F: 'Feh'
 		}
 	}
 };

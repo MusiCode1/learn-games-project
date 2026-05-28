@@ -1,8 +1,8 @@
 /**
- * מאגר סוגי ניקוד — פאזה 3: כל 12 הניקודים.
+ * מאגר סוגי ניקוד.
  *
  * הניקודים בסדר פדגוגי:
- * patah, kamatz, hirik, segol, tzere, holam, shuruk, kubutz, shva, hataf-patah, hataf-segol, none
+ * patah, kamatz, hirik, segol, tzere, holam, shuruk, kubutz, shva, none
  *
  * שימו לב על ה-speakSuffix:
  *   - patah: 'ָא' (קמץ U+05B8 + אלף) — TTS יציב כמו הישן
@@ -29,8 +29,6 @@ export type VowelCode =
 	| 'shuruk'
 	| 'kubutz'
 	| 'shva'
-	| 'hataf-patah'
-	| 'hataf-segol'
 	| 'none';
 
 export interface Vowel {
@@ -109,18 +107,6 @@ export const VOWELS_BY_CODE: Record<VowelCode, Vowel> = {
 		// שווא נע — זהה צלילית ל-none
 		speakSuffix: '\u05B0' // ְ
 	},
-	'hataf-patah': {
-		code: 'hataf-patah',
-		displayName: language.vowelNameHatafPatah,
-		mark: '\u05B2', // ֲ (U+05B2)
-		speakSuffix: '\u05B2\u05D0' // ֲא
-	},
-	'hataf-segol': {
-		code: 'hataf-segol',
-		displayName: language.vowelNameHatafSegol,
-		mark: '\u05B1', // ֱ (U+05B1)
-		speakSuffix: '\u05B1\u05D0' // ֱא
-	},
 	none: {
 		code: 'none',
 		displayName: language.vowelNameNone,
@@ -130,7 +116,7 @@ export const VOWELS_BY_CODE: Record<VowelCode, Vowel> = {
 	}
 };
 
-// סדר פדגוגי: patah → kamatz → hirik → segol → tzere → holam → shuruk → kubutz → shva → hataf-patah → hataf-segol → none
+// סדר פדגוגי: patah → kamatz → hirik → segol → tzere → holam → shuruk → kubutz → shva → none
 export const ALL_VOWELS: Vowel[] = [
 	VOWELS_BY_CODE.patah,
 	VOWELS_BY_CODE.kamatz,
@@ -141,7 +127,5 @@ export const ALL_VOWELS: Vowel[] = [
 	VOWELS_BY_CODE.shuruk,
 	VOWELS_BY_CODE.kubutz,
 	VOWELS_BY_CODE.shva,
-	VOWELS_BY_CODE['hataf-patah'],
-	VOWELS_BY_CODE['hataf-segol'],
 	VOWELS_BY_CODE.none
 ];

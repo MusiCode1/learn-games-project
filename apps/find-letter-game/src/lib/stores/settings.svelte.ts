@@ -25,7 +25,7 @@ export type GridSize = '2x3' | '3x3' | '3x4' | '4x4';
 // =============================================================
 function makeDefaults() {
 	return {
-		schemaVersion: 4 as number,
+		schemaVersion: 5 as number,
 		gridSize: '3x4' as GridSize,
 		autoSpeakOnNewRound: true,
 		voiceEnabled: true,

@@ -156,7 +156,7 @@ test('כל קובץ ב-TTS_FILES בשימוש על-ידי לפחות אות אח
 	// (a/aa עם none עדיין ממתינים ל-NEEDS_DECISION → fallback ל-Web Speech)
 	const VOWELS_WITH_MP3: VowelCode[] = [
 		'patah', 'kamatz', 'hirik', 'segol', 'tzere', 'holam',
-		'shuruk', 'kubutz', 'hataf-patah', 'hataf-segol', 'none'
+		'shuruk', 'kubutz', 'none'
 	];
 	const allPairs = generateDeck(DEFAULT_LETTER_IDS, VOWELS_WITH_MP3);
 	const usedFiles = new Set(

@@ -1,5 +1,44 @@
 # יומן פיתוח — איפה האות?
 
+## 2026-05-28 14:00
+
+### הסרת חטף-פתח וחטף-סגול ממערכת הניקודים
+
+החלטה מודעת: שני סוגי החטף יוסרו מהמשחק. הם נוספו ב-Phase 3 ויוצרו עבורם MP3 ב-Phase 4, אבל בהחלטה פדגוגית הם לא מועילים ברמת הלימוד של המשחק. הסרה ברמת הקוד בלבד — קבצי האודיו (52 ב-R2 ו-`assets/`) נותרים זמנית; ינוקו בנפרד.
+
+#### מה בוצע?
+
+**שכבת data (`src/lib/data/`)**
+- ‏`vowels.ts`: הסרת 2 entries מ-`VOWELS_BY_CODE` (`hataf-patah`, `hataf-segol`), הסרה מ-`VowelCode` union, הסרה מ-`ALL_VOWELS` array, עדכון comments. הקובץ עכשיו 10 ניקודים במקום 12.
+- ‏`vowels.test.ts`: הסרת 2 טסטים ייעודיים, עדכון `toHaveLength(12)` → `toHaveLength(10)`. נוסף טסט חדש שמוודא ש-`hataf-patah` ו-`hataf-segol` **לא** קיימים יותר.
+
+**שכבת TTS mapping (`src/lib/utils/letters.ts`)**
+- הסרת 2 entries מ-`VOWEL_FILE_INFO` (`hataf-patah` עם `hatafPatah/`, `hataf-segol` עם `hatafSegol/`).
+- עדכון comment של `VOWEL_FILE_INFO` — `tzere, kubutz` הם הניקודים היחידים שמשמרים directory ייעודי (לשם דיוק; קודם היה גם `hatafPatah, hatafSegol`).
+- ‏`letters.test.ts`: הסרת 2 codes מ-`VOWELS_WITH_MP3` בטסט 21.
+
+**שכבת שפה (`src/lib/services/language.ts`)**
+- הסרת `vowelNameHatafPatah` ו-`vowelNameHatafSegol`.
+
+**שכבת settings migration (`src/lib/stores/settings-migration.ts`)**
+- ‏Schema version עולה: `4 → 5`. שלב migration חדש שמסנן `hataf-patah` ו-`hataf-segol` מתוך `selectedVowels` של משתמשים קיימים. אם אחרי הסינון `selectedVowels` ריק — fallback ל-`['patah']`.
+- ‏מבנה חדש: `const REMOVED_VOWELS = new Set([...])` ופונקציה `stripRemovedVowels`. זה ה-pattern לשימוש כשמסירים עוד ניקודים בעתיד — פשוט להוסיף לסט.
+- ‏`settings.svelte.ts`: `schemaVersion: 5` ב-`makeDefaults`.
+- 3 טסטים חדשים ב-`settings-migration.test.ts`: סינון hataf, fallback ל-patah, ו-no-op כש-v4 בלי חטפים.
+
+#### החלטות ארכיטקטורה
+
+- **‏UI auto-update**: ‏`VowelSelectionGrid.svelte` בנוי גנרי על `ALL_VOWELS.map(...)`. לא נגעתי בו — ה-checkboxes של החטף ייעלמו לבד.
+- **‏R2 cleanup דחוי**: 52 קבצי MP3 ב-R2 (`shared/tts/find-letter/hatafPatah/`, `hatafSegol/`) ועותקים מקבילים ב-`assets/` יוסרו בנפרד. הם מתים — אף קוד לא יבקש אותם — אבל לא קריטי שיתחיל מיד.
+- **תיעוד היסטורי נשמר**: `tts-review/batch/hatafPatah/judge-report.md` ו-`hatafSegol/judge-report.md` נשארים ב-git כתיעוד שהם נוסו ושהוסרו בכוונה.
+
+#### תוצאות
+
+- ‏`bun run --filter find-letter-game check`: 0 errors, 10 warnings (pre-existing).
+- ‏`bun run --filter find-letter-game test`: 136 passed, 2 skipped (+3 חדשים בנטו).
+
+---
+
 ## 2026-05-27 18:30
 
 ### Phase 4 — חיבור TTS לכל הניקודים החדשים (העלאה ל-R2 + מיפוי)

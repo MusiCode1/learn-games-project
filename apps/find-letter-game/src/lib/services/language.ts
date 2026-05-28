@@ -67,8 +67,6 @@ export const language = {
 	vowelNameShuruk: 'שורוק',
 	vowelNameKubutz: 'קובוץ',
 	vowelNameShva: 'שווא',
-	vowelNameHatafPatah: 'חטף פתח',
-	vowelNameHatafSegol: 'חטף סגול',
 	vowelNameNone: 'עיצור',
 
 	// הגדרות TTS
