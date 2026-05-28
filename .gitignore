@@ -54,7 +54,10 @@ apps/train-addition-game/static/assets/
  .vscode
 
 # Agent local state (per-machine)
-.claude
-.agents
-.codenomad
+.claude/settings.local.json
+.agents/
+.codenomad/
+.specstory/
 
+# Private snapshots — לא ל-CI/GitHub (יכולים להכיל נתונים אישיים)
+docs/private-docs/
