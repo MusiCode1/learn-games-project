@@ -9,7 +9,8 @@
     "dev": "bun run --filter '*' dev",
     "build": "bun run --filter '*' build",
     "check": "bun run --filter '*' check",
-    "lint": "bun run --filter '*' lint"
+    "lint": "bun run --filter '*' lint",
+    "sync:assets": "bun scripts/sync-assets.js"
   },
   "devDependencies": {
     "turbo": "^2.1.0"
